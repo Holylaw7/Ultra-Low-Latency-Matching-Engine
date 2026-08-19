@@ -1,7 +1,7 @@
 # AGENT_CONTEXT - Matching Engine
 
 > Last Updated: 2026-08-19
-> Project Status: Phase 2 - Basic OrderBook (OrderBook aggregate + active index completed, pending approval)
+> Project Status: Phase 2 - Structural Limit Matching (ADR / Decision proposed, pending approval)
 > Owner: Human Developer
 > Primary Agent: Codex
 
@@ -53,7 +53,7 @@ Codex owns implementation assistance.
 
 ### Phase
 
-Phase 2 - Basic OrderBook (Implementation)
+Phase 2 - Structural Limit Matching (ADR / Decision)
 
 ### Completed
 
@@ -72,14 +72,14 @@ Phase 2 - Basic OrderBook (Implementation)
 ### Current Task
 
 `TASK-20260819-004` - Establish Basic OrderBook baseline (`In Progress`,
-`Implementation - OrderBook + active OrderId index` completed; pending approval).
+`Structural Limit Matching ADR / Decision` proposed; pending Human approval).
 
 ### Next Task
 
-Phase 2 - Basic OrderBook implementation. The `BidBook / AskBook` sub-stage was
-approved on `2026-08-19`. The `OrderBook + active OrderId index` sub-stage is
-complete and awaiting approval. Structural matching remains unauthorized until
-the next approval gate.
+Phase 2 - Structural Limit Matching. Sub-stages 1-3 were approved on
+`2026-08-19`. ADR-0008 and the associated stage plan now propose the detailed
+`matchLimit` / `MatchFragment` boundary. Production implementation and
+matching tests remain unauthorized until Human approval.
 
 Current task plan:
 [`tasks/active/TASK-20260819-004-basic-orderbook.md`](../tasks/active/TASK-20260819-004-basic-orderbook.md).
@@ -88,11 +88,18 @@ Current ADR:
 [`docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md`](../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md)
 (`Accepted with constraints`).
 
+Current sub-stage ADR:
+[`docs/adr/ADR-0008-structural-limit-matching.md`](../docs/adr/ADR-0008-structural-limit-matching.md)
+(`Proposed`, pending Human approval).
+
 Current Phase 2 report:
 [`tasks/reports/PHASE-2-adr-decision.md`](../tasks/reports/PHASE-2-adr-decision.md).
 
 Current implementation sub-stage report:
 [`tasks/reports/PHASE-2-implementation-orderbook-active-index.md`](../tasks/reports/PHASE-2-implementation-orderbook-active-index.md).
+
+Current decision-stage report:
+[`tasks/reports/PHASE-2-structural-limit-matching-adr-decision.md`](../tasks/reports/PHASE-2-structural-limit-matching-adr-decision.md).
 
 Phase 1 report:
 [`tasks/reports/PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md).
@@ -105,8 +112,9 @@ sub-stage `OrderNode + OrderQueue + PriceLevel` was approved on `2026-08-19`.
 Human Developer then authorized and the implementation completed the
 `BidBook / AskBook` sub-stage, which was approved on `2026-08-19`. Human
 Developer then authorized and the implementation completed the `OrderBook +
-active OrderId index` sub-stage. Its completion report and next approval gate
-are now pending Human approval.
+active OrderId index` sub-stage, which was approved on `2026-08-19`. The
+Structural Limit Matching ADR / Decision stage is now proposed and awaiting
+Human approval. No production matching implementation has started.
 
 ---
 
@@ -355,6 +363,7 @@ This is a research and engineering project, not a real trading platform.
 | ADR-0005 domain model | Accepted with constraints | Long-term record of Phase 1 domain semantics |
 | ADR-0006 governance | Accepted | ADR-first decisions, phase reports, Human approval gates, and document synchronization |
 | ADR-0007 Basic OrderBook | Accepted with constraints | TreeMap side books, intrusive FIFO levels, active cancellation index, best-price cache, and limit-order matching boundaries; implementation remains strictly scoped |
+| ADR-0008 Structural Limit Matching | Proposed | `matchLimit` and immutable `MatchFragment` boundary, deterministic price-time traversal, maker-price fragments, lifecycle synchronization and residual resting; pending Human approval |
 | Netty | Planned | High-performance networking |
 | Disruptor | Planned | Low-contention event pipeline |
 | WAL | Planned | Crash recovery |

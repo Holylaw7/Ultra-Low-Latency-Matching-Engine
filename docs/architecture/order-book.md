@@ -2,8 +2,11 @@
 
 ## Status
 
-Baseline design approved; implementation in progress under
+Baseline structure approved and implemented under
 [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../adr/ADR-0007-basic-orderbook-structure-and-boundaries.md).
+Structural Limit Matching details are proposed under
+[`ADR-0008-structural-limit-matching.md`](../adr/ADR-0008-structural-limit-matching.md);
+implementation is not authorized until that proposal is approved.
 
 ## Initial Baseline
 
@@ -20,8 +23,10 @@ Phase 2 production implementation is authorized only within the approved ADR
 and task scope. The `OrderNode + OrderQueue + PriceLevel` sub-stage is complete;
 Human Developer approved that sub-stage on `2026-08-19`, and the authorized
 `BidBook / AskBook` sub-stage was approved on `2026-08-19`. The
-`OrderBook + active OrderId index` sub-stage is complete and its report is
-awaiting Human approval before structural limit matching begins.
+`OrderBook + active OrderId index` sub-stage was approved by the Human
+Developer on `2026-08-19`. Structural Limit Matching is now in its ADR /
+Decision stage. The detailed input contract, result boundary, traversal,
+maker-price, residual, and invariant decisions are pending Human approval.
 
 ## Aggregate
 
@@ -36,6 +41,20 @@ price-level counts. Its package-private execution state-transition primitive
 keeps partial and full execution synchronized with the active index for
 correctness testing. It does not select counterparties, create match
 fragments, allocate trade identifiers, or publish events.
+
+## Structural Limit Matching Proposal
+
+ADR-0008 proposes a narrow `OrderBook.matchLimit(Order)` operation returning
+an immutable, traversal-ordered `List<MatchFragment>`. The operation would
+accept a new active limit order, consume crossed opposite-side levels using
+price-time priority, use the resting maker price, synchronize maker and taker
+state transitions, and rest a non-zero incoming residual once.
+
+`MatchFragment` would contain maker and taker identifiers, maker price,
+executed quantity, and both post-fragment remaining quantities. It would not
+contain `TradeId`, event sequence, timestamps, `Trade`, `Execution`, mutable
+nodes, or publication behavior. This proposal does not authorize production
+implementation until ADR-0008 and the associated stage plan are approved.
 
 ## Invariants
 

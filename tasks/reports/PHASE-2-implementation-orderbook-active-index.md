@@ -9,8 +9,8 @@
 | Task | `TASK-20260819-004-basic-orderbook` |
 | ADR | [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md) |
 | Report Date | `2026-08-19` |
-| Stage Status | `Completed - Pending Human Approval` |
-| Next Approval Gate | `Pending Human Approval` |
+| Stage Status | `Completed` |
+| Next Approval Gate | `ADR / Decision - Structural Limit Matching` |
 
 ## 2. Objective
 
@@ -113,20 +113,26 @@ feat(orderbook): add orderbook aggregate and active index
 
 ## 7. Approval Request
 
-请 Human Developer 审批本实现子阶段，并授权下一子阶段：
+Human Developer 已于 `2026-08-19` 批准本实现子阶段，并授权进入下一阶段的
+Structural Limit Matching ADR / Decision。
 
 ```text
-Structural Limit Matching
-    -> one-level and multi-level traversal
-    -> maker-price match fragments
-    -> residual resting
+Implementation Sub-stage 3: Approved
+Next Stage: ADR / Decision - Structural Limit Matching
+ADR-0008: Proposed
 ```
 
-在审批通过前，项目保持：
+当前项目保持：
 
 ```text
-Implementation Sub-stage 3: Completed
-Next Gate: Pending Human Approval
-Structural Matching: Not Authorized
+Implementation Sub-stage 3: Completed and Approved
+Next Gate: ADR-0008 / Task Plan Approval
+Structural Matching Implementation: Not Authorized
 MatchingEngine / Market Order: Not Authorized
 ```
+
+## 8. Human Approval Record
+
+| Date | Reviewer | Decision | Notes |
+| --- | --- | --- | --- |
+| 2026-08-19 | Human Developer | `Approved` | Sub-stage 3 accepted. Authorized to enter the Structural Limit Matching ADR / Decision stage. No Structural Limit Matching production implementation was authorized by this report. |

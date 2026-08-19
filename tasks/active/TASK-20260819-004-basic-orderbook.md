@@ -13,7 +13,7 @@
 | Updated | `2026-08-19` |
 | Related Phase | `Phase 2 - Basic OrderBook` |
 | Related ADR | [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md) |
-| Current Stage | `Implementation - OrderBook + active OrderId index (Completed)` |
+| Current Stage | `ADR / Decision - Structural Limit Matching (Proposed)` |
 | Next Approval Gate | `Pending Human Approval` |
 
 ## 2. Background
@@ -25,6 +25,9 @@ FIFO 和 OrderId 索引的初始方向，但还没有覆盖 Basic OrderBook 所�
 
 本方案根据 Phase 2 架构审查创建，已于 `2026-08-19` 获得 Human Developer
 批准。实现必须严格遵守 ADR-0007 的范围和约束，并按子阶段完成、报告和审批。
+Sub-stage 3 已于 `2026-08-19` 通过 Human Approval。Structural Limit Matching
+进入新的 ADR / Decision 子阶段，必须先完成 ADR-0008 和本阶段任务方案审批，
+再开始生产实现。
 
 ## 3. Goal
 
@@ -154,6 +157,15 @@ Developer 于 `2026-08-19` 批准进入 Implementation 阶段，确认：
 | Decision Summary | 使用 side-specific TreeMap、PriceLevel intrusive FIFO、active OrderId -> OrderNode 索引和 Best Price 缓存；支持 Add、Cancel、Best Bid/Ask 和结构化限价撮合；Market Order 与 MatchingEngine 延后。 |
 | Scope Boundary | 仅允许 Basic OrderBook 结构、取消、最佳价、限价结构化撮合和正确性测试；禁止 MatchingEngine、Market Order、网络、Pipeline、WAL、Recovery、性能替代结构和性能结论。 |
 
+Structural Limit Matching sub-stage ADR:
+
+| Field | Value |
+| --- | --- |
+| ADR | [`docs/adr/ADR-0008-structural-limit-matching.md`](../../docs/adr/ADR-0008-structural-limit-matching.md) |
+| Status | `Proposed` |
+| Decision Summary | 由 `OrderBook.matchLimit(Order)` 返回不可变、按撮合顺序排列的 `MatchFragment`；仅处理 NEW 限价 incoming order，按价格时间优先级和 maker price 生成结构化片段，撮合后 resting residual；不创建 Trade、Execution、TradeId、事件或 `OrderBookMatch`。 |
+| Scope Boundary | 仅允许结构化限价撮合、双方向单层/多层 sweep、partial/full fill、residual resting 和正确性测试；禁止 Market Order、MatchingEngine、事件编排、WAL、Network、性能优化和性能结论。 |
+
 该 ADR 草案先于本任务的技术决策和任务审批创建。ADR 与本方案的决策摘要、
 范围边界和验证计划必须保持一致；任何差异都必须暂停实现并重新审批。
 
@@ -161,14 +173,16 @@ Developer 于 `2026-08-19` 批准进入 Implementation 阶段，确认：
 
 - [ ] No architecture change
 - [x] ADR required: `ADR-0007-basic-orderbook-structure-and-boundaries.md`
+- [x] ADR required: `ADR-0008-structural-limit-matching.md`
 - [x] Human architecture decision required
 
 ## 8. Planned File Changes
 
 | File or Directory | Change | Reason |
 | --- | --- | --- |
-| `src/main/java/com/ultralatency/matching/orderbook/` | 新增 OrderBook、BidBook、AskBook、PriceLevel、OrderQueue、OrderNode 和匹配结果类型 | 建立 Phase 2 基线结构 |
-| `src/test/java/com/ultralatency/matching/orderbook/` | 新增结构、边界、取消和撮合测试 | 固定价格时间优先级和状态不变量 |
+| `src/main/java/com/ultralatency/matching/orderbook/` | 新增 OrderBook、BidBook、AskBook、PriceLevel、OrderQueue、OrderNode 和 `MatchFragment`；扩展 OrderBook 结构化限价撮合 | 建立 Phase 2 基线结构和匹配边界 |
+| `src/test/java/com/ultralatency/matching/orderbook/` | 新增结构、边界、取消和结构化撮合测试 | 固定价格时间优先级、maker price、residual 和状态不变量 |
+| `docs/adr/ADR-0008-structural-limit-matching.md` | 记录 Structural Limit Matching 的详细决策草案 | 在实现前冻结输入、输出和生命周期边界 |
 | `docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md` | 记录 OrderBook 决策 | 在实现前冻结可审查的结构和边界 |
 | `docs/architecture/order-book.md` | ADR 获批后同步实现边界和不变量 | 保持架构文档与 ADR 一致 |
 | `.codex/AGENT_CONTEXT.md` | 每阶段完成后同步当前任务和审批状态 | 支持会话恢复 |
@@ -269,6 +283,12 @@ Decision-stage proposal:
 docs(orderbook): propose basic orderbook baseline
 ```
 
+Structural Limit Matching ADR / Decision proposal:
+
+```text
+docs(orderbook): propose structural limit matching decision
+```
+
 Implementation:
 
 ```text
@@ -287,6 +307,7 @@ must not be mixed into an unrelated implementation commit.
 | 2026-08-19 | Human Developer | ADR / Decision and Task Plan | `Approved` | Approved ADR-0007 and TASK-20260819-004 for implementation. TreeMap + intrusive FIFO + active OrderId index + best-price cache is the Phase 2 baseline. Market Order, MatchingEngine, WAL, network, Disruptor, lock-free, off-heap, custom tree, SkipList, radix, and unproven performance optimization remain out of scope. |
 | 2026-08-19 | Human Developer | Implementation Sub-stage 1 | `Approved` | OrderNode, OrderQueue and PriceLevel baseline accepted. FIFO, O(1) unlink, cancel, partial/full fill, quantity invariants, tests and build verification passed. Shade Plugin overlap warnings remain deferred technical debt. BidBook / AskBook implementation authorized within ADR-0007 scope. |
 | 2026-08-19 | Human Developer | Implementation Sub-stage 2 | `Approved` | SideBook, BidBook and AskBook accepted. Price ordering, Best Bid/Ask, FIFO preservation, empty-level cleanup, validation, tests and Maven verification passed. OrderBook aggregate and active OrderId index authorized. |
+| 2026-08-19 | Human Developer | Implementation Sub-stage 3 | `Approved` | OrderBook aggregate, active OrderId index, add/cancel/lookup, Best Bid/Ask, execution lifecycle synchronization, empty-level cleanup, consistency tests, Maven verification and clean commit accepted. Structural Limit Matching ADR / Decision authorized. |
 
 ## 16. Phase Reports and Approval Gates
 
@@ -296,14 +317,16 @@ must not be mixed into an unrelated implementation commit.
 | Task Approval |  | `Completed` | `Approved` | Approved 2026-08-19 |
 | Implementation - Sub-stage 1 | [`tasks/reports/PHASE-2-implementation-ordernode-queue-pricelevel.md`](../reports/PHASE-2-implementation-ordernode-queue-pricelevel.md) | `Completed` | `Implementation - Sub-stage 2` | Approved 2026-08-19 |
 | Implementation - Sub-stage 2 | [`tasks/reports/PHASE-2-implementation-bidbook-askbook.md`](../reports/PHASE-2-implementation-bidbook-askbook.md) | `Completed` | `Approved` | Approved 2026-08-19 |
-| Implementation - Sub-stage 3 | [`tasks/reports/PHASE-2-implementation-orderbook-active-index.md`](../reports/PHASE-2-implementation-orderbook-active-index.md) | `Completed - Pending Human Approval` | `Pending Human Approval` | Pending |
+| Implementation - Sub-stage 3 | [`tasks/reports/PHASE-2-implementation-orderbook-active-index.md`](../reports/PHASE-2-implementation-orderbook-active-index.md) | `Completed` | `ADR / Decision - Structural Limit Matching` | Approved 2026-08-19 |
+| ADR / Decision - Structural Limit Matching | [`tasks/reports/PHASE-2-structural-limit-matching-adr-decision.md`](../reports/PHASE-2-structural-limit-matching-adr-decision.md) | `Completed - Pending Human Approval` | `Pending Human Approval` | Pending |
 | Verification |  | `Pending` | `Pending Human Approval` |  |
 | Documentation and Synchronization |  | `Pending` | `Pending Human Approval` |  |
 
 本阶段报告已由 Human Developer 审批，允许进入 Implementation 阶段。实现仍须
 按子阶段输出报告，并在下一阶段前等待 Human approval。当前
-`OrderBook / active OrderId index` 子阶段已完成，等待审批后才能进入
-结构化限价撮合子阶段。
+`OrderBook / active OrderId index` 子阶段已获 Human Developer 批准；
+Structural Limit Matching 的 ADR / Decision 子阶段已完成，等待 ADR-0008
+和任务方案审批后才能进入生产实现。
 
 ## 17. Implementation Log
 
@@ -314,6 +337,7 @@ must not be mixed into an unrelated implementation commit.
 | 2026-08-19 | In Progress | Human Developer 批准 Sub-stage 1，并授权 `BidBook / AskBook` 子阶段 | 待完成价格层索引、最佳价、空层清理及阶段验证 |
 | 2026-08-19 | Completed - Pending Human Approval | 完成 `BidBook / AskBook` 价格层索引、Best Price 和空层清理 | `mvn verify` 成功；28 tests，0 failures，Checkstyle 0 |
 | 2026-08-19 | Completed - Pending Human Approval | Human Developer 批准 Sub-stage 2；完成 `OrderBook` 聚合、active `OrderId -> OrderNode` 索引、OrderBook 级 add/cancel/lookup 和受控执行状态同步 | `mvn -pl core -am test` 与 `mvn verify` 成功；34 tests，0 failures，Checkstyle 0；`git diff --cached --check` 通过；提交 `feat(orderbook): add orderbook aggregate and active index` |
+| 2026-08-19 | Proposed - Pending Human Approval | Human Developer 批准 Sub-stage 3；完成 Structural Limit Matching 的只读架构/API 审查，创建 ADR-0008 提案和阶段报告，冻结 `matchLimit`、`MatchFragment`、crossing、maker-price、residual 和 active-index 边界 | 未修改生产代码、测试代码或构建配置；等待 ADR-0008 与任务方案审批 |
 
 ## 18. Completion Checklist
 
