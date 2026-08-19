@@ -5,7 +5,8 @@
 The Phase 2 OrderBook benchmark baseline and documentation synchronization were
 approved on `2026-08-19`. ADR-0009 and its profiling task-plan stage were
 approved on `2026-08-19`; profiling execution was completed on `2026-08-19`
-and is pending Human Approval. No optimization or Phase 3 work is authorized.
+and approved on `2026-08-19`. Optimization is now at its ADR / Decision gate;
+no production optimization or Phase 3 work is authorized.
 
 ## Workflow
 
@@ -35,9 +36,9 @@ an optimization.
 See [`ADR-0009-performance-profiling-evidence.md`](../adr/ADR-0009-performance-profiling-evidence.md)
 and [`PHASE-2-profiling-execution.md`](../../tasks/reports/PHASE-2-profiling-execution.md).
 
-The profiling stage has produced a report and is stopped at a Human Approval
-gate. A profile observation does not authorize an optimization; any
-optimization requires a separate ADR / Decision and Human Approval.
+The profiling stage produced a report and was approved as evidence collection.
+A profile observation does not authorize an optimization; any optimization
+requires a separate ADR / Decision and Human Approval.
 
 ## Current Evidence
 
@@ -56,14 +57,24 @@ Current gate:
 
 ```text
 Profiling Execution:
-    Completed - Pending Human Approval
+    Completed - Approved
 
 Optimization:
-    Not Authorized
+    ADR / Decision - Pending Human Approval
 
 Phase 3:
     Not Authorized
 ```
+
+## Optimization Decision
+
+The current JFR evidence identifies investigation candidates but does not
+isolate steady-state matching cost from `@Setup(Level.Invocation)` and JFR
+overhead. The proposed decision is to defer production optimization and first
+prepare a separately approved measurement-isolation plan.
+
+See [`ADR-0010-optimization-decision-after-profiling.md`](../adr/ADR-0010-optimization-decision-after-profiling.md)
+and [`PHASE-2-optimization-adr-decision.md`](../../tasks/reports/PHASE-2-optimization-adr-decision.md).
 
 ## Tools
 

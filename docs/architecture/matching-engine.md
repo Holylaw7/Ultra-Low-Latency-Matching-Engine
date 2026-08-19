@@ -58,5 +58,7 @@ The structural implementation and correctness verification are complete. The
 OrderBook baseline benchmark and documentation synchronization were approved
 on `2026-08-19`. Profiling execution was completed under
 [`ADR-0009-performance-profiling-evidence.md`](../adr/ADR-0009-performance-profiling-evidence.md)
-and its evidence is pending Human Approval; the future MatchingEngine stage
-remains unauthorized.
+and approved as evidence collection on `2026-08-19`. Optimization is governed
+by proposed
+[`ADR-0010-optimization-decision-after-profiling.md`](../adr/ADR-0010-optimization-decision-after-profiling.md);
+the future MatchingEngine stage remains unauthorized.

@@ -19,14 +19,17 @@ Correctness
 Phase 2 - Basic OrderBook：Structural Limit Matching、Verification、OrderBook
 baseline Benchmark 和 Documentation Synchronization 已完成并经 Human
 Developer 于 `2026-08-19` 批准。ADR-0009 Profiling ADR / Decision 已于
-`2026-08-19` 批准，Profiling Execution 已完成，等待 Human Approval。
+`2026-08-19` 批准，Profiling Execution 已于 `2026-08-19` 通过 Human
+Approval。当前进入 Optimization ADR / Decision 提案阶段，等待 Human
+Approval。
 
 Phase 1 Domain Model and Correctness Baseline has been completed and approved.
 ADR-0007 and ADR-0008 have been approved, and the Phase 2 OrderBook structure
 and Structural Limit Matching are implemented within their recorded scope.
 The approved benchmark is component-level experimental baseline evidence, not a
 production throughput or latency claim. Profiling execution evidence is
-recorded and pending Human Approval.
+recorded and approved as evidence collection. The next gate is the
+Optimization ADR / Decision.
 
 The repository currently contains:
 
@@ -80,8 +83,8 @@ thread, deterministic fixed workloads and the current TreeMap + intrusive FIFO
 and active OrderId index implementation. Results are component-level evidence
 only; they must not be presented as production throughput, latency, allocation
 or GC claims. JFR profiling evidence is recorded in
-`tasks/reports/PHASE-2-profiling-execution.md`; the current gate is Profiling
-Completion / Human Approval.
+`tasks/reports/PHASE-2-profiling-execution.md`; the current gate is
+Optimization ADR / Decision / Human Approval.
 
 ## Structure
 

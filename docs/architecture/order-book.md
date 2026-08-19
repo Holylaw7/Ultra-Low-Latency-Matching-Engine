@@ -9,7 +9,8 @@ Structural Limit Matching is approved under
 implementation and verification are complete within that approved scope. The
 OrderBook baseline benchmark has also been executed and approved as
 component-level experimental evidence. ADR-0009 has been approved, profiling
-execution has completed, and the profiling evidence is pending Human Approval.
+execution has completed and was approved as evidence collection on
+`2026-08-19`.
 
 ## Initial Baseline
 
@@ -34,7 +35,10 @@ and invariant decisions are implemented constraints. Verification, the
 approved baseline benchmark and documentation synchronization are complete.
 ADR-0009 is approved and the profiling execution evidence is recorded in
 [`PHASE-2-profiling-execution.md`](../../tasks/reports/PHASE-2-profiling-execution.md);
-optimization remains separately gated.
+profiling execution was approved on `2026-08-19`. Optimization is now governed
+by proposed
+[`ADR-0010-optimization-decision-after-profiling.md`](../adr/ADR-0010-optimization-decision-after-profiling.md)
+and remains unauthorized.
 
 ## Aggregate
 
@@ -64,9 +68,9 @@ and rests a non-zero incoming residual once.
 quantity, and both post-fragment remaining quantities. It does not contain
 `TradeId`, event sequence, timestamps, `Trade`, `Execution`, mutable nodes, or
 publication behavior. Implementation and correctness verification are
-complete. The current Human Approval gate covers completion of profiling
-evidence; profiling execution is complete pending Human Approval and
-optimization remains unauthorized.
+complete. Profiling execution was approved as evidence collection on
+`2026-08-19`. The current Human Approval gate covers the proposed
+Optimization ADR / Decision; production optimization remains unauthorized.
 
 ## Baseline Measurement
 

@@ -5,7 +5,8 @@
 The Phase 2 OrderBook baseline was executed and approved by the Human Developer
 on `2026-08-19`. It is a component-level experimental measurement of the
 current correctness baseline, not a production performance claim. Profiling was
-executed under approved ADR-0009 and is pending Human Approval.
+executed under approved ADR-0009 and approved as evidence collection on
+`2026-08-19`.
 
 ## Required Environment
 
@@ -50,9 +51,10 @@ Current result:
 
 Next gate:
 
-- Profiling completion and Human Approval under the approved
-  [`ADR-0009-performance-profiling-evidence.md`](../adr/ADR-0009-performance-profiling-evidence.md)
-  (`Approved`; execution completed)
+- Optimization ADR / Decision Human Approval under the proposed
+  [`ADR-0010-optimization-decision-after-profiling.md`](../adr/ADR-0010-optimization-decision-after-profiling.md)
+  (`Proposed`; production optimization and measurement-isolation execution
+  remain unauthorized)
 
 Profiling report:
 

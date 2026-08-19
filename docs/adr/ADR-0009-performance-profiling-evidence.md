@@ -149,8 +149,8 @@ profiler-results/jfr-cancel-clean/
 The execution collected Throughput and SampleTime JFR recordings for the four
 approved workloads. async-profiler was unavailable in the environment. No
 production code, tests, benchmark semantics, JVM arguments, GC settings or
-data structures were changed. The execution stage is complete pending Human
-Approval; optimization and Phase 3 remain unauthorized.
+data structures were changed. The execution stage was approved as evidence
+collection on `2026-08-19`; optimization and Phase 3 remain unauthorized.
 
 ## Decision Record
 
@@ -166,6 +166,7 @@ Approval; optimization and Phase 3 remain unauthorized.
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
 | 2026-08-19 | Human Developer | `Approved` | ADR-0009 approved. Profiling execution is authorized against the committed OrderBook baseline using JFR-first evidence. Optimization, benchmark redesign, JVM/GC tuning, alternative data structures and Phase 3 remain unauthorized. |
+| 2026-08-19 | Human Developer | `Approved` | Profiling execution completed using the authorized fixed workloads and JFR evidence collection. The profiling phase is accepted as evidence collection only. Optimization and Phase 3 remain unauthorized pending evidence review and a separate optimization decision. |
 
 ## Relationship to Existing Decisions
 

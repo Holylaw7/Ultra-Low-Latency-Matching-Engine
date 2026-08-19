@@ -2,6 +2,10 @@
 
 No optimization has been accepted yet.
 
+`ADR-0010-optimization-decision-after-profiling.md` is proposed. Its current
+decision proposal defers production optimization until setup and profiler
+overhead are isolated with a separately approved measurement plan.
+
 Each entry must use this format:
 
 ```text

@@ -9,8 +9,8 @@
 | Task | `TASK-20260819-004-basic-orderbook` |
 | ADR | [`ADR-0009-performance-profiling-evidence.md`](../../docs/adr/ADR-0009-performance-profiling-evidence.md) |
 | Report Date | `2026-08-19` |
-| Stage Status | `Completed - Pending Human Approval` |
-| Next Approval Gate | `Profiling Completion / Human Approval` |
+| Stage Status | `Completed - Approved` |
+| Next Approval Gate | `Optimization ADR / Decision` |
 
 ## 2. Authorization and Objective
 
@@ -251,28 +251,28 @@ This report is synchronized with:
 - `.codex/MASTER_PROMPT.md`; and
 - `tasks/active/TASK-20260819-004-basic-orderbook.md`.
 
-## 14. Approval Request
+## 14. Approval and Hand-off
 
-Human Developer is requested to review and approve the Profiling Execution
-evidence and documentation synchronization.
+Human Developer approved the Profiling Execution evidence and documentation
+synchronization on `2026-08-19`.
 
 ```text
 Profiling Execution:
-    Completed - Pending Human Approval
+    Completed - Approved
 
 Optimization:
-    Not Authorized
+    ADR / Decision - Next Gate
 
 Phase 3:
     Not Authorized
 ```
 
-The next authorized decision, after approval, is an Optimization ADR /
-Decision proposal based on the recorded evidence. This report does not
-authorize that proposal's implementation.
+The next stage is an Optimization ADR / Decision proposal based on the
+recorded evidence. This report does not authorize that proposal's
+implementation.
 
 ## 15. Approval Record
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
-| 2026-08-19 | Human Developer | `Pending` | Profiling execution evidence and synchronized documentation are awaiting review. |
+| 2026-08-19 | Human Developer | `Approved` | Profiling execution completed using the authorized fixed workloads and JFR evidence collection. The profiling phase is accepted as evidence collection only. Optimization and Phase 3 remain unauthorized pending evidence review and a separate optimization decision. |
