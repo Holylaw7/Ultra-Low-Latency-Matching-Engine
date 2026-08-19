@@ -13,7 +13,7 @@
 | Updated | `2026-08-19` |
 | Related Phase | `Phase 2 - Basic OrderBook` |
 | Related ADR | [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md); [`ADR-0008-structural-limit-matching.md`](../../docs/adr/ADR-0008-structural-limit-matching.md) |
-| Current Stage | `Implementation - Structural Limit Matching (Completed - Pending Human Approval)` |
+| Current Stage | `Benchmark Baseline + Documentation and Synchronization (Completed - Pending Human Approval)` |
 | Next Approval Gate | `Pending Human Approval` |
 
 ## 2. Background
@@ -27,8 +27,10 @@ FIFO 和 OrderId 索引的初始方向，但还没有覆盖 Basic OrderBook 所�
 批准。实现必须严格遵守 ADR-0007 的范围和约束，并按子阶段完成、报告和审批。
 Sub-stage 3 已于 `2026-08-19` 通过 Human Approval。Structural Limit Matching
 的 ADR-0008 已于 `2026-08-19` 获批，随后已在记录范围内完成生产实现和测试。
-当前实现阶段报告已输出，等待 Human Approval；审批前不得进入
-Verification 阶段。
+Human Developer 已于 `2026-08-19` 批准 Structural Limit Matching 实现，
+并明确授权执行 Benchmark baseline。Benchmark 已完成，且结果、范围和限制
+已经同步到项目文档。当前仅等待 Human Approval；不得进行性能优化、替换
+数据结构或进入 Phase 3。
 
 ## 3. Goal
 
@@ -103,15 +105,18 @@ Phase 1 的 `Order` 已经提供：
 
 - `src/main/java/com/ultralatency/matching/orderbook/`
 - `src/test/java/com/ultralatency/matching/orderbook/`
+- `benchmark/src/main/java/com/ultralatency/matching/benchmark/`
 - 与已批准决策一致的 OrderBook ADR 和架构文档同步。
 - `.codex/AGENT_CONTEXT.md` 和本任务的阶段报告。
+- Verification 阶段的跨结构一致性、确定性和边界证据。
+- Benchmark 阶段的可重复参数、原始结果和 baseline 报告。
 
 ### Out of Scope
 
 - `MatchingEngine`、事件输入、Trade/Execution 外发。
 - Market Order、网络、Pipeline、WAL、Snapshot、Recovery。
 - 性能替代结构和最终内存布局。
-- Verification 阶段和正式 benchmark 结论。
+- Profile、性能优化和未经本次实验直接证明的性能结论。
 
 ## 7. Design Proposal
 
@@ -231,15 +236,26 @@ Structural Limit Matching sub-stage ADR:
 
 ## 10. Benchmark and Profile Plan
 
-- Benchmark: `Not executed in Implementation stage; deferred to approved Verification stage`
-- Profile: `Not executed; no performance conclusion authorized`
-- Dataset and distribution: identical generated event streams for all baselines
-- Metrics: price insert, best lookup, cancel, one-level match, multi-level match,
-  empty-level cleanup; later include throughput, latency, allocation and GC
+- Benchmark: `Completed on 2026-08-19; pending Human Approval`
+- Profile: `Not authorized in this stage`
+- JMH: `1.37`, one matching-owner thread, two forks
+- Warmup: `3 x 1 s`; measurement: `5 x 1 s`
+- Dataset parameters: `64` price levels for lookup/multi-level cases;
+  one order for insertion/cancel/cleanup; one maker for single-level matching
+- Order distribution: deterministic generated limit orders with one order per
+  price level unless the benchmark case explicitly exercises same-price FIFO
+- Price distribution: positive integer ticks, contiguous levels for the sweep
+  workload, fixed incoming prices that cross the configured maker levels
+- Metrics: throughput and sample-time latency, including p50/p95/p99/p999
+  where JMH reports them; allocation/GC are not claimed unless separately
+  measured with an approved profiler configuration
 - Baseline: TreeMap + intrusive queue + active OrderId index
 
-No performance claim is authorized by this task plan. Any alternative structure
-requires a separate evidence-backed decision or an approved scope update.
+The benchmark must validate the operation result with `Blackhole` and use fresh
+state for mutating cases. Results are experimental evidence for this baseline
+only. They must not be presented as a production throughput or latency claim.
+Custom Tree, SkipList, Radix, Price Array, off-heap, object-pool, Disruptor,
+lock-free and GC-tuning work remain unauthorized.
 
 ## 11. Risks and Mitigations
 
@@ -282,10 +298,27 @@ Verification stage after implementation:
 ```text
 mvn -pl core -am test
 mvn verify
-run the approved OrderBook baseline benchmark with recorded parameters
 git diff --check
 git status --short --branch
 ```
+
+Benchmark stage after explicit authorization:
+
+```text
+mvn -pl core -am test
+mvn verify
+java -jar benchmark/target/matching-engine-benchmark-0.1.0-SNAPSHOT.jar \
+  OrderBookBaselineBenchmark \
+  -f 2 -wi 3 -i 5 -w 1s -r 1s -t 1 -rf json \
+  -rff benchmark-results/orderbook-baseline.json
+git diff --check
+git status --short --branch
+```
+
+The benchmark result file is local evidence and must not be hand-edited. The
+phase report must record the exact command, environment, parameters and raw
+result location. The benchmark stage ends at a Human Approval gate; it does
+not authorize profiling, optimization or Phase 3.
 
 ## 14. Git Commit Plan
 
@@ -320,6 +353,8 @@ must not be mixed into an unrelated implementation commit.
 | 2026-08-19 | Human Developer | Implementation Sub-stage 1 | `Approved` | OrderNode, OrderQueue and PriceLevel baseline accepted. FIFO, O(1) unlink, cancel, partial/full fill, quantity invariants, tests and build verification passed. Shade Plugin overlap warnings remain deferred technical debt. BidBook / AskBook implementation authorized within ADR-0007 scope. |
 | 2026-08-19 | Human Developer | Implementation Sub-stage 2 | `Approved` | SideBook, BidBook and AskBook accepted. Price ordering, Best Bid/Ask, FIFO preservation, empty-level cleanup, validation, tests and Maven verification passed. OrderBook aggregate and active OrderId index authorized. |
 | 2026-08-19 | Human Developer | Implementation Sub-stage 3 | `Approved` | OrderBook aggregate, active OrderId index, add/cancel/lookup, Best Bid/Ask, execution lifecycle synchronization, empty-level cleanup, consistency tests, Maven verification and clean commit accepted. Structural Limit Matching ADR / Decision authorized. |
+| 2026-08-19 | Human Developer | Implementation - Structural Limit Matching | `Approved` | MatchFragment boundary, crossing rules, maker-price, price-time priority, multi-level matching, residual resting, determinism and quantity invariants accepted. Verification authorized; Benchmark and Phase 3 remain out of scope. |
+| 2026-08-19 | Human Developer | Benchmark Authorization | `Approved` | Baseline JMH measurement authorized for the implemented Phase 2 OrderBook. Record reproducible environment, workload parameters and raw results. No profiling, optimization, alternative data structure or Phase 3 work is authorized. |
 
 ## 16. Phase Reports and Approval Gates
 
@@ -331,16 +366,19 @@ must not be mixed into an unrelated implementation commit.
 | Implementation - Sub-stage 2 | [`tasks/reports/PHASE-2-implementation-bidbook-askbook.md`](../reports/PHASE-2-implementation-bidbook-askbook.md) | `Completed` | `Approved` | Approved 2026-08-19 |
 | Implementation - Sub-stage 3 | [`tasks/reports/PHASE-2-implementation-orderbook-active-index.md`](../reports/PHASE-2-implementation-orderbook-active-index.md) | `Completed` | `ADR / Decision - Structural Limit Matching` | Approved 2026-08-19 |
 | ADR / Decision - Structural Limit Matching | [`tasks/reports/PHASE-2-structural-limit-matching-adr-decision.md`](../reports/PHASE-2-structural-limit-matching-adr-decision.md) | `Completed` | `Implementation - Structural Limit Matching` | Approved 2026-08-19 |
-| Implementation - Structural Limit Matching | [`tasks/reports/PHASE-2-implementation-structural-limit-matching.md`](../reports/PHASE-2-implementation-structural-limit-matching.md) | `Completed - Pending Human Approval` | `Pending Human Approval` | Pending |
-| Verification |  | `Pending` | `Pending Human Approval` |  |
-| Documentation and Synchronization |  | `Pending` | `Pending Human Approval` |  |
+| Implementation - Structural Limit Matching | [`tasks/reports/PHASE-2-implementation-structural-limit-matching.md`](../reports/PHASE-2-implementation-structural-limit-matching.md) | `Completed` | `Verification` | Approved 2026-08-19 |
+| Verification | [`tasks/reports/PHASE-2-verification-structural-limit-matching.md`](../reports/PHASE-2-verification-structural-limit-matching.md) | `Completed - Pending Human Approval` | `Pending Human Approval` | Pending |
+| Benchmark Baseline | [`tasks/reports/PHASE-2-benchmark-orderbook-baseline.md`](../reports/PHASE-2-benchmark-orderbook-baseline.md) | `Completed - Pending Human Approval` | `Pending Human Approval` | Authorized 2026-08-19; completion pending |
+| Documentation and Synchronization | [`tasks/reports/PHASE-2-documentation-synchronization.md`](../reports/PHASE-2-documentation-synchronization.md) | `Completed - Pending Human Approval` | `Pending Human Approval` | Pending |
 
 本阶段报告已由 Human Developer 审批，允许进入 Implementation 阶段。实现仍须
 按子阶段输出报告，并在下一阶段前等待 Human approval。当前
 `OrderBook / active OrderId index` 子阶段已获 Human Developer 批准；
 Structural Limit Matching 的 ADR / Decision 子阶段已完成并获批。当前
-Structural Limit Matching 实现已完成，阶段报告已输出，下一门禁为
-`Pending Human Approval`；审批前不得进入 Verification 阶段。
+Structural Limit Matching 实现已于 `2026-08-19` 获 Human Developer 批准。当前
+Verification 已完成并输出阶段报告。Human Developer 已于 `2026-08-19`
+明确授权 Benchmark baseline；Benchmark 和文档同步均已完成，当前下一门禁为
+`Pending Human Approval`。本阶段不包含性能优化、Profile 或 Phase 3。
 
 ## 17. Implementation Log
 
@@ -353,6 +391,9 @@ Structural Limit Matching 实现已完成，阶段报告已输出，下一门禁
 | 2026-08-19 | Completed - Pending Human Approval | Human Developer 批准 Sub-stage 2；完成 `OrderBook` 聚合、active `OrderId -> OrderNode` 索引、OrderBook 级 add/cancel/lookup 和受控执行状态同步 | `mvn -pl core -am test` 与 `mvn verify` 成功；34 tests，0 failures，Checkstyle 0；`git diff --cached --check` 通过；提交 `feat(orderbook): add orderbook aggregate and active index` |
 | 2026-08-19 | Proposed - Pending Human Approval | Human Developer 批准 Sub-stage 3；完成 Structural Limit Matching 的只读架构/API 审查，创建 ADR-0008 提案和阶段报告，冻结 `matchLimit`、`MatchFragment`、crossing、maker-price、residual 和 active-index 边界 | 未修改生产代码、测试代码或构建配置；等待 ADR-0008 与任务方案审批 |
 | 2026-08-19 | Completed - Pending Human Approval | Human Developer 批准 ADR-0008；完成 `MatchFragment`、`matchLimit`、双方向单层/多层撮合、生命周期同步和正确性测试 | `mvn verify` 成功；45 tests，0 failures，Checkstyle 0；等待 Human Approval |
+| 2026-08-19 | Completed - Approved | Human Developer 批准 Structural Limit Matching 实现，授权 Verification | 记录实现门禁批准；Benchmark、MatchingEngine、Trade/Execution、WAL 和 Phase 3 仍未授权 |
+| 2026-08-19 | Completed - Pending Human Approval | 完成 Structural Limit Matching Verification，补强 active index/node、价格层数量、非交叉终态和确定性最终状态证据 | `mvn -pl core -am -Dtest=OrderBookTest test`：17 tests；完整 `mvn verify` 待执行；等待 Human Approval |
+| 2026-08-19 | Completed - Pending Human Approval | Human Developer 授权并完成 Phase 2 OrderBook baseline Benchmark；同步 JMH 方案、可重复参数、原始结果路径和限制 | `mvn verify` 成功；45 tests，0 failures，Checkstyle 0；7 个操作的 Throughput/SampleTime 结果已记录；等待 Human Approval |
 
 ## 18. Completion Checklist
 
@@ -360,7 +401,7 @@ Structural Limit Matching 实现已完成，阶段报告已输出，下一门禁
 - [x] Tests added or updated
 - [x] Build passed
 - [x] Static or format checks passed
-- [ ] Benchmark or profile completed when applicable
+- [x] Benchmark completed and raw parameters/results recorded
 - [x] Documentation updated
 - [x] Decision and ADR linkage recorded
 - [x] ADR existed before the technical decision and task approval
@@ -370,4 +411,4 @@ Structural Limit Matching 实现已完成，阶段报告已输出，下一门禁
 - [x] `AGENT_CONTEXT.md` updated
 - [x] Diff reviewed
 - [x] Commit created
-- [x] Post-commit Git status confirmed
+- [ ] Post-commit Git status confirmed

@@ -2,7 +2,9 @@
 
 ## Status
 
-No matching-engine baseline exists yet.
+The Phase 2 OrderBook baseline has been executed and is pending Human Approval.
+It is an experimental measurement of the current correctness baseline, not a
+production performance claim.
 
 ## Required Environment
 
@@ -26,10 +28,21 @@ Every published result must record:
 - P95
 - P99
 - P999
-- Allocation rate
-- GC activity
-- CPU utilization
+- Allocation rate, GC activity and CPU utilization when a separately approved
+  profiler or measurement configuration is used
 
 ## Rules
 
-Do not report a single run as a conclusion. Do not edit raw results manually. Keep the benchmark command and parameters with the result.
+Do not report a single run as a conclusion. Do not edit raw results manually.
+Keep the benchmark command, parameters, environment and raw result location
+with the result. Distinguish throughput distributions from operation-latency
+percentiles; JMH `SampleTime` is the latency evidence in the current baseline.
+
+Current result:
+
+- Report:
+  [`PHASE-2-benchmark-orderbook-baseline.md`](../../tasks/reports/PHASE-2-benchmark-orderbook-baseline.md)
+- Raw JSON:
+  `benchmark-results/orderbook-baseline.json` (local, ignored by Git)
+- Baseline:
+  TreeMap + intrusive FIFO + active OrderId index

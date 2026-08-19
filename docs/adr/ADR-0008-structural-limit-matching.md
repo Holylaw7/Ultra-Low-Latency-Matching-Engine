@@ -300,6 +300,24 @@ Implementation verification must cover both buy and sell directions:
 No benchmark is required for this ADR / Decision stage. A later approved
 verification stage may run the baseline benchmark with recorded parameters.
 
+## Baseline Benchmark Evidence
+
+The Human Developer authorized the Phase 2 OrderBook baseline benchmark on
+`2026-08-19`. The benchmark was executed after Structural Limit Matching
+implementation and correctness verification, using the existing TreeMap,
+intrusive FIFO and active OrderId index baseline.
+
+The run used JMH 1.37, Java 21.0.12, two forks, one thread, three one-second
+warmup iterations and five one-second measurement iterations. It measured
+price-level insertion, Best Bid/Ask lookup, OrderId cancellation,
+empty-level cleanup, one-level matching and a deterministic 64-level sweep.
+The complete result table and raw JSON location are recorded in
+[`PHASE-2-benchmark-orderbook-baseline.md`](../../tasks/reports/PHASE-2-benchmark-orderbook-baseline.md).
+
+This evidence does not authorize profiling or optimization and does not
+establish production throughput, latency, allocation, GC or million-orders-
+per-second claims.
+
 ## Approval Record
 
 | Date | Reviewer | Decision | Notes |

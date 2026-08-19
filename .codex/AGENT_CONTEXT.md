@@ -1,7 +1,7 @@
 # AGENT_CONTEXT - Matching Engine
 
 > Last Updated: 2026-08-19
-> Project Status: Phase 2 - Structural Limit Matching (Implementation completed - pending Human Approval)
+> Project Status: Phase 2 - OrderBook Benchmark Baseline (completed - pending Human Approval)
 > Owner: Human Developer
 > Primary Agent: Codex
 
@@ -53,7 +53,7 @@ Codex owns implementation assistance.
 
 ### Phase
 
-Phase 2 - Structural Limit Matching (Implementation completed - pending Human Approval)
+Phase 2 - OrderBook Benchmark Baseline (completed - pending Human Approval)
 
 ### Completed
 
@@ -72,14 +72,17 @@ Phase 2 - Structural Limit Matching (Implementation completed - pending Human Ap
 ### Current Task
 
 `TASK-20260819-004` - Establish Basic OrderBook baseline (`In Progress`,
-`Structural Limit Matching` implementation completed, pending Human Approval).
+`OrderBook Benchmark Baseline` completed, pending Human Approval).
 
 ### Next Task
 
-Phase 2 - Structural Limit Matching. Sub-stages 1-3 and ADR-0008 were approved
-on `2026-08-19`. The approved production implementation and matching tests are
-complete within the ADR scope. The current gate is Human Approval of the
-implementation stage; Verification must not begin before that approval.
+Phase 2 - OrderBook Benchmark Baseline. Sub-stages 1-3, ADR-0008, the
+Structural Limit Matching implementation and verification evidence are
+complete within the approved scope. Human Developer explicitly authorized the
+baseline benchmark on `2026-08-19`; the benchmark and documentation
+synchronization are complete. The current gate is Human Approval of the
+Benchmark / Synchronization deliverable. Profiling, optimization and Phase 3
+must not begin before approval.
 
 Current task plan:
 [`tasks/active/TASK-20260819-004-basic-orderbook.md`](../tasks/active/TASK-20260819-004-basic-orderbook.md).
@@ -93,10 +96,19 @@ Current sub-stage ADR:
 (`Approved`, implementation authorized).
 
 Current Phase 2 report:
+[`tasks/reports/PHASE-2-verification-structural-limit-matching.md`](../tasks/reports/PHASE-2-verification-structural-limit-matching.md).
+
+Implementation sub-stage report:
 [`tasks/reports/PHASE-2-implementation-structural-limit-matching.md`](../tasks/reports/PHASE-2-implementation-structural-limit-matching.md).
 
-Current implementation sub-stage report:
-[`tasks/reports/PHASE-2-implementation-structural-limit-matching.md`](../tasks/reports/PHASE-2-implementation-structural-limit-matching.md).
+Current Verification report:
+[`tasks/reports/PHASE-2-verification-structural-limit-matching.md`](../tasks/reports/PHASE-2-verification-structural-limit-matching.md).
+
+Current Benchmark report:
+[`tasks/reports/PHASE-2-benchmark-orderbook-baseline.md`](../tasks/reports/PHASE-2-benchmark-orderbook-baseline.md).
+
+Documentation synchronization report:
+[`tasks/reports/PHASE-2-documentation-synchronization.md`](../tasks/reports/PHASE-2-documentation-synchronization.md).
 
 Current decision-stage report:
 [`tasks/reports/PHASE-2-structural-limit-matching-adr-decision.md`](../tasks/reports/PHASE-2-structural-limit-matching-adr-decision.md).
@@ -115,9 +127,12 @@ Developer then authorized and the implementation completed the `OrderBook +
 active OrderId index` sub-stage, which was approved on `2026-08-19`. The
 Structural Limit Matching ADR / Decision stage was approved on `2026-08-19`.
 Production matching implementation and its correctness tests are complete
-within the approved scope. The implementation-stage report and synchronized
-documentation are complete; Human Approval is required before entering
-Verification.
+within the approved scope, and Human Developer approved that implementation on
+`2026-08-19`. Verification added cross-structure active-index/node identity,
+price-level quantity, non-crossed final-state and deterministic-state evidence.
+Human Developer explicitly authorized the baseline benchmark on `2026-08-19`.
+Benchmark evidence and documentation synchronization are complete. Human
+Approval is required before profiling, optimization or Phase 3.
 
 ---
 
@@ -395,7 +410,26 @@ These must be resolved through experiments rather than assumptions:
 
 ## 16. Benchmark Evidence
 
-No official benchmark result yet.
+Phase 2 OrderBook baseline benchmark completed on `2026-08-19` and is pending
+Human Approval. The run used JMH 1.37, Java 21.0.12, two forks, one thread,
+three one-second warmup iterations and five one-second measurement iterations
+on Windows 11 x64 with an Intel i9-13900H (14 cores / 20 logical processors).
+
+Measured operations:
+
+- price-level insertion;
+- Best Bid / Best Ask lookup;
+- cancel by OrderId;
+- empty-level cleanup;
+- one-level matching;
+- 64-level multi-level matching.
+
+Raw JSON is local and ignored by Git:
+`benchmark-results/orderbook-baseline.json`.
+The result table and limitations are in
+`tasks/reports/PHASE-2-benchmark-orderbook-baseline.md`.
+Allocation, GC, profiling, optimization and production performance claims
+remain unauthorized.
 
 Do not claim the following until experimentally verified:
 

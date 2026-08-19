@@ -6,8 +6,9 @@ Baseline structure approved and implemented under
 [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../adr/ADR-0007-basic-orderbook-structure-and-boundaries.md).
 Structural Limit Matching is approved under
 [`ADR-0008-structural-limit-matching.md`](../adr/ADR-0008-structural-limit-matching.md);
-implementation is complete within that approved scope and is awaiting the
-implementation-stage Human Approval gate.
+implementation and verification are complete within that approved scope. The
+OrderBook baseline benchmark has also been executed and is awaiting Human
+Approval as experimental evidence.
 
 ## Initial Baseline
 
@@ -28,8 +29,9 @@ Human Developer approved that sub-stage on `2026-08-19`, and the authorized
 Developer on `2026-08-19`. Structural Limit Matching is now in its ADR /
 Decision stage and was approved by the Human Developer on `2026-08-19`. The
 detailed input contract, result boundary, traversal, maker-price, residual,
-and invariant decisions are now implemented constraints. The implementation
-stage report is complete and pending Human Approval.
+and invariant decisions are implemented constraints. Verification and the
+approved baseline benchmark are complete; the benchmark report is pending
+Human Approval.
 
 ## Aggregate
 
@@ -58,8 +60,22 @@ and rests a non-zero incoming residual once.
 `MatchFragment` contains maker and taker identifiers, maker price, executed
 quantity, and both post-fragment remaining quantities. It does not contain
 `TradeId`, event sequence, timestamps, `Trade`, `Execution`, mutable nodes, or
-publication behavior. The implementation-stage report is complete and awaits
-Human Approval before the next Verification stage.
+publication behavior. Implementation and correctness verification are
+complete. The current Human Approval gate covers the baseline benchmark and
+the synchronized documentation.
+
+## Baseline Measurement
+
+The approved baseline benchmark measures insertion, Best Bid/Best Ask lookup,
+OrderId cancellation, empty-level cleanup, one-level matching and a
+64-level multi-level sweep. It uses JMH 1.37, two forks, one thread, three
+one-second warmup iterations and five one-second measurement iterations.
+Results are recorded in
+[`PHASE-2-benchmark-orderbook-baseline.md`](../../tasks/reports/PHASE-2-benchmark-orderbook-baseline.md).
+
+The measurements are workload-specific evidence for this implementation. They
+do not establish production P99, allocation, GC, or million-orders-per-second
+performance.
 
 ## Invariants
 

@@ -9,8 +9,8 @@
 | Task | `TASK-20260819-004-basic-orderbook` |
 | ADR | [`ADR-0008-structural-limit-matching.md`](../../docs/adr/ADR-0008-structural-limit-matching.md) |
 | Report Date | `2026-08-19` |
-| Stage Status | `Completed - Pending Human Approval` |
-| Next Approval Gate | `Pending Human Approval` |
+| Stage Status | `Completed / Approved` |
+| Next Approval Gate | `Verification` |
 
 ## 2. Objective
 
@@ -128,22 +128,35 @@ The following remain out of scope:
 Shade Plugin overlap warnings remain known benchmark packaging technical debt
 and were not changed by this stage.
 
-## 8. Approval Request
+## 8. Human Approval and Hand-off
 
-请求 Human Developer 审查并批准本实现阶段。
+Human Developer 已于 `2026-08-19` 审查并批准本实现阶段，授权进入
+Verification。批准约束如下：
+
+- 仅验证 ADR-0008 已批准的 Structural Limit Matching 行为；
+- 不执行 Benchmark 或性能优化；
+- 不进入 MatchingEngine、Trade/Execution、WAL、Network 或 Phase 3；
+- 不修改 Phase 1 Domain Model。
 
 当前状态：
 
 ```text
 Implementation - Structural Limit Matching:
-    Completed - Pending Human Approval
+    Completed / Approved
 
 Next Stage:
     Verification
 
 Authorization:
-    Verification is not authorized until Human Approval is recorded
+    Verification authorized
 ```
 
-审批通过后，下一阶段应单独输出 Verification 报告；在此之前不开始
-Verification、Benchmark 或任何 Phase 3 实现。
+Verification 阶段完成后，必须单独输出 Verification 报告并等待下一次
+Human Approval；在审批前不得进入 Documentation and Synchronization、
+Benchmark 或任何 Phase 3 实现。
+
+## 9. Approval Record
+
+| Date | Reviewer | Decision | Notes |
+| --- | --- | --- | --- |
+| 2026-08-19 | Human Developer | `Approved` | Structural Limit Matching implementation accepted. Verification authorized within ADR-0008 scope; Benchmark and Phase 3 remain unauthorized. |

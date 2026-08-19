@@ -325,6 +325,13 @@ match, and empty-level cleanup. It must report environment, workload,
 warmup, measurement, throughput, latency, allocation, and GC. No performance
 conclusion is part of this proposal.
 
+The approved Phase 2 baseline benchmark was later executed on `2026-08-19`
+with JMH 1.37, Java 21.0.12, two forks and one matching-owner thread. It
+records the fixed workload and raw result location in
+[`PHASE-2-benchmark-orderbook-baseline.md`](../../tasks/reports/PHASE-2-benchmark-orderbook-baseline.md).
+Allocation and GC were not measured, and the result remains experimental
+baseline evidence pending Human Approval.
+
 ## Relationship to ADR-0002
 
 The review found no conflict with ADR-0002's initial `TreeMap`, intrusive FIFO,

@@ -16,11 +16,14 @@ Correctness
 
 ## Current Stage
 
-Phase 2 - Basic OrderBook（当前处于 ADR / Decision 阶段）。
+Phase 2 - Basic OrderBook：Structural Limit Matching 已完成实现和验证，
+OrderBook baseline Benchmark 已执行，当前等待 Human Approval。
 
 Phase 1 Domain Model and Correctness Baseline has been completed and approved.
-Phase 2 production code and tests remain blocked until ADR-0007 and the linked
-task plan receive separate Human approval.
+ADR-0007 and ADR-0008 have been approved, and the Phase 2 OrderBook structure
+and Structural Limit Matching are implemented within their recorded scope.
+The current benchmark is experimental baseline evidence, not a production
+throughput or latency claim.
 
 The repository currently contains:
 
@@ -34,7 +37,10 @@ The repository currently contains:
 - Architecture, ADR, benchmark, and performance documentation skeleton
 - Task workspace with ADR-first decisions and phase approval gates
 
-No matching behavior or performance claim has been implemented yet.
+Implemented Phase 2 behavior includes deterministic limit-order matching,
+price-time priority, maker-price fragments, partial/full fills, and residual
+resting. MatchingEngine, Trade/Execution publication, WAL, network and
+performance optimization remain outside the current scope.
 
 ## Build
 
@@ -57,7 +63,20 @@ Run the bootstrap benchmark:
 java -jar benchmark/target/matching-engine-benchmark-0.1.0-SNAPSHOT.jar BootstrapBenchmark
 ```
 
-Benchmark results are experimental evidence. They must not be presented as system performance until the workload, JVM, hardware, warmup, measurement, and distribution are recorded.
+Run the approved Phase 2 OrderBook baseline:
+
+```bash
+java -jar benchmark/target/matching-engine-benchmark-0.1.0-SNAPSHOT.jar \
+  OrderBookBaselineBenchmark \
+  -f 2 -wi 3 -i 5 -w 1s -r 1s -t 1 -rf json \
+  -rff benchmark-results/orderbook-baseline.json
+```
+
+The recorded baseline uses Java 21, JMH 1.37, two forks, one matching-owner
+thread, deterministic fixed workloads and the current TreeMap + intrusive FIFO
+and active OrderId index implementation. Results are experimental evidence only;
+they must not be presented as production throughput, latency, allocation or GC
+claims.
 
 ## Structure
 

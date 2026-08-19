@@ -272,9 +272,17 @@ class OrderBookTest {
                 book.bidLevelAt(new Price(101))
                         .orElseThrow()
                         .totalQuantityUnits());
+        assertSame(
+                book.activeNode(new OrderId(2)).orElseThrow(),
+                book.bidLevelAt(new Price(101)).orElseThrow().tail());
         assertEquals(Optional.empty(), book.bestAsk());
         assertEquals(Optional.of(new Price(101)), book.bestBid());
         assertEquals(1, book.activeOrderCount());
+        assertLevelConsistency(
+                book,
+                book.bidLevelAt(new Price(101)).orElseThrow(),
+                new OrderId(2));
+        assertNonCrossed(book);
     }
 
     @Test
@@ -294,7 +302,11 @@ class OrderBookTest {
         assertEquals(70, level.totalQuantityUnits());
         assertEquals(OrderStatus.PARTIALLY_FILLED, incoming.status());
         assertEquals(Optional.of(incoming), book.activeOrder(new OrderId(3)));
-        assertBookQuantity(level);
+        assertLevelConsistency(book, level, new OrderId(1), new OrderId(3));
+        assertSame(
+                book.activeNode(new OrderId(3)).orElseThrow(),
+                level.tail());
+        assertNonCrossed(book);
     }
 
     @Test
@@ -340,7 +352,11 @@ class OrderBookTest {
         assertEquals(Optional.of(new Price(102)), book.bestAsk());
         assertEquals(150, third.remainingQuantityUnits());
         assertEquals(1, book.activeOrderCount());
-        assertBookQuantity(book.askLevelAt(new Price(102)).orElseThrow());
+        assertLevelConsistency(
+                book,
+                book.askLevelAt(new Price(102)).orElseThrow(),
+                new OrderId(3));
+        assertNonCrossed(book);
     }
 
     @Test
@@ -379,7 +395,11 @@ class OrderBookTest {
                         .orElseThrow()
                         .head()
                         .order());
-        assertBookQuantity(book.askLevelAt(new Price(100)).orElseThrow());
+        assertLevelConsistency(
+                book,
+                book.askLevelAt(new Price(100)).orElseThrow(),
+                new OrderId(2));
+        assertNonCrossed(book);
     }
 
     @Test
@@ -422,7 +442,11 @@ class OrderBookTest {
         assertEquals(OrderStatus.FILLED, incoming.status());
         assertEquals(Optional.of(new Price(100)), book.bestBid());
         assertEquals(150, third.remainingQuantityUnits());
-        assertBookQuantity(book.bidLevelAt(new Price(100)).orElseThrow());
+        assertLevelConsistency(
+                book,
+                book.bidLevelAt(new Price(100)).orElseThrow(),
+                new OrderId(3));
+        assertNonCrossed(book);
     }
 
     @Test
@@ -484,8 +508,19 @@ class OrderBookTest {
                 secondBook.activeOrder(new OrderId(3))
                         .orElseThrow()
                         .remainingQuantityUnits());
-        assertBookQuantity(firstBook.askLevelAt(new Price(102)).orElseThrow());
-        assertBookQuantity(secondBook.askLevelAt(new Price(102)).orElseThrow());
+        assertEquals(
+                firstBook.activeOrder(new OrderId(3)).orElseThrow().status(),
+                secondBook.activeOrder(new OrderId(3)).orElseThrow().status());
+        assertLevelConsistency(
+                firstBook,
+                firstBook.askLevelAt(new Price(102)).orElseThrow(),
+                new OrderId(3));
+        assertLevelConsistency(
+                secondBook,
+                secondBook.askLevelAt(new Price(102)).orElseThrow(),
+                new OrderId(3));
+        assertNonCrossed(firstBook);
+        assertNonCrossed(secondBook);
     }
 
     private static void addDeterministicInputs(final OrderBook book) {
@@ -494,14 +529,34 @@ class OrderBookTest {
         book.add(sell(3, 102, 300, 3));
     }
 
-    private static void assertBookQuantity(final PriceLevel level) {
+    private static void assertLevelConsistency(
+            final OrderBook book,
+            final PriceLevel level,
+            final OrderId... expectedOrderIds) {
         long sum = 0;
+        int index = 0;
         OrderNode node = level.head();
         while (node != null) {
+            assertTrue(index < expectedOrderIds.length);
+            assertEquals(expectedOrderIds[index], node.order().orderId());
+            assertSame(
+                    node,
+                    book.activeNode(node.order().orderId()).orElseThrow());
             sum = Math.addExact(sum, node.order().remainingQuantityUnits());
             node = node.next();
+            index++;
         }
+        assertEquals(expectedOrderIds.length, index);
+        assertEquals(expectedOrderIds.length, level.orderCount());
         assertEquals(sum, level.totalQuantityUnits());
+    }
+
+    private static void assertNonCrossed(final OrderBook book) {
+        if (book.bestBid().isPresent() && book.bestAsk().isPresent()) {
+            assertTrue(
+                    book.bestBid().orElseThrow().compareTo(
+                            book.bestAsk().orElseThrow()) < 0);
+        }
     }
 
     private static Order buy(
