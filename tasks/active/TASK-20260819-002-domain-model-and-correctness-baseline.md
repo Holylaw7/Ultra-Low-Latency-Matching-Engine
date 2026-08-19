@@ -6,13 +6,13 @@
 | --- | --- |
 | Task ID | `TASK-20260819-002` |
 | Title | Establish domain model and correctness baseline |
-| Status | `Approved` |
+| Status | `In Progress` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created | `2026-08-19` |
 | Updated | `2026-08-19` |
 | Related Phase | Phase 1 - Domain Model |
-| Related ADR | `None` |
+| Related ADR | [`ADR-0005-domain-model-and-correctness-baseline.md`](../../docs/adr/ADR-0005-domain-model-and-correctness-baseline.md) |
 | Approval Gate | `Approved with Constraints` |
 
 ## 2. Background
@@ -134,13 +134,19 @@ Phase 0 工程骨架已经建立，但撮合领域模型尚未实现。根 `pom.
 - `OrderStatus` 固定为 `NEW`、`PARTIALLY_FILLED`、`FILLED` 和 `CANCELED`。
 - `Trade` 与 `Execution` 的语义必须保持确定性，不能依赖时间、随机数或线程调度。
 
+对应决策记录：
+
+```text
+docs/adr/ADR-0005-domain-model-and-correctness-baseline.md
+```
+
 如果实现过程中需要突破以上范围，必须停止当前任务，更新方案并重新审批。
 
 ### Architecture Impact
 
 - [x] No architecture change expected
-- [ ] ADR required
-- [ ] Human architecture decision required
+- [x] ADR required: `ADR-0005-domain-model-and-correctness-baseline.md`
+- [x] Human architecture decision recorded in the approval constraints
 
 如果实现过程中发现需要改变协议、事件顺序、WAL、Snapshot、并发模型或核心数据结构，必须停止当前任务，更新方案并创建或关联 ADR，重新等待审批。
 
@@ -150,6 +156,7 @@ Phase 0 工程骨架已经建立，但撮合领域模型尚未实现。根 `pom.
 | --- | --- | --- |
 | `src/main/java/com/ultralatency/matching/domain/` | 新增领域类型 | 建立稳定的领域边界 |
 | `src/test/java/com/ultralatency/matching/domain/` | 新增单元测试 | 固定不变量和状态语义 |
+| `docs/adr/ADR-0005-domain-model-and-correctness-baseline.md` | 记录领域模型决策 | 固定数值单位、状态机和确定性边界 |
 | `docs/architecture/matching-engine.md` | 必要时补充领域约束 | 保持架构文档同步 |
 | `.codex/AGENT_CONTEXT.md` | 实现完成后更新状态 | 支持会话恢复 |
 
@@ -249,7 +256,9 @@ feat(domain): establish matching domain model
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
-| 2026-08-19 | Approved | Human Developer 有条件批准任务方案，允许按锁定约束实现 | 已记录审批约束；下一步进入实现前基线和最小领域模型开发 |
+| 2026-08-19 | Approved | Human Developer 有条件批准任务方案，允许按锁定约束实现 | 已记录审批约束；审批状态已提交为 `6ac614b` |
+| 2026-08-19 | In Progress | 将已批准的领域决策写入 `ADR-0005` 并关联到本任务方案 | ADR 与任务决策步骤保持一致 |
+| 2026-08-19 | In Progress | 开始实现值对象、订单状态机、成交/执行模型及正确性测试 | 实现范围严格限制在本任务方案 |
 
 ## 17. Completion Checklist
 
