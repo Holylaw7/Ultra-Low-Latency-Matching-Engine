@@ -56,7 +56,7 @@ assignment, and event publication remain MatchingEngine responsibilities and
 are not part of the Phase 2 Structural Limit Matching implementation scope.
 The structural implementation and correctness verification are complete. The
 OrderBook baseline benchmark and documentation synchronization were approved
-on `2026-08-19`. Profiling is proposed under
+on `2026-08-19`. Profiling execution was completed under
 [`ADR-0009-performance-profiling-evidence.md`](../adr/ADR-0009-performance-profiling-evidence.md)
-and awaits Human Approval; the future MatchingEngine stage remains
-unauthorized.
+and its evidence is pending Human Approval; the future MatchingEngine stage
+remains unauthorized.

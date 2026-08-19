@@ -3,8 +3,9 @@
 ## Status
 
 Phase 2 OrderBook baseline implemented, measured and approved by the Human
-Developer on `2026-08-19`. Profiling is the next ADR / Decision stage; no
-profiling or optimization has been executed.
+Developer on `2026-08-19`. ADR-0009 was approved by the Human Developer on
+`2026-08-19`; profiling execution was completed under ADR-0009 and is pending
+Human Approval. No optimization has been executed.
 
 ## Planned Comparisons
 
@@ -39,5 +40,6 @@ in this run.
 See the full environment, command, raw result path and table in
 [`PHASE-2-benchmark-orderbook-baseline.md`](../../tasks/reports/PHASE-2-benchmark-orderbook-baseline.md).
 
-The profiling proposal is recorded in
-[`ADR-0009-performance-profiling-evidence.md`](../adr/ADR-0009-performance-profiling-evidence.md).
+The profiling decision and execution evidence are recorded in
+[`ADR-0009-performance-profiling-evidence.md`](../adr/ADR-0009-performance-profiling-evidence.md)
+and [`PHASE-2-profiling-execution.md`](../../tasks/reports/PHASE-2-profiling-execution.md).

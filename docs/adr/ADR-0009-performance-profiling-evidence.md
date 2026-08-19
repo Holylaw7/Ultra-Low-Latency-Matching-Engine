@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed
+Approved
 
 ## Context
 
@@ -130,14 +130,42 @@ The profiling report must include:
 The stage ends at a Human Approval gate. An optimization can begin only after a
 separate ADR / Decision and task-plan approval.
 
+## Execution Evidence
+
+Profiling execution was completed on `2026-08-19` under the approved
+JFR-first scope. The execution report is:
+
+[`PHASE-2-profiling-execution.md`](../../tasks/reports/PHASE-2-profiling-execution.md)
+
+Raw local evidence is stored under:
+
+```text
+profiler-results/jfr-multi-level/
+profiler-results/jfr-one-level/
+profiler-results/jfr-cancel-by-id/
+profiler-results/jfr-cancel-clean/
+```
+
+The execution collected Throughput and SampleTime JFR recordings for the four
+approved workloads. async-profiler was unavailable in the environment. No
+production code, tests, benchmark semantics, JVM arguments, GC settings or
+data structures were changed. The execution stage is complete pending Human
+Approval; optimization and Phase 3 remain unauthorized.
+
 ## Decision Record
 
 | Field | Value |
 | --- | --- |
 | Proposal date | `2026-08-19` |
-| Reviewer | `Pending Human Developer review` |
-| Decision date |  |
-| Decision | `Proposed` |
+| Reviewer | `Human Developer` |
+| Decision date | `2026-08-19` |
+| Decision | `Approved` |
+
+## Human Approval Record
+
+| Date | Reviewer | Decision | Notes |
+| --- | --- | --- | --- |
+| 2026-08-19 | Human Developer | `Approved` | ADR-0009 approved. Profiling execution is authorized against the committed OrderBook baseline using JFR-first evidence. Optimization, benchmark redesign, JVM/GC tuning, alternative data structures and Phase 3 remain unauthorized. |
 
 ## Relationship to Existing Decisions
 

@@ -1,7 +1,7 @@
 # AGENT_CONTEXT - Matching Engine
 
 > Last Updated: 2026-08-19
-> Project Status: Phase 2 - Profiling ADR / Decision (proposed - pending Human Approval)
+> Project Status: Phase 2 - Profiling Execution (completed - pending Human Approval)
 > Owner: Human Developer
 > Primary Agent: Codex
 
@@ -53,7 +53,7 @@ Codex owns implementation assistance.
 
 ### Phase
 
-Phase 2 - Profiling ADR / Decision (proposed - pending Human Approval)
+Phase 2 - Profiling Execution (completed - pending Human Approval)
 
 ### Completed
 
@@ -72,16 +72,17 @@ Phase 2 - Profiling ADR / Decision (proposed - pending Human Approval)
 ### Current Task
 
 `TASK-20260819-004` - Establish Basic OrderBook baseline (`In Progress`,
-`Profiling ADR / Decision` proposed, pending Human Approval).
+`Profiling Execution` completed; pending Human Approval).
 
 ### Next Task
 
-Phase 2 - Profiling ADR / Decision. Sub-stages 1-3, ADR-0008, Structural Limit
+Phase 2 - Profiling Execution. Sub-stages 1-3, ADR-0008, Structural Limit
 Matching, Verification, the OrderBook baseline benchmark and Documentation
 Synchronization are approved within the recorded scope. Human Developer
 authorized entry into the Profiling ADR / Decision stage on `2026-08-19`.
-ADR-0009 and its phase report are proposed. Profiling execution, optimization
-and Phase 3 must not begin before the next approval.
+ADR-0009 and its phase report were approved on `2026-08-19`; profiling
+execution has completed and its report is pending Human Approval. Optimization
+and Phase 3 must not begin.
 
 Current task plan:
 [`tasks/active/TASK-20260819-004-basic-orderbook.md`](../tasks/active/TASK-20260819-004-basic-orderbook.md).
@@ -96,7 +97,7 @@ Current sub-stage ADR:
 
 Current profiling ADR:
 [`docs/adr/ADR-0009-performance-profiling-evidence.md`](../docs/adr/ADR-0009-performance-profiling-evidence.md)
-(`Proposed - Pending Human Approval`; profiling execution not authorized).
+(`Approved`; profiling execution completed, pending Human Approval).
 
 Latest completed Phase 2 report:
 [`tasks/reports/PHASE-2-verification-structural-limit-matching.md`](../tasks/reports/PHASE-2-verification-structural-limit-matching.md).
@@ -119,6 +120,9 @@ Latest completed decision-stage report:
 Current profiling decision-stage report:
 [`tasks/reports/PHASE-2-profiling-adr-decision.md`](../tasks/reports/PHASE-2-profiling-adr-decision.md).
 
+Current profiling execution report:
+[`tasks/reports/PHASE-2-profiling-execution.md`](../tasks/reports/PHASE-2-profiling-execution.md).
+
 Phase 1 report:
 [`tasks/reports/PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md).
 
@@ -138,8 +142,9 @@ within the approved scope, and Human Developer approved that implementation on
 price-level quantity, non-crossed final-state and deterministic-state evidence.
 Human Developer explicitly authorized the baseline benchmark on `2026-08-19`.
 Benchmark evidence and documentation synchronization were approved on
-`2026-08-19`. ADR-0009 and its phase report are now proposed for Human
-Approval. Profiling execution, optimization and Phase 3 remain unauthorized.
+`2026-08-19`. ADR-0009 and its phase report were approved on `2026-08-19`;
+profiling execution has completed and is pending Human Approval. Optimization
+and Phase 3 remain unauthorized.
 
 ---
 
@@ -389,7 +394,7 @@ This is a research and engineering project, not a real trading platform.
 | ADR-0006 governance | Accepted | ADR-first decisions, phase reports, Human approval gates, and document synchronization |
 | ADR-0007 Basic OrderBook | Accepted with constraints | TreeMap side books, intrusive FIFO levels, active cancellation index, best-price cache, and limit-order matching boundaries; implementation remains strictly scoped |
 | ADR-0008 Structural Limit Matching | Approved | `matchLimit` and immutable `MatchFragment` boundary, deterministic price-time traversal, maker-price fragments, lifecycle synchronization and residual resting; implementation authorized within scope |
-| ADR-0009 Performance Profiling Evidence | Proposed | JFR-first profiling of the approved OrderBook baseline; profiling execution requires Human Approval; optimization and Phase 3 remain out of scope |
+| ADR-0009 Performance Profiling Evidence | Approved | JFR-first profiling of the approved OrderBook baseline; profiling execution authorized; optimization and Phase 3 remain out of scope |
 | Netty | Planned | High-performance networking |
 | Disruptor | Planned | Low-contention event pipeline |
 | WAL | Planned | Crash recovery |
@@ -437,16 +442,18 @@ Raw JSON is local and ignored by Git:
 The result table and limitations are in
 `tasks/reports/PHASE-2-benchmark-orderbook-baseline.md`.
 Allocation, GC, profiling, optimization and production performance claims
-remain outside the current authorization. Profiling is proposed under
-ADR-0009 and is pending Human Approval.
+remain outside the current authorization. Profiling evidence is recorded under
+approved ADR-0009 and awaits Human Approval; optimization and Phase 3 remain
+unauthorized.
 
 ## 17. Profiling Decision Status
 
-ADR-0009 and its phase report define the next evidence-collection decision
-stage. The proposal requires a controlled JFR recording of the committed
-baseline, with optional async-profiler evidence when available. No profiler
-has been run, and no production code, benchmark semantics or optimization may
-be changed before Human Approval.
+ADR-0009 and its phase report define the controlled profiling evidence stage.
+JFR recordings for the approved workloads are recorded in
+`tasks/reports/PHASE-2-profiling-execution.md` and the local ignored
+`profiler-results/` directory. async-profiler was unavailable. The profiling
+report is pending Human Approval; no production code, benchmark semantics or
+optimization may be changed.
 
 Do not claim the following until experimentally verified:
 

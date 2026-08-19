@@ -8,8 +8,8 @@ Structural Limit Matching is approved under
 [`ADR-0008-structural-limit-matching.md`](../adr/ADR-0008-structural-limit-matching.md);
 implementation and verification are complete within that approved scope. The
 OrderBook baseline benchmark has also been executed and approved as
-component-level experimental evidence. Profiling is proposed separately and
-awaits Human Approval.
+component-level experimental evidence. ADR-0009 has been approved, profiling
+execution has completed, and the profiling evidence is pending Human Approval.
 
 ## Initial Baseline
 
@@ -32,7 +32,9 @@ Decision stage and was approved by the Human Developer on `2026-08-19`. The
 detailed input contract, result boundary, traversal, maker-price, residual,
 and invariant decisions are implemented constraints. Verification, the
 approved baseline benchmark and documentation synchronization are complete.
-Profiling is the next decision stage and remains pending Human Approval.
+ADR-0009 is approved and the profiling execution evidence is recorded in
+[`PHASE-2-profiling-execution.md`](../../tasks/reports/PHASE-2-profiling-execution.md);
+optimization remains separately gated.
 
 ## Aggregate
 
@@ -62,8 +64,9 @@ and rests a non-zero incoming residual once.
 quantity, and both post-fragment remaining quantities. It does not contain
 `TradeId`, event sequence, timestamps, `Trade`, `Execution`, mutable nodes, or
 publication behavior. Implementation and correctness verification are
-complete. The current Human Approval gate covers the Profiling ADR / Decision
-proposal; profiling execution and optimization remain unauthorized.
+complete. The current Human Approval gate covers completion of profiling
+evidence; profiling execution is complete pending Human Approval and
+optimization remains unauthorized.
 
 ## Baseline Measurement
 
@@ -76,8 +79,9 @@ Results are recorded in
 
 The measurements are workload-specific evidence for this implementation. They
 do not establish production P99, allocation, GC, or million-orders-per-second
-performance. The next profiling decision is recorded in
-[`ADR-0009-performance-profiling-evidence.md`](../adr/ADR-0009-performance-profiling-evidence.md).
+performance. The profiling decision and execution evidence are recorded in
+[`ADR-0009-performance-profiling-evidence.md`](../adr/ADR-0009-performance-profiling-evidence.md)
+and [`PHASE-2-profiling-execution.md`](../../tasks/reports/PHASE-2-profiling-execution.md).
 
 ## Invariants
 

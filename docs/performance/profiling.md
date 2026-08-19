@@ -2,10 +2,10 @@
 
 ## Status
 
-The Phase 2 OrderBook benchmark baseline was approved on `2026-08-19`.
-`ADR-0009-performance-profiling-evidence.md` and its task-plan proposal are
-currently awaiting Human Approval. No profile has been recorded or authorized
-yet.
+The Phase 2 OrderBook benchmark baseline and documentation synchronization were
+approved on `2026-08-19`. ADR-0009 and its profiling task-plan stage were
+approved on `2026-08-19`; profiling execution was completed on `2026-08-19`
+and is pending Human Approval. No optimization or Phase 3 work is authorized.
 
 ## Workflow
 
@@ -20,9 +20,9 @@ Reproduce
     -> Re-benchmark
 ```
 
-## Proposed First Profile
+## Authorized First Profile
 
-The proposed first profile uses the committed `OrderBookBaselineBenchmark`
+The authorized first profile uses the committed `OrderBookBaselineBenchmark`
 without changing production behavior or benchmark semantics. The primary
 workload is `multiLevelMatch`, with `oneLevelMatch`, `cancelByOrderId` and
 `cancelAndCleanEmptyLevel` as supporting workloads.
@@ -33,7 +33,37 @@ and its version and command are recorded. The profile stage must not implement
 an optimization.
 
 See [`ADR-0009-performance-profiling-evidence.md`](../adr/ADR-0009-performance-profiling-evidence.md)
-and [`PHASE-2-profiling-adr-decision.md`](../../tasks/reports/PHASE-2-profiling-adr-decision.md).
+and [`PHASE-2-profiling-execution.md`](../../tasks/reports/PHASE-2-profiling-execution.md).
+
+The profiling stage has produced a report and is stopped at a Human Approval
+gate. A profile observation does not authorize an optimization; any
+optimization requires a separate ADR / Decision and Human Approval.
+
+## Current Evidence
+
+JFR recordings were collected for `multiLevelMatch`, `oneLevelMatch`,
+`cancelByOrderId` and `cancelAndCleanEmptyLevel` using the approved JMH
+parameters. The primary observations include TreeMap navigation and mutation,
+HashMap lookup, order construction and match-fragment allocation. The
+recordings include JFR overhead and JMH invocation setup, so they are not
+baseline or production latency measurements.
+
+The full environment, commands, raw artifact directories, hotspot observations,
+GC observations and limitations are recorded in
+[`PHASE-2-profiling-execution.md`](../../tasks/reports/PHASE-2-profiling-execution.md).
+
+Current gate:
+
+```text
+Profiling Execution:
+    Completed - Pending Human Approval
+
+Optimization:
+    Not Authorized
+
+Phase 3:
+    Not Authorized
+```
 
 ## Tools
 
