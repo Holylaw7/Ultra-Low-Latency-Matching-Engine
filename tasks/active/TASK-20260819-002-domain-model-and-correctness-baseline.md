@@ -6,14 +6,14 @@
 | --- | --- |
 | Task ID | `TASK-20260819-002` |
 | Title | Establish domain model and correctness baseline |
-| Status | `Proposed` |
+| Status | `Approved` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created | `2026-08-19` |
 | Updated | `2026-08-19` |
 | Related Phase | Phase 1 - Domain Model |
 | Related ADR | `None` |
-| Approval Gate | `Pending Human approval` |
+| Approval Gate | `Approved with Constraints` |
 
 ## 2. Background
 
@@ -90,10 +90,13 @@ Phase 0 工程骨架已经建立，但撮合领域模型尚未实现。根 `pom.
 
 拟采用以下基线：
 
-- `OrderId`、`Price`、`Quantity` 和 `Sequence` 使用有明确范围校验的值类型，底层表示和精度语义在实现前固定并写入测试。
+- `OrderId`、`Price`、`Quantity` 和 `Sequence` 使用有明确范围校验的值类型，底层均使用正整数 `long` 表示。
+- `Price` 表示固定 Tick Scale 编码后的整数 Tick，不使用 `double` 或 `BigDecimal`；`Quantity` 表示最小交易单位，不使用浮点数或 `BigDecimal`。
+- `Sequence` 表示 Matching Engine 输入事件的正向逻辑顺序，不使用系统时间、随机数或线程调度结果生成。
 - `Order` 的身份字段保持稳定，剩余数量和状态只能通过受控方法变化。
+- `Trade` 表示一笔撮合成交，`Execution` 表示一个订单在该成交中的执行结果；一个 `Trade` 对应两个 `Execution`。
 - `Trade` 和 `Execution` 表达一次确定的执行结果，不读取当前时间，也不生成随机标识。
-- 订单状态至少覆盖可接受、部分成交、完全成交和取消等语义；具体枚举值和迁移表以实现前的测试设计为准。
+- `OrderStatus` 固定为 `NEW`、`PARTIALLY_FILLED`、`FILLED` 和 `CANCELED`，状态迁移由受控方法执行。
 - 领域对象不直接依赖 `OrderBook`、网络、WAL 或线程模型。
 
 ### Input and Output
@@ -123,7 +126,15 @@ Phase 0 工程骨架已经建立，但撮合领域模型尚未实现。根 `pom.
 
 ### Decision
 
-方案已完成对齐，当前仍等待 Human 审批。本任务必须保持 `Proposed`，直到设计、范围和验收标准被明确批准；审批前不得修改生产代码或生产测试。
+本任务已获得 Human Developer 的有条件批准，可以开始实现。实现必须遵守以下约束：
+
+- 只实现领域类型、状态转换和正确性测试。
+- 不实现或预留 `OrderBook`、`MatchingEngine`、Disruptor、Netty、WAL、Snapshot、Recovery 或性能优化。
+- `Price` 和 `Quantity` 使用正整数领域单位；`Sequence` 使用正的逻辑单调序列。
+- `OrderStatus` 固定为 `NEW`、`PARTIALLY_FILLED`、`FILLED` 和 `CANCELED`。
+- `Trade` 与 `Execution` 的语义必须保持确定性，不能依赖时间、随机数或线程调度。
+
+如果实现过程中需要突破以上范围，必须停止当前任务，更新方案并重新审批。
 
 ### Architecture Impact
 
@@ -232,13 +243,13 @@ feat(domain): establish matching domain model
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
-| 2026-08-19 | Human Developer | Pending | 方案已按开发规范和实际工程结构对齐，等待明确审批；审批前不得实现 |
+| 2026-08-19 | Human Developer | Approved with Constraints | Approved for implementation. Price and Quantity use integer domain units; OrderStatus state machine is fixed; Sequence is a logical monotonic sequence; Trade and Execution remain deterministic. OrderBook, MatchingEngine, Network, WAL, Snapshot, Disruptor, and performance optimization are out of scope. |
 
 ## 16. Implementation Log
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
-| 2026-08-19 | Proposed | 根据实际源码布局、现有架构文档和开发规范完成任务对齐；未修改生产代码 | 本次对齐后执行 `git diff --check` |
+| 2026-08-19 | Approved | Human Developer 有条件批准任务方案，允许按锁定约束实现 | 已记录审批约束；下一步进入实现前基线和最小领域模型开发 |
 
 ## 17. Completion Checklist
 
