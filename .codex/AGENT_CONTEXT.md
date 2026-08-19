@@ -1,7 +1,7 @@
 # AGENT_CONTEXT - Matching Engine
 
 > Last Updated: 2026-08-19
-> Project Status: Phase 2 - Basic OrderBook (Implementation - Pending Approval)
+> Project Status: Phase 2 - Basic OrderBook (OrderBook aggregate + active index completed, pending approval)
 > Owner: Human Developer
 > Primary Agent: Codex
 
@@ -72,13 +72,14 @@ Phase 2 - Basic OrderBook (Implementation)
 ### Current Task
 
 `TASK-20260819-004` - Establish Basic OrderBook baseline (`In Progress`,
-`Implementation - BidBook / AskBook` completed; pending approval).
+`Implementation - OrderBook + active OrderId index` completed; pending approval).
 
 ### Next Task
 
-Phase 2 - Basic OrderBook implementation. The `BidBook / AskBook` sub-stage is
-complete and awaiting approval. `OrderBook`, active-index aggregation and
-matching remain unauthorized until the next approval gate.
+Phase 2 - Basic OrderBook implementation. The `BidBook / AskBook` sub-stage was
+approved on `2026-08-19`. The `OrderBook + active OrderId index` sub-stage is
+complete and awaiting approval. Structural matching remains unauthorized until
+the next approval gate.
 
 Current task plan:
 [`tasks/active/TASK-20260819-004-basic-orderbook.md`](../tasks/active/TASK-20260819-004-basic-orderbook.md).
@@ -91,7 +92,7 @@ Current Phase 2 report:
 [`tasks/reports/PHASE-2-adr-decision.md`](../tasks/reports/PHASE-2-adr-decision.md).
 
 Current implementation sub-stage report:
-[`tasks/reports/PHASE-2-implementation-bidbook-askbook.md`](../tasks/reports/PHASE-2-implementation-bidbook-askbook.md).
+[`tasks/reports/PHASE-2-implementation-orderbook-active-index.md`](../tasks/reports/PHASE-2-implementation-orderbook-active-index.md).
 
 Phase 1 report:
 [`tasks/reports/PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md).
@@ -102,8 +103,10 @@ ADR-0007 and TASK-20260819-004 on `2026-08-19`, authorizing Phase 2
 implementation within the recorded constraints. The current implementation
 sub-stage `OrderNode + OrderQueue + PriceLevel` was approved on `2026-08-19`.
 Human Developer then authorized and the implementation completed the
-`BidBook / AskBook` sub-stage. Its completion report and next approval gate are
-now pending Human approval.
+`BidBook / AskBook` sub-stage, which was approved on `2026-08-19`. Human
+Developer then authorized and the implementation completed the `OrderBook +
+active OrderId index` sub-stage. Its completion report and next approval gate
+are now pending Human approval.
 
 ---
 

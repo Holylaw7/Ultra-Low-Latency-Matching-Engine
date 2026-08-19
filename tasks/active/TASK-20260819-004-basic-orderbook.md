@@ -13,7 +13,7 @@
 | Updated | `2026-08-19` |
 | Related Phase | `Phase 2 - Basic OrderBook` |
 | Related ADR | [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md) |
-| Current Stage | `Implementation - BidBook / AskBook (Completed)` |
+| Current Stage | `Implementation - OrderBook + active OrderId index (Completed)` |
 | Next Approval Gate | `Pending Human Approval` |
 
 ## 2. Background
@@ -66,9 +66,9 @@ FIFO 和 OrderId 索引的初始方向，但还没有覆盖 Basic OrderBook 所�
 ### Acceptance Criteria
 
 - [x] 生产代码只位于 OrderBook 领域包，不依赖网络、持久化或线程调度。
-- [ ] 非法 side/type/status、重复 active OrderId 和无效残量被显式拒绝。
+- [x] 非法 side/type/status、重复 active OrderId 和无效残量被显式拒绝。
 - [x] 取消操作幂等，重复取消不改变状态且不抛出业务异常。
-- [ ] 价格层、队列、active index 和 Best Price 缓存的一致性有测试证明。
+- [x] 价格层、队列、active index 和 Best Price 缓存的一致性有测试证明。
 - [ ] 一层和多层撮合、同价 FIFO、部分成交、完全成交和空层删除测试通过。
 - [x] 根 Maven 构建、JUnit 和 Checkstyle 通过。
 - [x] 实现前后 ADR、任务方案、架构文档和 `AGENT_CONTEXT.md` 保持一致。
@@ -78,15 +78,15 @@ FIFO 和 OrderId 索引的初始方向，但还没有覆盖 Basic OrderBook 所�
 
 ### Current Implementation
 
-当前已完成 `OrderNode`、`OrderQueue`、`PriceLevel` 和 `BidBook / AskBook`
-子阶段。Phase 1 的 `Order` 已经提供：
+当前已完成 `OrderNode`、`OrderQueue`、`PriceLevel`、`BidBook / AskBook` 和
+`OrderBook + active OrderId index` 子阶段。Phase 1 的 `Order` 已经提供：
 
 - limit/market 工厂方法；
 - `Side`、`OrderType`、`OrderStatus`；
 - `remainingQuantityUnits()`；
 - 受控 `applyExecution()` 和幂等 `cancel()`。
 
-当前尚未实现 `OrderBook`、active `OrderId` 取消索引或结构化撮合结果。
+当前尚未实现结构化撮合结果和限价撮合遍历。
 
 ### In Scope
 
@@ -181,7 +181,7 @@ Developer 于 `2026-08-19` 批准进入 Implementation 阶段，确认：
 - [x] PriceLevel queue append, head/tail, count and total quantity.
 - [x] Bid price priority and Ask price priority.
 - [x] Same-price FIFO using accepted input sequence.
-- [ ] Active index lookup and node unlink behavior.
+- [x] Active index lookup and node unlink behavior.
 - [x] Best Bid/Ask after add, cancel, fill and empty-level cleanup.
 
 ### Integration or System Tests
@@ -193,7 +193,7 @@ Developer 于 `2026-08-19` 批准进入 Implementation 阶段，确认：
 ### Failure and Boundary Tests
 
 - [x] Reject market orders from resting `add`.
-- [ ] Reject wrong-side, duplicate-active-id, terminal-order and zero-residual inputs.
+- [x] Reject wrong-side, duplicate-active-id, terminal-order and zero-residual inputs.
 - [x] Verify absent and repeated cancellation are no-op and non-throwing.
 - [x] Verify empty-book and empty-side best-price results.
 - [x] Verify no stale PriceLevel remains after final removal.
@@ -286,6 +286,7 @@ must not be mixed into an unrelated implementation commit.
 | 2026-08-19 | Human Developer | Phase 1 hand-off | `Approved` | Authorized Phase 2 ADR / Decision stage only. No Phase 2 production code or tests authorized yet. |
 | 2026-08-19 | Human Developer | ADR / Decision and Task Plan | `Approved` | Approved ADR-0007 and TASK-20260819-004 for implementation. TreeMap + intrusive FIFO + active OrderId index + best-price cache is the Phase 2 baseline. Market Order, MatchingEngine, WAL, network, Disruptor, lock-free, off-heap, custom tree, SkipList, radix, and unproven performance optimization remain out of scope. |
 | 2026-08-19 | Human Developer | Implementation Sub-stage 1 | `Approved` | OrderNode, OrderQueue and PriceLevel baseline accepted. FIFO, O(1) unlink, cancel, partial/full fill, quantity invariants, tests and build verification passed. Shade Plugin overlap warnings remain deferred technical debt. BidBook / AskBook implementation authorized within ADR-0007 scope. |
+| 2026-08-19 | Human Developer | Implementation Sub-stage 2 | `Approved` | SideBook, BidBook and AskBook accepted. Price ordering, Best Bid/Ask, FIFO preservation, empty-level cleanup, validation, tests and Maven verification passed. OrderBook aggregate and active OrderId index authorized. |
 
 ## 16. Phase Reports and Approval Gates
 
@@ -294,14 +295,15 @@ must not be mixed into an unrelated implementation commit.
 | ADR / Decision | [`tasks/reports/PHASE-2-adr-decision.md`](../reports/PHASE-2-adr-decision.md) | `Completed` | `Approved` | Approved 2026-08-19 |
 | Task Approval |  | `Completed` | `Approved` | Approved 2026-08-19 |
 | Implementation - Sub-stage 1 | [`tasks/reports/PHASE-2-implementation-ordernode-queue-pricelevel.md`](../reports/PHASE-2-implementation-ordernode-queue-pricelevel.md) | `Completed` | `Implementation - Sub-stage 2` | Approved 2026-08-19 |
-| Implementation - Sub-stage 2 | [`tasks/reports/PHASE-2-implementation-bidbook-askbook.md`](../reports/PHASE-2-implementation-bidbook-askbook.md) | `Completed - Pending Human Approval` | `Pending Human Approval` | Pending |
+| Implementation - Sub-stage 2 | [`tasks/reports/PHASE-2-implementation-bidbook-askbook.md`](../reports/PHASE-2-implementation-bidbook-askbook.md) | `Completed` | `Approved` | Approved 2026-08-19 |
+| Implementation - Sub-stage 3 | [`tasks/reports/PHASE-2-implementation-orderbook-active-index.md`](../reports/PHASE-2-implementation-orderbook-active-index.md) | `Completed - Pending Human Approval` | `Pending Human Approval` | Pending |
 | Verification |  | `Pending` | `Pending Human Approval` |  |
 | Documentation and Synchronization |  | `Pending` | `Pending Human Approval` |  |
 
 本阶段报告已由 Human Developer 审批，允许进入 Implementation 阶段。实现仍须
 按子阶段输出报告，并在下一阶段前等待 Human approval。当前
-`BidBook / AskBook` 子阶段已完成，等待审批后才能进入
-`OrderBook / active OrderId index` 子阶段。
+`OrderBook / active OrderId index` 子阶段已完成，等待审批后才能进入
+结构化限价撮合子阶段。
 
 ## 17. Implementation Log
 
@@ -311,6 +313,7 @@ must not be mixed into an unrelated implementation commit.
 | 2026-08-19 | Completed - Pending Human Approval | Human Developer 已批准 ADR-0007 和本任务方案；完成子阶段 `OrderNode + OrderQueue + PriceLevel` | `mvn verify` 成功；21 tests，0 failures，Checkstyle 0 |
 | 2026-08-19 | In Progress | Human Developer 批准 Sub-stage 1，并授权 `BidBook / AskBook` 子阶段 | 待完成价格层索引、最佳价、空层清理及阶段验证 |
 | 2026-08-19 | Completed - Pending Human Approval | 完成 `BidBook / AskBook` 价格层索引、Best Price 和空层清理 | `mvn verify` 成功；28 tests，0 failures，Checkstyle 0 |
+| 2026-08-19 | Completed - Pending Human Approval | Human Developer 批准 Sub-stage 2；完成 `OrderBook` 聚合、active `OrderId -> OrderNode` 索引、OrderBook 级 add/cancel/lookup 和受控执行状态同步 | `mvn -pl core -am test` 与 `mvn verify` 成功；34 tests，0 failures，Checkstyle 0；`git diff --cached --check` 通过；提交 `feat(orderbook): add orderbook aggregate and active index` |
 
 ## 18. Completion Checklist
 
