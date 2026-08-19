@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260819-002` |
 | Title | Establish domain model and correctness baseline |
-| Status | `In Progress` |
+| Status | `Completed` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created | `2026-08-19` |
@@ -40,30 +40,31 @@ Phase 0 工程骨架已经建立，但撮合领域模型尚未实现。根 `pom.
 
 ### Requirements
 
-- [ ] 定义 `Side`、`OrderType` 和 `OrderStatus`。
-- [ ] 定义 `OrderId`、`Price`、`Quantity` 和 `Sequence` 的表示、范围和比较语义。
-- [ ] 定义 `Order`、`Trade` 和 `Execution` 的字段、相等性和状态边界。
-- [ ] 明确非法价格、数量、标识、序列和状态转换的处理方式。
-- [ ] 明确订单状态的合法迁移和终态。
-- [ ] 建立领域模型单元测试、边界测试和确定性测试。
-- [ ] 保持领域类型不依赖网络、持久化、Metrics 或线程调度。
+- [x] 定义 `Side`、`OrderType` 和 `OrderStatus`。
+- [x] 定义 `OrderId`、`Price`、`Quantity` 和 `Sequence` 的表示、范围和比较语义。
+- [x] 定义 `Order`、`Trade` 和 `Execution` 的字段、相等性和状态边界。
+- [x] 明确非法价格、数量、标识、序列和状态转换的处理方式。
+- [x] 明确订单状态的合法迁移和终态。
+- [x] 建立领域模型单元测试、边界测试和确定性测试。
+- [x] 保持领域类型不依赖网络、持久化、Metrics 或线程调度。
 
 ### Acceptance Criteria
 
-- [ ] 所有领域类型具有明确的不变量。
-- [ ] `OrderId`、`Price`、`Quantity` 和 `Sequence` 的非法输入会被显式拒绝。
-- [ ] 订单状态转换测试覆盖正常、非法、终态和重复操作。
-- [ ] `Trade` 和 `Execution` 的结果只由输入字段决定，不依赖系统时间、随机数或线程调度。
-- [ ] 领域模型不引入网络、WAL、Snapshot、数据库或第三方依赖。
-- [ ] 生产源码位于 `src/main/java/com/ultralatency/matching/domain/`，测试位于 `src/test/java/com/ultralatency/matching/domain/`。
-- [ ] 根 Maven 构建、测试和 Checkstyle 通过。
-- [ ] 不引入未审批的架构变化或第三方依赖。
+- [x] 所有领域类型具有明确的不变量。
+- [x] `OrderId`、`Price`、`Quantity` 和 `Sequence` 的非法输入会被显式拒绝。
+- [x] 订单状态转换测试覆盖正常、非法、终态和重复操作。
+- [x] `Trade` 和 `Execution` 的结果只由输入字段决定，不依赖系统时间、随机数或线程调度。
+- [x] 领域模型不引入网络、WAL、Snapshot、数据库或第三方依赖。
+- [x] 生产源码位于 `src/main/java/com/ultralatency/matching/domain/`，测试位于 `src/test/java/com/ultralatency/matching/domain/`。
+- [x] 根 Maven 构建、测试和 Checkstyle 通过。
+- [x] 不引入未审批的架构变化或第三方依赖。
 
 ## 6. Current Implementation and Scope
 
 ### Current Implementation
 
-当前仓库只有 `src/main/java/com/ultralatency/matching/MatchingEngineApplication.java` 应用占位类和 `src/test/java/com/ultralatency/matching/MatchingEngineApplicationTest.java` 基础测试，尚无订单、成交和执行领域类型。
+当前仓库已包含 Phase 0 工程骨架，以及本任务新增的订单、成交和执行领域类型。
+领域类型位于根源码布局下，并由 `core` 模块编译和测试。
 
 `core/pom.xml` 通过 `${project.basedir}/../src/main/java` 和 `${project.basedir}/../src/test/java` 复用根目录源码布局。方案中的文件路径以仓库根目录为基准。
 
@@ -134,11 +135,16 @@ Phase 0 工程骨架已经建立，但撮合领域模型尚未实现。根 `pom.
 - `OrderStatus` 固定为 `NEW`、`PARTIALLY_FILLED`、`FILLED` 和 `CANCELED`。
 - `Trade` 与 `Execution` 的语义必须保持确定性，不能依赖时间、随机数或线程调度。
 
-对应决策记录：
+### ADR Linkage
 
-```text
-docs/adr/ADR-0005-domain-model-and-correctness-baseline.md
-```
+| Field | Value |
+| --- | --- |
+| ADR | [`docs/adr/ADR-0005-domain-model-and-correctness-baseline.md`](../../docs/adr/ADR-0005-domain-model-and-correctness-baseline.md) |
+| Status | `Accepted with constraints` |
+| Decision Summary | 使用整数领域单位和值对象；固定订单状态机；以逻辑单调序列表达事件顺序；区分 Trade 与 Execution；保持领域结果确定性。 |
+| Scope Boundary | 仅实现领域类型、受控状态转换和正确性测试；禁止引入 OrderBook、MatchingEngine、网络、Pipeline、WAL、Snapshot、Recovery 或性能优化。 |
+
+该 ADR 已在实现前创建并获得 Human Developer 的有条件批准。任务方案中的决策摘要、范围边界和本 ADR 的 `Decision` 小节必须保持一致；任何差异都必须暂停实现、同步文档并重新审批。
 
 如果实现过程中需要突破以上范围，必须停止当前任务，更新方案并重新审批。
 
@@ -157,34 +163,34 @@ docs/adr/ADR-0005-domain-model-and-correctness-baseline.md
 | `src/main/java/com/ultralatency/matching/domain/` | 新增领域类型 | 建立稳定的领域边界 |
 | `src/test/java/com/ultralatency/matching/domain/` | 新增单元测试 | 固定不变量和状态语义 |
 | `docs/adr/ADR-0005-domain-model-and-correctness-baseline.md` | 记录领域模型决策 | 固定数值单位、状态机和确定性边界 |
-| `docs/architecture/matching-engine.md` | 必要时补充领域约束 | 保持架构文档同步 |
+| `docs/architecture/matching-engine.md` | 未修改 | 当前任务没有改变匹配流程架构 |
 | `.codex/AGENT_CONTEXT.md` | 实现完成后更新状态 | 支持会话恢复 |
 
 ## 9. Test Plan
 
 ### Unit Tests
 
-- [ ] 值类型边界、比较和非法输入。
-- [ ] 订单创建、身份字段和基础字段。
-- [ ] 订单剩余数量变化和状态转换。
-- [ ] `Trade` 和 `Execution` 的字段完整性与相等性。
+- [x] 值类型边界、比较和非法输入。
+- [x] 订单创建、身份字段和基础字段。
+- [x] 订单剩余数量变化和状态转换。
+- [x] `Trade` 和 `Execution` 的字段完整性与相等性。
 
 ### Integration or System Tests
 
-- [ ] 当前任务不涉及模块间运行时集成，执行根 Maven Reactor 验证。
+- [x] 当前任务不涉及模块间运行时集成，执行根 Maven Reactor 验证。
 
 ### Failure and Boundary Tests
 
-- [ ] 零或负价格、数量和序列。
-- [ ] 非法或空的订单标识。
-- [ ] 剩余数量超过原始数量。
-- [ ] 已成交、已取消订单的非法变更。
-- [ ] 重复取消和重复终态操作的明确语义。
+- [x] 零或负价格、数量和序列。
+- [x] 非法或空的订单标识。
+- [x] 剩余数量超过原始数量。
+- [x] 已成交、已取消订单的非法变更。
+- [x] 重复取消和重复终态操作的明确语义。
 
 ### Determinism or Replay Tests
 
-- [ ] 验证相同输入产生相同领域对象、状态和执行结果。
-- [ ] 验证领域对象的 equals、状态和序列不依赖时间、随机数或线程。
+- [x] 验证相同输入产生相同领域对象、状态和执行结果。
+- [x] 验证领域对象的 equals、状态和序列不依赖时间、随机数或线程。
 
 ## 10. Benchmark and Profile Plan
 
@@ -257,18 +263,20 @@ feat(domain): establish matching domain model
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-19 | Approved | Human Developer 有条件批准任务方案，允许按锁定约束实现 | 已记录审批约束；审批状态已提交为 `6ac614b` |
-| 2026-08-19 | In Progress | 将已批准的领域决策写入 `ADR-0005` 并关联到本任务方案 | ADR 与任务决策步骤保持一致 |
+| 2026-08-19 | In Progress | 将已批准的领域决策写入 `ADR-0005` 并在 `Decision -> ADR Linkage` 中关联 | ADR 与任务决策步骤保持一致 |
 | 2026-08-19 | In Progress | 开始实现值对象、订单状态机、成交/执行模型及正确性测试 | 实现范围严格限制在本任务方案 |
+| 2026-08-19 | Completed | 完成领域值对象、订单状态机、Trade/Execution 模型和确定性正确性测试 | `mvn -pl core -am test` 通过；根 `mvn verify` 通过；11 个领域测试通过 |
 
 ## 17. Completion Checklist
 
-- [ ] Scope and acceptance criteria satisfied
-- [ ] Tests added or updated
-- [ ] Build passed
-- [ ] Static or format checks passed
-- [ ] Benchmark or profile completed when applicable
-- [ ] Documentation updated
-- [ ] `AGENT_CONTEXT.md` updated
-- [ ] Diff reviewed
-- [ ] Commit created
-- [ ] Post-commit Git status confirmed
+- [x] Scope and acceptance criteria satisfied
+- [x] Tests added or updated
+- [x] Build passed
+- [x] Static or format checks passed
+- [x] Benchmark or profile completed when applicable
+- [x] Documentation updated
+- [x] Decision and ADR linkage verified
+- [x] `AGENT_CONTEXT.md` updated
+- [x] Diff reviewed
+- [x] Commit created
+- [x] Post-commit Git status confirmed

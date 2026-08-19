@@ -1,7 +1,7 @@
 # AGENT_CONTEXT - Matching Engine
 
 > Last Updated: 2026-08-19
-> Project Status: Bootstrap
+> Project Status: Phase 1 - Domain Model
 > Owner: Human Developer
 > Primary Agent: Codex
 
@@ -53,7 +53,7 @@ Codex owns implementation assistance.
 
 ### Phase
 
-Phase 0 - Bootstrap
+Phase 1 - Domain Model
 
 ### Completed
 
@@ -65,16 +65,19 @@ Phase 0 - Bootstrap
 - [x] CI
 - [x] Documentation structure
 - [x] Task workspace and plan-first workflow
+- [x] Domain model and correctness baseline
+- [x] ADR linkage recorded for the domain decision
 
 ### Current Task
 
-`TASK-20260819-001` - Establish task workspace and plan-first development workflow.
+`TASK-20260819-002` - Establish the domain model and correctness baseline (Completed).
 
 ### Next Task
 
-`TASK-20260819-002` - Establish the domain model and correctness baseline.
+Phase 2 - Basic OrderBook.
 
-The next task is currently `Proposed`. Production code must not be modified until Human approval is recorded in the task plan.
+No Phase 2 task plan has been approved yet. Production code must not be modified
+until a new task plan is approved and its decision/ADR linkage is recorded.
 
 ---
 
@@ -131,6 +134,14 @@ Planned enums:
 - Side
 - OrderType
 - OrderStatus
+
+Implemented Phase 1 baseline:
+
+- Positive `long`-backed identifiers, prices, quantities, and sequences.
+- Limit and market orders with controlled lifecycle transitions.
+- Deterministic `Trade` and `Execution` value objects.
+- Correctness tests for boundaries, terminal states, idempotent cancellation,
+  and equal-input determinism.
 
 ---
 
@@ -308,6 +319,11 @@ This is a research and engineering project, not a real trading platform.
 | --- | --- | --- |
 | Java 21 | Accepted | JVM performance and existing expertise |
 | Single-threaded matching core | Accepted | Deterministic mutation |
+| Integer domain units | Accepted with constraints | Avoid floating-point rounding in the matching core |
+| Domain lifecycle baseline | Accepted with constraints | Fixed order states and controlled transitions |
+| Trade/Execution separation | Accepted with constraints | Distinguish one match from one order's execution result |
+| Logical event sequence | Accepted with constraints | Deterministic ordering independent of time and scheduling |
+| ADR-0005 domain model | Accepted with constraints | Long-term record of Phase 1 domain semantics |
 | Netty | Planned | High-performance networking |
 | Disruptor | Planned | Low-contention event pipeline |
 | WAL | Planned | Crash recovery |
@@ -501,6 +517,8 @@ Verified on 2026-08-19:
 - JMH benchmark module packages successfully.
 - Checkstyle runs with zero violations.
 - GitHub Actions workflow is defined for `mvn verify`.
+- Phase 1 domain tests pass with 11 tests and zero failures.
+- Root `mvn verify` passes after the domain model implementation.
 
 The bootstrap benchmark is an infrastructure smoke test only. It is not a matching-engine performance result.
 
@@ -526,10 +544,11 @@ tasks/completed/TASK-20260819-001-task-workspace-and-plan-first.md
 The next domain-model task is:
 
 ```text
-tasks/active/TASK-20260819-002-domain-model-and-correctness-baseline.md
+tasks/completed/TASK-20260819-002-domain-model-and-correctness-baseline.md
 ```
 
-Its status is `Proposed`. It must be explicitly approved before any domain production code or domain tests are modified.
+Its status is `Completed`. The next OrderBook task requires a new approved plan
+before production code or tests are modified.
 
 Each task plan must record:
 
