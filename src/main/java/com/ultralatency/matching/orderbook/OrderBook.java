@@ -1,12 +1,16 @@
 package com.ultralatency.matching.orderbook;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 import com.ultralatency.matching.domain.Order;
 import com.ultralatency.matching.domain.OrderId;
+import com.ultralatency.matching.domain.OrderStatus;
+import com.ultralatency.matching.domain.OrderType;
 import com.ultralatency.matching.domain.Price;
 import com.ultralatency.matching.domain.Quantity;
 import com.ultralatency.matching.domain.Side;
@@ -48,6 +52,56 @@ public final class OrderBook {
         final SideBook sideBook = sideBook(order.side());
         final OrderNode node = sideBook.add(order);
         activeOrders.put(orderId, node);
+    }
+
+    /**
+     * Matches a new incoming limit order against the opposite side.
+     *
+     * @param incoming new limit order to match
+     * @return immutable fragments in traversal order
+     * @throws IllegalArgumentException when the order is not a limit order or
+     *     its identifier is active
+     * @throws IllegalStateException when the order is not new
+     */
+    public List<MatchFragment> matchLimit(final Order incoming) {
+        validateIncomingLimit(incoming);
+        final List<MatchFragment> fragments = new ArrayList<>();
+        final SideBook oppositeBook = oppositeBook(incoming.side());
+
+        while (incoming.isActive()) {
+            final PriceLevel bestLevel = oppositeBook.bestLevel().orElse(null);
+            if (bestLevel == null
+                    || !crosses(incoming, bestLevel.price())) {
+                break;
+            }
+
+            final OrderNode maker = bestLevel.head();
+            if (maker == null) {
+                throw new IllegalStateException(
+                        "Best price level cannot be empty");
+            }
+
+            final long executedUnits = Math.min(
+                    incoming.remainingQuantityUnits(),
+                    maker.order().remainingQuantityUnits());
+            final Quantity executedQuantity = new Quantity(executedUnits);
+            final Price makerPrice = maker.order().limitPrice().orElseThrow();
+
+            applyExecution(maker.order().orderId(), executedQuantity);
+            incoming.applyExecution(executedQuantity);
+            fragments.add(new MatchFragment(
+                    maker.order().orderId(),
+                    incoming.orderId(),
+                    makerPrice,
+                    executedQuantity,
+                    maker.order().remainingQuantityUnits(),
+                    incoming.remainingQuantityUnits()));
+        }
+
+        if (incoming.isActive()) {
+            add(incoming);
+        }
+        return List.copyOf(fragments);
     }
 
     /**
@@ -168,6 +222,34 @@ public final class OrderBook {
 
     Optional<PriceLevel> askLevelAt(final Price price) {
         return askBook.levelAt(price);
+    }
+
+    private void validateIncomingLimit(final Order incoming) {
+        Objects.requireNonNull(incoming, "incoming");
+        if (incoming.type() != OrderType.LIMIT) {
+            throw new IllegalArgumentException(
+                    "Only limit orders may be matched");
+        }
+        if (incoming.status() != OrderStatus.NEW) {
+            throw new IllegalStateException(
+                    "Only NEW orders may be matched as incoming");
+        }
+        if (activeOrders.containsKey(incoming.orderId())) {
+            throw new IllegalArgumentException(
+                    "OrderId is already active: "
+                            + incoming.orderId().value());
+        }
+    }
+
+    private SideBook oppositeBook(final Side side) {
+        return side == Side.BUY ? askBook : bidBook;
+    }
+
+    private boolean crosses(final Order incoming, final Price makerPrice) {
+        final Price incomingPrice = incoming.limitPrice().orElseThrow();
+        return incoming.side() == Side.BUY
+                ? incomingPrice.compareTo(makerPrice) >= 0
+                : incomingPrice.compareTo(makerPrice) <= 0;
     }
 
     private SideBook sideBook(final Side side) {

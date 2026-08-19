@@ -9,8 +9,8 @@
 | Task | `TASK-20260819-004-basic-orderbook` |
 | ADR | [`ADR-0008-structural-limit-matching.md`](../../docs/adr/ADR-0008-structural-limit-matching.md) |
 | Report Date | `2026-08-19` |
-| Stage Status | `Completed - Pending Human Approval` |
-| Next Approval Gate | `Pending Human Approval` |
+| Stage Status | `Completed` |
+| Next Approval Gate | `Implementation - Structural Limit Matching` |
 
 ## 2. Objective
 
@@ -59,7 +59,8 @@ ADR-0008 提议：
 - incoming residual 仅在撮合结束后一次性进入自己的 side book；
 - 不创建 `OrderBookMatch`、`Trade`、`Execution`、TradeId 或事件。
 
-该 ADR 目前为 `Proposed`，尚未授权生产代码或生产测试实现。
+该 ADR 已于 `2026-08-19` 获 Human Developer 批准，授权在既定范围内
+进入生产代码和生产测试实现。
 
 ## 5. Options and Decision Boundary
 
@@ -107,23 +108,23 @@ ADR 审批后允许：
 - active index 与数量不变量；
 - 相同输入的 fragments 和最终状态确定性。
 
-## 8. Approval Request
+## 8. Human Approval Record
 
-请 Human Developer 审批：
+| Date | Reviewer | Decision | Notes |
+| --- | --- | --- | --- |
+| 2026-08-19 | Human Developer | `Approved` | ADR-0008 approved. Structural Limit Matching implementation and tests are authorized within the recorded scope. |
 
-1. [`ADR-0008-structural-limit-matching.md`](../../docs/adr/ADR-0008-structural-limit-matching.md)；
-2. 任务方案中 Structural Limit Matching 的范围、API 和验收标准；
-3. 进入下一阶段：
+已批准进入下一阶段：
 
 ```text
 Implementation - Structural Limit Matching
 ```
 
-在审批完成前保持：
+当前状态：
 
 ```text
-ADR-0008: Proposed
-Production implementation: Not authorized
-Structural matching tests: Not authorized
-Next gate: Pending Human Approval
+ADR-0008: Approved
+Production implementation: Authorized
+Structural matching tests: Authorized
+Next gate: Implementation Completion / Verification
 ```

@@ -4,9 +4,10 @@
 
 Baseline structure approved and implemented under
 [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../adr/ADR-0007-basic-orderbook-structure-and-boundaries.md).
-Structural Limit Matching details are proposed under
+Structural Limit Matching is approved under
 [`ADR-0008-structural-limit-matching.md`](../adr/ADR-0008-structural-limit-matching.md);
-implementation is not authorized until that proposal is approved.
+implementation is complete within that approved scope and is awaiting the
+implementation-stage Human Approval gate.
 
 ## Initial Baseline
 
@@ -25,8 +26,10 @@ Human Developer approved that sub-stage on `2026-08-19`, and the authorized
 `BidBook / AskBook` sub-stage was approved on `2026-08-19`. The
 `OrderBook + active OrderId index` sub-stage was approved by the Human
 Developer on `2026-08-19`. Structural Limit Matching is now in its ADR /
-Decision stage. The detailed input contract, result boundary, traversal,
-maker-price, residual, and invariant decisions are pending Human approval.
+Decision stage and was approved by the Human Developer on `2026-08-19`. The
+detailed input contract, result boundary, traversal, maker-price, residual,
+and invariant decisions are now implemented constraints. The implementation
+stage report is complete and pending Human Approval.
 
 ## Aggregate
 
@@ -36,25 +39,27 @@ index lookup, delegates node removal to the owning side book, and removes the
 index entry after a successful unlink. Historical or global order-id
 uniqueness remains outside the aggregate.
 
-The aggregate currently exposes add, cancel, active lookup, Best Bid/Ask and
+The aggregate exposes add, cancel, active lookup, Best Bid/Ask and
 price-level counts. Its package-private execution state-transition primitive
-keeps partial and full execution synchronized with the active index for
-correctness testing. It does not select counterparties, create match
-fragments, allocate trade identifiers, or publish events.
+keeps partial and full execution synchronized with the active index. The
+approved `matchLimit` operation selects crossed counterparties and returns
+structural fragments without allocating trade identifiers or publishing
+events.
 
-## Structural Limit Matching Proposal
+## Structural Limit Matching
 
-ADR-0008 proposes a narrow `OrderBook.matchLimit(Order)` operation returning
-an immutable, traversal-ordered `List<MatchFragment>`. The operation would
-accept a new active limit order, consume crossed opposite-side levels using
-price-time priority, use the resting maker price, synchronize maker and taker
-state transitions, and rest a non-zero incoming residual once.
+ADR-0008 defines and the implementation provides a narrow
+`OrderBook.matchLimit(Order)` operation returning an immutable,
+traversal-ordered `List<MatchFragment>`. The operation accepts a new active
+limit order, consumes crossed opposite-side levels using price-time priority,
+uses the resting maker price, synchronizes maker and taker state transitions,
+and rests a non-zero incoming residual once.
 
-`MatchFragment` would contain maker and taker identifiers, maker price,
-executed quantity, and both post-fragment remaining quantities. It would not
-contain `TradeId`, event sequence, timestamps, `Trade`, `Execution`, mutable
-nodes, or publication behavior. This proposal does not authorize production
-implementation until ADR-0008 and the associated stage plan are approved.
+`MatchFragment` contains maker and taker identifiers, maker price, executed
+quantity, and both post-fragment remaining quantities. It does not contain
+`TradeId`, event sequence, timestamps, `Trade`, `Execution`, mutable nodes, or
+publication behavior. The implementation-stage report is complete and awaits
+Human Approval before the next Verification stage.
 
 ## Invariants
 

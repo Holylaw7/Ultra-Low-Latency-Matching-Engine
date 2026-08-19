@@ -47,10 +47,12 @@ The same ordered input event sequence must produce the same:
 
 ## OrderBook Boundary
 
-The Phase 2 Structural Limit Matching proposal in
+The approved Phase 2 Structural Limit Matching decision in
 [`ADR-0008-structural-limit-matching.md`](../adr/ADR-0008-structural-limit-matching.md)
 places price-time traversal and in-memory order lifecycle mutation in
-`OrderBook.matchLimit(Order)`. The proposed result is an ordered
+`OrderBook.matchLimit(Order)`. The result is an ordered
 `MatchFragment` list. `Trade`, `Execution`, trade identifiers, event sequence
 assignment, and event publication remain MatchingEngine responsibilities and
-are not part of the current Phase 2 implementation scope.
+are not part of the Phase 2 Structural Limit Matching implementation scope.
+The structural implementation is complete and awaits its Human Approval gate;
+the future MatchingEngine stage remains unauthorized.

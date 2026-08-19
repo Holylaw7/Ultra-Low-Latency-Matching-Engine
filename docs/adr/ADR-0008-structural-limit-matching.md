@@ -2,14 +2,14 @@
 
 ## Status
 
-Proposed
+Approved
 
 ## Decision Record
 
 - Proposal date: `2026-08-19`
-- Reviewer: `Pending Human Developer`
-- Decision date: `Pending`
-- Decision: `Pending`
+- Reviewer: `Human Developer`
+- Decision date: `2026-08-19`
+- Decision: `Approved`
 - Related decisions:
   - [`ADR-0001-matching-model.md`](ADR-0001-matching-model.md)
   - [`ADR-0005-domain-model-and-correctness-baseline.md`](ADR-0005-domain-model-and-correctness-baseline.md)
@@ -35,6 +35,9 @@ residual quantity rests, and the OrderBook does not create or publish
 This ADR freezes the detailed behavior for that sub-stage before production
 implementation begins. It does not reopen the approved TreeMap, intrusive
 queue, active-index, or Phase 1 domain decisions.
+
+Human Developer approved this ADR on `2026-08-19`. Production implementation
+is authorized only within the scope and constraints recorded below.
 
 ## Problem
 
@@ -73,7 +76,7 @@ Costs:
 - a future performance stage may need a different output transport after
   benchmark evidence.
 
-**Result: Proposed for Human approval.**
+**Result: Approved.**
 
 ### Option 2 - Return mutated OrderNode or expose mutable queue traversal
 
@@ -102,7 +105,7 @@ MatchingEngine.
 **Result: Deferred.** The proposed baseline uses the narrower immutable
 `MatchFragment` result type.
 
-## Proposed Decision
+## Decision
 
 ### 1. Public Operation and Result Boundary
 
@@ -296,6 +299,12 @@ Implementation verification must cover both buy and sell directions:
 
 No benchmark is required for this ADR / Decision stage. A later approved
 verification stage may run the baseline benchmark with recorded parameters.
+
+## Approval Record
+
+| Date | Reviewer | Decision | Notes |
+| --- | --- | --- | --- |
+| 2026-08-19 | Human Developer | `Approved` | Structural Limit Matching is authorized within the defined scope. `MatchFragment` remains the structural result boundary; Trade/Execution, MatchingEngine, Market Order, WAL, Network and performance alternatives remain out of scope. |
 
 ## Relationship to ADR-0007
 

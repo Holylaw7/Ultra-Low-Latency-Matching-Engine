@@ -4,7 +4,7 @@
 > 项目定位：单机高性能、低延迟、确定性撮合引擎
 > 主要语言：Java 21
 > 开发模式：Human-led Architecture + Codex-assisted Engineering
-> 当前阶段：Phase 2 - Basic OrderBook（ADR / Decision）
+> 当前阶段：Phase 2 - Structural Limit Matching（Implementation 完成，等待 Human Approval）
 >
 > 本文件是 Codex 在本项目中的最高优先级项目级行为规范。
 > 每次启动新的 Codex 会话时，必须首先阅读：
@@ -274,6 +274,8 @@ Matching Engine
 - AskBook
 - PriceLevel
 - OrderQueue
+- Structural Limit Matching
+- MatchFragment
 
 支持：
 
@@ -281,17 +283,17 @@ Matching Engine
 - Cancel
 - Best Bid
 - Best Ask
-- Match
+- Deterministic limit matching
 
 ### Phase 3 - Matching Engine
 
 实现：
 
-- Limit Order
 - Market Order
-- Partial Fill
-- Multiple Price Levels
-- Price-Time Priority
+- Trade / Execution orchestration
+- Event sequence allocation
+- Event publication
+- Matching policy boundaries
 
 建立完整的 correctness test suite。
 
