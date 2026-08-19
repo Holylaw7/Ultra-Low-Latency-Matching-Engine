@@ -57,21 +57,21 @@ Phase 0 - Bootstrap
 
 ### Completed
 
-- [ ] Repository initialized
-- [ ] Maven project
-- [ ] Java 21
-- [ ] JUnit
-- [ ] JMH
-- [ ] CI
-- [ ] Documentation structure
+- [x] Repository initialized
+- [x] Maven project
+- [x] Java 21
+- [x] JUnit
+- [x] JMH
+- [x] CI
+- [x] Documentation structure
 
 ### Current Task
 
-Establish repository-level software engineering and Git development rules.
+Establish the Phase 0 project bootstrap framework.
 
 ### Next Task
 
-Initialize the Maven project and establish the domain model and correctness baseline.
+Establish the domain model and correctness baseline.
 
 ---
 
@@ -481,3 +481,19 @@ Commit requirements:
 - Commit hash and final status reported
 
 Push, rebase, amend, reset, restore, clean, and force push require explicit authorization.
+
+---
+
+## 21. Bootstrap Verification
+
+Verified on 2026-08-19:
+
+- Root Maven reactor builds successfully.
+- Core module compiles the root `src/` layout.
+- Java 21 release compilation is enforced.
+- JUnit 5 test suite runs successfully.
+- JMH benchmark module packages successfully.
+- Checkstyle runs with zero violations.
+- GitHub Actions workflow is defined for `mvn verify`.
+
+The bootstrap benchmark is an infrastructure smoke test only. It is not a matching-engine performance result.
