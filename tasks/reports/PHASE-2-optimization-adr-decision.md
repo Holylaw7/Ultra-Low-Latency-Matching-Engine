@@ -10,8 +10,8 @@
 | ADR | [`ADR-0010-optimization-decision-after-profiling.md`](../../docs/adr/ADR-0010-optimization-decision-after-profiling.md) |
 | Input Evidence | [`PHASE-2-profiling-execution.md`](PHASE-2-profiling-execution.md) |
 | Report Date | `2026-08-19` |
-| Stage Status | `Proposed - Pending Human Approval` |
-| Next Approval Gate | `Human Approval - Optimization ADR / Decision` |
+| Stage Status | `Completed - Approved` |
+| Next Approval Gate | `Human Approval - Steady-State Evidence Review` |
 
 ## 2. Authorization and Objective
 
@@ -22,6 +22,9 @@ ADR / Decision proposal.
 The objective is to determine whether the current profile supports a
 production optimization target. No production code, test code, benchmark
 semantics, JVM arguments or GC settings are changed in this stage.
+
+Human Developer approved ADR-0010 on `2026-08-19` and authorized the separate
+Measurement-Isolation Execution stage.
 
 ## 3. Evidence Reviewed
 
@@ -51,14 +54,14 @@ in the profiling execution report.
 The current evidence does **not** justify selecting or implementing a
 production optimization.
 
-The proposed decision is:
+The approved decision is:
 
 ```text
 Production optimization:
     Deferred
 
 Next evidence step:
-    Measurement isolation plan and execution, separately approved
+    Measurement isolation execution, separately authorized
 
 Phase 3:
     Not Authorized
@@ -87,15 +90,15 @@ available evidence.
 
 ## 6. Authorized Scope Requested
 
-After Human approval of ADR-0010, the next stage may prepare a
-measurement-isolation task plan. That plan must preserve the approved B0
-workload and correctness semantics, and it must receive its own stage approval
-before execution.
+After Human approval of ADR-0010, the next stage is the authorized
+measurement-isolation execution. It must preserve the approved B0 workload and
+correctness semantics, and it must stop at a separate Human Approval gate
+before any production optimization is considered.
 
-This report does not authorize:
+This report and its approval do not authorize:
 
 - production code changes;
-- benchmark redesign or workload replacement;
+- replacing or overwriting the B0 benchmark;
 - result-buffer or object-pool work;
 - TreeMap or active-index replacement;
 - JVM/GC tuning;
@@ -135,19 +138,25 @@ This report is synchronized with:
 - [`.codex/MASTER_PROMPT.md`](../../.codex/MASTER_PROMPT.md); and
 - [`TASK-20260819-004-basic-orderbook.md`](../active/TASK-20260819-004-basic-orderbook.md).
 
-## 9. Approval Request
+## 9. Current Handoff
 
-Human Developer is requested to review ADR-0010 and this decision-stage report.
+Human Developer approved ADR-0010 on `2026-08-19` and authorized the
+Measurement-Isolation Execution stage. That experiment is complete and is
+recorded separately in
+[`PHASE-2-measurement-isolation.md`](PHASE-2-measurement-isolation.md).
 
 ```text
 Optimization ADR / Decision:
-    Proposed - Pending Human Approval
+    Approved
 
 Production Optimization:
     Not Authorized
 
 Measurement-Isolation Execution:
-    Not Authorized
+    Completed - Pending Human Approval
+
+Steady-State Evidence Review:
+    Next Gate
 
 Phase 3:
     Not Authorized
@@ -157,4 +166,4 @@ Phase 3:
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
-| 2026-08-19 | Human Developer | `Pending` | Evidence review completed. The proposed decision defers production optimization until setup and profiler overhead are isolated under a separately approved measurement plan. |
+| 2026-08-19 | Human Developer | `Approved` | ADR-0010 accepted. Current JFR evidence is insufficient to justify production optimization because setup and steady-state matching costs are not isolated. Measurement-Isolation Execution is authorized; production optimization and Phase 3 remain unauthorized. |

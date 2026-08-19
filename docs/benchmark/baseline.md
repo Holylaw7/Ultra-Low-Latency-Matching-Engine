@@ -51,11 +51,18 @@ Current result:
 
 Next gate:
 
-- Optimization ADR / Decision Human Approval under the proposed
+- Steady-State Evidence Review Human Approval under the approved
   [`ADR-0010-optimization-decision-after-profiling.md`](../adr/ADR-0010-optimization-decision-after-profiling.md)
-  (`Proposed`; production optimization and measurement-isolation execution
-  remain unauthorized)
+  (`Approved`; production optimization remains unauthorized)
 
 Profiling report:
 
 - [`PHASE-2-profiling-execution.md`](../../tasks/reports/PHASE-2-profiling-execution.md)
+
+Measurement-isolation report:
+
+- [`PHASE-2-measurement-isolation.md`](../../tasks/reports/PHASE-2-measurement-isolation.md)
+
+The isolation measurements use a separate `SingleShotTime` harness with
+prebuilt independent cases and do not replace or overwrite the approved B0
+result.

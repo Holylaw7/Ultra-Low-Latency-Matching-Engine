@@ -10,7 +10,9 @@ implementation and verification are complete within that approved scope. The
 OrderBook baseline benchmark has also been executed and approved as
 component-level experimental evidence. ADR-0009 has been approved, profiling
 execution has completed and was approved as evidence collection on
-`2026-08-19`.
+`2026-08-19`. ADR-0010 was approved on `2026-08-19` and authorized a
+separate measurement-isolation experiment. That experiment is complete and
+awaits Steady-State Evidence Review.
 
 ## Initial Baseline
 
@@ -35,10 +37,12 @@ and invariant decisions are implemented constraints. Verification, the
 approved baseline benchmark and documentation synchronization are complete.
 ADR-0009 is approved and the profiling execution evidence is recorded in
 [`PHASE-2-profiling-execution.md`](../../tasks/reports/PHASE-2-profiling-execution.md);
-profiling execution was approved on `2026-08-19`. Optimization is now governed
-by proposed
-[`ADR-0010-optimization-decision-after-profiling.md`](../adr/ADR-0010-optimization-decision-after-profiling.md)
-and remains unauthorized.
+profiling execution was approved on `2026-08-19`. ADR-0010 is approved, and
+the measurement-isolation evidence is recorded in
+[`PHASE-2-measurement-isolation.md`](../../tasks/reports/PHASE-2-measurement-isolation.md).
+The current gate is Steady-State Evidence Review; production optimization
+remains unauthorized under
+[`ADR-0010-optimization-decision-after-profiling.md`](../adr/ADR-0010-optimization-decision-after-profiling.md).
 
 ## Aggregate
 
@@ -69,8 +73,8 @@ quantity, and both post-fragment remaining quantities. It does not contain
 `TradeId`, event sequence, timestamps, `Trade`, `Execution`, mutable nodes, or
 publication behavior. Implementation and correctness verification are
 complete. Profiling execution was approved as evidence collection on
-`2026-08-19`. The current Human Approval gate covers the proposed
-Optimization ADR / Decision; production optimization remains unauthorized.
+`2026-08-19`. Measurement isolation is complete and pending Steady-State
+Evidence Review; production optimization remains unauthorized.
 
 ## Baseline Measurement
 
@@ -86,6 +90,8 @@ do not establish production P99, allocation, GC, or million-orders-per-second
 performance. The profiling decision and execution evidence are recorded in
 [`ADR-0009-performance-profiling-evidence.md`](../adr/ADR-0009-performance-profiling-evidence.md)
 and [`PHASE-2-profiling-execution.md`](../../tasks/reports/PHASE-2-profiling-execution.md).
+The isolated harness and current gate are recorded in
+[`PHASE-2-measurement-isolation.md`](../../tasks/reports/PHASE-2-measurement-isolation.md).
 
 ## Invariants
 

@@ -5,8 +5,9 @@
 The Phase 2 OrderBook benchmark baseline and documentation synchronization were
 approved on `2026-08-19`. ADR-0009 and its profiling task-plan stage were
 approved on `2026-08-19`; profiling execution was completed on `2026-08-19`
-and approved on `2026-08-19`. Optimization is now at its ADR / Decision gate;
-no production optimization or Phase 3 work is authorized.
+and approved on `2026-08-19`. ADR-0010 was approved on `2026-08-19`;
+measurement-isolation execution completed and is pending Human Approval.
+No production optimization or Phase 3 work is authorized.
 
 ## Workflow
 
@@ -16,6 +17,7 @@ Reproduce
     -> Profiling ADR / Decision
     -> Profile
     -> Identify Hot Path
+    -> Isolate Measurement
     -> Form Hypothesis
     -> Optimize
     -> Re-benchmark
@@ -59,8 +61,11 @@ Current gate:
 Profiling Execution:
     Completed - Approved
 
-Optimization:
-    ADR / Decision - Pending Human Approval
+Optimization ADR / Decision:
+    Approved
+
+Measurement-Isolation:
+    Completed - Pending Human Approval
 
 Phase 3:
     Not Authorized
@@ -68,10 +73,13 @@ Phase 3:
 
 ## Optimization Decision
 
-The current JFR evidence identifies investigation candidates but does not
-isolate steady-state matching cost from `@Setup(Level.Invocation)` and JFR
-overhead. The proposed decision is to defer production optimization and first
-prepare a separately approved measurement-isolation plan.
+The current JFR evidence did not isolate steady-state matching cost from
+`@Setup(Level.Invocation)` and JFR overhead. ADR-0010 therefore deferred
+production optimization and authorized a separate measurement-isolation
+experiment. The experiment is recorded in
+[`PHASE-2-measurement-isolation.md`](../../tasks/reports/PHASE-2-measurement-isolation.md).
+Its short JFR recordings remain insufficient for selecting a production
+optimization.
 
 See [`ADR-0010-optimization-decision-after-profiling.md`](../adr/ADR-0010-optimization-decision-after-profiling.md)
 and [`PHASE-2-optimization-adr-decision.md`](../../tasks/reports/PHASE-2-optimization-adr-decision.md).

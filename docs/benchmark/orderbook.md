@@ -5,8 +5,9 @@
 Phase 2 OrderBook baseline implemented, measured and approved by the Human
 Developer on `2026-08-19`. ADR-0009 was approved by the Human Developer on
 `2026-08-19`; profiling execution was completed under ADR-0009 and approved as
-evidence collection. ADR-0010 is the current Optimization ADR / Decision gate;
-no optimization has been executed.
+evidence collection. ADR-0010 was approved on `2026-08-19`; measurement
+isolation completed and is pending Steady-State Evidence Review. No
+optimization has been executed.
 
 ## Planned Comparisons
 
@@ -44,3 +45,5 @@ See the full environment, command, raw result path and table in
 The profiling decision and execution evidence are recorded in
 [`ADR-0009-performance-profiling-evidence.md`](../adr/ADR-0009-performance-profiling-evidence.md)
 and [`PHASE-2-profiling-execution.md`](../../tasks/reports/PHASE-2-profiling-execution.md).
+The isolation harness and evidence are recorded in
+[`PHASE-2-measurement-isolation.md`](../../tasks/reports/PHASE-2-measurement-isolation.md).

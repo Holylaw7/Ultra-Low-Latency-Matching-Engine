@@ -2,16 +2,16 @@
 
 ## Status
 
-Proposed
+Approved
 
 ## Decision Record
 
 | Field | Value |
 | --- | --- |
 | Proposal date | `2026-08-19` |
-| Reviewer | `Pending Human Developer review` |
-| Decision date |  |
-| Decision | `Proposed` |
+| Reviewer | `Human Developer` |
+| Decision date | `2026-08-19` |
+| Decision | `Approved` |
 
 Related decisions:
 
@@ -34,6 +34,11 @@ and state-reset work to the recordings.
 The current implementation remains the approved TreeMap side-book,
 intrusive-FIFO and active `OrderId -> OrderNode` baseline. No production
 change has been made in response to the profile.
+
+Human Developer approved this ADR on `2026-08-19` and authorized the
+measurement-isolation execution. The isolation experiment adds only a
+benchmark harness and evidence-collection boundary; it does not change the
+approved B0 workload result, production matching code or JVM configuration.
 
 ## Problem
 
@@ -97,9 +102,9 @@ This preserves the correctness baseline and requires a controlled follow-up
 that separates operation cost from invocation setup before any production
 change is proposed.
 
-**Result: Proposed.**
+**Result: Accepted.**
 
-## Proposed Decision
+## Decision
 
 1. Do not authorize a production optimization from the current JFR evidence.
 2. Keep the approved TreeMap, intrusive FIFO, active-index, `List<MatchFragment>`
@@ -107,22 +112,20 @@ change is proposed.
 3. Treat `MatchFragment`/result construction, TreeMap price-index activity and
    active-index lookup as investigation candidates only, not accepted
    optimization targets.
-4. The next authorized decision-stage output is a measurement-isolation plan.
-   It must define how to separate steady-state operation cost from
-   `@Setup(Level.Invocation)` and profiler overhead while preserving the
-   approved workload semantics.
+4. Authorize a measurement-isolation execution that separates steady-state
+   operation cost from `@Setup(Level.Invocation)` and profiler overhead while
+   preserving the approved workload semantics.
 5. Any subsequent production change requires a new or updated Optimization ADR,
    explicit Human Approval, the existing correctness gates, and a before/after
    benchmark using comparable workloads.
 
-This ADR does not authorize measurement-isolation execution yet. It requests
-Human approval of the decision boundary and the next evidence-collection
-proposal.
+This ADR authorizes measurement-isolation execution only. It does not
+authorize production optimization, benchmark replacement, JVM/GC tuning or
+Phase 3 work.
 
 ## Measurement-Isolation Requirements
 
-If this ADR is approved, a separate implementation or experiment stage must
-first:
+The authorized measurement-isolation stage must:
 
 - preserve the existing B0 benchmark result and workload definitions;
 - report setup and operation timing separately where the harness permits;
@@ -138,10 +141,13 @@ optimization, data-structure replacement or JVM tuning exercise.
 
 ## Scope Boundary
 
-Authorized by this ADR proposal only after Human approval:
+Authorized by this approved ADR:
 
 - review and classification of the approved JFR evidence;
-- preparation of a measurement-isolation task plan;
+- benchmark-harness measurement isolation;
+- steady-state single-level and multi-level matching measurements;
+- separate lifecycle/preparation measurements;
+- JFR evidence collection for the isolated matching workloads;
 - documentation and phase-report synchronization.
 
 Not authorized:
@@ -175,31 +181,35 @@ Costs and risks:
 
 ## Verification Plan
 
-For this ADR / Decision stage:
+For this ADR / Decision and Measurement-Isolation stage:
 
 - review the profiling execution report and raw artifact paths;
-- confirm that no production, test, benchmark or JVM configuration files
-  change;
+- confirm that no production matching code, B0 result, or JVM configuration
+  changes;
+- verify the isolated benchmark keeps setup outside the measured matching
+  invocation;
+- record the exact isolation results, JFR paths and profiler limitations;
 - run `git diff --check`;
 - run `mvn verify` as the repository quality gate;
 - verify that the task plan, ADR, phase report, performance documents and
-  `.codex` context describe the same pending Human Approval gate.
+  `.codex` context describe the same post-isolation approval gate.
 
-No optimization benchmark or implementation is authorized by this stage.
+No production optimization benchmark or implementation is authorized by this
+stage.
 
-## Approval Request
+## Current Gate
 
-Human Developer is requested to approve or reject the proposed decision:
+The approved decision and completed experiment have the following status:
 
 ```text
 Optimization ADR / Decision:
-    Proposed - Pending Human Approval
+    Approved
 
 Production Optimization:
     Not Authorized
 
 Measurement-Isolation Execution:
-    Not Authorized
+    Completed - Pending Human Approval
 
 Phase 3:
     Not Authorized
@@ -209,4 +219,4 @@ Phase 3:
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
-|  |  | `Pending` | Current JFR evidence was reviewed and classified; no production optimization is authorized until this ADR and its follow-up evidence plan are approved. |
+| 2026-08-19 | Human Developer | `Approved` | ADR-0010 accepted. Current JFR evidence is insufficient to justify production optimization because benchmark setup and steady-state matching costs are not isolated. Measurement-Isolation Execution is authorized. Production optimization and Phase 3 remain unauthorized. |

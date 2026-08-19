@@ -20,16 +20,18 @@ Phase 2 - Basic OrderBook：Structural Limit Matching、Verification、OrderBook
 baseline Benchmark 和 Documentation Synchronization 已完成并经 Human
 Developer 于 `2026-08-19` 批准。ADR-0009 Profiling ADR / Decision 已于
 `2026-08-19` 批准，Profiling Execution 已于 `2026-08-19` 通过 Human
-Approval。当前进入 Optimization ADR / Decision 提案阶段，等待 Human
-Approval。
+Approval。ADR-0010 Optimization ADR / Decision 已于 `2026-08-19` 批准，
+并授权 Measurement-Isolation Execution。当前 isolation 已完成，等待
+Steady-State Evidence Review 的 Human Approval。
 
 Phase 1 Domain Model and Correctness Baseline has been completed and approved.
 ADR-0007 and ADR-0008 have been approved, and the Phase 2 OrderBook structure
 and Structural Limit Matching are implemented within their recorded scope.
 The approved benchmark is component-level experimental baseline evidence, not a
 production throughput or latency claim. Profiling execution evidence is
-recorded and approved as evidence collection. The next gate is the
-Optimization ADR / Decision.
+recorded and approved as evidence collection. Measurement-isolation evidence
+is recorded separately and does not replace B0 or authorize production
+optimization. The next gate is Steady-State Evidence Review.
 
 The repository currently contains:
 
@@ -83,8 +85,9 @@ thread, deterministic fixed workloads and the current TreeMap + intrusive FIFO
 and active OrderId index implementation. Results are component-level evidence
 only; they must not be presented as production throughput, latency, allocation
 or GC claims. JFR profiling evidence is recorded in
-`tasks/reports/PHASE-2-profiling-execution.md`; the current gate is
-Optimization ADR / Decision / Human Approval.
+`tasks/reports/PHASE-2-profiling-execution.md`; measurement-isolation evidence
+is recorded in `tasks/reports/PHASE-2-measurement-isolation.md`. The current
+gate is Steady-State Evidence Review / Human Approval.
 
 ## Structure
 
