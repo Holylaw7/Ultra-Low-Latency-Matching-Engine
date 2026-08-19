@@ -542,11 +542,16 @@ Requirement
 
 规则：
 
-1. 需要 ADR 的决策，必须先创建或更新 ADR，再开始生产代码实现。
-2. 任务方案必须链接具体 ADR，不能只写“ADR required”。
-3. ADR 与任务方案的决策内容必须一致；若不一致，先暂停实现并同步两者。
-4. 不需要 ADR 时，必须写 `ADR: Not required`，并说明这是局部实现、不改变架构、协议、数据格式或运行时语义。
-5. ADR 发生变更时，必须在任务方案的 `Implementation Log` 中记录变更原因、影响和重新验证结果。
+1. 识别出需要长期保留的技术决策后，必须先创建或更新 ADR 草案，并将状态设为 `Proposed`。
+2. ADR 草案必须先记录 Context、Problem、Options、Proposed Decision、Scope Boundary、Consequences 和验证计划，再进行技术决策或审批。
+3. Human Review 和技术决策只能发生在 ADR 草案存在之后；决策结果必须回写 ADR 状态。
+4. ADR 状态与审批结果一致后，任务方案才能获批并进入实现。
+5. 任务方案必须链接具体 ADR，不能只写“ADR required”。
+6. ADR 与任务方案的决策内容必须一致；若不一致，先暂停实现并同步两者。
+7. 不需要 ADR 时，必须写 `ADR: Not required`，并说明这是局部实现、不改变架构、协议、数据格式或运行时语义。
+8. ADR 发生变更时，必须在任务方案的 `Implementation Log` 中记录变更原因、影响和重新验证结果。
+
+上面的顺序适用于每一个独立的技术决策。ADR 不是实现完成后的总结，而是决策前的输入、评审依据和长期记录。
 
 ### 22.3 实现
 
@@ -595,6 +600,41 @@ Requirement
 - 是否有不必要的分配、锁和 I/O
 - 测试是否证明关键行为
 - 文档是否与实现一致
+
+### 22.6 阶段报告与逐步审批
+
+一个任务必须按风险和交付边界划分为若干开发阶段。至少应区分：
+
+```text
+ADR / Decision
+    -> Task Approval
+    -> Implementation
+    -> Verification
+    -> Documentation and Synchronization
+```
+
+阶段可以包含多个原子开发动作，但不得跨越未审批的阶段边界。
+
+每个阶段完成后，Codex 必须：
+
+1. 输出并记录阶段报告，至少包含：
+   - 本阶段目标和实际完成内容
+   - 修改文件和范围
+   - 测试、构建、Benchmark 或其他证据
+   - 与已批准方案的偏差
+   - 新增风险、限制和未验证内容
+   - 下一阶段目标和所需审批事项
+2. 在任务方案的 `Phase Reports and Approval Gates` 中记录报告位置、阶段状态和下一审批门禁。报告较长时可以另建 `tasks/reports/` 文件并链接。
+3. 将下一门禁标记为 `Pending Human Approval`，停止进入下一阶段。
+4. 等待 Human 明确批准，并把日期、审批人、决定、约束和备注写入任务方案的 `Approval Record` 或阶段报告。
+
+只有审批记录完成后，才能开始下一阶段。审批被拒绝、附加新约束或发现范围变化时，必须先更新任务方案；如果影响技术决策，必须先创建或更新 ADR，再重新申请审批。
+
+任务完成阶段必须额外执行文档同步：
+
+- ADR、任务方案、规范、架构/Benchmark/Recovery 文档和 `AGENT_CONTEXT.md` 的状态、决策摘要、范围边界和验证结果一致。
+- 同步完成前，任务不能标记为 `Completed`。
+- 同步完成后，在阶段报告和最终报告中记录同步范围及结果。
 
 ---
 
@@ -891,11 +931,14 @@ Release Tag 只能建立在已验证提交上，并必须记录版本、变更�
 
 每个任务的决策步骤必须与对应 ADR 同步。任务完成前必须确认：
 
+- ADR 草案在技术决策和任务审批之前已经存在。
 - 任务方案的 ADR 链接可访问。
 - ADR 状态和任务审批状态一致。
 - 任务方案的决策摘要与 ADR 的决策内容一致。
 - ADR 已列入 Git Diff 审查范围。
 - 如果不需要 ADR，任务方案中已记录明确理由。
+- 每个已完成阶段都有阶段报告和 Human 审批记录。
+- 文档与 `AGENT_CONTEXT.md` 已完成同步。
 
 重大设计、性能或恢复结论必须记录：
 
@@ -921,7 +964,9 @@ Release Tag 只能建立在已验证提交上，并必须记录版本、变更�
 - 静态或格式检查通过
 - 相关 Benchmark 通过（如果涉及性能）
 - Git Diff 已审查
+- 每个开发阶段均有阶段报告，且下一阶段开始前已有 Human 审批
 - 文档已同步
+- `AGENT_CONTEXT.md` 已同步
 - Commit 已完成或未提交原因已说明
 - 提交后 Git 状态已确认
 - 没有明显回归
@@ -976,6 +1021,7 @@ tasks/
 - Benchmark、Profile、数据集和指标计划
 - 风险、兼容性和回滚方案
 - 验证命令和 Git 提交计划
+- 当前开发阶段、下一审批门禁和阶段报告记录方式
 
 方案不完整时，任务不得进入实现阶段。
 
@@ -1005,6 +1051,8 @@ Proposed / Approved / In Progress
 - `Completed`：验收标准已满足，变更已提交并完成状态确认。
 - `Cancelled`：任务被明确取消，且取消原因已记录。
 
+任务处于 `In Progress` 时，仍必须维护当前阶段和下一审批门禁。阶段完成后，任务可以保持 `In Progress`，但下一门禁必须是 `Pending Human Approval`，在审批前不得继续执行后续阶段。
+
 ### 28.4 审批门禁
 
 `Proposed` 状态未获 Human 明确确认前：
@@ -1027,6 +1075,8 @@ Proposed / Approved / In Progress
 - 引入或替换关键第三方依赖
 - 扩大原定任务范围
 
+进入任何需要技术决策的阶段前，必须确认相关 ADR 草案已经存在并完成相应审批；不得先做决定、先写实现，再补 ADR。
+
 ### 28.5 实现期间管理
 
 实现过程中必须持续更新任务方案：
@@ -1036,6 +1086,8 @@ Proposed / Approved / In Progress
 - 新增文件、测试、Benchmark 和文档必须与方案的文件变更计划一致。
 - 发现新的风险、限制或性能回归时必须记录。
 - 不得将未验证的目标写成已达成的结论。
+- 每个阶段完成时输出阶段报告，更新 `Phase Reports and Approval Gates`，将下一门禁设为 `Pending Human Approval` 并停止。
+- 只有 Human 审批记录完成后，才能将当前阶段推进到下一阶段。
 
 ### 28.6 完成、归档和恢复
 
@@ -1045,6 +1097,8 @@ Proposed / Approved / In Progress
 - 执行适用的测试、构建、静态检查和 Benchmark。
 - 审查 Git Diff 和暂存区 Diff。
 - 更新相关文档和 `AGENT_CONTEXT.md`。
+- 确认 ADR、任务方案、阶段报告、规范和 `AGENT_CONTEXT.md` 的内容已同步。
+- 确认每个阶段都有报告，且进入下一阶段前都有 Human 审批记录。
 - 完成一个逻辑完整的 Conventional Commit。
 - 执行提交后 Git 状态确认。
 

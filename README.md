@@ -16,7 +16,7 @@ Correctness
 
 ## Current Stage
 
-Phase 0 - Project Bootstrap.
+Phase 1 - Domain Model（当前同步开发治理规范）。
 
 The repository currently contains:
 
@@ -28,6 +28,7 @@ The repository currently contains:
 - Java version enforcement
 - GitHub Actions CI
 - Architecture, ADR, benchmark, and performance documentation skeleton
+- Task workspace with ADR-first decisions and phase approval gates
 
 No matching behavior or performance claim has been implemented yet.
 

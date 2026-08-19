@@ -4,7 +4,7 @@
 > 项目定位：单机高性能、低延迟、确定性撮合引擎
 > 主要语言：Java 21
 > 开发模式：Human-led Architecture + Codex-assisted Engineering
-> 当前阶段：Project Bootstrap
+> 当前阶段：Phase 1 - Domain Model（Governance Alignment）
 >
 > 本文件是 Codex 在本项目中的最高优先级项目级行为规范。
 > 每次启动新的 Codex 会话时，必须首先阅读：
@@ -467,6 +467,7 @@ Codex 不应该一次性实现整个系统。
 - Benchmark / Profile 计划
 - 风险与回滚方案
 - Git 提交计划
+- 当前开发阶段、下一审批门禁和阶段报告记录方式
 
 任务状态必须遵循：
 
@@ -487,9 +488,11 @@ Proposed
 
 任务方案的 `Decision` 小节必须明确记录 ADR 关联：
 
-- 需要架构或重要技术决策时，必须创建或更新 `docs/adr/` 下的 ADR。
+- 识别出需要长期保留的技术决策时，必须先创建或更新 `docs/adr/` 下状态为 `Proposed` 的 ADR 草案。
+- ADR 草案必须先记录 Context、Problem、Options、Proposed Decision、Scope Boundary、Consequences 和验证计划，再进行技术决策或审批。
+- Human Review 和技术决策只能发生在 ADR 草案存在之后，结果必须回写 ADR 状态。
 - 任务方案必须记录 ADR 的相对路径、编号、标题和当前状态。
-- ADR 必须在开始实现前完成创建或更新，并经过 Human 决策。
+- ADR 状态与审批结果一致后，任务方案才能获批并进入实现。
 - 任务方案中的决策必须与 ADR 中的 `Decision` 内容一致；任务方案负责执行范围，ADR 负责长期决策记录。
 - 如果明确不需要 ADR，必须写明 `ADR: Not required` 及不需要的理由，不能留空或只勾选 `No architecture change`。
 - ADR 路径失效、状态不一致或决策发生变化时，必须先同步任务方案和 ADR，再继续实现。
@@ -497,6 +500,29 @@ Proposed
 只有 Human 明确审批后，任务才能进入 `Approved`，随后才允许开始实现。开始实现时将状态改为 `In Progress`，完成验收、测试、文档和 Git 提交后改为 `Completed`，并将方案移动到 `tasks/completed/`。
 
 如果实现范围、设计、验收标准或风险发生变化，必须先更新任务方案并重新审批。不得通过代码先行的方式绕过方案审批。
+
+### 6.3 阶段报告与逐步审批
+
+任务必须按风险和交付边界划分为若干开发阶段，至少区分：
+
+```text
+ADR / Decision
+    -> Task Approval
+    -> Implementation
+    -> Verification
+    -> Documentation and Synchronization
+```
+
+每个阶段完成后，Codex 必须：
+
+1. 输出并在任务方案的 `Phase Reports and Approval Gates` 中记录阶段报告。
+2. 报告目标、实际完成内容、文件范围、验证证据、偏差、风险、限制和下一阶段提案。
+3. 将下一审批门禁设为 `Pending Human Approval` 并停止执行下一阶段。
+4. 等待 Human 明确批准，并记录日期、审批人、决定、约束和备注。
+
+只有审批记录完成后才能进入下一阶段。审批被拒绝、增加约束或发现范围变化时，必须先更新任务方案；如果影响技术决策，必须先创建或更新 ADR，再重新申请审批。
+
+阶段完成后的文档、ADR、任务方案、规范和 `AGENT_CONTEXT.md` 必须同步；同步未完成时不能将任务标记为 `Completed`。
 
 每次任务：
 
@@ -508,8 +534,10 @@ Proposed
 6. 执行相关测试
 7. 检查性能影响
 8. 检查 Git diff
-9. 更新任务状态、文档和上下文
-10. 总结结果
+9. 输出阶段报告并等待 Human 审批
+10. 审批通过后进入下一阶段
+11. 更新任务状态、文档和上下文
+12. 总结结果
 
 ---
 
@@ -683,13 +711,19 @@ Codex 不得自行决定：
 
 ```text
 需求确认
+    -> 创建 ADR 草案
+    -> Human 决策和审批
     -> 范围与验收标准
-    -> 设计与 ADR 关联
+    -> 任务方案审批
     -> 最小实现
+    -> 阶段报告
+    -> Human 审批
     -> 测试与静态检查
-    -> Diff Review
-    -> Benchmark / Profile（如适用）
-    -> 文档与上下文更新
+    -> 阶段报告
+    -> Human 审批
+    -> 文档与上下文同步
+    -> 阶段报告
+    -> Human 审批
     -> Git Commit
     -> 状态确认
 ```
@@ -704,6 +738,7 @@ Codex 不得自行决定：
 - 影响范围
 - 风险
 - 需要执行的验证命令
+- 阶段划分、阶段报告位置和每个阶段的审批门禁
 
 需求不明确、验收标准冲突或涉及架构变化时，Codex 必须先报告，不得自行扩大范围。
 
@@ -723,6 +758,8 @@ Codex 不得自行决定：
 - 代码差异审查
 - 相关 Benchmark 或 Profile
 - 文档和 `AGENT_CONTEXT.md` 更新
+- 每个完成阶段的报告和 Human 审批记录
+- ADR、任务方案、规范和 `AGENT_CONTEXT.md` 的最终同步
 - Git 提交前后状态确认
 
 ---
@@ -936,7 +973,8 @@ Release Tag 必须建立在已验证的稳定提交上，并记录：
 4. 构建和适用的质量门禁通过。
 5. 性能相关结论有 Benchmark 或 Profile 证据。
 6. 代码 Diff 已审查。
-7. 文档和 `AGENT_CONTEXT.md` 已同步。
-8. Git Commit 已完成或明确说明未提交原因。
-9. 提交后 Git 状态已确认。
-10. 最终报告完整记录变更、验证、风险和下一步。
+7. 每个开发阶段都有阶段报告，且进入下一阶段前已有 Human 审批。
+8. 文档和 `AGENT_CONTEXT.md` 已同步。
+9. Git Commit 已完成或明确说明未提交原因。
+10. 提交后 Git 状态已确认。
+11. 最终报告完整记录变更、验证、风险和下一步。

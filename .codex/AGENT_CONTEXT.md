@@ -67,17 +67,20 @@ Phase 1 - Domain Model
 - [x] Task workspace and plan-first workflow
 - [x] Domain model and correctness baseline
 - [x] ADR linkage recorded for the domain decision
+- [x] ADR-first decision and phase approval governance
 
 ### Current Task
 
-`TASK-20260819-002` - Establish the domain model and correctness baseline (Completed).
+`TASK-20260819-003` - Enforce ADR-first decisions and phase approval gates
+(`Completed`).
 
 ### Next Task
 
 Phase 2 - Basic OrderBook.
 
 No Phase 2 task plan has been approved yet. Production code must not be modified
-until a new task plan is approved and its decision/ADR linkage is recorded.
+until a new task plan is approved, its decision/ADR linkage is recorded, and the
+phase report and Human approval gate are recorded.
 
 ---
 
@@ -324,6 +327,7 @@ This is a research and engineering project, not a real trading platform.
 | Trade/Execution separation | Accepted with constraints | Distinguish one match from one order's execution result |
 | Logical event sequence | Accepted with constraints | Deterministic ordering independent of time and scheduling |
 | ADR-0005 domain model | Accepted with constraints | Long-term record of Phase 1 domain semantics |
+| ADR-0006 governance | Accepted | ADR-first decisions, phase reports, Human approval gates, and document synchronization |
 | Netty | Planned | High-performance networking |
 | Disruptor | Planned | Low-contention event pipeline |
 | WAL | Planned | Crash recovery |
@@ -415,6 +419,7 @@ At the beginning of every session:
 9. Inspect recent commits
 10. Identify current phase
 11. Confirm task scope and approval status
+12. Confirm current development stage, phase report status, and next approval gate
 
 At the end:
 
@@ -423,7 +428,10 @@ At the end:
 3. Inspect Git diff
 4. Update `AGENT_CONTEXT.md`
 5. Update the active task plan and move completed plans to `tasks/completed/`
-6. Report:
+6. If a stage is complete, write its phase report, set the next gate to
+   `Pending Human Approval`, and stop before the next stage until Human approval
+   is recorded.
+7. Report:
    - Changes
    - Tests
    - Benchmarks
@@ -459,15 +467,27 @@ All implementation follows this lifecycle:
 
 ```text
 Requirement
-    -> Scope
-    -> Design
+    -> ADR Draft
+    -> Human Decision
+    -> Scope and Task Approval
     -> Implementation
+    -> Phase Report
+    -> Human Approval
     -> Verification
-    -> Review
-    -> Documentation
+    -> Phase Report
+    -> Human Approval
+    -> Documentation and Synchronization
+    -> Phase Report
+    -> Human Approval
     -> Commit
     -> Git Status Confirmation
 ```
+
+Every technical decision must have an ADR draft before the decision is made.
+Every completed development stage must have a phase report and an explicit
+Human approval before the next stage begins. ADR, task plan, project rules,
+related project documents, and this context file must be synchronized before a
+task is marked `Completed`.
 
 Git status must be checked:
 
@@ -547,8 +567,14 @@ The completed domain-model task is:
 tasks/completed/TASK-20260819-002-domain-model-and-correctness-baseline.md
 ```
 
-Its status is `Completed`. The next OrderBook task requires a new approved plan
-before production code or tests are modified.
+The completed governance task is:
+
+```text
+tasks/completed/TASK-20260819-003-adr-first-phase-approval-governance.md
+```
+
+All listed tasks have status `Completed`. The next OrderBook task requires a new
+approved plan before production code or tests are modified.
 
 Each task plan must record:
 
@@ -559,6 +585,9 @@ Each task plan must record:
 - Risks and rollback
 - Verification commands
 - Approval and implementation log
+- Current stage, phase reports, and approval gates
 - Git commit plan
 
-If implementation changes the approved scope or design, update the task plan and obtain approval again before continuing.
+If implementation changes the approved scope or design, update the task plan
+and obtain approval again before continuing. If a technical decision changes,
+create or update the ADR before requesting the decision again.

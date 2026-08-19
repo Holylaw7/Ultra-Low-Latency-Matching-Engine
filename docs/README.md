@@ -3,7 +3,7 @@
 Documentation is organized by purpose:
 
 - `architecture/`: system structure and module responsibilities
-- `adr/`: important design decisions and their consequences
+- `adr/`: decision records created before technical decisions and their consequences
 - `benchmark/`: reproducible benchmark methodology and results
 - `performance/`: profiling data and optimization history
 
