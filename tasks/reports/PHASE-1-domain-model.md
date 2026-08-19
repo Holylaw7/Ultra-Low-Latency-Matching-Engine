@@ -10,7 +10,7 @@
 | Report Date | `2026-08-19` |
 | Phase Status | `Completed` |
 | Next Stage | `Phase 2 - Basic OrderBook` |
-| Next Approval Gate | `Pending Human Approval` |
+| Next Approval Gate | `Phase 2 ADR / Task Plan Approval` |
 
 ## 2. Objective
 
@@ -94,12 +94,11 @@ Result:
 3. 创建 `Proposed` OrderBook 任务方案并链接具体 ADR。
 4. 在 Human 审批 ADR 和任务方案前，不修改 OrderBook 生产代码或测试代码。
 
-## 9. Approval Request
+## 9. Approval Record
 
-请 Human Developer 审批本报告，确认：
+| Date | Reviewer | Decision | Notes |
+| --- | --- | --- | --- |
+| 2026-08-19 | Human Developer | `Approved` | Phase 1 Domain Model and Correctness Baseline accepted. Build, tests, Checkstyle, determinism, and scope constraints verified. Approved to enter Phase 2 ADR / Decision stage. No Phase 2 production implementation is authorized until the Phase 2 ADR and Task Plan are separately approved. |
 
-- Phase 1 - Domain Model 已完成并接受上述限制。
-- 允许进入 Phase 2 的 `ADR / Decision` 阶段。
-- Phase 2 在 ADR 草案和任务方案获批前不得开始生产代码或测试实现。
-
-在审批记录完成前，下一阶段保持 `Pending Human Approval`。
+Phase 1 hand-off is approved. Phase 2 is authorized only through its
+`ADR / Decision` stage; the next gate is `Phase 2 ADR / Task Plan Approval`.

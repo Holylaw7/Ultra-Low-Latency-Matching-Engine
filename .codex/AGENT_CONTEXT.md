@@ -1,7 +1,7 @@
 # AGENT_CONTEXT - Matching Engine
 
 > Last Updated: 2026-08-19
-> Project Status: Phase 1 - Domain Model
+> Project Status: Phase 2 - Basic OrderBook (ADR / Decision)
 > Owner: Human Developer
 > Primary Agent: Codex
 
@@ -53,7 +53,7 @@ Codex owns implementation assistance.
 
 ### Phase
 
-Phase 1 - Domain Model
+Phase 2 - Basic OrderBook (ADR / Decision)
 
 ### Completed
 
@@ -81,11 +81,10 @@ Phase 2 - Basic OrderBook.
 Phase 1 report:
 [`tasks/reports/PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md).
 
-The Phase 1 implementation and verification are complete. The next gate is
-`Pending Human Approval`; Phase 2 must not start before Human approves the
-Phase 1 hand-off. After approval, Phase 2 may begin only with its ADR /
-Decision stage and a `Proposed` task plan. Production code and tests must not
-be modified until the Phase 2 ADR and task plan are approved.
+The Phase 1 implementation and verification are complete. Human Developer
+approved the Phase 1 hand-off on `2026-08-19` and authorized entry into the
+Phase 2 `ADR / Decision` stage. Phase 2 production code and tests remain
+blocked until the Phase 2 ADR and task plan are separately approved.
 
 ---
 

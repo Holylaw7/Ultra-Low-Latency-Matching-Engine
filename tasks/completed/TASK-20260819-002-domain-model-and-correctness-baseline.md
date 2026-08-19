@@ -271,11 +271,11 @@ feat(domain): establish matching domain model
 
 | Stage | Report Location | Status | Next Approval Gate | Human Approval |
 | --- | --- | --- | --- | --- |
-| Phase 1 - Domain Model | [`tasks/reports/PHASE-1-domain-model.md`](../reports/PHASE-1-domain-model.md) | `Completed` | `Pending Human Approval` before Phase 2 ADR / Decision | Pending |
+| Phase 1 - Domain Model | [`tasks/reports/PHASE-1-domain-model.md`](../reports/PHASE-1-domain-model.md) | `Completed` | `Phase 2 ADR / Task Plan Approval` | 2026-08-19 Human Developer: `Approved` |
 
-阶段报告确认 Phase 1 的实现、验证和文档同步已完成。报告已记录范围、
-验证证据、限制、未验证内容和 Phase 2 提案；在 Human 审批前不得进入
-Phase 2 的 ADR / Decision 阶段。
+阶段报告确认 Phase 1 的实现、验证和文档同步已完成。Human Developer
+于 2026-08-19 批准 Phase 1，并授权进入 Phase 2 的 `ADR / Decision`
+阶段；Phase 2 ADR 和任务方案分别获批前，不得开始生产代码或测试实现。
 
 ## 18. Completion Checklist
 
