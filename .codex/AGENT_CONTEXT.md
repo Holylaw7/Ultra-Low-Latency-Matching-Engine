@@ -67,11 +67,11 @@ Phase 0 - Bootstrap
 
 ### Current Task
 
-Project initialization.
+Establish repository-level software engineering and Git development rules.
 
 ### Next Task
 
-Establish the domain model and correctness baseline.
+Initialize the Maven project and establish the domain model and correctness baseline.
 
 ---
 
@@ -429,3 +429,55 @@ ADR must contain:
 - Consequences
 - Benchmark Evidence
 
+---
+
+## 20. Development Governance
+
+All implementation follows this lifecycle:
+
+```text
+Requirement
+    -> Scope
+    -> Design
+    -> Implementation
+    -> Verification
+    -> Review
+    -> Documentation
+    -> Commit
+    -> Git Status Confirmation
+```
+
+Git status must be checked:
+
+- At the beginning of every session
+- Before editing
+- After editing
+- Before staging
+- After staging
+- Before committing
+- After committing
+- Before the final report
+
+The working tree should be clean after a completed task.
+
+Required repository checks:
+
+```text
+git status --short --branch
+git branch --show-current
+git log --oneline --decorate -5
+git diff --stat
+git diff --cached --stat
+git diff --check
+```
+
+Commit requirements:
+
+- One logical topic per commit
+- Conventional Commits message
+- Tests and applicable quality gates pass
+- Staged diff reviewed
+- No secrets, generated files, or unrelated changes
+- Commit hash and final status reported
+
+Push, rebase, amend, reset, restore, clean, and force push require explicit authorization.

@@ -626,3 +626,267 @@ Codex 不得自行决定：
 
 > Build a technically credible, measurable, deterministic, single-node ultra-low-latency matching engine.
 
+---
+
+## 13. 软件工程交付流程
+
+所有开发任务必须遵循以下生命周期：
+
+```text
+需求确认
+    -> 范围与验收标准
+    -> 设计与 ADR
+    -> 最小实现
+    -> 测试与静态检查
+    -> Diff Review
+    -> Benchmark / Profile（如适用）
+    -> 文档与上下文更新
+    -> Git Commit
+    -> 状态确认
+```
+
+每个任务开始前必须明确：
+
+- 目标
+- 非目标
+- 输入与输出
+- 验收标准
+- 影响范围
+- 风险
+- 需要执行的验证命令
+
+需求不明确、验收标准冲突或涉及架构变化时，Codex 必须先报告，不得自行扩大范围。
+
+实现时必须：
+
+- 保持模块边界清晰
+- 优先复用现有抽象和项目约定
+- 将业务逻辑与 Infrastructure 分离
+- 避免在同一变更中混合功能、无关重构和格式化
+- 保持 API、数据格式和事件顺序的兼容性，除非已有明确决策
+- 对失败路径、边界条件和资源释放进行处理
+
+交付前必须完成：
+
+- 相关测试
+- 构建和静态检查
+- 代码差异审查
+- 相关 Benchmark 或 Profile
+- 文档和 `AGENT_CONTEXT.md` 更新
+- Git 提交前后状态确认
+
+---
+
+## 14. Git 工作流与状态确认
+
+Git 是项目变更的唯一追踪来源。任何代码、测试、配置或文档修改都必须通过 Git 管理。
+
+### 14.1 会话开始检查
+
+每次会话开始必须执行并理解：
+
+```bash
+git status --short --branch
+git branch --show-current
+git log --oneline --decorate -5
+git diff --stat
+git diff --cached --stat
+```
+
+如果存在未提交修改：
+
+- 先区分当前任务修改与既有修改
+- 不得覆盖、撤销或重置用户已有修改
+- 不得把无关修改混入当前提交
+- 若既有修改影响当前任务，必须先报告风险
+
+### 14.2 修改前检查
+
+开始编辑前必须确认：
+
+- 当前分支正确
+- 工作区状态已记录
+- 目标文件属于当前任务范围
+- 不存在未处理的冲突
+- 依赖、构建和测试基线已知
+
+### 14.3 分支规则
+
+除初始化或明确授权外，不直接在稳定分支上开发。
+
+分支命名必须使用以下前缀之一：
+
+```text
+feature/<short-description>
+fix/<short-description>
+perf/<short-description>
+test/<short-description>
+refactor/<short-description>
+docs/<short-description>
+chore/<short-description>
+```
+
+分支必须只承载一个逻辑主题。不得通过创建大量无意义分支规避整理变更。
+
+### 14.4 暂存与 Diff 审查
+
+禁止无审查地执行全量暂存作为默认流程。优先显式指定相关文件：
+
+```bash
+git add <file1> <file2>
+git status --short
+git diff --cached --stat
+git diff --cached --check
+git diff --cached
+```
+
+暂存区审查必须确认：
+
+- 没有密钥、口令、Token、个人配置或敏感数据
+- 没有构建产物、临时文件或 IDE 文件
+- 没有无关格式化和重命名
+- 没有删除测试或降低校验强度
+- 变更与任务目标一致
+
+### 14.5 提交前门禁
+
+提交前必须根据变更范围执行：
+
+```bash
+git diff --check
+git diff --cached --check
+```
+
+并执行适用的：
+
+- 编译
+- 单元测试
+- 集成测试
+- 静态分析
+- 格式检查
+- 相关 Benchmark
+- 相关 Recovery / Replay 测试
+
+任何门禁失败时，不得提交“先提交再修复”的半成品。若确需提交未完成工作，必须明确标记并先报告。
+
+### 14.6 提交规范
+
+每个 Commit 必须：
+
+- 只包含一个逻辑完整变更
+- 能够独立解释修改原因
+- 通过适用的验证
+- 使用 Conventional Commits 风格
+- 不包含无关修改
+
+格式：
+
+```text
+<type>(<scope>): <imperative summary>
+```
+
+允许的 `type`：
+
+```text
+feat
+fix
+perf
+test
+refactor
+docs
+build
+ci
+chore
+```
+
+示例：
+
+```text
+feat(orderbook): implement price level
+fix(match): preserve time priority after partial fill
+perf(orderbook): reduce cancel allocation
+test(recovery): verify deterministic replay
+docs(benchmark): record baseline methodology
+```
+
+禁止使用以下无意义提交信息：
+
+```text
+update
+fix
+test
+aaa
+final
+temp
+```
+
+除非用户明确要求，Codex 不得执行：
+
+- `git reset --hard`
+- `git checkout -- <path>`
+- `git restore <path>`
+- `git clean`
+- `git commit --amend`
+- `git rebase`
+- 强制推送
+
+这些操作可能破坏已有工作或历史，必须先获得明确授权。
+
+### 14.7 提交后确认
+
+每次提交完成后必须执行：
+
+```bash
+git status --short --branch
+git log -1 --oneline --decorate
+git show --stat --oneline HEAD
+```
+
+除非存在明确说明的未完成修改，提交后的工作区必须干净。
+
+最终报告必须包含：
+
+- 当前分支
+- Commit hash
+- Commit message
+- 提交包含的文件或逻辑范围
+- 执行过的验证命令
+- 验证结果
+- 是否存在未提交修改
+
+### 14.8 推送与发布
+
+未经用户明确要求，不执行 `git push`。
+
+推送前必须确认：
+
+- 本地工作区干净
+- 当前分支和远端目标正确
+- 最新提交已通过本地验证
+- 没有敏感文件
+- 提交历史和变更范围合理
+
+Release Tag 必须建立在已验证的稳定提交上，并记录：
+
+- 版本号
+- 变更摘要
+- 测试结果
+- Benchmark 结果
+- 已知限制
+
+---
+
+## 15. Codex 会话完成标准
+
+一次开发任务只有同时满足以下条件才算完成：
+
+1. 需求范围明确。
+2. 实现与现有架构一致。
+3. 相关测试已新增或更新。
+4. 构建和适用的质量门禁通过。
+5. 性能相关结论有 Benchmark 或 Profile 证据。
+6. 代码 Diff 已审查。
+7. 文档和 `AGENT_CONTEXT.md` 已同步。
+8. Git Commit 已完成或明确说明未提交原因。
+9. 提交后 Git 状态已确认。
+10. 最终报告完整记录变更、验证、风险和下一步。
