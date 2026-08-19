@@ -541,7 +541,7 @@ The current completed governance task is:
 tasks/completed/TASK-20260819-001-task-workspace-and-plan-first.md
 ```
 
-The next domain-model task is:
+The completed domain-model task is:
 
 ```text
 tasks/completed/TASK-20260819-002-domain-model-and-correctness-baseline.md
