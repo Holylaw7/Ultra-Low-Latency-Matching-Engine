@@ -2,9 +2,8 @@
 
 ## Status
 
-Baseline design planned; implementation pending. Phase 2 details are proposed
-in [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../adr/ADR-0007-basic-orderbook-structure-and-boundaries.md)
-and await Human approval.
+Baseline design approved; implementation in progress under
+[`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../adr/ADR-0007-basic-orderbook-structure-and-boundaries.md).
 
 ## Initial Baseline
 
@@ -16,8 +15,9 @@ The first implementation will use:
 
 This is a correctness and measurement baseline, not a final performance claim.
 
-No Phase 2 production implementation is authorized while ADR-0007 or
-`TASK-20260819-004` remains `Proposed`.
+Phase 2 production implementation is authorized only within the approved ADR
+and task scope. The `OrderNode + OrderQueue + PriceLevel` sub-stage is complete;
+the next `BidBook / AskBook` sub-stage is blocked pending Human approval.
 
 ## Invariants
 

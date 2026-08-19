@@ -6,14 +6,14 @@
 | --- | --- |
 | Task ID | `TASK-20260819-004` |
 | Title | Establish Basic OrderBook baseline |
-| Status | `Proposed` |
+| Status | `In Progress` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created | `2026-08-19` |
 | Updated | `2026-08-19` |
 | Related Phase | `Phase 2 - Basic OrderBook` |
 | Related ADR | [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md) |
-| Current Stage | `ADR / Decision` |
+| Current Stage | `Implementation - OrderNode / OrderQueue / PriceLevel (Completed)` |
 | Next Approval Gate | `Pending Human Approval` |
 
 ## 2. Background
@@ -23,8 +23,8 @@ Phase 1 已完成并经 Human Developer 批准，提供了稳定的 `Order`、�
 FIFO 和 OrderId 索引的初始方向，但还没有覆盖 Basic OrderBook 所需的
 取消、Best Bid/Ask、空价格层和结构化撮合边界。
 
-本方案根据 Phase 2 架构审查创建，当前仅处于 `Proposed` 状态。ADR-0007
-和本方案分别获批前，不修改 OrderBook 生产代码或测试代码。
+本方案根据 Phase 2 架构审查创建，已于 `2026-08-19` 获得 Human Developer
+批准。实现必须严格遵守 ADR-0007 的范围和约束，并按子阶段完成、报告和审批。
 
 ## 3. Goal
 
@@ -78,15 +78,16 @@ FIFO 和 OrderId 索引的初始方向，但还没有覆盖 Basic OrderBook 所�
 
 ### Current Implementation
 
-当前只有 Phase 1 领域模型。`Order` 已经提供：
+当前已完成 `OrderNode`、`OrderQueue` 和 `PriceLevel` 子阶段。Phase 1 的
+`Order` 已经提供：
 
 - limit/market 工厂方法；
 - `Side`、`OrderType`、`OrderStatus`；
 - `remainingQuantityUnits()`；
 - 受控 `applyExecution()` 和幂等 `cancel()`。
 
-当前没有 `OrderBook`、`BidBook`、`AskBook`、`PriceLevel`、`OrderQueue` 或
-取消索引实现。
+当前尚未实现 `OrderBook`、`BidBook`、`AskBook`、active `OrderId` 取消索引或
+结构化撮合结果。
 
 ### In Scope
 
@@ -127,26 +128,30 @@ OrderBook
 
 | Option | Advantages | Risks or Costs | Result |
 | --- | --- | --- | --- |
-| TreeMap + intrusive queue + active OrderId index | 清晰、可验证、与 ADR-0002 一致 | 对象和 O(log P) 价格层变更不是最终性能方案 | Proposed |
+| TreeMap + intrusive queue + active OrderId index | 清晰、可验证、与 ADR-0002 一致 | 对象和 O(log P) 价格层变更不是最终性能方案 | Accepted with constraints |
 | Custom balanced tree / SkipList | 可能改善局部性或分配 | 实现复杂，尚无基准证明 | Deferred |
 | Price Array / Radix | 密集价格区间可能更快 | 需要固定范围或额外映射，当前没有该约束 | Deferred |
 
 ### Decision
 
-推荐接受 ADR-0007 的 Proposed Decision，但当前不将其视为已批准决策。
-Human 审批需要确认：
+已接受 ADR-0007 的 Decision，状态为 `Accepted with constraints`。Human
+Developer 于 `2026-08-19` 批准进入 Implementation 阶段，确认：
 
 1. TreeMap 和 side-specific best cache 是否作为 Phase 2 baseline。
 2. active-only OrderId index 和由上层负责全局唯一性的边界。
 3. `OrderBookMatch` 结构化匹配片段以及 maker-price 语义。
-4. Market Order 延后到 Phase 3。
+4. Market Order、MatchingEngine、Trade/Execution 创建或发布、WAL、网络、
+   Disruptor、lock-free、off-heap、Custom Tree、SkipList、Radix 和未经
+   Benchmark 证明的性能优化均不在本任务范围内。
+5. 如需修改 Phase 1 `Order.applyExecution()`，必须暂停并重新审查
+   ADR-0005，不得在本任务中直接修改。
 
 ### ADR Linkage
 
 | Field | Value |
 | --- | --- |
 | ADR | [`docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md`](../../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md) |
-| Status | `Proposed` |
+| Status | `Accepted with constraints` |
 | Decision Summary | 使用 side-specific TreeMap、PriceLevel intrusive FIFO、active OrderId -> OrderNode 索引和 Best Price 缓存；支持 Add、Cancel、Best Bid/Ask 和结构化限价撮合；Market Order 与 MatchingEngine 延后。 |
 | Scope Boundary | 仅允许 Basic OrderBook 结构、取消、最佳价、限价结构化撮合和正确性测试；禁止 MatchingEngine、Market Order、网络、Pipeline、WAL、Recovery、性能替代结构和性能结论。 |
 
@@ -280,26 +285,27 @@ must not be mixed into an unrelated implementation commit.
 | Date | Reviewer | Stage | Decision | Constraints / Notes |
 | --- | --- | --- | --- | --- |
 | 2026-08-19 | Human Developer | Phase 1 hand-off | `Approved` | Authorized Phase 2 ADR / Decision stage only. No Phase 2 production code or tests authorized yet. |
-|  |  | ADR / Decision and Task Plan | `Pending` | Awaiting review of ADR-0007 and this Proposed task plan. |
+| 2026-08-19 | Human Developer | ADR / Decision and Task Plan | `Approved` | Approved ADR-0007 and TASK-20260819-004 for implementation. TreeMap + intrusive FIFO + active OrderId index + best-price cache is the Phase 2 baseline. Market Order, MatchingEngine, WAL, network, Disruptor, lock-free, off-heap, custom tree, SkipList, radix, and unproven performance optimization remain out of scope. |
 
 ## 16. Phase Reports and Approval Gates
 
 | Stage | Report Location | Status | Next Approval Gate | Human Approval |
 | --- | --- | --- | --- | --- |
-| ADR / Decision | [`tasks/reports/PHASE-2-adr-decision.md`](../reports/PHASE-2-adr-decision.md) | `Completed - Proposed` | `Pending Human Approval` | Pending |
-| Task Approval |  | `Pending` | `Pending Human Approval` |  |
-| Implementation |  | `Pending` | `Pending Human Approval` |  |
+| ADR / Decision | [`tasks/reports/PHASE-2-adr-decision.md`](../reports/PHASE-2-adr-decision.md) | `Completed` | `Approved` | Approved 2026-08-19 |
+| Task Approval |  | `Completed` | `Approved` | Approved 2026-08-19 |
+| Implementation | [`tasks/reports/PHASE-2-implementation-ordernode-queue-pricelevel.md`](../reports/PHASE-2-implementation-ordernode-queue-pricelevel.md) | `Completed - Pending Human Approval` | `Pending Human Approval` | Pending |
 | Verification |  | `Pending` | `Pending Human Approval` |  |
 | Documentation and Synchronization |  | `Pending` | `Pending Human Approval` |  |
 
-本阶段报告只证明 ADR 草案、任务方案和架构审查已完成，不代表技术决策或
-实现已获批。Human 审批 ADR 和任务方案后，才能进入 Implementation 阶段。
+本阶段报告已由 Human Developer 审批，允许进入 Implementation 阶段。实现仍须
+按子阶段输出报告，并在下一阶段前等待 Human approval。
 
 ## 17. Implementation Log
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-19 | Proposed | 完成 ADR-0002、ADR-0005、OrderBook 架构、Matching Engine 架构和 Phase 1 API 审查；创建 ADR-0007 草案和本任务方案 | 只读审查完成；未修改生产代码或测试代码 |
+| 2026-08-19 | Completed - Pending Human Approval | Human Developer 已批准 ADR-0007 和本任务方案；完成子阶段 `OrderNode + OrderQueue + PriceLevel` | `mvn verify` 成功；21 tests，0 failures，Checkstyle 0 |
 
 ## 18. Completion Checklist
 
@@ -311,10 +317,10 @@ must not be mixed into an unrelated implementation commit.
 - [ ] Documentation updated
 - [x] Decision and ADR linkage recorded
 - [x] ADR existed before the technical decision and task approval
-- [ ] Every completed stage has a phase report
-- [ ] Human approval is recorded before each next stage
-- [ ] ADR, task plan, rules, project documents, and `AGENT_CONTEXT.md` are synchronized
-- [ ] `AGENT_CONTEXT.md` updated
-- [ ] Diff reviewed
+- [x] Every completed stage has a phase report
+- [x] Human approval is recorded before each next stage
+- [x] ADR, task plan, rules, project documents, and `AGENT_CONTEXT.md` are synchronized
+- [x] `AGENT_CONTEXT.md` updated
+- [x] Diff reviewed
 - [ ] Commit created
 - [ ] Post-commit Git status confirmed

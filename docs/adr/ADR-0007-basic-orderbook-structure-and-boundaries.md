@@ -2,12 +2,14 @@
 
 ## Status
 
-Proposed
+Accepted with constraints
 
 ## Decision Record
 
 - Proposal date: `2026-08-19`
-- Reviewer: Pending Human Developer review
+- Reviewer: Human Developer
+- Decision date: `2026-08-19`
+- Decision: `Approved`
 - Related decisions:
   - [`ADR-0001-matching-model.md`](ADR-0001-matching-model.md)
   - [`ADR-0002-orderbook-structure.md`](ADR-0002-orderbook-structure.md)
@@ -38,8 +40,9 @@ does not define the complete behavior needed for the first Basic OrderBook:
 - the boundary between resting, matching, and market-order handling;
 - the structural match result consumed later by `MatchingEngine`.
 
-This ADR is a Phase 2 proposal. It does not authorize production
-implementation until the ADR and its linked task plan are approved.
+This ADR was approved for Phase 2 implementation on `2026-08-19`. Production
+implementation is authorized only within the scope and constraints recorded
+below and in the linked task plan.
 
 ## Problem
 
@@ -79,7 +82,7 @@ Costs:
   live price levels;
 - the active-only index does not provide historical order-id uniqueness.
 
-**Result: Proposed.**
+**Result: Accepted as the Phase 2 baseline with constraints.**
 
 ### Option 2 - Custom Red-Black Tree or Skip List
 
@@ -98,7 +101,7 @@ mapping rules.
 
 **Result: Deferred.**
 
-## Proposed Decision
+## Decision
 
 ### 1. Ownership and Side Separation
 
@@ -251,6 +254,12 @@ The following invariants must hold after every public operation:
 - Best Ask is the lowest live ask price, or empty;
 - when no match operation is active, `BestBid < BestAsk` whenever both exist.
 
+## Human Approval Record
+
+| Date | Reviewer | Decision | Constraints / Notes |
+| --- | --- | --- | --- |
+| 2026-08-19 | Human Developer | `Approved` | Authorizes Phase 2 implementation of the TreeMap side books, intrusive FIFO queues, active `OrderId -> OrderNode` index, best-price cache, add/cancel, and structural limit matching within the approved scope. `OrderBookMatch` remains a structural fragment only; maker price is authoritative. Market Order, MatchingEngine, Trade/Execution creation or publication, WAL, network, Disruptor, lock-free, off-heap, custom tree, SkipList, radix, and unproven performance optimization remain out of scope. Any Phase 1 domain change requires a separate ADR-0005 review. |
+
 ## Scope Boundary
 
 This proposal authorizes only the following after approval:
@@ -263,7 +272,7 @@ This proposal authorizes only the following after approval:
   deterministic matching;
 - documentation and a baseline benchmark plan.
 
-This proposal does not authorize:
+This decision does not authorize:
 
 - `MatchingEngine` event orchestration;
 - market-order matching policy;
@@ -321,5 +330,5 @@ conclusion is part of this proposal.
 The review found no conflict with ADR-0002's initial `TreeMap`, intrusive FIFO,
 and `OrderId` index direction. ADR-0007 refines that baseline with the missing
 behavioral boundaries and invariants required for implementation. ADR-0002
-remains the historical baseline; if this ADR is accepted, ADR-0007 becomes the
-authoritative Phase 2 implementation decision for the listed scope.
+remains the historical baseline; ADR-0007 is the authoritative Phase 2
+implementation decision for the listed scope.

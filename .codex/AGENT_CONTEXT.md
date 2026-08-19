@@ -1,7 +1,7 @@
 # AGENT_CONTEXT - Matching Engine
 
 > Last Updated: 2026-08-19
-> Project Status: Phase 2 - Basic OrderBook (ADR / Decision)
+> Project Status: Phase 2 - Basic OrderBook (Implementation - Pending Approval)
 > Owner: Human Developer
 > Primary Agent: Codex
 
@@ -53,7 +53,7 @@ Codex owns implementation assistance.
 
 ### Phase
 
-Phase 2 - Basic OrderBook (ADR / Decision)
+Phase 2 - Basic OrderBook (Implementation)
 
 ### Completed
 
@@ -71,31 +71,38 @@ Phase 2 - Basic OrderBook (ADR / Decision)
 
 ### Current Task
 
-`TASK-20260819-004` - Establish Basic OrderBook baseline (`Proposed`,
-`ADR / Decision` stage).
+`TASK-20260819-004` - Establish Basic OrderBook baseline (`In Progress`,
+`Implementation - OrderNode / OrderQueue / PriceLevel` completed; pending approval).
 
 ### Next Task
 
-Phase 2 - Basic OrderBook.
+Phase 2 - Basic OrderBook implementation. The
+`OrderNode`, `OrderQueue`, and `PriceLevel` sub-stage is complete. `BidBook`,
+`AskBook`, `OrderBook`, matching, and active-index aggregation remain for later
+approved sub-stages.
 
 Current task plan:
 [`tasks/active/TASK-20260819-004-basic-orderbook.md`](../tasks/active/TASK-20260819-004-basic-orderbook.md).
 
 Current ADR:
 [`docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md`](../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md)
-(`Proposed`).
+(`Accepted with constraints`).
 
 Current Phase 2 report:
 [`tasks/reports/PHASE-2-adr-decision.md`](../tasks/reports/PHASE-2-adr-decision.md).
+
+Current implementation sub-stage report:
+[`tasks/reports/PHASE-2-implementation-ordernode-queue-pricelevel.md`](../tasks/reports/PHASE-2-implementation-ordernode-queue-pricelevel.md).
 
 Phase 1 report:
 [`tasks/reports/PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md).
 
 The Phase 1 implementation and verification are complete. Human Developer
-approved the Phase 1 hand-off on `2026-08-19` and authorized entry into the
-Phase 2 `ADR / Decision` stage. The Phase 2 ADR and task plan are now proposed
-and awaiting Human approval. Phase 2 production code and tests remain blocked
-until both are separately approved.
+approved the Phase 1 hand-off on `2026-08-19`. Human Developer approved
+ADR-0007 and TASK-20260819-004 on `2026-08-19`, authorizing Phase 2
+implementation within the recorded constraints. The current implementation
+sub-stage `OrderNode + OrderQueue + PriceLevel` is complete. The next
+`BidBook / AskBook` sub-stage is blocked pending Human approval.
 
 ---
 
@@ -343,7 +350,7 @@ This is a research and engineering project, not a real trading platform.
 | Logical event sequence | Accepted with constraints | Deterministic ordering independent of time and scheduling |
 | ADR-0005 domain model | Accepted with constraints | Long-term record of Phase 1 domain semantics |
 | ADR-0006 governance | Accepted | ADR-first decisions, phase reports, Human approval gates, and document synchronization |
-| ADR-0007 Basic OrderBook | Proposed | TreeMap side books, intrusive FIFO levels, active cancellation index, best-price cache, and limit-order matching boundaries pending Human approval |
+| ADR-0007 Basic OrderBook | Accepted with constraints | TreeMap side books, intrusive FIFO levels, active cancellation index, best-price cache, and limit-order matching boundaries; implementation remains strictly scoped |
 | Netty | Planned | High-performance networking |
 | Disruptor | Planned | Low-contention event pipeline |
 | WAL | Planned | Crash recovery |
@@ -553,7 +560,7 @@ Verified on 2026-08-19:
 - JMH benchmark module packages successfully.
 - Checkstyle runs with zero violations.
 - GitHub Actions workflow is defined for `mvn verify`.
-- Phase 1 domain tests pass with 11 tests and zero failures.
+- Phase 1 domain tests pass with 12 tests and zero failures.
 - Root `mvn verify` passes after the domain model implementation.
 
 The bootstrap benchmark is an infrastructure smoke test only. It is not a matching-engine performance result.
@@ -589,8 +596,10 @@ The completed governance task is:
 tasks/completed/TASK-20260819-003-adr-first-phase-approval-governance.md
 ```
 
-All listed tasks have status `Completed`. The next OrderBook task requires a new
-approved plan before production code or tests are modified.
+All listed tasks have status `Completed` except the approved
+`TASK-20260819-004`, which is currently `In Progress`. No additional production
+code or test scope may be added without an updated approved plan and ADR
+review where applicable.
 
 Each task plan must record:
 

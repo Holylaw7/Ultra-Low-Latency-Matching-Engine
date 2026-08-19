@@ -9,13 +9,14 @@
 | Task | `TASK-20260819-004-basic-orderbook` |
 | ADR | [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md) |
 | Report Date | `2026-08-19` |
-| Stage Status | `Completed - Proposed`
-| Next Approval Gate | `Pending Human Approval` |
+| Stage Status | `Completed` |
+| Next Approval Gate | `Implementation` |
 
 ## 2. Objective
 
 在不修改生产代码和测试代码的前提下，完成 Basic OrderBook 的架构发现，
-明确数据结构、行为边界、测试计划和 ADR/任务方案关联。
+明确数据结构、行为边界、测试计划和 ADR/任务方案关联。该阶段已由 Human
+Developer 批准，并已开放 Phase 2 Implementation。
 
 ## 3. Reviewed Context
 
@@ -40,7 +41,7 @@
 - benchmark 文档要求后续覆盖插入、Best Price、OrderId Cancel、单层/多层
   撮合和空价格层清理，尚未产生任何性能结果。
 
-## 5. Proposed Decision
+## 5. Decision
 
 `ADR-0007` 提议：
 
@@ -53,16 +54,24 @@
 - `match` 只处理限价单，可跨多个价格层，按 maker price 生成结构化匹配片段。
 - Market Order、MatchingEngine、TradeId/事件分配、网络和持久化均延后。
 
-ADR-0007 当前状态仍为 `Proposed`，没有任何实现授权。
+ADR-0007 已变更为 `Accepted with constraints`，Human Developer 已授权
+按批准范围进入 Implementation。
 
 ## 6. Scope and Deviations
 
-本阶段只创建和同步：
+本阶段创建和同步：
 
 - ADR-0007 草案；
-- `TASK-20260819-004` Proposed 任务方案；
+- `TASK-20260819-004` 任务方案；
 - Phase 2 ADR/Decision 阶段报告；
 - 当前阶段、任务和审批门禁文档。
+
+Human Developer 于 `2026-08-19` 批准 ADR-0007 和
+`TASK-20260819-004`。批准范围包括 TreeMap side books、intrusive FIFO、
+active `OrderId -> OrderNode` index、best-price cache、add/cancel 和结构化
+限价撮合；Market Order、MatchingEngine、Trade/Execution 创建或发布、WAL、
+网络、Disruptor、lock-free、off-heap、Custom Tree、SkipList、Radix 和未经
+Benchmark 证明的性能优化均保持在范围外。
 
 未修改：
 
@@ -72,7 +81,8 @@ ADR-0007 当前状态仍为 `Proposed`，没有任何实现授权。
 - OrderBook 运行时行为；
 - ADR-0002 的历史内容。
 
-没有超出 Phase 1 批准中“只进入 Phase 2 ADR / Decision 阶段”的约束。
+没有超出 Phase 1 批准中“先完成 Phase 2 ADR / Decision，再等待审批后实现”的
+约束。
 
 ## 7. Risks and Open Review Points
 
@@ -95,17 +105,17 @@ ADR-0007 当前状态仍为 `Proposed`，没有任何实现授权。
 
 ## 9. Approval Request
 
-请 Human Developer 审批：
+Human Developer 已于 `2026-08-19` 审批：
 
-- `ADR-0007-basic-orderbook-structure-and-boundaries.md` 的 Proposed Decision；
-- `TASK-20260819-004-basic-orderbook.md` 的 Proposed 范围、验收标准和测试计划；
-- 允许进入 Phase 2 的 Task Approval / Implementation 阶段。
+- `ADR-0007-basic-orderbook-structure-and-boundaries.md` 的 Decision；
+- `TASK-20260819-004-basic-orderbook.md` 的范围、验收标准和测试计划；
+- 进入 Phase 2 Implementation 阶段。
 
-在审批记录完成前，Phase 2 保持：
+当前 Phase 2 状态：
 
 ```text
-ADR / Decision: Completed - Proposed
-Next Gate: Pending Human Approval
-Production Code: Not Authorized
-Production Tests: Not Authorized
+ADR / Decision: Completed
+Next Stage: Implementation
+Production Code: Authorized within approved scope
+Production Tests: Authorized within approved scope
 ```
