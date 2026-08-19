@@ -529,6 +529,25 @@ Requirement
 - 改变网络协议
 - 改变持久化或恢复策略
 
+#### 决策步骤的 ADR 记录要求
+
+任务方案的 `Decision` 小节必须包含一个 `ADR Linkage` 小节，并明确记录：
+
+| Field | Required Content |
+| --- | --- |
+| ADR | `docs/adr/ADR-NNNN-title.md`，或 `Not required` |
+| Status | ADR 当前状态，例如 `Proposed`、`Accepted`、`Accepted with constraints` |
+| Decision Summary | 与 ADR `Decision` 小节一致的摘要 |
+| Scope Boundary | 该决策允许和禁止的实现范围 |
+
+规则：
+
+1. 需要 ADR 的决策，必须先创建或更新 ADR，再开始生产代码实现。
+2. 任务方案必须链接具体 ADR，不能只写“ADR required”。
+3. ADR 与任务方案的决策内容必须一致；若不一致，先暂停实现并同步两者。
+4. 不需要 ADR 时，必须写 `ADR: Not required`，并说明这是局部实现、不改变架构、协议、数据格式或运行时语义。
+5. ADR 发生变更时，必须在任务方案的 `Implementation Log` 中记录变更原因、影响和重新验证结果。
+
 ### 22.3 实现
 
 实现必须：
@@ -869,6 +888,14 @@ Release Tag 只能建立在已验证提交上，并必须记录版本、变更�
 - Benchmark 报告
 - Recovery 文档
 - `AGENT_CONTEXT.md`
+
+每个任务的决策步骤必须与对应 ADR 同步。任务完成前必须确认：
+
+- 任务方案的 ADR 链接可访问。
+- ADR 状态和任务审批状态一致。
+- 任务方案的决策摘要与 ADR 的决策内容一致。
+- ADR 已列入 Git Diff 审查范围。
+- 如果不需要 ADR，任务方案中已记录明确理由。
 
 重大设计、性能或恢复结论必须记录：
 

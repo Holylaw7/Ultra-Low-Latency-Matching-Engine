@@ -66,6 +66,20 @@
 
 说明推荐方案和选择理由。
 
+### ADR Linkage
+
+必须在决策步骤中明确写入对应 ADR：
+
+| Field | Value |
+| --- | --- |
+| ADR | `docs/adr/ADR-NNNN-title.md` or `Not required` |
+| Status | `Proposed` / `Accepted` / `Accepted with constraints` / `Not applicable` |
+| Decision Summary | 与 ADR `Decision` 小节一致的摘要 |
+| Scope Boundary | 允许和禁止的实现范围 |
+
+如果需要 ADR，必须在开始实现前创建或更新，并将具体路径写入本任务方案的 `Related ADR` 和本节。
+如果不需要 ADR，必须说明不改变架构、协议、数据格式或运行时语义的理由。
+
 ### Architecture Impact
 
 - [ ] No architecture change
@@ -154,6 +168,7 @@
 - [ ] Static or format checks passed
 - [ ] Benchmark or profile completed when applicable
 - [ ] Documentation updated
+- [ ] Decision and ADR linkage verified
 - [ ] `AGENT_CONTEXT.md` updated
 - [ ] Diff reviewed
 - [ ] Commit created
