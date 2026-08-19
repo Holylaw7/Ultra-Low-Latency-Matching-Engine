@@ -898,3 +898,134 @@ Release Tag 只能建立在已验证提交上，并必须记录版本、变更�
 - Commit 已完成或未提交原因已说明
 - 提交后 Git 状态已确认
 - 没有明显回归
+
+---
+
+## 28. Task 工作区与方案先行
+
+### 28.1 唯一方案工作区
+
+`tasks/` 是项目开发方案的唯一工作区。任何需要修改以下内容的任务，都必须先在 `tasks/active/` 创建任务方案：
+
+- 生产代码
+- 测试代码
+- 构建配置
+- Benchmark
+- Profile 配置
+- 网络协议
+- WAL、Snapshot 或 Recovery
+- 项目文档
+- 运行时行为
+
+任务方案模板位于：
+
+```text
+tasks/TEMPLATE.md
+```
+
+工作区结构：
+
+```text
+tasks/
+├── README.md
+├── TEMPLATE.md
+├── active/
+├── completed/
+└── archive/
+```
+
+### 28.2 方案内容要求
+
+方案必须在实现前明确：
+
+- Task ID、标题、负责人和相关阶段
+- 背景、目标和非目标
+- 需求、输入、输出和验收标准
+- 当前实现与影响范围
+- 设计方案、候选方案和选择理由
+- 是否需要 ADR 或 Human 架构决策
+- 计划修改的文件和模块
+- Unit、Integration、System、Recovery 或 Replay 测试计划
+- Benchmark、Profile、数据集和指标计划
+- 风险、兼容性和回滚方案
+- 验证命令和 Git 提交计划
+
+方案不完整时，任务不得进入实现阶段。
+
+### 28.3 状态流转
+
+任务状态只能按以下流程流转：
+
+```text
+Proposed
+    -> Approved
+    -> In Progress
+    -> Completed
+```
+
+任务也可以在明确记录原因后进入：
+
+```text
+Proposed / Approved / In Progress
+    -> Cancelled
+```
+
+状态含义：
+
+- `Proposed`：方案已创建，等待 Human 审批。
+- `Approved`：方案已审批，允许开始实现。
+- `In Progress`：已开始实现、测试或 Benchmark。
+- `Completed`：验收标准已满足，变更已提交并完成状态确认。
+- `Cancelled`：任务被明确取消，且取消原因已记录。
+
+### 28.4 审批门禁
+
+`Proposed` 状态未获 Human 明确确认前：
+
+- 可以阅读代码和文档。
+- 可以执行只读命令、构建基线和补充方案。
+- 不得修改生产代码、测试代码、构建配置或运行时行为。
+- 不得创建用于绕过审批的临时实现。
+
+只有方案进入 `Approved` 后，才能将状态改为 `In Progress` 并开始开发。
+
+以下变更必须在方案中明确标记并等待 Human 决策：
+
+- 改变核心架构
+- 改变 Matching Model
+- 改变 OrderBook 核心结构
+- 改变事件顺序或 Sequence 语义
+- 改变网络协议
+- 改变 WAL、Snapshot 或 Recovery 格式
+- 引入或替换关键第三方依赖
+- 扩大原定任务范围
+
+### 28.5 实现期间管理
+
+实现过程中必须持续更新任务方案：
+
+- 开始实现时记录 `In Progress`。
+- 设计发生变化时先更新方案，再继续实现。
+- 新增文件、测试、Benchmark 和文档必须与方案的文件变更计划一致。
+- 发现新的风险、限制或性能回归时必须记录。
+- 不得将未验证的目标写成已达成的结论。
+
+### 28.6 完成、归档和恢复
+
+任务完成前必须：
+
+- 满足全部验收标准。
+- 执行适用的测试、构建、静态检查和 Benchmark。
+- 审查 Git Diff 和暂存区 Diff。
+- 更新相关文档和 `AGENT_CONTEXT.md`。
+- 完成一个逻辑完整的 Conventional Commit。
+- 执行提交后 Git 状态确认。
+
+完成后：
+
+1. 将任务状态改为 `Completed`。
+2. 将任务方案从 `tasks/active/` 移动到 `tasks/completed/`。
+3. 在 `Implementation Log` 中记录结果和验证命令。
+4. 长期历史方案可移动到 `tasks/archive/`，不得无记录删除。
+
+每次新会话必须先读取 `tasks/README.md` 和相关 `tasks/active/` 方案，确认当前任务状态后才能编辑文件。

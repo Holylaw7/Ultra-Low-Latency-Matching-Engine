@@ -64,14 +64,17 @@ Phase 0 - Bootstrap
 - [x] JMH
 - [x] CI
 - [x] Documentation structure
+- [x] Task workspace and plan-first workflow
 
 ### Current Task
 
-Establish the Phase 0 project bootstrap framework.
+`TASK-20260819-001` - Establish task workspace and plan-first development workflow.
 
 ### Next Task
 
-Establish the domain model and correctness baseline.
+`TASK-20260819-002` - Establish the domain model and correctness baseline.
+
+The next task is currently `Proposed`. Production code must not be modified until Human approval is recorded in the task plan.
 
 ---
 
@@ -388,12 +391,14 @@ At the beginning of every session:
 1. Read `MASTER_PROMPT.md`
 2. Read `DEVELOPMENT_RULES.md`
 3. Read `AGENT_CONTEXT.md`
-4. Check Git status
-5. Check current branch
-6. Check build status
-7. Inspect recent commits
-8. Identify current phase
-9. Confirm task scope
+4. Read `tasks/README.md`
+5. Read relevant plans in `tasks/active/`
+6. Check Git status
+7. Check current branch
+8. Check build status
+9. Inspect recent commits
+10. Identify current phase
+11. Confirm task scope and approval status
 
 At the end:
 
@@ -401,7 +406,8 @@ At the end:
 2. Run relevant benchmark
 3. Inspect Git diff
 4. Update `AGENT_CONTEXT.md`
-5. Report:
+5. Update the active task plan and move completed plans to `tasks/completed/`
+6. Report:
    - Changes
    - Tests
    - Benchmarks
@@ -497,3 +503,43 @@ Verified on 2026-08-19:
 - GitHub Actions workflow is defined for `mvn verify`.
 
 The bootstrap benchmark is an infrastructure smoke test only. It is not a matching-engine performance result.
+
+---
+
+## 22. Task Workspace and Plan-First Workflow
+
+All development plans are versioned under `tasks/`.
+
+```text
+Proposed
+    -> Approved
+    -> In Progress
+    -> Completed
+```
+
+The current completed governance task is:
+
+```text
+tasks/completed/TASK-20260819-001-task-workspace-and-plan-first.md
+```
+
+The next domain-model task is:
+
+```text
+tasks/active/TASK-20260819-002-domain-model-and-correctness-baseline.md
+```
+
+Its status is `Proposed`. It must be explicitly approved before any domain production code or domain tests are modified.
+
+Each task plan must record:
+
+- Scope and acceptance criteria
+- Design and architecture impact
+- Planned file changes
+- Test and Benchmark plan
+- Risks and rollback
+- Verification commands
+- Approval and implementation log
+- Git commit plan
+
+If implementation changes the approved scope or design, update the task plan and obtain approval again before continuing.
