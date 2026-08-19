@@ -72,14 +72,13 @@ Phase 2 - Basic OrderBook (Implementation)
 ### Current Task
 
 `TASK-20260819-004` - Establish Basic OrderBook baseline (`In Progress`,
-`Implementation - OrderNode / OrderQueue / PriceLevel` completed; pending approval).
+`Implementation - BidBook / AskBook` completed; pending approval).
 
 ### Next Task
 
-Phase 2 - Basic OrderBook implementation. The
-`OrderNode`, `OrderQueue`, and `PriceLevel` sub-stage is complete. `BidBook`,
-`AskBook`, `OrderBook`, matching, and active-index aggregation remain for later
-approved sub-stages.
+Phase 2 - Basic OrderBook implementation. The `BidBook / AskBook` sub-stage is
+complete and awaiting approval. `OrderBook`, active-index aggregation and
+matching remain unauthorized until the next approval gate.
 
 Current task plan:
 [`tasks/active/TASK-20260819-004-basic-orderbook.md`](../tasks/active/TASK-20260819-004-basic-orderbook.md).
@@ -92,7 +91,7 @@ Current Phase 2 report:
 [`tasks/reports/PHASE-2-adr-decision.md`](../tasks/reports/PHASE-2-adr-decision.md).
 
 Current implementation sub-stage report:
-[`tasks/reports/PHASE-2-implementation-ordernode-queue-pricelevel.md`](../tasks/reports/PHASE-2-implementation-ordernode-queue-pricelevel.md).
+[`tasks/reports/PHASE-2-implementation-bidbook-askbook.md`](../tasks/reports/PHASE-2-implementation-bidbook-askbook.md).
 
 Phase 1 report:
 [`tasks/reports/PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md).
@@ -101,8 +100,10 @@ The Phase 1 implementation and verification are complete. Human Developer
 approved the Phase 1 hand-off on `2026-08-19`. Human Developer approved
 ADR-0007 and TASK-20260819-004 on `2026-08-19`, authorizing Phase 2
 implementation within the recorded constraints. The current implementation
-sub-stage `OrderNode + OrderQueue + PriceLevel` is complete. The next
-`BidBook / AskBook` sub-stage is blocked pending Human approval.
+sub-stage `OrderNode + OrderQueue + PriceLevel` was approved on `2026-08-19`.
+Human Developer then authorized and the implementation completed the
+`BidBook / AskBook` sub-stage. Its completion report and next approval gate are
+now pending Human approval.
 
 ---
 

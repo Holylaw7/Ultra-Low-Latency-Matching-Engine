@@ -13,7 +13,7 @@
 | Updated | `2026-08-19` |
 | Related Phase | `Phase 2 - Basic OrderBook` |
 | Related ADR | [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md) |
-| Current Stage | `Implementation - OrderNode / OrderQueue / PriceLevel (Completed)` |
+| Current Stage | `Implementation - BidBook / AskBook (Completed)` |
 | Next Approval Gate | `Pending Human Approval` |
 
 ## 2. Background
@@ -52,42 +52,41 @@ FIFO 和 OrderId 索引的初始方向，但还没有覆盖 Basic OrderBook 所�
 
 ### Requirements
 
-- [ ] `BidBook` 只接受买方限价单，按高价优先。
-- [ ] `AskBook` 只接受卖方限价单，按低价优先。
-- [ ] 同价订单按输入顺序和 `Sequence` 语义保持 FIFO。
-- [ ] `PriceLevel` 维护价格、队列、订单数量和剩余数量总和。
-- [ ] 已知节点的取消不扫描整个订单队列。
-- [ ] 取消后立即清理空价格层并更新 Best Bid/Ask。
-- [ ] `BestBid` 是最高存活买价，`BestAsk` 是最低存活卖价。
+- [x] `BidBook` 只接受买方限价单，按高价优先。
+- [x] `AskBook` 只接受卖方限价单，按低价优先。
+- [x] 同价订单按输入顺序和 `Sequence` 语义保持 FIFO。
+- [x] `PriceLevel` 维护价格、队列、订单数量和剩余数量总和。
+- [x] 已知节点的取消不扫描整个订单队列。
+- [x] 取消后立即清理空价格层并更新 Best Bid/Ask。
+- [x] `BestBid` 是最高存活买价，`BestAsk` 是最低存活卖价。
 - [ ] 结构化限价撮合支持部分成交、完全成交和跨多个价格层。
 - [ ] 撮合后剩余限价单按原有状态和优先级进入队列。
 - [ ] 相同输入序列产生相同匹配片段和最终 OrderBook 状态。
 
 ### Acceptance Criteria
 
-- [ ] 生产代码只位于 OrderBook 领域包，不依赖网络、持久化或线程调度。
+- [x] 生产代码只位于 OrderBook 领域包，不依赖网络、持久化或线程调度。
 - [ ] 非法 side/type/status、重复 active OrderId 和无效残量被显式拒绝。
-- [ ] 取消操作幂等，重复取消不改变状态且不抛出业务异常。
+- [x] 取消操作幂等，重复取消不改变状态且不抛出业务异常。
 - [ ] 价格层、队列、active index 和 Best Price 缓存的一致性有测试证明。
 - [ ] 一层和多层撮合、同价 FIFO、部分成交、完全成交和空层删除测试通过。
-- [ ] 根 Maven 构建、JUnit 和 Checkstyle 通过。
-- [ ] 实现前后 ADR、任务方案、架构文档和 `AGENT_CONTEXT.md` 保持一致。
+- [x] 根 Maven 构建、JUnit 和 Checkstyle 通过。
+- [x] 实现前后 ADR、任务方案、架构文档和 `AGENT_CONTEXT.md` 保持一致。
 - [ ] 相关基线 Benchmark 只在实现获批后执行，并保留可重复参数和结果。
 
 ## 6. Current Implementation and Scope
 
 ### Current Implementation
 
-当前已完成 `OrderNode`、`OrderQueue` 和 `PriceLevel` 子阶段。Phase 1 的
-`Order` 已经提供：
+当前已完成 `OrderNode`、`OrderQueue`、`PriceLevel` 和 `BidBook / AskBook`
+子阶段。Phase 1 的 `Order` 已经提供：
 
 - limit/market 工厂方法；
 - `Side`、`OrderType`、`OrderStatus`；
 - `remainingQuantityUnits()`；
 - 受控 `applyExecution()` 和幂等 `cancel()`。
 
-当前尚未实现 `OrderBook`、`BidBook`、`AskBook`、active `OrderId` 取消索引或
-结构化撮合结果。
+当前尚未实现 `OrderBook`、active `OrderId` 取消索引或结构化撮合结果。
 
 ### In Scope
 
@@ -179,11 +178,11 @@ Developer 于 `2026-08-19` 批准进入 Implementation 阶段，确认：
 
 ### Unit Tests
 
-- [ ] PriceLevel queue append, head/tail, count and total quantity.
-- [ ] Bid price priority and Ask price priority.
-- [ ] Same-price FIFO using accepted input sequence.
+- [x] PriceLevel queue append, head/tail, count and total quantity.
+- [x] Bid price priority and Ask price priority.
+- [x] Same-price FIFO using accepted input sequence.
 - [ ] Active index lookup and node unlink behavior.
-- [ ] Best Bid/Ask after add, cancel, fill and empty-level cleanup.
+- [x] Best Bid/Ask after add, cancel, fill and empty-level cleanup.
 
 ### Integration or System Tests
 
@@ -193,11 +192,11 @@ Developer 于 `2026-08-19` 批准进入 Implementation 阶段，确认：
 
 ### Failure and Boundary Tests
 
-- [ ] Reject market orders from resting `add`.
+- [x] Reject market orders from resting `add`.
 - [ ] Reject wrong-side, duplicate-active-id, terminal-order and zero-residual inputs.
-- [ ] Verify absent and repeated cancellation are no-op and non-throwing.
-- [ ] Verify empty-book and empty-side best-price results.
-- [ ] Verify no stale PriceLevel remains after final removal.
+- [x] Verify absent and repeated cancellation are no-op and non-throwing.
+- [x] Verify empty-book and empty-side best-price results.
+- [x] Verify no stale PriceLevel remains after final removal.
 
 ### Determinism or Replay Tests
 
@@ -286,6 +285,7 @@ must not be mixed into an unrelated implementation commit.
 | --- | --- | --- | --- | --- |
 | 2026-08-19 | Human Developer | Phase 1 hand-off | `Approved` | Authorized Phase 2 ADR / Decision stage only. No Phase 2 production code or tests authorized yet. |
 | 2026-08-19 | Human Developer | ADR / Decision and Task Plan | `Approved` | Approved ADR-0007 and TASK-20260819-004 for implementation. TreeMap + intrusive FIFO + active OrderId index + best-price cache is the Phase 2 baseline. Market Order, MatchingEngine, WAL, network, Disruptor, lock-free, off-heap, custom tree, SkipList, radix, and unproven performance optimization remain out of scope. |
+| 2026-08-19 | Human Developer | Implementation Sub-stage 1 | `Approved` | OrderNode, OrderQueue and PriceLevel baseline accepted. FIFO, O(1) unlink, cancel, partial/full fill, quantity invariants, tests and build verification passed. Shade Plugin overlap warnings remain deferred technical debt. BidBook / AskBook implementation authorized within ADR-0007 scope. |
 
 ## 16. Phase Reports and Approval Gates
 
@@ -293,12 +293,15 @@ must not be mixed into an unrelated implementation commit.
 | --- | --- | --- | --- | --- |
 | ADR / Decision | [`tasks/reports/PHASE-2-adr-decision.md`](../reports/PHASE-2-adr-decision.md) | `Completed` | `Approved` | Approved 2026-08-19 |
 | Task Approval |  | `Completed` | `Approved` | Approved 2026-08-19 |
-| Implementation | [`tasks/reports/PHASE-2-implementation-ordernode-queue-pricelevel.md`](../reports/PHASE-2-implementation-ordernode-queue-pricelevel.md) | `Completed - Pending Human Approval` | `Pending Human Approval` | Pending |
+| Implementation - Sub-stage 1 | [`tasks/reports/PHASE-2-implementation-ordernode-queue-pricelevel.md`](../reports/PHASE-2-implementation-ordernode-queue-pricelevel.md) | `Completed` | `Implementation - Sub-stage 2` | Approved 2026-08-19 |
+| Implementation - Sub-stage 2 | [`tasks/reports/PHASE-2-implementation-bidbook-askbook.md`](../reports/PHASE-2-implementation-bidbook-askbook.md) | `Completed - Pending Human Approval` | `Pending Human Approval` | Pending |
 | Verification |  | `Pending` | `Pending Human Approval` |  |
 | Documentation and Synchronization |  | `Pending` | `Pending Human Approval` |  |
 
 本阶段报告已由 Human Developer 审批，允许进入 Implementation 阶段。实现仍须
-按子阶段输出报告，并在下一阶段前等待 Human approval。
+按子阶段输出报告，并在下一阶段前等待 Human approval。当前
+`BidBook / AskBook` 子阶段已完成，等待审批后才能进入
+`OrderBook / active OrderId index` 子阶段。
 
 ## 17. Implementation Log
 
@@ -306,15 +309,17 @@ must not be mixed into an unrelated implementation commit.
 | --- | --- | --- | --- |
 | 2026-08-19 | Proposed | 完成 ADR-0002、ADR-0005、OrderBook 架构、Matching Engine 架构和 Phase 1 API 审查；创建 ADR-0007 草案和本任务方案 | 只读审查完成；未修改生产代码或测试代码 |
 | 2026-08-19 | Completed - Pending Human Approval | Human Developer 已批准 ADR-0007 和本任务方案；完成子阶段 `OrderNode + OrderQueue + PriceLevel` | `mvn verify` 成功；21 tests，0 failures，Checkstyle 0 |
+| 2026-08-19 | In Progress | Human Developer 批准 Sub-stage 1，并授权 `BidBook / AskBook` 子阶段 | 待完成价格层索引、最佳价、空层清理及阶段验证 |
+| 2026-08-19 | Completed - Pending Human Approval | 完成 `BidBook / AskBook` 价格层索引、Best Price 和空层清理 | `mvn verify` 成功；28 tests，0 failures，Checkstyle 0 |
 
 ## 18. Completion Checklist
 
 - [ ] Scope and acceptance criteria satisfied
-- [ ] Tests added or updated
-- [ ] Build passed
-- [ ] Static or format checks passed
+- [x] Tests added or updated
+- [x] Build passed
+- [x] Static or format checks passed
 - [ ] Benchmark or profile completed when applicable
-- [ ] Documentation updated
+- [x] Documentation updated
 - [x] Decision and ADR linkage recorded
 - [x] ADR existed before the technical decision and task approval
 - [x] Every completed stage has a phase report
@@ -322,5 +327,5 @@ must not be mixed into an unrelated implementation commit.
 - [x] ADR, task plan, rules, project documents, and `AGENT_CONTEXT.md` are synchronized
 - [x] `AGENT_CONTEXT.md` updated
 - [x] Diff reviewed
-- [ ] Commit created
-- [ ] Post-commit Git status confirmed
+- [x] Commit created
+- [x] Post-commit Git status confirmed

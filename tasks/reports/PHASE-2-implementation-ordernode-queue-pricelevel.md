@@ -9,8 +9,8 @@
 | Task | `TASK-20260819-004-basic-orderbook` |
 | ADR | [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md) |
 | Report Date | `2026-08-19` |
-| Stage Status | `Completed - Pending Human Approval` |
-| Next Approval Gate | `Pending Human Approval` |
+| Stage Status | `Completed` |
+| Next Approval Gate | `Implementation - BidBook / AskBook` |
 
 ## 2. Objective
 
@@ -87,9 +87,9 @@ PASS
 - TreeMap、side-specific price index、active OrderId index 和 best-price cache
   仍待后续获批子阶段实现。
 
-## 7. Approval Request
+## 7. Approval Record and Handoff
 
-请 Human Developer 审批本实现子阶段，并授权下一子阶段：
+Human Developer 已于 `2026-08-19` 批准本实现子阶段，并授权下一子阶段：
 
 ```text
 BidBook / AskBook
@@ -98,10 +98,11 @@ BidBook / AskBook
     -> best-price lookup
 ```
 
-在审批通过前，项目保持：
+当前交接状态：
 
 ```text
 Implementation Sub-stage 1: Completed
-Next Gate: Pending Human Approval
-BidBook / AskBook Production Code: Not Authorized
+Human Approval: Approved
+Next Stage: Implementation Sub-stage 2
+BidBook / AskBook Production Code: Authorized within ADR-0007 scope
 ```

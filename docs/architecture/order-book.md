@@ -17,7 +17,9 @@ This is a correctness and measurement baseline, not a final performance claim.
 
 Phase 2 production implementation is authorized only within the approved ADR
 and task scope. The `OrderNode + OrderQueue + PriceLevel` sub-stage is complete;
-the next `BidBook / AskBook` sub-stage is blocked pending Human approval.
+Human Developer approved that sub-stage on `2026-08-19`, and the authorized
+`BidBook / AskBook` sub-stage is complete. Its completion report is awaiting
+Human approval before the next `OrderBook / active OrderId index` sub-stage.
 
 ## Invariants
 
