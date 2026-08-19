@@ -2,9 +2,10 @@
 
 ## Status
 
-The Phase 2 OrderBook baseline has been executed and is pending Human Approval.
-It is an experimental measurement of the current correctness baseline, not a
-production performance claim.
+The Phase 2 OrderBook baseline was executed and approved by the Human Developer
+on `2026-08-19`. It is a component-level experimental measurement of the
+current correctness baseline, not a production performance claim. Profiling is
+the next ADR / Decision stage; no profile has been executed.
 
 ## Required Environment
 
@@ -46,3 +47,9 @@ Current result:
   `benchmark-results/orderbook-baseline.json` (local, ignored by Git)
 - Baseline:
   TreeMap + intrusive FIFO + active OrderId index
+
+Next gate:
+
+- Profiling ADR / Decision under
+  [`ADR-0009-performance-profiling-evidence.md`](../adr/ADR-0009-performance-profiling-evidence.md)
+  (`Proposed - Pending Human Approval`)

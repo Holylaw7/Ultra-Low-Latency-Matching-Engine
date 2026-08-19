@@ -16,14 +16,16 @@ Correctness
 
 ## Current Stage
 
-Phase 2 - Basic OrderBook：Structural Limit Matching 已完成实现和验证，
-OrderBook baseline Benchmark 已执行，当前等待 Human Approval。
+Phase 2 - Basic OrderBook：Structural Limit Matching、Verification、OrderBook
+baseline Benchmark 和 Documentation Synchronization 已完成并经 Human
+Developer 于 `2026-08-19` 批准。当前进入 Profiling ADR / Decision 提案阶段，
+等待 Human Approval。
 
 Phase 1 Domain Model and Correctness Baseline has been completed and approved.
 ADR-0007 and ADR-0008 have been approved, and the Phase 2 OrderBook structure
 and Structural Limit Matching are implemented within their recorded scope.
-The current benchmark is experimental baseline evidence, not a production
-throughput or latency claim.
+The approved benchmark is component-level experimental baseline evidence, not a
+production throughput or latency claim. Profiling has not been executed.
 
 The repository currently contains:
 
@@ -72,11 +74,11 @@ java -jar benchmark/target/matching-engine-benchmark-0.1.0-SNAPSHOT.jar \
   -rff benchmark-results/orderbook-baseline.json
 ```
 
-The recorded baseline uses Java 21, JMH 1.37, two forks, one matching-owner
+The approved baseline uses Java 21, JMH 1.37, two forks, one matching-owner
 thread, deterministic fixed workloads and the current TreeMap + intrusive FIFO
-and active OrderId index implementation. Results are experimental evidence only;
-they must not be presented as production throughput, latency, allocation or GC
-claims.
+and active OrderId index implementation. Results are component-level evidence
+only; they must not be presented as production throughput, latency, allocation
+or GC claims. The next gate is approval of the Profiling ADR / Task Plan.
 
 ## Structure
 

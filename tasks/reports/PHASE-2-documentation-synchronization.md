@@ -8,8 +8,8 @@
 | Stage | `Documentation and Synchronization` |
 | Task | `TASK-20260819-004-basic-orderbook` |
 | Report Date | `2026-08-19` |
-| Stage Status | `Completed - Pending Human Approval` |
-| Next Approval Gate | `Pending Human Approval` |
+| Stage Status | `Completed` |
+| Next Approval Gate | `Profiling ADR / Decision` |
 
 ## 2. Objective
 
@@ -31,12 +31,12 @@
 
 同步内容包括：
 
-- 当前阶段改为 OrderBook Benchmark Baseline，等待 Human Approval；
+- 当前阶段改为 Profiling ADR / Decision，等待 Human Approval；
 - 记录 JMH 环境、参数、固定 workload 和原始 JSON 路径；
 - 明确结果是实验性 baseline，不是生产性能结论；
 - 保留 Shade Plugin 警告为已知技术债；
-- 保持 MatchingEngine、Trade/Execution、WAL、Network、Profiling、
-  Optimization 和 Phase 3 未授权。
+- 保持 MatchingEngine、Trade/Execution、WAL、Network、Optimization 和
+  Phase 3 未授权；Profiling 仅进入 ADR / Decision 提案阶段。
 
 ## 4. Verification
 
@@ -52,11 +52,12 @@ PASS
 
 ## 5. Approval Request
 
-请求 Human Developer 审查本次文档同步。Benchmark 结果和同步文档均处于
-等待审批状态；审批前不进入 Profiling、Optimization 或 Phase 3。
+本次文档同步已由 Human Developer 于 `2026-08-19` 审查并批准。当前进入
+Profiling ADR / Decision 提案阶段；在 ADR-0009 和任务方案获批前，不执行
+Profiling，不进入 Optimization 或 Phase 3。
 
 ## 6. Approval Record
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
-|  |  | `Pending` | Synchronization is complete and awaits Human Approval. |
+| 2026-08-19 | Human Developer | `Approved` | Documentation synchronization accepted. Profiling is the next ADR / Decision stage; profiling execution, Optimization and Phase 3 remain unauthorized. |

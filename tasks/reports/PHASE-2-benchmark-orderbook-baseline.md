@@ -9,8 +9,8 @@
 | Task | `TASK-20260819-004-basic-orderbook` |
 | ADR | [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md); [`ADR-0008-structural-limit-matching.md`](../../docs/adr/ADR-0008-structural-limit-matching.md) |
 | Report Date | `2026-08-19` |
-| Stage Status | `Completed - Pending Human Approval` |
-| Next Approval Gate | `Pending Human Approval` |
+| Stage Status | `Completed` |
+| Next Approval Gate | `Profiling ADR / Decision` |
 
 ## 2. Authorization and Objective
 
@@ -165,22 +165,23 @@ Synchronized after the benchmark run:
 
 ## 10. Approval Request
 
-请求 Human Developer 审查并批准本 Benchmark baseline 及同步文档。批准后
-才可以讨论 Profiling、Optimization 或 Phase 3；本报告本身不授权这些工作。
+本报告及其同步文档已由 Human Developer 于 `2026-08-19` 审查并批准。
+批准范围仅覆盖组件级 baseline 证据；Profiling 仍须先完成 ADR / Decision
+审批，Optimization、替代数据结构和 Phase 3 仍未授权。
 
 ```text
 Benchmark Baseline:
-    Completed - Pending Human Approval
+    Completed - Approved
 
 Documentation and Synchronization:
-    Completed - Pending Human Approval
+    Completed - Approved
 
 Next Gate:
-    Pending Human Approval
+    Profiling ADR / Decision - Pending Human Approval
 ```
 
 ## 11. Approval Record
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
-|  |  | `Pending` | Baseline evidence and synchronized documentation await Human Approval. |
+| 2026-08-19 | Human Developer | `Approved` | JMH baseline accepted as component-level evidence only. Profiling may proceed to ADR / Decision; optimization, alternative structures and Phase 3 remain unauthorized. |

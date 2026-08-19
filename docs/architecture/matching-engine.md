@@ -55,5 +55,8 @@ places price-time traversal and in-memory order lifecycle mutation in
 assignment, and event publication remain MatchingEngine responsibilities and
 are not part of the Phase 2 Structural Limit Matching implementation scope.
 The structural implementation and correctness verification are complete. The
-OrderBook baseline benchmark is complete and awaits Human Approval; the future
-MatchingEngine stage remains unauthorized.
+OrderBook baseline benchmark and documentation synchronization were approved
+on `2026-08-19`. Profiling is proposed under
+[`ADR-0009-performance-profiling-evidence.md`](../adr/ADR-0009-performance-profiling-evidence.md)
+and awaits Human Approval; the future MatchingEngine stage remains
+unauthorized.

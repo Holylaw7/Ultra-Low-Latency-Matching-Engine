@@ -314,9 +314,10 @@ empty-level cleanup, one-level matching and a deterministic 64-level sweep.
 The complete result table and raw JSON location are recorded in
 [`PHASE-2-benchmark-orderbook-baseline.md`](../../tasks/reports/PHASE-2-benchmark-orderbook-baseline.md).
 
-This evidence does not authorize profiling or optimization and does not
-establish production throughput, latency, allocation, GC or million-orders-
-per-second claims.
+This evidence does not itself authorize profile execution or optimization and
+does not establish production throughput, latency, allocation, GC or
+million-orders-per-second claims. Profiling is separately proposed under
+[`ADR-0009-performance-profiling-evidence.md`](ADR-0009-performance-profiling-evidence.md).
 
 ## Approval Record
 

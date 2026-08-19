@@ -7,8 +7,9 @@ Baseline structure approved and implemented under
 Structural Limit Matching is approved under
 [`ADR-0008-structural-limit-matching.md`](../adr/ADR-0008-structural-limit-matching.md);
 implementation and verification are complete within that approved scope. The
-OrderBook baseline benchmark has also been executed and is awaiting Human
-Approval as experimental evidence.
+OrderBook baseline benchmark has also been executed and approved as
+component-level experimental evidence. Profiling is proposed separately and
+awaits Human Approval.
 
 ## Initial Baseline
 
@@ -29,9 +30,9 @@ Human Developer approved that sub-stage on `2026-08-19`, and the authorized
 Developer on `2026-08-19`. Structural Limit Matching is now in its ADR /
 Decision stage and was approved by the Human Developer on `2026-08-19`. The
 detailed input contract, result boundary, traversal, maker-price, residual,
-and invariant decisions are implemented constraints. Verification and the
-approved baseline benchmark are complete; the benchmark report is pending
-Human Approval.
+and invariant decisions are implemented constraints. Verification, the
+approved baseline benchmark and documentation synchronization are complete.
+Profiling is the next decision stage and remains pending Human Approval.
 
 ## Aggregate
 
@@ -61,8 +62,8 @@ and rests a non-zero incoming residual once.
 quantity, and both post-fragment remaining quantities. It does not contain
 `TradeId`, event sequence, timestamps, `Trade`, `Execution`, mutable nodes, or
 publication behavior. Implementation and correctness verification are
-complete. The current Human Approval gate covers the baseline benchmark and
-the synchronized documentation.
+complete. The current Human Approval gate covers the Profiling ADR / Decision
+proposal; profiling execution and optimization remain unauthorized.
 
 ## Baseline Measurement
 
@@ -75,7 +76,8 @@ Results are recorded in
 
 The measurements are workload-specific evidence for this implementation. They
 do not establish production P99, allocation, GC, or million-orders-per-second
-performance.
+performance. The next profiling decision is recorded in
+[`ADR-0009-performance-profiling-evidence.md`](../adr/ADR-0009-performance-profiling-evidence.md).
 
 ## Invariants
 

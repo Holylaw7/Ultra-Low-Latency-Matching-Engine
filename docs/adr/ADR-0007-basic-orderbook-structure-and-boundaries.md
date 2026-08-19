@@ -329,8 +329,10 @@ The approved Phase 2 baseline benchmark was later executed on `2026-08-19`
 with JMH 1.37, Java 21.0.12, two forks and one matching-owner thread. It
 records the fixed workload and raw result location in
 [`PHASE-2-benchmark-orderbook-baseline.md`](../../tasks/reports/PHASE-2-benchmark-orderbook-baseline.md).
-Allocation and GC were not measured, and the result remains experimental
-baseline evidence pending Human Approval.
+Allocation and GC were not measured. The Human Developer approved this
+component-level baseline on `2026-08-19`; it is not a production performance
+claim. Profiling is separately proposed under
+[`ADR-0009-performance-profiling-evidence.md`](ADR-0009-performance-profiling-evidence.md).
 
 ## Relationship to ADR-0002
 

@@ -12,9 +12,9 @@
 | Created | `2026-08-19` |
 | Updated | `2026-08-19` |
 | Related Phase | `Phase 2 - Basic OrderBook` |
-| Related ADR | [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md); [`ADR-0008-structural-limit-matching.md`](../../docs/adr/ADR-0008-structural-limit-matching.md) |
-| Current Stage | `Benchmark Baseline + Documentation and Synchronization (Completed - Pending Human Approval)` |
-| Next Approval Gate | `Pending Human Approval` |
+| Related ADR | [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md); [`ADR-0008-structural-limit-matching.md`](../../docs/adr/ADR-0008-structural-limit-matching.md); [`ADR-0009-performance-profiling-evidence.md`](../../docs/adr/ADR-0009-performance-profiling-evidence.md) |
+| Current Stage | `Profiling ADR / Decision (Proposed - Pending Human Approval)` |
+| Next Approval Gate | `Human Approval - Profiling ADR / Task Plan` |
 
 ## 2. Background
 
@@ -183,6 +183,15 @@ Structural Limit Matching sub-stage ADR:
 该 ADR 草案先于本任务的技术决策和任务审批创建。ADR 与本方案的决策摘要、
 范围边界和验证计划必须保持一致；任何差异都必须暂停实现并重新审批。
 
+Performance Profiling ADR:
+
+| Field | Value |
+| --- | --- |
+| ADR | [`docs/adr/ADR-0009-performance-profiling-evidence.md`](../../docs/adr/ADR-0009-performance-profiling-evidence.md) |
+| Status | `Proposed` |
+| Decision Summary | Use controlled JFR evidence for the approved OrderBook baseline; use async-profiler only as optional supplementary evidence when available; do not modify implementation or optimize during profiling. |
+| Scope Boundary | Only profiling decision work and, after approval, evidence collection are allowed. Profiling execution, optimization, alternative data structures and Phase 3 remain separately gated. |
+
 ### Architecture Impact
 
 - [ ] No architecture change
@@ -236,8 +245,8 @@ Structural Limit Matching sub-stage ADR:
 
 ## 10. Benchmark and Profile Plan
 
-- Benchmark: `Completed on 2026-08-19; pending Human Approval`
-- Profile: `Not authorized in this stage`
+- Benchmark: `Completed and Approved on 2026-08-19`
+- Profile: `ADR-0009 Proposed; execution not authorized`
 - JMH: `1.37`, one matching-owner thread, two forks
 - Warmup: `3 x 1 s`; measurement: `5 x 1 s`
 - Dataset parameters: `64` price levels for lookup/multi-level cases;
@@ -254,6 +263,9 @@ Structural Limit Matching sub-stage ADR:
 The benchmark must validate the operation result with `Blackhole` and use fresh
 state for mutating cases. Results are experimental evidence for this baseline
 only. They must not be presented as a production throughput or latency claim.
+Profiling must use the committed workload and record JFR/tool versions,
+environment, commands, timestamps and raw artifact paths. No profile execution
+is authorized before ADR-0009 and its task stage are approved.
 Custom Tree, SkipList, Radix, Price Array, off-heap, object-pool, Disruptor,
 lock-free and GC-tuning work remain unauthorized.
 
@@ -302,6 +314,15 @@ git diff --check
 git status --short --branch
 ```
 
+Profiling ADR / Decision stage:
+
+```text
+git diff --check
+git status --short --branch
+review ADR-0009-performance-profiling-evidence.md
+review PHASE-2-profiling-adr-decision.md
+```
+
 Benchmark stage after explicit authorization:
 
 ```text
@@ -318,7 +339,7 @@ git status --short --branch
 The benchmark result file is local evidence and must not be hand-edited. The
 phase report must record the exact command, environment, parameters and raw
 result location. The benchmark stage ends at a Human Approval gate; it does
-not authorize profiling, optimization or Phase 3.
+not authorize profiling execution, optimization or Phase 3.
 
 ## 14. Git Commit Plan
 
@@ -355,6 +376,8 @@ must not be mixed into an unrelated implementation commit.
 | 2026-08-19 | Human Developer | Implementation Sub-stage 3 | `Approved` | OrderBook aggregate, active OrderId index, add/cancel/lookup, Best Bid/Ask, execution lifecycle synchronization, empty-level cleanup, consistency tests, Maven verification and clean commit accepted. Structural Limit Matching ADR / Decision authorized. |
 | 2026-08-19 | Human Developer | Implementation - Structural Limit Matching | `Approved` | MatchFragment boundary, crossing rules, maker-price, price-time priority, multi-level matching, residual resting, determinism and quantity invariants accepted. Verification authorized; Benchmark and Phase 3 remain out of scope. |
 | 2026-08-19 | Human Developer | Benchmark Authorization | `Approved` | Baseline JMH measurement authorized for the implemented Phase 2 OrderBook. Record reproducible environment, workload parameters and raw results. No profiling, optimization, alternative data structure or Phase 3 work is authorized. |
+| 2026-08-19 | Human Developer | Verification / Benchmark / Documentation Approval | `Approved` | Phase 2 correctness verification, OrderBook component baseline and documentation synchronization accepted. Profiling may enter ADR / Decision; profiling execution, optimization and Phase 3 remain unauthorized. |
+| 2026-08-19 | Human Developer | Profiling ADR / Decision Entry | `Authorized` | Authorized preparation and review of ADR-0009 and its profiling task proposal only. No profiler execution, production change or optimization is authorized. |
 
 ## 16. Phase Reports and Approval Gates
 
@@ -367,18 +390,20 @@ must not be mixed into an unrelated implementation commit.
 | Implementation - Sub-stage 3 | [`tasks/reports/PHASE-2-implementation-orderbook-active-index.md`](../reports/PHASE-2-implementation-orderbook-active-index.md) | `Completed` | `ADR / Decision - Structural Limit Matching` | Approved 2026-08-19 |
 | ADR / Decision - Structural Limit Matching | [`tasks/reports/PHASE-2-structural-limit-matching-adr-decision.md`](../reports/PHASE-2-structural-limit-matching-adr-decision.md) | `Completed` | `Implementation - Structural Limit Matching` | Approved 2026-08-19 |
 | Implementation - Structural Limit Matching | [`tasks/reports/PHASE-2-implementation-structural-limit-matching.md`](../reports/PHASE-2-implementation-structural-limit-matching.md) | `Completed` | `Verification` | Approved 2026-08-19 |
-| Verification | [`tasks/reports/PHASE-2-verification-structural-limit-matching.md`](../reports/PHASE-2-verification-structural-limit-matching.md) | `Completed - Pending Human Approval` | `Pending Human Approval` | Pending |
-| Benchmark Baseline | [`tasks/reports/PHASE-2-benchmark-orderbook-baseline.md`](../reports/PHASE-2-benchmark-orderbook-baseline.md) | `Completed - Pending Human Approval` | `Pending Human Approval` | Authorized 2026-08-19; completion pending |
-| Documentation and Synchronization | [`tasks/reports/PHASE-2-documentation-synchronization.md`](../reports/PHASE-2-documentation-synchronization.md) | `Completed - Pending Human Approval` | `Pending Human Approval` | Pending |
+| Verification | [`tasks/reports/PHASE-2-verification-structural-limit-matching.md`](../reports/PHASE-2-verification-structural-limit-matching.md) | `Completed` | `Profiling ADR / Decision` | Approved 2026-08-19 |
+| Benchmark Baseline | [`tasks/reports/PHASE-2-benchmark-orderbook-baseline.md`](../reports/PHASE-2-benchmark-orderbook-baseline.md) | `Completed` | `Profiling ADR / Decision` | Approved 2026-08-19 |
+| Documentation and Synchronization | [`tasks/reports/PHASE-2-documentation-synchronization.md`](../reports/PHASE-2-documentation-synchronization.md) | `Completed` | `Profiling ADR / Decision` | Approved 2026-08-19 |
+| Profiling ADR / Decision | [`tasks/reports/PHASE-2-profiling-adr-decision.md`](../reports/PHASE-2-profiling-adr-decision.md) | `Proposed - Pending Human Approval` | `Human Approval - Profiling ADR / Task Plan` | Pending |
 
 本阶段报告已由 Human Developer 审批，允许进入 Implementation 阶段。实现仍须
 按子阶段输出报告，并在下一阶段前等待 Human approval。当前
 `OrderBook / active OrderId index` 子阶段已获 Human Developer 批准；
 Structural Limit Matching 的 ADR / Decision 子阶段已完成并获批。当前
 Structural Limit Matching 实现已于 `2026-08-19` 获 Human Developer 批准。当前
-Verification 已完成并输出阶段报告。Human Developer 已于 `2026-08-19`
-明确授权 Benchmark baseline；Benchmark 和文档同步均已完成，当前下一门禁为
-`Pending Human Approval`。本阶段不包含性能优化、Profile 或 Phase 3。
+Verification、Benchmark 和 Documentation Synchronization 已于 `2026-08-19`
+获批。Profiling ADR / Decision 提案已创建，当前下一门禁为
+`Human Approval - Profiling ADR / Task Plan`。本阶段不执行 profiling，
+不包含性能优化或 Phase 3。
 
 ## 17. Implementation Log
 
@@ -394,6 +419,8 @@ Verification 已完成并输出阶段报告。Human Developer 已于 `2026-08-19
 | 2026-08-19 | Completed - Approved | Human Developer 批准 Structural Limit Matching 实现，授权 Verification | 记录实现门禁批准；Benchmark、MatchingEngine、Trade/Execution、WAL 和 Phase 3 仍未授权 |
 | 2026-08-19 | Completed - Pending Human Approval | 完成 Structural Limit Matching Verification，补强 active index/node、价格层数量、非交叉终态和确定性最终状态证据 | `mvn -pl core -am -Dtest=OrderBookTest test`：17 tests；完整 `mvn verify` 待执行；等待 Human Approval |
 | 2026-08-19 | Completed - Pending Human Approval | Human Developer 授权并完成 Phase 2 OrderBook baseline Benchmark；同步 JMH 方案、可重复参数、原始结果路径和限制 | `mvn verify` 成功；45 tests，0 failures，Checkstyle 0；7 个操作的 Throughput/SampleTime 结果已记录；等待 Human Approval |
+| 2026-08-19 | Completed - Approved | Human Developer 批准 Verification、Benchmark Baseline 和 Documentation Synchronization | 组件级 baseline 证据已接受；Profiling 仅获准进入 ADR / Decision，执行与优化仍未授权 |
+| 2026-08-19 | Proposed - Pending Human Approval | 创建 ADR-0009 和 Profiling ADR / Decision 阶段报告，冻结 JFR 首次 profiling、可选 async-profiler、workload 复用和证据格式 | 未执行 profiler，未修改生产代码、测试或 benchmark 语义；等待 Human Approval |
 
 ## 18. Completion Checklist
 

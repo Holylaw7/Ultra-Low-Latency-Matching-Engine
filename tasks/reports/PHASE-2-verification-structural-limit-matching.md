@@ -9,8 +9,8 @@
 | Task | `TASK-20260819-004-basic-orderbook` |
 | ADR | [`ADR-0008-structural-limit-matching.md`](../../docs/adr/ADR-0008-structural-limit-matching.md) |
 | Report Date | `2026-08-19` |
-| Stage Status | `Completed - Pending Human Approval` |
-| Next Approval Gate | `Pending Human Approval` |
+| Stage Status | `Completed` |
+| Next Approval Gate | `Profiling ADR / Decision` |
 
 ## 2. Objective
 
@@ -82,17 +82,17 @@ PASS
 
 ```text
 Verification:
-    Completed - Pending Human Approval
+    Completed - Approved
 
 Benchmark:
     Authorized and executed as a separate baseline stage
 
 Next Gate:
-    Pending Human Approval
+    Profiling ADR / Decision - Pending Human Approval
 ```
 
 ## 8. Approval Record
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
-|  |  | `Pending` | Verification evidence is complete; Human Approval is required before the next governed stage. |
+| 2026-08-19 | Human Developer | `Approved` | Verification evidence accepted. Structural matching correctness, determinism, active-index consistency and quantity invariants passed. Profiling may enter ADR / Decision; Optimization and Phase 3 remain unauthorized. |
