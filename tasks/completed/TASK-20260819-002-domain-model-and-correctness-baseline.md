@@ -267,7 +267,17 @@ feat(domain): establish matching domain model
 | 2026-08-19 | In Progress | 开始实现值对象、订单状态机、成交/执行模型及正确性测试 | 实现范围严格限制在本任务方案 |
 | 2026-08-19 | Completed | 完成领域值对象、订单状态机、Trade/Execution 模型和确定性正确性测试 | `mvn -pl core -am test` 通过；根 `mvn verify` 通过；11 个领域测试通过 |
 
-## 17. Completion Checklist
+## 17. Phase Reports and Approval Gates
+
+| Stage | Report Location | Status | Next Approval Gate | Human Approval |
+| --- | --- | --- | --- | --- |
+| Phase 1 - Domain Model | [`tasks/reports/PHASE-1-domain-model.md`](../reports/PHASE-1-domain-model.md) | `Completed` | `Pending Human Approval` before Phase 2 ADR / Decision | Pending |
+
+阶段报告确认 Phase 1 的实现、验证和文档同步已完成。报告已记录范围、
+验证证据、限制、未验证内容和 Phase 2 提案；在 Human 审批前不得进入
+Phase 2 的 ADR / Decision 阶段。
+
+## 18. Completion Checklist
 
 - [x] Scope and acceptance criteria satisfied
 - [x] Tests added or updated

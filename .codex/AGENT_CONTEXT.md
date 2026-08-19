@@ -78,9 +78,14 @@ Phase 1 - Domain Model
 
 Phase 2 - Basic OrderBook.
 
-No Phase 2 task plan has been approved yet. Production code must not be modified
-until a new task plan is approved, its decision/ADR linkage is recorded, and the
-phase report and Human approval gate are recorded.
+Phase 1 report:
+[`tasks/reports/PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md).
+
+The Phase 1 implementation and verification are complete. The next gate is
+`Pending Human Approval`; Phase 2 must not start before Human approves the
+Phase 1 hand-off. After approval, Phase 2 may begin only with its ADR /
+Decision stage and a `Proposed` task plan. Production code and tests must not
+be modified until the Phase 2 ADR and task plan are approved.
 
 ---
 
