@@ -4,7 +4,7 @@
 > 项目定位：单机高性能、低延迟、确定性撮合引擎
 > 主要语言：Java 21
 > 开发模式：Human-led Architecture + Codex-assisted Engineering
-> 当前阶段：Phase 1 - Domain Model（Governance Alignment）
+> 当前阶段：Phase 2 - Basic OrderBook（ADR / Decision）
 >
 > 本文件是 Codex 在本项目中的最高优先级项目级行为规范。
 > 每次启动新的 Codex 会话时，必须首先阅读：

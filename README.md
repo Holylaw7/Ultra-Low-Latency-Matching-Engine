@@ -16,7 +16,11 @@ Correctness
 
 ## Current Stage
 
-Phase 1 - Domain Model（当前同步开发治理规范）。
+Phase 2 - Basic OrderBook（当前处于 ADR / Decision 阶段）。
+
+Phase 1 Domain Model and Correctness Baseline has been completed and approved.
+Phase 2 production code and tests remain blocked until ADR-0007 and the linked
+task plan receive separate Human approval.
 
 The repository currently contains:
 

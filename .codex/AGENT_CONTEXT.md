@@ -71,20 +71,31 @@ Phase 2 - Basic OrderBook (ADR / Decision)
 
 ### Current Task
 
-`TASK-20260819-003` - Enforce ADR-first decisions and phase approval gates
-(`Completed`).
+`TASK-20260819-004` - Establish Basic OrderBook baseline (`Proposed`,
+`ADR / Decision` stage).
 
 ### Next Task
 
 Phase 2 - Basic OrderBook.
+
+Current task plan:
+[`tasks/active/TASK-20260819-004-basic-orderbook.md`](../tasks/active/TASK-20260819-004-basic-orderbook.md).
+
+Current ADR:
+[`docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md`](../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md)
+(`Proposed`).
+
+Current Phase 2 report:
+[`tasks/reports/PHASE-2-adr-decision.md`](../tasks/reports/PHASE-2-adr-decision.md).
 
 Phase 1 report:
 [`tasks/reports/PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md).
 
 The Phase 1 implementation and verification are complete. Human Developer
 approved the Phase 1 hand-off on `2026-08-19` and authorized entry into the
-Phase 2 `ADR / Decision` stage. Phase 2 production code and tests remain
-blocked until the Phase 2 ADR and task plan are separately approved.
+Phase 2 `ADR / Decision` stage. The Phase 2 ADR and task plan are now proposed
+and awaiting Human approval. Phase 2 production code and tests remain blocked
+until both are separately approved.
 
 ---
 
@@ -332,6 +343,7 @@ This is a research and engineering project, not a real trading platform.
 | Logical event sequence | Accepted with constraints | Deterministic ordering independent of time and scheduling |
 | ADR-0005 domain model | Accepted with constraints | Long-term record of Phase 1 domain semantics |
 | ADR-0006 governance | Accepted | ADR-first decisions, phase reports, Human approval gates, and document synchronization |
+| ADR-0007 Basic OrderBook | Proposed | TreeMap side books, intrusive FIFO levels, active cancellation index, best-price cache, and limit-order matching boundaries pending Human approval |
 | Netty | Planned | High-performance networking |
 | Disruptor | Planned | Low-contention event pipeline |
 | WAL | Planned | Crash recovery |

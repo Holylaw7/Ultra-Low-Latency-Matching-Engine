@@ -2,7 +2,9 @@
 
 ## Status
 
-Baseline design planned; implementation pending.
+Baseline design planned; implementation pending. Phase 2 details are proposed
+in [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../adr/ADR-0007-basic-orderbook-structure-and-boundaries.md)
+and await Human approval.
 
 ## Initial Baseline
 
@@ -13,6 +15,9 @@ The first implementation will use:
 - An `OrderId` index for direct cancellation lookup
 
 This is a correctness and measurement baseline, not a final performance claim.
+
+No Phase 2 production implementation is authorized while ADR-0007 or
+`TASK-20260819-004` remains `Proposed`.
 
 ## Invariants
 

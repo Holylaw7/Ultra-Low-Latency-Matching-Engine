@@ -1,0 +1,320 @@
+# Task Plan - TASK-20260819-004
+
+## 1. Metadata
+
+| Field | Value |
+| --- | --- |
+| Task ID | `TASK-20260819-004` |
+| Title | Establish Basic OrderBook baseline |
+| Status | `Proposed` |
+| Owner | Human Developer |
+| Implementer | Codex |
+| Created | `2026-08-19` |
+| Updated | `2026-08-19` |
+| Related Phase | `Phase 2 - Basic OrderBook` |
+| Related ADR | [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md) |
+| Current Stage | `ADR / Decision` |
+| Next Approval Gate | `Pending Human Approval` |
+
+## 2. Background
+
+Phase 1 已完成并经 Human Developer 批准，提供了稳定的 `Order`、价格、
+数量、序列和状态迁移语义。现有 `ADR-0002` 提供了 TreeMap、intrusive
+FIFO 和 OrderId 索引的初始方向，但还没有覆盖 Basic OrderBook 所需的
+取消、Best Bid/Ask、空价格层和结构化撮合边界。
+
+本方案根据 Phase 2 架构审查创建，当前仅处于 `Proposed` 状态。ADR-0007
+和本方案分别获批前，不修改 OrderBook 生产代码或测试代码。
+
+## 3. Goal
+
+建立一个清晰、可测试、确定性的 Basic OrderBook 基线，支持：
+
+- `BidBook` 和 `AskBook`；
+- `PriceLevel` 和 intrusive FIFO `OrderQueue`；
+- active `OrderId -> OrderNode` 取消索引；
+- Add、Cancel、Best Bid、Best Ask；
+- 跨一个或多个价格层的限价结构化撮合；
+- 空价格层清理和最终状态不变量验证。
+
+## 4. Non-Goals
+
+- 不实现完整 `MatchingEngine` 事件编排。
+- 不确定或实现 Market Order 策略。
+- 不引入 Netty、Disruptor/RingBuffer、WAL、Snapshot、Recovery 或网络协议。
+- 不实现 Custom Tree、SkipList、Radix、Price Array、off-heap 或 cache-line
+  优化。
+- 不分配全局 `OrderId` 或 `Sequence`。
+- 不产生未经 Benchmark 证明的性能结论。
+- 不处理 benchmark uber-jar 的已知 Shade Plugin 警告。
+
+## 5. Requirements and Acceptance Criteria
+
+### Requirements
+
+- [ ] `BidBook` 只接受买方限价单，按高价优先。
+- [ ] `AskBook` 只接受卖方限价单，按低价优先。
+- [ ] 同价订单按输入顺序和 `Sequence` 语义保持 FIFO。
+- [ ] `PriceLevel` 维护价格、队列、订单数量和剩余数量总和。
+- [ ] 已知节点的取消不扫描整个订单队列。
+- [ ] 取消后立即清理空价格层并更新 Best Bid/Ask。
+- [ ] `BestBid` 是最高存活买价，`BestAsk` 是最低存活卖价。
+- [ ] 结构化限价撮合支持部分成交、完全成交和跨多个价格层。
+- [ ] 撮合后剩余限价单按原有状态和优先级进入队列。
+- [ ] 相同输入序列产生相同匹配片段和最终 OrderBook 状态。
+
+### Acceptance Criteria
+
+- [ ] 生产代码只位于 OrderBook 领域包，不依赖网络、持久化或线程调度。
+- [ ] 非法 side/type/status、重复 active OrderId 和无效残量被显式拒绝。
+- [ ] 取消操作幂等，重复取消不改变状态且不抛出业务异常。
+- [ ] 价格层、队列、active index 和 Best Price 缓存的一致性有测试证明。
+- [ ] 一层和多层撮合、同价 FIFO、部分成交、完全成交和空层删除测试通过。
+- [ ] 根 Maven 构建、JUnit 和 Checkstyle 通过。
+- [ ] 实现前后 ADR、任务方案、架构文档和 `AGENT_CONTEXT.md` 保持一致。
+- [ ] 相关基线 Benchmark 只在实现获批后执行，并保留可重复参数和结果。
+
+## 6. Current Implementation and Scope
+
+### Current Implementation
+
+当前只有 Phase 1 领域模型。`Order` 已经提供：
+
+- limit/market 工厂方法；
+- `Side`、`OrderType`、`OrderStatus`；
+- `remainingQuantityUnits()`；
+- 受控 `applyExecution()` 和幂等 `cancel()`。
+
+当前没有 `OrderBook`、`BidBook`、`AskBook`、`PriceLevel`、`OrderQueue` 或
+取消索引实现。
+
+### In Scope
+
+- `src/main/java/com/ultralatency/matching/orderbook/`
+- `src/test/java/com/ultralatency/matching/orderbook/`
+- 与已批准决策一致的 OrderBook ADR 和架构文档同步。
+- `.codex/AGENT_CONTEXT.md` 和本任务的阶段报告。
+
+### Out of Scope
+
+- `MatchingEngine`、事件输入、Trade/Execution 外发。
+- Market Order、网络、Pipeline、WAL、Snapshot、Recovery。
+- 性能替代结构和最终内存布局。
+
+## 7. Design Proposal
+
+### Proposed Design
+
+采用 ADR-0007 的基线：
+
+```text
+OrderBook
+    +-- BidBook: TreeMap<Price, PriceLevel> descending
+    +-- AskBook: TreeMap<Price, PriceLevel> ascending
+    +-- active OrderId -> OrderNode
+```
+
+每个 `PriceLevel` 拥有一个 intrusive FIFO `OrderQueue`。`OrderNode` 持有
+`Order`、所属价格层、`prev` 和 `next`。`OrderBook` 维护每侧的 Best Price
+缓存，价格层索引仍是唯一权威来源。
+
+`add` 是非交叉限价单的 resting primitive；可能成交的 incoming limit order
+通过 `match` 进入。`match` 使用价格优先、同价 FIFO，按 maker price 产生
+结构化匹配片段，填满或取消的订单离开 live queue，剩余限价单重新进入
+合适的价格层。
+
+### Alternatives Considered
+
+| Option | Advantages | Risks or Costs | Result |
+| --- | --- | --- | --- |
+| TreeMap + intrusive queue + active OrderId index | 清晰、可验证、与 ADR-0002 一致 | 对象和 O(log P) 价格层变更不是最终性能方案 | Proposed |
+| Custom balanced tree / SkipList | 可能改善局部性或分配 | 实现复杂，尚无基准证明 | Deferred |
+| Price Array / Radix | 密集价格区间可能更快 | 需要固定范围或额外映射，当前没有该约束 | Deferred |
+
+### Decision
+
+推荐接受 ADR-0007 的 Proposed Decision，但当前不将其视为已批准决策。
+Human 审批需要确认：
+
+1. TreeMap 和 side-specific best cache 是否作为 Phase 2 baseline。
+2. active-only OrderId index 和由上层负责全局唯一性的边界。
+3. `OrderBookMatch` 结构化匹配片段以及 maker-price 语义。
+4. Market Order 延后到 Phase 3。
+
+### ADR Linkage
+
+| Field | Value |
+| --- | --- |
+| ADR | [`docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md`](../../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md) |
+| Status | `Proposed` |
+| Decision Summary | 使用 side-specific TreeMap、PriceLevel intrusive FIFO、active OrderId -> OrderNode 索引和 Best Price 缓存；支持 Add、Cancel、Best Bid/Ask 和结构化限价撮合；Market Order 与 MatchingEngine 延后。 |
+| Scope Boundary | 仅允许 Basic OrderBook 结构、取消、最佳价、限价结构化撮合和正确性测试；禁止 MatchingEngine、Market Order、网络、Pipeline、WAL、Recovery、性能替代结构和性能结论。 |
+
+该 ADR 草案先于本任务的技术决策和任务审批创建。ADR 与本方案的决策摘要、
+范围边界和验证计划必须保持一致；任何差异都必须暂停实现并重新审批。
+
+### Architecture Impact
+
+- [ ] No architecture change
+- [x] ADR required: `ADR-0007-basic-orderbook-structure-and-boundaries.md`
+- [x] Human architecture decision required
+
+## 8. Planned File Changes
+
+| File or Directory | Change | Reason |
+| --- | --- | --- |
+| `src/main/java/com/ultralatency/matching/orderbook/` | 新增 OrderBook、BidBook、AskBook、PriceLevel、OrderQueue、OrderNode 和匹配结果类型 | 建立 Phase 2 基线结构 |
+| `src/test/java/com/ultralatency/matching/orderbook/` | 新增结构、边界、取消和撮合测试 | 固定价格时间优先级和状态不变量 |
+| `docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md` | 记录 OrderBook 决策 | 在实现前冻结可审查的结构和边界 |
+| `docs/architecture/order-book.md` | ADR 获批后同步实现边界和不变量 | 保持架构文档与 ADR 一致 |
+| `.codex/AGENT_CONTEXT.md` | 每阶段完成后同步当前任务和审批状态 | 支持会话恢复 |
+| `tasks/reports/PHASE-2-*.md` | 记录 ADR/Decision、实现、验证和同步阶段报告 | 建立逐步审批 hand-off |
+
+## 9. Test Plan
+
+### Unit Tests
+
+- [ ] PriceLevel queue append, head/tail, count and total quantity.
+- [ ] Bid price priority and Ask price priority.
+- [ ] Same-price FIFO using accepted input sequence.
+- [ ] Active index lookup and node unlink behavior.
+- [ ] Best Bid/Ask after add, cancel, fill and empty-level cleanup.
+
+### Integration or System Tests
+
+- [ ] OrderBook add/cancel/match across both sides.
+- [ ] One-level and multi-level limit matching.
+- [ ] Residual order resting and final non-crossed state.
+
+### Failure and Boundary Tests
+
+- [ ] Reject market orders from resting `add`.
+- [ ] Reject wrong-side, duplicate-active-id, terminal-order and zero-residual inputs.
+- [ ] Verify absent and repeated cancellation are no-op and non-throwing.
+- [ ] Verify empty-book and empty-side best-price results.
+- [ ] Verify no stale PriceLevel remains after final removal.
+
+### Determinism or Replay Tests
+
+- [ ] Same ordered inputs produce equal match fragments and final state.
+- [ ] State summary/hash is independent of HashMap iteration or object identity.
+
+## 10. Benchmark and Profile Plan
+
+- Benchmark: `Not executed in ADR / Decision stage`
+- Profile: `Not applicable before an approved implementation`
+- Dataset and distribution: identical generated event streams for all baselines
+- Metrics: price insert, best lookup, cancel, one-level match, multi-level match,
+  empty-level cleanup; later include throughput, latency, allocation and GC
+- Baseline: TreeMap + intrusive queue + active OrderId index
+
+No performance claim is authorized by this task plan. Any alternative structure
+requires a separate evidence-backed decision or an approved scope update.
+
+## 11. Risks and Mitigations
+
+| Risk | Impact | Mitigation |
+| --- | --- | --- |
+| Best-price cache becomes stale | Wrong match or quote | Keep TreeMap authoritative and test every add/remove boundary |
+| Active-only index cannot prove historical ID uniqueness | Duplicate IDs across terminal history | Make global uniqueness an explicit MatchingEngine/event-source responsibility |
+| OrderBookMatch diverges from Trade/Execution | Phase 3 integration rework | Test field mapping and keep TradeId/sequence allocation outside OrderBook |
+| TreeMap baseline is too allocation-heavy | Performance ceiling | Measure before considering custom structures; do not optimize in this task |
+| Market-order semantics leak into Basic OrderBook | Scope and architecture drift | Reject market resting and defer market matching to Phase 3 |
+
+## 12. Rollback Plan
+
+Before implementation, delete this Proposed task and ADR only if Human rejects or
+cancels the design, preserving the existing ADR-0002 baseline. After
+implementation, revert the single logical OrderBook commit without changing
+Phase 1 domain semantics or persistence formats.
+
+## 13. Verification Commands
+
+Decision stage:
+
+```text
+git status --short --branch
+git diff --check
+review ADR-0002, ADR-0005, order-book architecture, matching architecture,
+Phase 1 domain source and tests
+```
+
+Implementation stage after approval:
+
+```text
+mvn -pl core -am test
+mvn verify
+git diff --check
+```
+
+Verification stage after implementation:
+
+```text
+mvn -pl core -am test
+mvn verify
+run the approved OrderBook baseline benchmark with recorded parameters
+git diff --check
+git status --short --branch
+```
+
+## 14. Git Commit Plan
+
+Decision-stage proposal:
+
+```text
+docs(orderbook): propose basic orderbook baseline
+```
+
+Implementation:
+
+```text
+feat(orderbook): implement basic orderbook baseline
+```
+
+Tests may be included in the implementation commit when they form one
+independently verifiable logical change. Benchmark and documentation results
+must not be mixed into an unrelated implementation commit.
+
+## 15. Approval Record
+
+| Date | Reviewer | Stage | Decision | Constraints / Notes |
+| --- | --- | --- | --- | --- |
+| 2026-08-19 | Human Developer | Phase 1 hand-off | `Approved` | Authorized Phase 2 ADR / Decision stage only. No Phase 2 production code or tests authorized yet. |
+|  |  | ADR / Decision and Task Plan | `Pending` | Awaiting review of ADR-0007 and this Proposed task plan. |
+
+## 16. Phase Reports and Approval Gates
+
+| Stage | Report Location | Status | Next Approval Gate | Human Approval |
+| --- | --- | --- | --- | --- |
+| ADR / Decision | [`tasks/reports/PHASE-2-adr-decision.md`](../reports/PHASE-2-adr-decision.md) | `Completed - Proposed` | `Pending Human Approval` | Pending |
+| Task Approval |  | `Pending` | `Pending Human Approval` |  |
+| Implementation |  | `Pending` | `Pending Human Approval` |  |
+| Verification |  | `Pending` | `Pending Human Approval` |  |
+| Documentation and Synchronization |  | `Pending` | `Pending Human Approval` |  |
+
+本阶段报告只证明 ADR 草案、任务方案和架构审查已完成，不代表技术决策或
+实现已获批。Human 审批 ADR 和任务方案后，才能进入 Implementation 阶段。
+
+## 17. Implementation Log
+
+| Date | Status | Summary | Verification |
+| --- | --- | --- | --- |
+| 2026-08-19 | Proposed | 完成 ADR-0002、ADR-0005、OrderBook 架构、Matching Engine 架构和 Phase 1 API 审查；创建 ADR-0007 草案和本任务方案 | 只读审查完成；未修改生产代码或测试代码 |
+
+## 18. Completion Checklist
+
+- [ ] Scope and acceptance criteria satisfied
+- [ ] Tests added or updated
+- [ ] Build passed
+- [ ] Static or format checks passed
+- [ ] Benchmark or profile completed when applicable
+- [ ] Documentation updated
+- [x] Decision and ADR linkage recorded
+- [x] ADR existed before the technical decision and task approval
+- [ ] Every completed stage has a phase report
+- [ ] Human approval is recorded before each next stage
+- [ ] ADR, task plan, rules, project documents, and `AGENT_CONTEXT.md` are synchronized
+- [ ] `AGENT_CONTEXT.md` updated
+- [ ] Diff reviewed
+- [ ] Commit created
+- [ ] Post-commit Git status confirmed
