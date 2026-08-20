@@ -6,15 +6,15 @@
 | --- | --- |
 | Task ID | `TASK-20260819-004` |
 | Title | Establish Basic OrderBook baseline |
-| Status | `In Progress` |
+| Status | `Completed` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created | `2026-08-19` |
 | Updated | `2026-08-19` |
 | Related Phase | `Phase 2 - Basic OrderBook` |
 | Related ADR | [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md); [`ADR-0008-structural-limit-matching.md`](../../docs/adr/ADR-0008-structural-limit-matching.md); [`ADR-0009-performance-profiling-evidence.md`](../../docs/adr/ADR-0009-performance-profiling-evidence.md); [`ADR-0010-optimization-decision-after-profiling.md`](../../docs/adr/ADR-0010-optimization-decision-after-profiling.md) |
-| Current Stage | `Phase 2 Closure Approved` |
-| Next Approval Gate | `Merge -> master CI -> engineering baseline tag -> Task Completion` |
+| Current Stage | `Completed` |
+| Next Approval Gate | `Phase 3 ADR / Decision proposal — Human Approval required` |
 
 ## 2. Background
 
@@ -413,6 +413,7 @@ must not be mixed into an unrelated implementation commit.
 | 2026-08-20 | Human Developer | TASK-006 Repository Remote and CI Setup | `Approved / Closed` | Remote repository, SSH tracking, branch push, local verification, GitHub Actions evidence and documentation accepted. Do not merge immediately; enter Phase 2 Final Closure Review. |
 | 2026-08-20 | Human Developer | Steady-State Evidence Review | `Approved for closure evidence` | Phase 2 measurement isolation and evidence tracks accepted as complete. Production optimization remains unauthorized. Final Closure Review is authorized; Phase 3, merge and tag remain gated. |
 | 2026-08-20 | Human Developer | Phase 2 Final Closure Review | `Approved` | Basic OrderBook and all correctness/performance/repository evidence accepted. Authorized normal `--no-ff` merge to master, master CI verification, annotated `v0.1.0-engineering-baseline` tag and TASK-004 closure. Release, Phase 3 implementation, production optimization and history rewrite remain unauthorized. |
+| 2026-08-20 | Codex | Authorized Closure Execution | `Completed` | Merge commit `cbfa957`; local Maven verify PASS; master CI run `32373388465` PASS; annotated tag `v0.1.0-engineering-baseline` pushed and verified against `cbfa957`. |
 
 ## 16. Phase Reports and Approval Gates
 
@@ -434,6 +435,8 @@ must not be mixed into an unrelated implementation commit.
 | Measurement-Isolation Execution | [`tasks/reports/PHASE-2-measurement-isolation.md`](../reports/PHASE-2-measurement-isolation.md) | `Completed - Approved` | `Phase 2 Final Closure Review` | Approved 2026-08-20 |
 | Repository Remote and CI Setup | [`tasks/reports/PHASE-2-repository-remote-ci-setup.md`](../reports/PHASE-2-repository-remote-ci-setup.md) | `Completed - Approved` | `Phase 2 Final Closure Review` | Approved 2026-08-20 |
 | Phase 2 Final Closure Review | [`tasks/reports/PHASE-2-final-closure-review.md`](../reports/PHASE-2-final-closure-review.md) | `Completed - Approved` | `Merge / master CI / baseline tag` | Approved 2026-08-20 |
+| Merge / Master CI / Engineering Baseline Tag | [`tasks/reports/PHASE-2-final-closure-review.md`](../reports/PHASE-2-final-closure-review.md) | `Completed` | `Task Completion` | Authorized 2026-08-20 |
+| Completion | [`tasks/reports/PHASE-2-final-closure-review.md`](../reports/PHASE-2-final-closure-review.md) | `Completed` | `Phase 3 ADR proposal only` | Phase 3 not authorized |
 
 本阶段报告已由 Human Developer 审批，允许进入 Implementation 阶段。实现仍须
 按子阶段输出报告，并在下一阶段前等待 Human approval。当前
@@ -469,10 +472,11 @@ Review。本阶段不包含 merge、tag、生产性能优化或 Phase 3。
 | 2026-08-19 | Completed - Pending Human Approval | Human Developer 批准 ADR-0010 并授权 Measurement-Isolation Execution；完成 steady-state matching 与 lifecycle preparation 隔离测量及 JFR 证据采集 | `mvn -pl benchmark -am verify` 成功；M1 0.423779 us/op；M2 5.590215 us/op；M3 single-level 0.459092 us/op；M3 multi-level 5.772109 us/op；JFR 样本量和 outlier 限制仍不支持生产优化；等待 Steady-State Evidence Review |
 | 2026-08-20 | Prepared - Pending Human Approval | Human Developer 关闭 TASK-006 并接受全部 Phase 2 evidence track；准备 Phase 2 Final Closure Review | Remote `master`/infrastructure branch established; CI runs `32371458037` and `32371665075` passed; merge, tag and Phase 3 remain unauthorized |
 | 2026-08-20 | Closure Approved | Human Developer 批准 Phase 2 Final Closure Review，授权普通 merge、master CI 验证、engineering baseline tag 和任务关闭 | 禁止 squash、Release、Phase 3 implementation、production optimization 和 history rewrite |
+| 2026-08-20 | Completed | 普通 `--no-ff` merge 到 master；完成本地验证、master CI、annotated engineering baseline tag 推送和远程验证 | Merge `cbfa957`; 45 tests; Checkstyle 0; BUILD SUCCESS; CI run `32373388465` PASS; tag peels to `cbfa957` |
 
 ## 18. Completion Checklist
 
-- [ ] Scope and acceptance criteria satisfied
+- [x] Scope and acceptance criteria satisfied
 - [x] Tests added or updated
 - [x] Build passed
 - [x] Static or format checks passed
@@ -488,3 +492,5 @@ Review。本阶段不包含 merge、tag、生产性能优化或 Phase 3。
 - [x] Diff reviewed
 - [x] Commit created
 - [x] Post-commit Git status confirmed
+- [x] Remote master synchronized and CI passed
+- [x] Engineering baseline tag created, pushed and verified

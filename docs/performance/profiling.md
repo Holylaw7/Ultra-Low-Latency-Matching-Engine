@@ -6,7 +6,8 @@ The Phase 2 OrderBook benchmark baseline and documentation synchronization were
 approved on `2026-08-19`. ADR-0009 and its profiling task-plan stage were
 approved on `2026-08-19`; profiling execution was completed on `2026-08-19`
 and approved on `2026-08-19`. ADR-0010 was approved on `2026-08-19`;
-measurement-isolation execution completed and is pending Human Approval.
+measurement-isolation execution and Phase 2 Final Closure completed. The
+baseline is frozen at `v0.1.0-engineering-baseline`.
 No production optimization or Phase 3 work is authorized.
 
 ## Workflow

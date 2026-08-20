@@ -52,7 +52,7 @@
 
 - `docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md`
 - `docs/architecture/order-book.md`
-- `tasks/active/TASK-20260819-004-basic-orderbook.md`
+- `tasks/completed/TASK-20260819-004-basic-orderbook.md`
 - `.codex/AGENT_CONTEXT.md`
 
 ## 5. Verification Evidence

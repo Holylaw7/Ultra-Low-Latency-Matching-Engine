@@ -136,7 +136,7 @@ This report is synchronized with:
 - [`README.md`](../../README.md);
 - [`.codex/AGENT_CONTEXT.md`](../../.codex/AGENT_CONTEXT.md);
 - [`.codex/MASTER_PROMPT.md`](../../.codex/MASTER_PROMPT.md); and
-- [`TASK-20260819-004-basic-orderbook.md`](../active/TASK-20260819-004-basic-orderbook.md).
+- [`TASK-20260819-004-basic-orderbook.md`](../completed/TASK-20260819-004-basic-orderbook.md).
 
 ## 9. Current Handoff
 

@@ -51,7 +51,7 @@ Best Bid/Ask 和生命周期一致性基线。不进入结构化撮合遍历、`
 同步文档：
 
 - `docs/architecture/order-book.md`
-- `tasks/active/TASK-20260819-004-basic-orderbook.md`
+- `tasks/completed/TASK-20260819-004-basic-orderbook.md`
 - `.codex/AGENT_CONTEXT.md`
 - `tasks/reports/PHASE-2-implementation-orderbook-active-index.md`
 

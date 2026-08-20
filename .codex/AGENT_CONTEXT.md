@@ -10,16 +10,17 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 2 — Basic OrderBook |
-| Product task | `TASK-20260819-004` — Basic OrderBook (`In Progress`) |
-| Product stage | Phase 2 closure actions |
-| Product approval | Final Closure Review approved |
+| Phase | Phase 2 — Basic OrderBook (`Completed`) |
+| Latest product task | [`TASK-20260819-004`](../tasks/completed/TASK-20260819-004-basic-orderbook.md) — Completed |
+| Product stage | Engineering baseline frozen |
+| Product approval | Phase 2 Closed |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
-| Branch | `chore/repository-remote-ci` |
-| Latest remote-verified commit | `f1f2a85` |
+| Branch | `master` |
+| Engineering baseline commit | `cbfa957` |
+| Engineering baseline tag | `v0.1.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `master` and `chore/repository-remote-ci` published; current branch tracks `origin` |
-| CI | Passing for `f1f2a85` — [GitHub Actions run 32371665075](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32371665075) |
+| Remote sync | `master` and engineering baseline tag published |
+| CI | Master PASS for `cbfa957` — [GitHub Actions run 32373388465](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32373388465) |
 
 ## Project Progress
 
@@ -27,27 +28,28 @@
 | --- | --- | --- |
 | Phase 0 — Bootstrap | Completed | Maven reactor, Java 21, JUnit 5, JMH, Checkstyle and CI workflow |
 | Phase 1 — Domain Model | Completed / Approved | [`PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md) |
-| Phase 2 — Basic OrderBook | Closure Approved | OrderBook tests, JMH/JFR evidence, remote repository and passing CI |
+| Phase 2 — Basic OrderBook | Completed / Approved | `v0.1.0-engineering-baseline`, 45 tests, JMH/JFR evidence and passing master CI |
 | Phase 3 — Matching Engine | Pending / Not Authorized | Requires completion and approval of the current Phase 2 gate |
 | Phase 4+ — Pipeline, network, recovery and performance evolution | Future Work | Architecture documents and future ADRs/tasks |
 
 ## Current Product Gate
 
-The Phase 2 implementation and evidence tracks are complete. Final Closure
-Review was approved on `2026-08-20`. The authorized closure sequence is:
+Phase 2 is closed and frozen at `v0.1.0-engineering-baseline`. The next possible
+product action is:
 
 ```text
-normal --no-ff merge to master
-    -> verify master locally and in GitHub Actions
-    -> create/push v0.1.0-engineering-baseline
-    -> close TASK-20260819-004
+Phase 3 ADR-0011 proposal
+    -> Human architecture review
+    -> Human ADR approval
+    -> new Task Plan and Human approval
+    -> implementation only after both approvals
 ```
 
-Release, production optimization, Phase 3 implementation and history rewrite
-remain unauthorized.
+Phase 3 ADR creation, Phase 3 implementation, Release, production optimization
+and history rewrite remain unauthorized until separately approved.
 
-Current plan:
-[`TASK-20260819-004-basic-orderbook.md`](../tasks/active/TASK-20260819-004-basic-orderbook.md).
+Completed plan:
+[`TASK-20260819-004-basic-orderbook.md`](../tasks/completed/TASK-20260819-004-basic-orderbook.md).
 
 Current evidence:
 
@@ -56,7 +58,7 @@ Current evidence:
 - [`PHASE-2-repository-remote-ci-setup.md`](../tasks/reports/PHASE-2-repository-remote-ci-setup.md)
   — completed and approved; remote CI established.
 - [`PHASE-2-final-closure-review.md`](../tasks/reports/PHASE-2-final-closure-review.md)
-  — approved; closure actions authorized.
+  — approved and completed; Phase 2 baseline frozen.
 - [`PHASE-2-profiling-execution.md`](../tasks/reports/PHASE-2-profiling-execution.md)
   — completed and approved as evidence collection.
 - [`PHASE-2-benchmark-orderbook-baseline.md`](../tasks/reports/PHASE-2-benchmark-orderbook-baseline.md)

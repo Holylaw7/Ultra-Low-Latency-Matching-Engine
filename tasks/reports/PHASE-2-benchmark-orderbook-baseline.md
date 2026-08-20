@@ -161,7 +161,7 @@ Synchronized after the benchmark run:
 - `docs/benchmark/orderbook.md`;
 - `.codex/AGENT_CONTEXT.md`;
 - `.codex/MASTER_PROMPT.md`;
-- `tasks/active/TASK-20260819-004-basic-orderbook.md`.
+- `tasks/completed/TASK-20260819-004-basic-orderbook.md`.
 
 ## 10. Approval Request
 

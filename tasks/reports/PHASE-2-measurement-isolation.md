@@ -254,7 +254,7 @@ Synchronized with:
 
 - [`ADR-0010-optimization-decision-after-profiling.md`](../../docs/adr/ADR-0010-optimization-decision-after-profiling.md);
 - [`PHASE-2-optimization-adr-decision.md`](PHASE-2-optimization-adr-decision.md);
-- [`TASK-20260819-004-basic-orderbook.md`](../active/TASK-20260819-004-basic-orderbook.md);
+- [`TASK-20260819-004-basic-orderbook.md`](../completed/TASK-20260819-004-basic-orderbook.md);
 - [`README.md`](../../README.md);
 - [`docs/performance/profiling.md`](../../docs/performance/profiling.md);
 - [`docs/performance/optimization-history.md`](../../docs/performance/optimization-history.md);

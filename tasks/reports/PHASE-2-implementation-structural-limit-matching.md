@@ -81,7 +81,7 @@ Synchronization:
 - `.codex/AGENT_CONTEXT.md`
 - `docs/architecture/order-book.md`
 - `docs/architecture/matching-engine.md`
-- `tasks/active/TASK-20260819-004-basic-orderbook.md`
+- `tasks/completed/TASK-20260819-004-basic-orderbook.md`
 - this phase report
 
 ADR-0008 remains the approved decision source. No new architecture decision

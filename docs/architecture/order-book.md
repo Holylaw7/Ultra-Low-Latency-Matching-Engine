@@ -11,8 +11,9 @@ OrderBook baseline benchmark has also been executed and approved as
 component-level experimental evidence. ADR-0009 has been approved, profiling
 execution has completed and was approved as evidence collection on
 `2026-08-19`. ADR-0010 was approved on `2026-08-19` and authorized a
-separate measurement-isolation experiment. That experiment and its evidence
-review are complete; Phase 2 Final Closure Review is pending.
+separate measurement-isolation experiment. That experiment, evidence review
+and Phase 2 Final Closure are complete; the engineering baseline is frozen at
+`v0.1.0-engineering-baseline`.
 
 ## Initial Baseline
 
@@ -40,8 +41,7 @@ ADR-0009 is approved and the profiling execution evidence is recorded in
 profiling execution was approved on `2026-08-19`. ADR-0010 is approved, and
 the measurement-isolation evidence is recorded in
 [`PHASE-2-measurement-isolation.md`](../../tasks/reports/PHASE-2-measurement-isolation.md).
-The current gate is Phase 2 Final Closure Review; production optimization
-remains unauthorized under
+Phase 2 is closed. Production optimization and Phase 3 remain unauthorized under
 [`ADR-0010-optimization-decision-after-profiling.md`](../adr/ADR-0010-optimization-decision-after-profiling.md).
 
 ## Aggregate
@@ -73,8 +73,8 @@ quantity, and both post-fragment remaining quantities. It does not contain
 `TradeId`, event sequence, timestamps, `Trade`, `Execution`, mutable nodes, or
 publication behavior. Implementation and correctness verification are
 complete. Profiling execution was approved as evidence collection on
-`2026-08-19`. Measurement isolation and evidence review are complete; Phase 2
-Final Closure Review is pending and production optimization remains unauthorized.
+`2026-08-19`. Measurement isolation, evidence review and Phase 2 Final Closure
+are complete; production optimization remains unauthorized.
 
 ## Baseline Measurement
 

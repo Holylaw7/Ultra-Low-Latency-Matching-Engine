@@ -22,8 +22,8 @@ Developer 于 `2026-08-19` 批准。ADR-0009 Profiling ADR / Decision 已于
 `2026-08-19` 批准，Profiling Execution 已于 `2026-08-19` 通过 Human
 Approval。ADR-0010 Optimization ADR / Decision 已于 `2026-08-19` 批准，
 并授权 Measurement-Isolation Execution。Isolation 与 Repository/CI Setup
-均已完成并于 `2026-08-20` 通过 Human Review；当前等待 Phase 2 Final
-Closure Review 的 Human Approval。
+均已完成并于 `2026-08-20` 通过 Human Review。Phase 2 已通过 Final Closure
+Review，并冻结为 `v0.1.0-engineering-baseline`。
 
 Phase 1 Domain Model and Correctness Baseline has been completed and approved.
 ADR-0007 and ADR-0008 have been approved, and the Phase 2 OrderBook structure
@@ -32,8 +32,8 @@ The approved benchmark is component-level experimental baseline evidence, not a
 production throughput or latency claim. Profiling execution evidence is
 recorded and approved as evidence collection. Measurement-isolation evidence
 is recorded separately and does not replace B0 or authorize production
-optimization. The evidence review is accepted; the next gate is Phase 2 Final
-Closure Review.
+optimization. Phase 2 is closed at the engineering baseline tag; Phase 3 is
+not authorized and must begin with a separate ADR and Task approval.
 
 The repository currently contains:
 
@@ -89,8 +89,7 @@ only; they must not be presented as production throughput, latency, allocation
 or GC claims. JFR profiling evidence is recorded in
 `tasks/reports/PHASE-2-profiling-execution.md`; measurement-isolation evidence
 is recorded in `tasks/reports/PHASE-2-measurement-isolation.md`. The evidence
-set is accepted for closure; the current gate is Phase 2 Final Closure Review /
-Human Approval.
+set is accepted and frozen in `v0.1.0-engineering-baseline`.
 
 ## Structure
 

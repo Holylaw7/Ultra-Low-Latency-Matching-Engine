@@ -8,8 +8,9 @@ The isolation report shows that the measured matching region is separated from
 case preparation, but the short JFR recordings do not yet justify selecting
 an optimization candidate.
 
-Steady-State Evidence Review is complete. The current gate is Phase 2 Final
-Closure Review; production optimization and Phase 3 remain unauthorized.
+Steady-State Evidence Review and Phase 2 Final Closure are complete. The
+baseline is frozen at `v0.1.0-engineering-baseline`; production optimization
+and Phase 3 remain unauthorized.
 
 Each entry must use this format:
 

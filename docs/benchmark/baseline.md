@@ -49,12 +49,12 @@ Current result:
 - Baseline:
   TreeMap + intrusive FIFO + active OrderId index
 
-Next gate:
+Phase 2 closure status:
 
-- Phase 2 Final Closure Review Human Approval after the completed
-  Steady-State Evidence Review under the approved
-  [`ADR-0010-optimization-decision-after-profiling.md`](../adr/ADR-0010-optimization-decision-after-profiling.md)
-  (`Approved`; production optimization remains unauthorized)
+- Completed and frozen at `v0.1.0-engineering-baseline` after the approved
+  Steady-State Evidence Review and Final Closure Review. Under
+  [`ADR-0010-optimization-decision-after-profiling.md`](../adr/ADR-0010-optimization-decision-after-profiling.md),
+  production optimization remains unauthorized.
 
 Profiling report:
 

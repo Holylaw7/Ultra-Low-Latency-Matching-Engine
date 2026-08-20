@@ -54,7 +54,7 @@ side-specific `TreeMap<Price, PriceLevel>` 索引、价格优先级、Best Price
 同步文档：
 
 - `docs/architecture/order-book.md`
-- `tasks/active/TASK-20260819-004-basic-orderbook.md`
+- `tasks/completed/TASK-20260819-004-basic-orderbook.md`
 - `.codex/AGENT_CONTEXT.md`
 - `tasks/reports/PHASE-2-implementation-ordernode-queue-pricelevel.md`
 

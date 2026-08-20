@@ -36,7 +36,7 @@ Network 或性能优化。
 ## 4. Changed Files
 
 - `src/test/java/com/ultralatency/matching/orderbook/OrderBookTest.java`
-- `tasks/active/TASK-20260819-004-basic-orderbook.md`
+- `tasks/completed/TASK-20260819-004-basic-orderbook.md`
 - `.codex/AGENT_CONTEXT.md`
 
 ## 5. Verification Evidence

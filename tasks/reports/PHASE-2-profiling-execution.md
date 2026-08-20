@@ -249,7 +249,7 @@ This report is synchronized with:
 - `README.md`;
 - `.codex/AGENT_CONTEXT.md`;
 - `.codex/MASTER_PROMPT.md`; and
-- `tasks/active/TASK-20260819-004-basic-orderbook.md`.
+- `tasks/completed/TASK-20260819-004-basic-orderbook.md`.
 
 ## 14. Approval and Hand-off
 
