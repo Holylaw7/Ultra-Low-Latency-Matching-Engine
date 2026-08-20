@@ -2,14 +2,15 @@
 
 ## Status
 
-Proposed — Human architecture decision pending
+Approved with conditions — D3 sequence semantic revision pending; Phase 3
+implementation not authorized
 
 ## Decision Record
 
 - Proposal date: `2026-08-20`
 - Reviewer: `Human Developer`
-- Decision date: Pending
-- Decision: Pending
+- Decision date: `2026-08-20`
+- Decision: `Approved with conditions`
 - Related decisions:
   - [`ADR-0001-matching-model.md`](ADR-0001-matching-model.md)
   - [`ADR-0005-domain-model-and-correctness-baseline.md`](ADR-0005-domain-model-and-correctness-baseline.md)
@@ -17,9 +18,10 @@ Proposed — Human architecture decision pending
   - [`ADR-0008-structural-limit-matching.md`](ADR-0008-structural-limit-matching.md)
   - [`ADR-0010-optimization-decision-after-profiling.md`](ADR-0010-optimization-decision-after-profiling.md)
 
-This document is a proposal, not an accepted decision. It authorizes no
-production implementation until the Human Developer records an explicit ADR
-decision and approves a separate implementation Task Plan.
+The Human Developer approved D1, D2 and D4-D7 on `2026-08-20`. D3 is
+conditionally approved and blocks implementation until the proposed
+ADR-0005 sequence semantic revision is explicitly accepted and synchronized.
+This conditional decision authorizes no production implementation.
 
 ## Context
 
@@ -78,7 +80,7 @@ Costs:
 - ownership is a contract that the caller must enforce;
 - ingress backpressure and multi-producer sequencing remain outside the core.
 
-**Proposal: select this option for the Phase 3 correctness baseline.**
+**Decision: approved for the Phase 3 correctness baseline.**
 
 ### Execution option B — embedded Disruptor
 
@@ -88,7 +90,8 @@ Advantages include a familiar low-latency pipeline and explicit consumer
 sequence. Costs include coupling correctness to lifecycle, wait strategy,
 producer configuration and backpressure before a synchronous baseline exists.
 
-**Proposal: defer to a separate pipeline ADR and benchmarked task.**
+**Decision: approved for deferral to a separate pipeline ADR and benchmarked
+task.**
 
 ### Execution option C — symbol Actor
 
@@ -97,7 +100,7 @@ An actor owns each symbol book and receives asynchronous messages.
 This provides isolation, but actor mailbox, scheduler, supervision and message
 ordering semantics would become part of the matching contract.
 
-**Proposal: reject for the Phase 3 baseline; reconsider only for a future
+**Decision: rejected for the Phase 3 baseline; reconsider only for a future
 multi-symbol architecture.**
 
 ### Sequence option A — one shared namespace
@@ -109,7 +112,7 @@ This is superficially simple but cannot represent multiple matches from one
 command without either duplicate output sequence values or an undocumented
 encoding scheme.
 
-**Proposal: reject.**
+**Decision: rejected.**
 
 ### Sequence option B — separate meanings using the same value type
 
@@ -119,7 +122,7 @@ output values.
 This is minimally invasive, but the compiler cannot prevent namespace mixups
 and the current `Trade.sequence` meaning stays ambiguous.
 
-**Proposal: acceptable fallback only if domain-type refinement is rejected.**
+**Decision: retained only as a rejected-revision fallback.**
 
 ### Sequence option C — explicit input and output domains
 
@@ -128,9 +131,9 @@ output-event sequence value type. Each emitted match result receives one
 monotonic output-event sequence. `TradeId` supplies the independent monotonic
 trade identity.
 
-**Proposal: select.** This refines the Phase 1 domain boundary and therefore
-requires explicit Human approval. If accepted, ADR-0005 must be amended by
-the implementation task rather than silently reinterpreted.
+**Decision: conditionally approved.** The direction is accepted, but the
+explicit ADR-0005 revision must be approved before implementation. The
+revision is documented in ADR-0005 as R1-R6 and must not be applied silently.
 
 ### WAL option A — commands are authoritative
 
@@ -138,7 +141,7 @@ Persist the accepted, sequenced command before applying it. Rebuild by
 replaying commands into the deterministic engine. Trade and Execution output
 is derived evidence.
 
-**Proposal: select as the logical recovery boundary.**
+**Decision: approved in principle as the logical recovery boundary.**
 
 ### WAL option B — derived events are authoritative
 
@@ -148,7 +151,7 @@ from output events.
 This requires a much larger event model for resting, cancellation, rejection
 and residual state, and bypasses the already deterministic command path.
 
-**Proposal: reject for the baseline.**
+**Decision: rejected for the baseline.**
 
 ### WAL option C — commands and outputs are both authoritative
 
@@ -156,10 +159,10 @@ Persist both and permit either to drive recovery.
 
 This creates two competing sources of truth and additional consistency rules.
 
-**Proposal: reject. Outputs may be recorded or verified, but are not a second
+**Decision: rejected. Outputs may be recorded or verified, but are not a second
 recovery authority.**
 
-## Proposed Decision
+## Conditionally Approved Decision
 
 ### 1. Core Execution Boundary
 
@@ -246,10 +249,10 @@ The mapping is deterministic:
 - remaining quantities equal the fragment post-match quantities;
 - result aggregates preserve fragment traversal order.
 
-The recommended domain refinement changes `Trade.sequence` to the explicit
-output-event sequence type. If that refinement is rejected, the fallback is
-to retain `Sequence` as the carrier while documenting disjoint namespaces;
-the fallback must be recorded in this ADR before implementation.
+The conditionally approved domain refinement replaces `Trade.sequence` with
+`Trade.eventSequence` using an explicit `EventSequence` value type. The exact
+semantic revision and Human approval items R1-R6 are recorded in ADR-0005.
+No implementation may begin while any of those items remains pending.
 
 ### 5. Engine Result Boundary
 
@@ -378,24 +381,27 @@ workload.
 
 ## Human Decision Gate
 
-The reviewer must explicitly accept, reject or revise each item:
+The first architecture review produced these decisions:
 
 | ID | Proposed decision | Current state |
 | --- | --- | --- |
-| D1 | Synchronous single-owner MatchingEngine with no embedded queue/thread | Pending |
-| D2 | Upstream-owned contiguous command sequence verified by the engine | Pending |
-| D3 | Engine-owned TradeId and explicit output-event sequence domains | Pending |
-| D4 | One ordered aggregate per fragment: Trade, maker Execution, taker Execution | Pending |
-| D5 | Immutable return result; no callbacks, publication or I/O | Pending |
-| D6 | Command log is canonical replay input; derived outputs are non-authoritative | Pending |
-| D7 | Market order, pipeline, WAL implementation and optimization remain deferred | Pending |
+| D1 | Synchronous single-owner MatchingEngine with no embedded queue/thread | Approved |
+| D2 | Upstream-owned contiguous command sequence verified by the engine | Approved |
+| D3 | Engine-owned TradeId and explicit output-event sequence domains | Conditional — ADR-0005 R1-R6 pending |
+| D4 | One ordered aggregate per fragment: Trade, maker Execution, taker Execution | Approved |
+| D5 | Immutable return result; no callbacks, publication or I/O | Approved |
+| D6 | Command log is canonical replay input; derived outputs are non-authoritative | Approved in principle; WAL implementation deferred |
+| D7 | Market order, pipeline, WAL implementation and optimization remain deferred | Approved |
 
-Approval of this ADR alone does not authorize code. After acceptance, a new
-or revised implementation Task Plan must define exact types, failure API,
-tests, files and verification commands and receive Human approval.
+The next gate is Human approval of ADR-0005 revision R1-R6. After that approval
+is recorded, ADR-0011 may become fully approved. Full ADR approval alone still
+does not authorize code: a separate implementation Task Plan must define exact
+types, failure API, tests, files and verification commands and receive Human
+approval.
 
 ## Approval Record
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
 | 2026-08-20 | Human Developer | `Proposal Authorized` | Phase 3 ADR / Decision proposal may be prepared. Architecture selection and implementation remain unauthorized pending review. |
+| 2026-08-20 | Human Developer | `Approved with conditions` | D1, D2 and D4-D7 approved. D3 is approved only after explicit ADR-0005 sequence semantic revision. Phase 3 implementation remains unauthorized. |
