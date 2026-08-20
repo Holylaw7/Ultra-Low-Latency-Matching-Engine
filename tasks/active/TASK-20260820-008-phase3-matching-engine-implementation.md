@@ -6,21 +6,21 @@
 | --- | --- |
 | Task ID | `TASK-20260820-008` |
 | Title | Implement Phase 3 MatchingEngine Orchestration Baseline |
-| Status | `In Progress — Stage 1 completed and approved` |
+| Status | `In Progress — Stage 2 completed pending Human approval` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created | `2026-08-20` |
 | Updated | `2026-08-20` |
 | Related Phase | Phase 3 — MatchingEngine |
 | Related ADR | ADR-0005 sequence revision and ADR-0011 (`Approved`) |
-| Current Stage | `Stage 2 MatchingEngine Core authorized — implementation not started` |
-| Next Approval Gate | `Stage 2 MatchingEngine Core completion review` |
+| Current Stage | `Stage 2 MatchingEngine Core completed — pending Human approval` |
+| Next Approval Gate | `Human Stage 2 Completion Review` |
 | Branch | `feature/phase3-matching-engine` |
 | Approved Implementation Branch | `feature/phase3-matching-engine` |
 | Parent Branch / HEAD | `docs/phase3-matching-engine-adr` at `96fe50b` |
 | Engineering Baseline | `v0.1.0-engineering-baseline` at `cbfa957` |
 | Remote | `origin` |
-| CI | Stage 1 evidence head `02aefd0`: [run 32381223468](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32381223468) PASS |
+| CI | Stage 2 final evidence push pending; Stage 1 evidence `02aefd0`: [run 32381223468](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32381223468) PASS |
 
 ## 2. Background
 
@@ -79,49 +79,49 @@ observable results without embedding infrastructure concerns.
 - [ ] Introduce immutable submit-limit and cancel command values carrying one
   input `Sequence`; submit carries immutable order fields rather than a
   mutable `Order` aggregate.
-- [ ] Reject null, malformed, duplicate, gap and out-of-order commands before
+- [x] Reject null, malformed, duplicate, gap and out-of-order commands before
   OrderBook mutation or counter advancement.
-- [ ] Construct the NEW limit `Order` inside MatchingEngine with the command
+- [x] Construct the NEW limit `Order` inside MatchingEngine with the command
   sequence, making `Order.sequence()` equality true by construction.
-- [ ] Keep command-sequence allocation upstream; MatchingEngine stores only
+- [x] Keep command-sequence allocation upstream; MatchingEngine stores only
   the last successfully applied value.
-- [ ] Allocate TradeId and EventSequence only inside MatchingEngine, once per
+- [x] Allocate TradeId and EventSequence only inside MatchingEngine, once per
   MatchFragment and in fragment traversal order.
-- [ ] Convert each fragment into one Trade, one maker Execution and one taker
+- [x] Convert each fragment into one Trade, one maker Execution and one taker
   Execution with deterministic named roles.
-- [ ] Return an immutable EngineResult with command outcome and ordered match
+- [x] Return an immutable EngineResult with command outcome and ordered match
   results; never publish or invoke callbacks.
-- [ ] Advance the command sequence for a successful unknown-order cancellation
+- [x] Advance the command sequence for a successful unknown-order cancellation
   no-op, while returning an explicit `NOT_FOUND` outcome.
-- [ ] Fail counter-capacity checks before any OrderBook mutation.
-- [ ] Mark an engine instance failed after an unexpected apply/translation
+- [x] Fail counter-capacity checks before any OrderBook mutation.
+- [x] Mark an engine instance failed after an unexpected apply/translation
   failure that may follow mutation; reject all later commands.
-- [ ] Leave all Phase 2 OrderBook production files unchanged.
+- [x] Leave all Phase 2 OrderBook production files unchanged.
 
 ### Acceptance Criteria
 
-- [ ] First accepted command has sequence 1; each later accepted command is
+- [x] First accepted command has sequence 1; each later accepted command is
   exactly the previous accepted sequence plus one.
-- [ ] Duplicate, skipped and out-of-order sequences leave book, engine
+- [x] Duplicate, skipped and out-of-order sequences leave book, engine
   sequence, TradeId and EventSequence state unchanged.
-- [ ] A non-crossing limit order returns `ACCEPTED`, no match results, and rests
+- [x] A non-crossing limit order returns `ACCEPTED`, no match results, and rests
   through the existing OrderBook behavior.
-- [ ] A single match returns exactly one immutable match result with the maker
+- [x] A single match returns exactly one immutable match result with the maker
   price, one TradeId, one EventSequence, maker Execution first and taker
   Execution second.
-- [ ] A multi-level/multi-maker match allocates gap-free increasing TradeIds
+- [x] A multi-level/multi-maker match allocates gap-free increasing TradeIds
   and EventSequences in exact MatchFragment order.
-- [ ] Successful cancellation returns `CANCELED`; absent cancellation returns
+- [x] Successful cancellation returns `CANCELED`; absent cancellation returns
   `NOT_FOUND`; both consume a valid command sequence and emit no match result.
-- [ ] Invalid fields and active-duplicate submit commands fail before the
+- [x] Invalid fields and active-duplicate submit commands fail before the
   engine sequence advances; market and terminal orders are unrepresentable at
   the command boundary.
-- [ ] Equal command streams from empty engines produce equal EngineResults and
+- [x] Equal command streams from empty engines produce equal EngineResults and
   equal observable OrderBook state, TradeIds and EventSequences.
-- [ ] EngineResult and match collections cannot be mutated by callers.
-- [ ] MatchingEngine has no I/O, queue, thread, callback, clock, randomness,
+- [x] EngineResult and match collections cannot be mutated by callers.
+- [x] MatchingEngine has no I/O, queue, thread, callback, clock, randomness,
   logging, networking or persistence dependency.
-- [ ] `mvn verify` passes with existing and new tests and zero Checkstyle
+- [x] `mvn verify` passes with existing and new tests and zero Checkstyle
   violations on Java 21.
 - [ ] Remote CI passes for every implementation-stage commit submitted for
   approval.
@@ -139,8 +139,9 @@ observable results without embedding infrastructure concerns.
   active order is absent.
 - `OrderBook.activeOrderCount()` provides a conservative upper bound for the
   fragments one incoming order can create.
-- Immutable engine commands and result aggregates exist; `MatchingEngine` does
-  not yet exist.
+- Immutable engine commands/results and synchronous `MatchingEngine` exist.
+  The engine validates command sequence, delegates to the frozen OrderBook and
+  converts ordered fragments into immutable Trade/Execution results.
 
 ### In Scope
 
@@ -611,7 +612,7 @@ Review. Stage 3 does not start automatically.
 | Task Planning | `tasks/reports/PHASE-3-matching-engine-implementation-planning.md` | Completed | Task Plan Review | Approved 2026-08-20 |
 | Task Approval | Same planning report | Completed | Domain/API Foundation | Approved 2026-08-20 |
 | Domain/API Foundation | `tasks/reports/PHASE-3-matching-engine-domain-api-foundation.md` | Completed / Approved | Stage 2 Authorization | Approved 2026-08-20 |
-| MatchingEngine Implementation | `tasks/reports/PHASE-3-matching-engine-core-authorization.md` | Authorized / Not Started | Human Stage 2 Completion Review | Approved 2026-08-20 |
+| MatchingEngine Implementation | `tasks/reports/PHASE-3-matching-engine-core-implementation.md` | Completed / Pending Human Approval | Human Stage 2 Completion Review | Pending |
 | Correctness / Determinism Verification | Not created | Not Authorized | Human Stage Approval | Not Authorized |
 | Benchmark / Profile | Not applicable | Not applicable | Documentation Sync | Not applicable |
 | Documentation and Synchronization | Not created | Not Authorized | Completion Review | Not Authorized |
@@ -628,6 +629,7 @@ Review. Stage 3 does not start automatically.
 | 2026-08-20 | Stage 1 Approved | Human accepted Stage 1 scope, ADR alignment, verification and frozen OrderBook boundary | Stage 2 remains unauthorized pending a separate authorization |
 | 2026-08-20 | Stage 2 Authorization Proposed | Froze MatchingEngine-only production scope, 2.1-2.3 boundaries, focused tests and prohibited paths | Documentation only; implementation remains unauthorized |
 | 2026-08-20 | Stage 2 Authorized | Human approved synchronous MatchingEngine Core implementation with no thread model or infrastructure | Stage 2.1-2.3 may proceed; Stage 3 remains unauthorized |
+| 2026-08-20 | Stage 2 Completed | Implemented command lifecycle, frozen OrderBook delegation and deterministic fragment translation | `c1fe408`, `f0e24cc`, `dbeaee6`; `mvn verify` PASS, 56 tests and Checkstyle 0; remote CI pending final evidence push |
 
 ## 19. Completion Checklist
 

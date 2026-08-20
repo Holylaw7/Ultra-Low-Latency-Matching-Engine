@@ -35,8 +35,10 @@ is recorded separately and does not replace B0 or authorize production
 optimization. Phase 2 is closed at the engineering baseline tag. Phase 3 ADR
 and TASK-008 are approved. Stage 1 Domain/API Foundation is completed and
 approved; it adds EventSequence plus immutable command/result types only.
-Synchronous MatchingEngine core implementation is authorized for Stage 2 but
-has not started. Stage 3 verification remains separately gated.
+Stage 2 implements the synchronous MatchingEngine core: sequenced limit submit
+and cancellation, frozen OrderBook delegation and immutable Trade/Execution
+results. The implementation is pending Human Stage 2 review; Stage 3
+verification remains separately gated.
 
 The repository currently contains:
 
@@ -52,10 +54,9 @@ The repository currently contains:
 
 Implemented Phase 2 behavior includes deterministic limit-order matching,
 price-time priority, maker-price fragments, partial/full fills, and residual
-resting. Stage 1 adds `EventSequence` and immutable engine boundary values;
-it does not add MatchingEngine processing, OrderBook integration, Trade or
-Execution generation. Publication, WAL, network and performance optimization
-remain outside the current scope.
+resting. Stage 2 adds synchronous command processing, OrderBook integration
+and deterministic Trade/Execution result generation. Publication, WAL, network
+and performance optimization remain outside the current scope.
 
 ## Build
 

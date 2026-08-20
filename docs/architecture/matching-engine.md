@@ -92,10 +92,11 @@ WAL implementation, snapshot, recovery and optimization remain deferred.
 `Trade.eventSequence`; the value type validates and orders output sequence
 values while allocation remains reserved for the future MatchingEngine.
 [`TASK-20260820-008-phase3-matching-engine-implementation.md`](../../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md)
-has completed its approved Stage 1 Domain/API Foundation. Immutable
-command/result boundary types have
-been added, but no MatchingEngine, OrderBook integration, Trade generation or
-EventSequence allocation exists. Stage 2 synchronous MatchingEngine Core is
-authorized with no engine-owned thread, executor, lock or queue. Determinism
-Verification remains separately gated and unauthorized. OrderBook is an
-external frozen dependency and no OrderBook file or API may change.
+has completed its approved Stage 1 Domain/API Foundation. Stage 2 now
+implements a synchronous MatchingEngine Core. It validates exact-next command
+sequence, constructs NEW limit orders, delegates to the frozen OrderBook,
+translates ordered MatchFragments and returns immutable Trade/Execution
+results with engine-owned TradeId/EventSequence allocation. It has no
+engine-owned thread, executor, lock or queue. Determinism Verification remains
+separately gated and unauthorized. OrderBook is an external frozen dependency
+and no OrderBook file or API may change.
