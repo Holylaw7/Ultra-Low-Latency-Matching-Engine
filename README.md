@@ -16,7 +16,24 @@ Correctness
 
 ## Current Stage
 
-Phase 0 - Project Bootstrap.
+Phase 2 - Basic OrderBook：Structural Limit Matching、Verification、OrderBook
+baseline Benchmark 和 Documentation Synchronization 已完成并经 Human
+Developer 于 `2026-08-19` 批准。ADR-0009 Profiling ADR / Decision 已于
+`2026-08-19` 批准，Profiling Execution 已于 `2026-08-19` 通过 Human
+Approval。ADR-0010 Optimization ADR / Decision 已于 `2026-08-19` 批准，
+并授权 Measurement-Isolation Execution。Isolation 与 Repository/CI Setup
+均已完成并于 `2026-08-20` 通过 Human Review；当前等待 Phase 2 Final
+Closure Review 的 Human Approval。
+
+Phase 1 Domain Model and Correctness Baseline has been completed and approved.
+ADR-0007 and ADR-0008 have been approved, and the Phase 2 OrderBook structure
+and Structural Limit Matching are implemented within their recorded scope.
+The approved benchmark is component-level experimental baseline evidence, not a
+production throughput or latency claim. Profiling execution evidence is
+recorded and approved as evidence collection. Measurement-isolation evidence
+is recorded separately and does not replace B0 or authorize production
+optimization. The evidence review is accepted; the next gate is Phase 2 Final
+Closure Review.
 
 The repository currently contains:
 
@@ -28,8 +45,12 @@ The repository currently contains:
 - Java version enforcement
 - GitHub Actions CI
 - Architecture, ADR, benchmark, and performance documentation skeleton
+- Task workspace with ADR-first decisions and phase approval gates
 
-No matching behavior or performance claim has been implemented yet.
+Implemented Phase 2 behavior includes deterministic limit-order matching,
+price-time priority, maker-price fragments, partial/full fills, and residual
+resting. MatchingEngine, Trade/Execution publication, WAL, network and
+performance optimization remain outside the current scope.
 
 ## Build
 
@@ -52,13 +73,31 @@ Run the bootstrap benchmark:
 java -jar benchmark/target/matching-engine-benchmark-0.1.0-SNAPSHOT.jar BootstrapBenchmark
 ```
 
-Benchmark results are experimental evidence. They must not be presented as system performance until the workload, JVM, hardware, warmup, measurement, and distribution are recorded.
+Run the approved Phase 2 OrderBook baseline:
+
+```bash
+java -jar benchmark/target/matching-engine-benchmark-0.1.0-SNAPSHOT.jar \
+  OrderBookBaselineBenchmark \
+  -f 2 -wi 3 -i 5 -w 1s -r 1s -t 1 -rf json \
+  -rff benchmark-results/orderbook-baseline.json
+```
+
+The approved baseline uses Java 21, JMH 1.37, two forks, one matching-owner
+thread, deterministic fixed workloads and the current TreeMap + intrusive FIFO
+and active OrderId index implementation. Results are component-level evidence
+only; they must not be presented as production throughput, latency, allocation
+or GC claims. JFR profiling evidence is recorded in
+`tasks/reports/PHASE-2-profiling-execution.md`; measurement-isolation evidence
+is recorded in `tasks/reports/PHASE-2-measurement-isolation.md`. The evidence
+set is accepted for closure; the current gate is Phase 2 Final Closure Review /
+Human Approval.
 
 ## Structure
 
 ```text
 .codex/       Project-level agent rules and current context
 docs/         Architecture, ADR, benchmark, and performance records
+tasks/        Approved plans, execution state, stage reports, and approval gates
 src/          Core production and test source
 core/         Maven module that packages the root core source
 benchmark/    Independent JMH module
@@ -72,5 +111,12 @@ Before changing code, read:
 1. `.codex/MASTER_PROMPT.md`
 2. `.codex/DEVELOPMENT_RULES.md`
 3. `.codex/AGENT_CONTEXT.md`
+4. `tasks/README.md`
+5. Relevant plans under `tasks/active/` and their linked ADRs
 
-Every change must be tested, reviewed in Git, committed with a meaningful message, and followed by a clean working-tree check.
+These files have distinct authority: `MASTER_PROMPT` defines governance,
+`DEVELOPMENT_RULES` defines engineering rules, `AGENT_CONTEXT` indexes current
+state, and `tasks/` defines approved work. Every change follows the applicable
+verification, Stage Report, Human approval, Git synchronization and CI status
+rules. Unavailable remote or CI evidence must be reported as unavailable, not
+inferred as successful.

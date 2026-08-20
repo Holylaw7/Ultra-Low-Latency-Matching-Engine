@@ -1,545 +1,154 @@
-# AGENT_CONTEXT - Matching Engine
+# AGENT_CONTEXT — Matching Engine Current State
 
-> Last Updated: 2026-08-19
-> Project Status: Bootstrap
-> Owner: Human Developer
-> Primary Agent: Codex
+> Last Updated: 2026-08-20
+> Purpose: compact current-state index; detailed history lives in Tasks, Stage
+> Reports, ADRs and Git.
 
----
+## Project Dashboard
 
-## 1. Project Identity
+| Item | Current State |
+| --- | --- |
+| Project | Ultra-Low-Latency Matching Engine |
+| Product scope | Single-node, in-memory, deterministic matching engine |
+| Phase | Phase 2 — Basic OrderBook |
+| Product task | `TASK-20260819-004` — Basic OrderBook (`In Progress`) |
+| Product stage | Phase 2 closure actions |
+| Product approval | Final Closure Review approved |
+| Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
+| Branch | `chore/repository-remote-ci` |
+| Latest remote-verified commit | `f1f2a85` |
+| Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
+| Remote sync | `master` and `chore/repository-remote-ci` published; current branch tracks `origin` |
+| CI | Passing for `f1f2a85` — [GitHub Actions run 32371665075](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32371665075) |
 
-Project:
+## Project Progress
 
-Ultra-Low-Latency Matching Engine
+| Phase | Status | Evidence |
+| --- | --- | --- |
+| Phase 0 — Bootstrap | Completed | Maven reactor, Java 21, JUnit 5, JMH, Checkstyle and CI workflow |
+| Phase 1 — Domain Model | Completed / Approved | [`PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md) |
+| Phase 2 — Basic OrderBook | Closure Approved | OrderBook tests, JMH/JFR evidence, remote repository and passing CI |
+| Phase 3 — Matching Engine | Pending / Not Authorized | Requires completion and approval of the current Phase 2 gate |
+| Phase 4+ — Pipeline, network, recovery and performance evolution | Future Work | Architecture documents and future ADRs/tasks |
 
-Type:
+## Current Product Gate
 
-Single-node high-performance matching engine.
-
-Primary Goals:
-
-1. Build a correct matching engine.
-2. Establish deterministic execution and replay.
-3. Measure throughput, latency, allocation, GC, and recovery behavior.
-4. Use evidence-based performance engineering.
-
----
-
-## 2. Engineering Philosophy
-
-The project follows:
+The Phase 2 implementation and evidence tracks are complete. Final Closure
+Review was approved on `2026-08-20`. The authorized closure sequence is:
 
 ```text
-Human Architecture
-    +
-Codex Implementation
-    +
-Automated Testing
-    +
-Benchmark
-    +
-Profiling
-    +
-Evidence-based Optimization
+normal --no-ff merge to master
+    -> verify master locally and in GitHub Actions
+    -> create/push v0.1.0-engineering-baseline
+    -> close TASK-20260819-004
 ```
 
-Human owns architecture and final decisions.
-Codex owns implementation assistance.
+Release, production optimization, Phase 3 implementation and history rewrite
+remain unauthorized.
 
----
+Current plan:
+[`TASK-20260819-004-basic-orderbook.md`](../tasks/active/TASK-20260819-004-basic-orderbook.md).
 
-## 3. Current Status
+Current evidence:
 
-### Phase
+- [`PHASE-2-measurement-isolation.md`](../tasks/reports/PHASE-2-measurement-isolation.md)
+  — completed and accepted as Phase 2 closure evidence.
+- [`PHASE-2-repository-remote-ci-setup.md`](../tasks/reports/PHASE-2-repository-remote-ci-setup.md)
+  — completed and approved; remote CI established.
+- [`PHASE-2-final-closure-review.md`](../tasks/reports/PHASE-2-final-closure-review.md)
+  — approved; closure actions authorized.
+- [`PHASE-2-profiling-execution.md`](../tasks/reports/PHASE-2-profiling-execution.md)
+  — completed and approved as evidence collection.
+- [`PHASE-2-benchmark-orderbook-baseline.md`](../tasks/reports/PHASE-2-benchmark-orderbook-baseline.md)
+  — approved component-level baseline.
+- [`PHASE-2-verification-structural-limit-matching.md`](../tasks/reports/PHASE-2-verification-structural-limit-matching.md)
+  — approved correctness evidence.
 
-Phase 0 - Bootstrap
+## Accepted Decisions
 
-### Completed
+| Decision | Status | Source |
+| --- | --- | --- |
+| Domain model and correctness baseline | Accepted with constraints | [`ADR-0005`](../docs/adr/ADR-0005-domain-model-and-correctness-baseline.md) |
+| ADR-first governance | Accepted | [`ADR-0006`](../docs/adr/ADR-0006-adr-first-decision-governance.md) |
+| TreeMap side books, intrusive FIFO and active OrderId index | Accepted with constraints | [`ADR-0007`](../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md) |
+| Structural limit matching and `MatchFragment` boundary | Approved | [`ADR-0008`](../docs/adr/ADR-0008-structural-limit-matching.md) |
+| JFR-first profiling evidence | Approved | [`ADR-0009`](../docs/adr/ADR-0009-performance-profiling-evidence.md) |
+| Defer production optimization until measurement isolation | Approved | [`ADR-0010`](../docs/adr/ADR-0010-optimization-decision-after-profiling.md) |
 
-- [x] Repository initialized
-- [x] Maven project
-- [x] Java 21
-- [x] JUnit
-- [x] JMH
-- [x] CI
-- [x] Documentation structure
-- [x] Task workspace and plan-first workflow
+If a Task and linked ADR disagree, stop and synchronize them before work.
 
-### Current Task
+## Verified Current Implementation
 
-`TASK-20260819-001` - Establish task workspace and plan-first development workflow.
+- Positive `long`-backed domain identifiers, price, quantity and sequence.
+- Controlled limit/market order lifecycle plus deterministic Trade and
+  Execution value objects.
+- `TreeMap` bid/ask price indexes with intrusive FIFO levels.
+- Active `OrderId -> OrderNode` cancellation index.
+- Deterministic structural limit matching with price-time priority, maker
+  price, partial/full fills and one-time residual resting.
+- OrderBook-focused correctness, invariant and determinism tests.
 
-### Next Task
+`MatchingEngine` orchestration, market-order execution, event publication,
+Disruptor pipeline, Netty protocol, WAL, snapshot and recovery are not
+implemented.
 
-`TASK-20260819-002` - Establish the domain model and correctness baseline.
+## Performance Evidence
 
-The next task is currently `Proposed`. Production code must not be modified until Human approval is recorded in the task plan.
+Verified fact:
 
----
+- A component-level JMH OrderBook baseline and JFR/measurement-isolation
+  evidence exist under the linked Phase 2 reports.
+- Raw JSON and JFR artifacts are local and ignored; reports record their paths,
+  generation commands, summaries and limitations.
 
-## 4. Planned Architecture
+Not verified:
+
+- 1M+ orders/s
+- Microsecond P99
+- Zero GC or zero-copy
+- Lock-free/wait-free execution
+- End-to-end system throughput
+
+These remain targets or hypotheses, never measured project claims.
+
+## Planned System Framework
 
 ```text
 Client
-    |
-    v
-Netty
-    |
-    v
-Decoder
-    |
-    v
-Ingress
-    |
-    v
-Disruptor / RingBuffer
-    |
-    v
-Matching Engine
-    |
-    v
-OrderBook
-    |
-    +---- Bid
-    +---- Ask
-    |
-    v
-Trade Event
-    |
-    +---- WAL
-    +---- Output
-    +---- Metrics
+  -> Netty / Protocol                 [Future Work]
+  -> Decoder / Validation             [Future Work]
+  -> Ingress + RingBuffer/Disruptor   [Future Work]
+  -> MatchingEngine                   [Phase 3]
+  -> OrderBook                        [Phase 2 baseline implemented]
+       -> BidBook / AskBook
+       -> PriceLevel / OrderQueue
+       -> active OrderId index
+  -> Trade / Execution events         [Domain types implemented; orchestration future]
+       -> WAL / Recovery              [Future Work]
+       -> Output / Metrics            [Future Work]
 ```
 
----
-
-## 5. Core Domain
-
-Planned entities:
-
-- Order
-- Trade
-- Execution
-- Price
-- Quantity
-- OrderId
-- Sequence
-
-Planned enums:
-
-- Side
-- OrderType
-- OrderStatus
-
----
-
-## 6. Matching Rules
-
-Primary matching rule:
-
-Price-Time Priority.
-
-Buy:
-
-Higher price first.
-
-Sell:
-
-Lower price first.
-
-Same price:
-
-Earlier sequence first.
-
----
-
-## 7. OrderBook Design
-
-Initial implementation:
-
-```text
-TreeMap + intrusive order queue + OrderId index
-```
-
-Potential future alternatives:
-
-- Custom Red-Black Tree
-- SkipList
-- Radix Tree
-- Price Array
-- Hybrid price index
-
-Any replacement requires benchmark evidence.
-
----
-
-## 8. Concurrency Model
-
-Default model:
-
-One Matching Thread owns one Symbol OrderBook.
-
-Multiple symbols may later be partitioned across matching workers.
-
-Do not introduce multi-threaded mutation of a single OrderBook without an explicit architecture decision.
-
----
-
-## 9. Performance Targets
-
-These are targets, not guaranteed results:
-
-- High single-node throughput
-- Microsecond-level core latency
-- Stable tail latency
-- Minimal allocation
-- Minimal GC interference
-
-Aspirational target:
-
-> 1M+ orders/s
-
-Actual performance must come from reproducible benchmarks.
-
----
-
-## 10. Benchmark Strategy
-
-Benchmark layers:
-
-### Level 1
-
-Pure OrderBook.
-
-### Level 2
-
-Pure Matching Engine.
-
-### Level 3
-
-RingBuffer or Disruptor Pipeline.
-
-### Level 4
-
-WAL.
-
-### Level 5
-
-Netty TCP End-to-End.
-
-Every result should report:
-
-- Throughput
-- P50
-- P95
-- P99
-- P999
-- Allocation
-- GC
-- CPU
-
----
-
-## 11. Recovery Model
-
-Planned:
-
-```text
-WAL
-    v
-Snapshot
-    v
-Restart
-    v
-Snapshot Load
-    v
-WAL Replay
-    v
-State Hash Verification
-```
-
-Recovery must be deterministic.
-
----
-
-## 12. Important Constraints
-
-The project is intentionally:
-
-- Single-node
-- In-memory
-- Performance-focused
-- Deterministic
-- JVM-focused
-
-Do not turn this into:
-
-- Microservice system
-- Cloud-native system
-- Distributed exchange
-- CRUD trading platform
-
-unless explicitly requested.
-
----
-
-## 13. Non-Goals
-
-Not currently planned:
-
-- Real-money operation
-- Real exchange connectivity
-- User management
-- Payment
-- KYC
-- Web frontend
-- Cryptocurrency integration
-- Production financial deployment
-- Multi-region deployment
-
-This is a research and engineering project, not a real trading platform.
-
----
-
-## 14. Current Technical Decisions
-
-| Decision | Status | Reason |
-| --- | --- | --- |
-| Java 21 | Accepted | JVM performance and existing expertise |
-| Single-threaded matching core | Accepted | Deterministic mutation |
-| Netty | Planned | High-performance networking |
-| Disruptor | Planned | Low-contention event pipeline |
-| WAL | Planned | Crash recovery |
-| JMH | Accepted | Reliable microbenchmark |
-| JFR | Planned | JVM profiling |
-| async-profiler | Planned | CPU and allocation profiling |
-
----
-
-## 15. Open Questions
-
-These must be resolved through experiments rather than assumptions:
-
-1. TreeMap vs custom tree
-2. SkipList vs tree
-3. Object-based vs flat memory layout
-4. Array-based vs linked price levels
-5. Disruptor vs custom ring buffer
-6. Heap vs off-heap
-7. WAL fsync policy
-8. Snapshot format
-9. Symbol partitioning
-10. CPU affinity strategy
-
----
-
-## 16. Benchmark Evidence
-
-No official benchmark result yet.
-
-Do not claim the following until experimentally verified:
-
-- 1M orders/s
-- Microsecond P99
-- Zero GC
-- Zero-copy
-- Lock-free execution
-
----
-
-## 17. Known Risks
-
-### Risk 1
-
-Over-optimization before correctness.
-
-Mitigation:
-
-Correctness first.
-
-### Risk 2
-
-Benchmark gaming.
-
-Mitigation:
-
-Independent benchmark module and reproducible parameters.
-
-### Risk 3
-
-Excessive complexity.
-
-Mitigation:
-
-Baseline implementation first.
-
-### Risk 4
-
-AI-generated code that cannot be explained.
-
-Mitigation:
-
-Human review and technical verification.
-
----
-
-## 18. Agent Session Protocol
-
-At the beginning of every session:
-
-1. Read `MASTER_PROMPT.md`
-2. Read `DEVELOPMENT_RULES.md`
-3. Read `AGENT_CONTEXT.md`
-4. Read `tasks/README.md`
-5. Read relevant plans in `tasks/active/`
-6. Check Git status
-7. Check current branch
-8. Check build status
-9. Inspect recent commits
-10. Identify current phase
-11. Confirm task scope and approval status
-
-At the end:
-
-1. Run relevant tests
-2. Run relevant benchmark
-3. Inspect Git diff
-4. Update `AGENT_CONTEXT.md`
-5. Update the active task plan and move completed plans to `tasks/completed/`
-6. Report:
-   - Changes
-   - Tests
-   - Benchmarks
-   - Risks
-   - Next step
-
----
-
-## 19. Project Evolution
-
-When a major architecture decision is made, create an ADR.
-
-Recommended format:
-
-```text
-docs/adr/ADR-NNNN-title.md
-```
-
-ADR must contain:
-
-- Context
-- Problem
-- Options
-- Decision
-- Consequences
-- Benchmark Evidence
-
----
-
-## 20. Development Governance
-
-All implementation follows this lifecycle:
-
-```text
-Requirement
-    -> Scope
-    -> Design
-    -> Implementation
-    -> Verification
-    -> Review
-    -> Documentation
-    -> Commit
-    -> Git Status Confirmation
-```
-
-Git status must be checked:
-
-- At the beginning of every session
-- Before editing
-- After editing
-- Before staging
-- After staging
-- Before committing
-- After committing
-- Before the final report
-
-The working tree should be clean after a completed task.
-
-Required repository checks:
-
-```text
-git status --short --branch
-git branch --show-current
-git log --oneline --decorate -5
-git diff --stat
-git diff --cached --stat
-git diff --check
-```
-
-Commit requirements:
-
-- One logical topic per commit
-- Conventional Commits message
-- Tests and applicable quality gates pass
-- Staged diff reviewed
-- No secrets, generated files, or unrelated changes
-- Commit hash and final status reported
-
-Push, rebase, amend, reset, restore, clean, and force push require explicit authorization.
-
----
-
-## 21. Bootstrap Verification
-
-Verified on 2026-08-19:
-
-- Root Maven reactor builds successfully.
-- Core module compiles the root `src/` layout.
-- Java 21 release compilation is enforced.
-- JUnit 5 test suite runs successfully.
-- JMH benchmark module packages successfully.
-- Checkstyle runs with zero violations.
-- GitHub Actions workflow is defined for `mvn verify`.
-
-The bootstrap benchmark is an infrastructure smoke test only. It is not a matching-engine performance result.
-
----
-
-## 22. Task Workspace and Plan-First Workflow
-
-All development plans are versioned under `tasks/`.
-
-```text
-Proposed
-    -> Approved
-    -> In Progress
-    -> Completed
-```
-
-The current completed governance task is:
-
-```text
-tasks/completed/TASK-20260819-001-task-workspace-and-plan-first.md
-```
-
-The next domain-model task is:
-
-```text
-tasks/active/TASK-20260819-002-domain-model-and-correctness-baseline.md
-```
-
-Its status is `Proposed`. It must be explicitly approved before any domain production code or domain tests are modified.
-
-Each task plan must record:
-
-- Scope and acceptance criteria
-- Design and architecture impact
-- Planned file changes
-- Test and Benchmark plan
-- Risks and rollback
-- Verification commands
-- Approval and implementation log
-- Git commit plan
-
-If implementation changes the approved scope or design, update the task plan and obtain approval again before continuing.
+One matching thread owns one symbol OrderBook. Any change to matching semantics,
+core structure, concurrency, event ordering, protocol, persistence or recovery
+requires an approved ADR and Task.
+
+## Known Risks
+
+- Current benchmark evidence is workload-specific and not end-to-end.
+- Windows scheduling and setup/profiler overhead limit performance inference.
+- Raw evidence is local; reproducibility depends on committed commands and
+  summaries.
+- The older `feature/domain-model` branch name predates the broader Phase 2
+  work; new infrastructure work uses a dedicated branch.
+- Branch protection, merge policy automation and release evidence remain
+  Future Work; they were outside `TASK-20260820-006`.
+
+## Session Recovery Checklist
+
+1. Read `MASTER_PROMPT.md`, `DEVELOPMENT_RULES.md`, this file and
+   `tasks/README.md`.
+2. Read every relevant `tasks/active/*` plan and linked ADR.
+3. Run the mandatory Git bootstrap commands from `MASTER_PROMPT.md`.
+4. Reconcile live Git state with this index; live Git is authoritative for
+   repository state.
+5. Confirm the current approval gate before any modification.
