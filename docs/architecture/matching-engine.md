@@ -90,5 +90,6 @@ WAL implementation, snapshot, recovery and optimization remain deferred.
 
 `Sequence` is reserved for commands, MatchingEngine owns `EventSequence`, and
 `Trade.sequence` is semantically revised to `Trade.eventSequence`. The next
-authorized action is creation and review of TASK-20260820-008. Only a
-separately approved implementation Task Plan may authorize Phase 3 code.
+gate is Human review of the Proposed
+[`TASK-20260820-008-phase3-matching-engine-implementation.md`](../../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md).
+Only approval of that plan may authorize the first implementation sub-stage.

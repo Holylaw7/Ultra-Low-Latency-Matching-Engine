@@ -10,19 +10,19 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 3 — MatchingEngine (`Architecture approved; implementation planning next`) |
+| Phase | Phase 3 — MatchingEngine (`Implementation plan proposed`) |
 | Latest product task | [`TASK-20260819-004`](../tasks/completed/TASK-20260819-004-basic-orderbook.md) — Completed |
 | Latest architecture task | [`TASK-20260820-007`](../tasks/completed/TASK-20260820-007-phase3-matching-engine-adr-decision.md) — Completed |
-| Current planning task | Not created; TASK-20260820-008 is the next authorized planning action |
-| Product stage | ADR-0011 approved and Phase 3 architecture frozen |
-| Product approval | TASK-008 planning authorized; implementation remains unauthorized |
+| Current planning task | [`TASK-20260820-008`](../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md) — Proposed / Pending Human Approval |
+| Product stage | TASK-008 Planning completed — Human Task Plan Review pending |
+| Product approval | ADR approved; TASK-008 implementation not authorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
-| Branch | `docs/phase3-matching-engine-adr` |
+| Branch | `docs/phase3-matching-engine-task-plan` |
 | Engineering baseline commit | `cbfa957` |
 | Engineering baseline tag | `v0.1.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
 | Remote sync | `master` and engineering baseline tag published |
-| CI | D3 approval head `0b8fed9` PASS — [GitHub Actions run 32377281282](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32377281282); final-approval sync pending |
+| CI | Parent ADR head `96fe50b` PASS — [GitHub Actions run 32377951264](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32377951264); TASK-008 planning CI pending |
 
 ## Project Progress
 
@@ -31,7 +31,7 @@
 | Phase 0 — Bootstrap | Completed | Maven reactor, Java 21, JUnit 5, JMH, Checkstyle and CI workflow |
 | Phase 1 — Domain Model | Completed / Approved | [`PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md) |
 | Phase 2 — Basic OrderBook | Completed / Approved | `v0.1.0-engineering-baseline`, 45 tests, JMH/JFR evidence and passing master CI |
-| Phase 3 — Matching Engine | Architecture Approved / Implementation Planning Not Started | ADR-0005 R1-R6 and [`ADR-0011`](../docs/adr/ADR-0011-matching-engine-orchestration-model.md) approved |
+| Phase 3 — Matching Engine | Task Plan Proposed / Implementation Not Authorized | [`TASK-008`](../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md) pending Human approval |
 | Phase 4+ — Pipeline, network, recovery and performance evolution | Future Work | Architecture documents and future ADRs/tasks |
 
 ## Current Product Gate
@@ -41,20 +41,22 @@ and ADR-0011 D1-D7 are finally approved. The current gate is:
 
 ```text
 ADR-0011 Final Approved
-    -> create TASK-20260820-008 plan
-    -> Human Task approval
-    -> implementation only after both approvals
+    -> TASK-20260820-008 Proposed
+    -> Human Task Plan approval
+    -> first implementation sub-stage only after approval
 ```
 
 Phase 3 implementation, Release, production optimization and history rewrite
-remain unauthorized until separately approved. TASK-008 does not yet exist;
-its planning and Human approval are the active gate.
+remain unauthorized until separately approved. TASK-008 now exists only as a
+Proposed plan; Human Task Plan approval is the active gate.
 
 Completed plan:
 [`TASK-20260819-004-basic-orderbook.md`](../tasks/completed/TASK-20260819-004-basic-orderbook.md).
 
 Current evidence:
 
+- [`PHASE-3-matching-engine-implementation-planning.md`](../tasks/reports/PHASE-3-matching-engine-implementation-planning.md)
+  — TASK-008 plan prepared; Human approval pending.
 - [`PHASE-3-matching-engine-adr-decision.md`](../tasks/reports/PHASE-3-matching-engine-adr-decision.md)
   — completed; ADR-0011 final approval recorded and architecture frozen.
 - [`PHASE-2-measurement-isolation.md`](../tasks/reports/PHASE-2-measurement-isolation.md)
@@ -125,7 +127,7 @@ Client
   -> Netty / Protocol                 [Future Work]
   -> Decoder / Validation             [Future Work]
   -> Ingress + RingBuffer/Disruptor   [Future Work]
-  -> MatchingEngine                   [ADR conditionally approved; not implemented]
+  -> MatchingEngine                   [ADR approved; TASK-008 proposed; not implemented]
   -> OrderBook                        [Phase 2 baseline implemented]
        -> BidBook / AskBook
        -> PriceLevel / OrderQueue
