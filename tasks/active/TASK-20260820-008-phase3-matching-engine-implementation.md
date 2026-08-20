@@ -13,8 +13,8 @@
 | Updated | `2026-08-20` |
 | Related Phase | Phase 3 — MatchingEngine |
 | Related ADR | ADR-0005 sequence revision and ADR-0011 (`Approved`) |
-| Current Stage | `Stage 1 Domain/API Foundation completed and approved` |
-| Next Approval Gate | `Stage 2 MatchingEngine Core authorization` |
+| Current Stage | `Stage 2 MatchingEngine Core authorization proposed` |
+| Next Approval Gate | `Human Stage 2 Authorization Review` |
 | Branch | `feature/phase3-matching-engine` |
 | Approved Implementation Branch | `feature/phase3-matching-engine` |
 | Parent Branch / HEAD | `docs/phase3-matching-engine-adr` at `96fe50b` |
@@ -481,15 +481,120 @@ release is authorized by this plan.
 - CI verification: exact branch-head SHA and GitHub Actions run recorded in
   the Task and Stage Report
 
-## 15. Approval Record
+## 15. Stage 2 MatchingEngine Core Authorization Request
+
+### Authorization Status
+
+```text
+Stage 1 Domain/API Foundation: Completed / Approved
+Stage 2 MatchingEngine Core:   Proposed / Pending Human Approval
+Stage 3 Verification:          Not Authorized
+```
+
+This request authorizes no code by itself. Stage 2 implementation may begin
+only after the Human Developer records an explicit approval below.
+
+### Authorized Production Scope if Approved
+
+Only the following new production file is permitted:
+
+```text
+src/main/java/com/ultralatency/matching/engine/MatchingEngine.java
+```
+
+The implementation must provide a synchronous genesis engine and
+`process(EngineCommand)` orchestration with this exact ownership:
+
+```text
+EngineCommand
+    -> reject failed engine / validate exact-next Sequence
+    -> construct NEW Order.limit for submit
+    -> preflight TradeId/EventSequence capacity before mutation
+    -> unchanged OrderBook.matchLimit or OrderBook.cancel
+    -> translate MatchFragments in traversal order
+    -> immutable EngineResult
+    -> advance lastAppliedCommandSequence only after success
+```
+
+Private state is limited to the owned `OrderBook`, last successfully applied
+command sequence, next TradeId, next EventSequence and fatal failed flag. No
+public restore, reset, counter setter, mutable state exposure or dependency
+injection seam is authorized.
+
+### Required Sub-stages
+
+#### 2.1 Command Processing Skeleton
+
+- Add final `MatchingEngine` with a public genesis constructor.
+- Add synchronous sealed-command dispatch.
+- Reject null, failed-engine, first-sequence-not-1, duplicate, gap and
+  out-of-order input before mutation.
+- Keep all sequence/counter ownership private to the engine.
+
+#### 2.2 OrderBook Integration
+
+- Construct a NEW limit `Order` from immutable submit-command values.
+- Delegate once to the frozen `OrderBook.matchLimit(Order)` boundary.
+- Delegate cancellation once to `OrderBook.cancel(OrderId)`.
+- Return `ACCEPTED`, `CANCELED` or `NOT_FOUND` using the approved semantics.
+- Never modify or extend an `orderbook/**` production file or API.
+
+#### 2.3 Trade and Execution Generation
+
+- Preflight both output counters conservatively before submit mutation.
+- Map one MatchFragment to one Trade plus named maker/taker Executions.
+- Allocate gap-free TradeId and EventSequence values in fragment list order.
+- Preserve maker price, quantity, order roles and post-match remaining units.
+- Mark the engine failed on an unexpected failure after the apply boundary;
+  reject later commands rather than continue from uncertain state.
+
+These are reviewable implementation/commit boundaries, not separate authority
+to cross Stage 2 or begin Stage 3.
+
+### Stage 2 Test Boundary
+
+If approved, Stage 2 may add only:
+
+```text
+src/test/java/com/ultralatency/matching/engine/MatchingEngineTest.java
+```
+
+Focused tests must cover genesis/contiguous/invalid command sequence, no-cross
+submit, single and multi-match mapping, partial fill, cancellation outcomes,
+immutable ordered results and unchanged counters/state after pre-apply
+rejection. Full two-engine stream equivalence, replay determinism, exhaustive
+failed-state injection and final regression evidence remain Stage 3 work.
+No production test hook is authorized to make those future tests convenient.
+
+### Explicitly Prohibited
+
+- Changes to any existing Stage 1 domain or engine API production type.
+- Changes to `src/main/java/com/ultralatency/matching/orderbook/**`.
+- Market orders, WAL, replay implementation, snapshots or recovery.
+- Network, protocol, publication, callback, logging or metrics.
+- Disruptor, queues, threads, executors or concurrency optimization.
+- Benchmarking, profiling, performance claims or baseline-tag changes.
+
+If implementation requires any prohibited change or cannot satisfy the
+approved API, stop and return to Task/ADR review.
+
+### Completion Gate
+
+Stage 2 completion must provide focused tests, `mvn verify`, zero Checkstyle
+violations, exact diff/path audit, Stage Report, clean Git state, remote push
+and exact-SHA CI evidence. It must then stop for Human Stage 2 Completion
+Review. Stage 3 does not start automatically.
+
+## 16. Approval Record
 
 | Date | Reviewer | Stage | Decision | Constraints / Notes |
 | --- | --- | --- | --- | --- |
 | 2026-08-20 | Human Developer | TASK-008 creation | `Planning Authorized` | Create a Proposed implementation plan on a dedicated documentation branch. No production code or implementation is authorized before Task approval. |
 | 2026-08-20 | Human Developer | Task Plan Review | `Approved` | Scope is limited to the synchronous MatchingEngine correctness baseline. OrderBook is an external frozen dependency and its API/files must not change. Implementation must follow Stage 1 Domain/API Foundation, Stage 2 MatchingEngine Core and Stage 3 Determinism Verification with separate approval gates. Performance optimization, WAL, network and recovery remain out of scope. |
 | 2026-08-20 | Human Developer | Stage 1 Completion Review | `Approved` | EventSequence semantics, Trade.eventSequence migration, immutable command/result API and boundary tests accepted. OrderBook baseline remains unchanged. Stage 2 requires separate authorization. |
+| 2026-08-20 | Codex | Stage 2 Authorization Request | `Proposed` | MatchingEngine Core scope frozen to synchronous orchestration in one new production file and focused tests. Implementation remains unauthorized pending Human approval. |
 
-## 16. Phase Reports and Approval Gates
+## 17. Phase Reports and Approval Gates
 
 | Stage | Report Location | Status | Next Approval Gate | Human Approval |
 | --- | --- | --- | --- | --- |
@@ -497,13 +602,13 @@ release is authorized by this plan.
 | Task Planning | `tasks/reports/PHASE-3-matching-engine-implementation-planning.md` | Completed | Task Plan Review | Approved 2026-08-20 |
 | Task Approval | Same planning report | Completed | Domain/API Foundation | Approved 2026-08-20 |
 | Domain/API Foundation | `tasks/reports/PHASE-3-matching-engine-domain-api-foundation.md` | Completed / Approved | Stage 2 Authorization | Approved 2026-08-20 |
-| MatchingEngine Implementation | Not created | Not Authorized | Human Stage Approval | Not Authorized |
+| MatchingEngine Implementation | `tasks/reports/PHASE-3-matching-engine-core-authorization.md` | Authorization Proposed / Not Started | Human Stage 2 Authorization Review | Pending |
 | Correctness / Determinism Verification | Not created | Not Authorized | Human Stage Approval | Not Authorized |
 | Benchmark / Profile | Not applicable | Not applicable | Documentation Sync | Not applicable |
 | Documentation and Synchronization | Not created | Not Authorized | Completion Review | Not Authorized |
 | Completion | Not created | Not Authorized | Human Completion Approval | Not Authorized |
 
-## 17. Implementation Log
+## 18. Implementation Log
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
@@ -512,8 +617,9 @@ release is authorized by this plan.
 | 2026-08-20 | Approved | Human approved TASK-008 with frozen OrderBook and three-stage implementation constraints | Stage 1 authorized but not started; no production code changed |
 | 2026-08-20 | Stage 1 Completed | Added EventSequence/Trade migration, immutable command/result API and API-boundary tests | `mvn verify` PASS; 49 tests; Checkstyle 0 violations; `02aefd0`; CI run `32381223468` PASS |
 | 2026-08-20 | Stage 1 Approved | Human accepted Stage 1 scope, ADR alignment, verification and frozen OrderBook boundary | Stage 2 remains unauthorized pending a separate authorization |
+| 2026-08-20 | Stage 2 Authorization Proposed | Froze MatchingEngine-only production scope, 2.1-2.3 boundaries, focused tests and prohibited paths | Documentation only; implementation remains unauthorized |
 
-## 18. Completion Checklist
+## 19. Completion Checklist
 
 - [x] Stage 1 scope and acceptance criteria satisfied
 - [x] Stage 1 tests added or updated

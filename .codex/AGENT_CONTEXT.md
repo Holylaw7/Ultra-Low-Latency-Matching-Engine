@@ -10,12 +10,12 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 3 — MatchingEngine (`TASK-008 Stage 1 completed and approved`) |
+| Phase | Phase 3 — MatchingEngine (`Stage 2 authorization pending Human approval`) |
 | Latest product task | [`TASK-20260819-004`](../tasks/completed/TASK-20260819-004-basic-orderbook.md) — Completed |
 | Latest architecture task | [`TASK-20260820-007`](../tasks/completed/TASK-20260820-007-phase3-matching-engine-adr-decision.md) — Completed |
 | Current planning task | [`TASK-20260820-008`](../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md) — Approved |
-| Product stage | Stage 1 Domain/API Foundation completed / approved |
-| Product approval | Stage 2/3 remain unauthorized pending separate authorization |
+| Product stage | Stage 2 MatchingEngine Core authorization proposed / not started |
+| Product approval | Stage 2/3 remain unauthorized pending Stage 2 authorization review |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `feature/phase3-matching-engine` |
 | Engineering baseline commit | `cbfa957` |
@@ -31,7 +31,7 @@
 | Phase 0 — Bootstrap | Completed | Maven reactor, Java 21, JUnit 5, JMH, Checkstyle and CI workflow |
 | Phase 1 — Domain Model | Completed / Approved | [`PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md) |
 | Phase 2 — Basic OrderBook | Completed / Approved | `v0.1.0-engineering-baseline`, 45 tests, JMH/JFR evidence and passing master CI |
-| Phase 3 — Matching Engine | Stage 1 Completed / Approved | [`TASK-008`](../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md); Stage 2 remains locked |
+| Phase 3 — Matching Engine | Stage 2 Authorization Proposed | [`TASK-008`](../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md); implementation remains locked |
 | Phase 4+ — Pipeline, network, recovery and performance evolution | Future Work | Architecture documents and future ADRs/tasks |
 
 ## Current Product Gate
@@ -44,12 +44,14 @@ ADR-0011 Final Approved
     -> TASK-20260820-008 Approved
     -> Stage 1 Domain/API Foundation
     -> Human Stage 1 completion approval [Completed]
-    -> Stage 2 separate authorization [Pending]
+    -> Stage 2 authorization request [Pending Human Approval]
 ```
 
-Stage 1 Domain/API Foundation is completed and approved. Stage 2 MatchingEngine
-Core, Stage 3 Determinism Verification, Release, production optimization and
-history rewrite remain unauthorized. OrderBook is an external frozen dependency.
+Stage 1 Domain/API Foundation is completed and approved. A bounded Stage 2
+MatchingEngine Core authorization request now awaits Human approval. Stage 2
+implementation, Stage 3 Determinism Verification, Release, production
+optimization and history rewrite remain unauthorized. OrderBook is an
+external frozen dependency.
 
 Completed plan:
 [`TASK-20260819-004-basic-orderbook.md`](../tasks/completed/TASK-20260819-004-basic-orderbook.md).
@@ -60,6 +62,8 @@ Current evidence:
   — TASK-008 plan approved; Stage 1 completed and approved.
 - [`PHASE-3-matching-engine-domain-api-foundation.md`](../tasks/reports/PHASE-3-matching-engine-domain-api-foundation.md)
   — Stage 1 approved evidence; no MatchingEngine or OrderBook integration.
+- [`PHASE-3-matching-engine-core-authorization.md`](../tasks/reports/PHASE-3-matching-engine-core-authorization.md)
+  — Stage 2 scope request pending Human approval; no code implementation.
 - [`PHASE-3-matching-engine-adr-decision.md`](../tasks/reports/PHASE-3-matching-engine-adr-decision.md)
   — completed; ADR-0011 final approval recorded and architecture frozen.
 - [`PHASE-2-measurement-isolation.md`](../tasks/reports/PHASE-2-measurement-isolation.md)
@@ -134,7 +138,7 @@ Client
   -> Netty / Protocol                 [Future Work]
   -> Decoder / Validation             [Future Work]
   -> Ingress + RingBuffer/Disruptor   [Future Work]
-  -> MatchingEngine                   [Stage 1 API only; core remains locked]
+  -> MatchingEngine                   [Stage 2 authorization proposed; core locked]
   -> OrderBook                        [Phase 2 baseline implemented]
        -> BidBook / AskBook
        -> PriceLevel / OrderQueue
