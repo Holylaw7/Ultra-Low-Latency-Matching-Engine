@@ -52,8 +52,8 @@ See [`order-book.md`](order-book.md) and
 ## Planned Delivery Order
 
 1. Domain model and correctness baseline — **Completed**.
-2. Basic OrderBook and structural limit matching — **In Progress; current
-   evidence review gate pending**.
+2. Basic OrderBook and structural limit matching — **Execution complete;
+   Phase 2 Final Closure Review pending**.
 3. MatchingEngine orchestration — **Future Work / Not Authorized**.
 4. Event pipeline — **Future Work**.
 5. Network adapter and protocol — **Future Work**.

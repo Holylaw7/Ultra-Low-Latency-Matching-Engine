@@ -59,8 +59,8 @@ OrderBook baseline benchmark and documentation synchronization were approved
 on `2026-08-19`. Profiling execution was completed under
 [`ADR-0009-performance-profiling-evidence.md`](../adr/ADR-0009-performance-profiling-evidence.md)
 and approved as evidence collection on `2026-08-19`. ADR-0010 was approved on
-`2026-08-19`; measurement isolation has completed and is pending Steady-State
-Evidence Review. Optimization is governed by
+`2026-08-19`; measurement isolation and evidence review have completed, and
+Phase 2 Final Closure Review is pending. Optimization is governed by
 [`ADR-0010-optimization-decision-after-profiling.md`](../adr/ADR-0010-optimization-decision-after-profiling.md);
 production optimization and the future MatchingEngine stage remain
 unauthorized.

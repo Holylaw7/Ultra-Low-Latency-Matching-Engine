@@ -6,7 +6,8 @@ Phase 2 OrderBook baseline implemented, measured and approved by the Human
 Developer on `2026-08-19`. ADR-0009 was approved by the Human Developer on
 `2026-08-19`; profiling execution was completed under ADR-0009 and approved as
 evidence collection. ADR-0010 was approved on `2026-08-19`; measurement
-isolation completed and is pending Steady-State Evidence Review. No
+isolation and evidence review completed, with Phase 2 Final Closure Review
+pending. No
 optimization has been executed.
 
 ## Planned Comparisons

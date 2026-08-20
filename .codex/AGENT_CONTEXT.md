@@ -12,14 +12,14 @@
 | Product scope | Single-node, in-memory, deterministic matching engine |
 | Phase | Phase 2 — Basic OrderBook |
 | Product task | `TASK-20260819-004` — Basic OrderBook (`In Progress`) |
-| Product stage | Measurement-Isolation Execution completed |
-| Product approval | Steady-State Evidence Review pending Human approval |
+| Product stage | Phase 2 Final Closure Review prepared |
+| Product approval | Final Closure pending Human approval |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `chore/repository-remote-ci` |
-| Latest verified infrastructure commit | `330114f` |
+| Latest remote-verified commit | `f1f2a85` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
 | Remote sync | `master` and `chore/repository-remote-ci` published; current branch tracks `origin` |
-| CI | Passing for `330114f` — [GitHub Actions run 32371458037](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32371458037) |
+| CI | Passing for `f1f2a85` — [GitHub Actions run 32371665075](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32371665075) |
 
 ## Project Progress
 
@@ -27,24 +27,26 @@
 | --- | --- | --- |
 | Phase 0 — Bootstrap | Completed | Maven reactor, Java 21, JUnit 5, JMH, Checkstyle and CI workflow |
 | Phase 1 — Domain Model | Completed / Approved | [`PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md) |
-| Phase 2 — Basic OrderBook | In Progress | OrderBook tests, JMH baseline and Phase 2 reports |
+| Phase 2 — Basic OrderBook | Execution complete / Final Closure pending | OrderBook tests, JMH/JFR evidence, remote repository and passing CI |
 | Phase 3 — Matching Engine | Pending / Not Authorized | Requires completion and approval of the current Phase 2 gate |
 | Phase 4+ — Pipeline, network, recovery and performance evolution | Future Work | Architecture documents and future ADRs/tasks |
 
 ## Current Product Gate
 
 The approved Phase 2 OrderBook structure, structural limit matching,
-correctness verification, component benchmark, profiling and
-measurement-isolation experiment are complete. The next product action is:
+correctness verification, component benchmark, profiling,
+measurement-isolation experiment and Repository/CI setup are complete and
+Human-reviewed. The next product action is:
 
 ```text
-Steady-State Evidence Review
+Phase 2 Final Closure Review
     -> Human Approval
-    -> approved next Task/Stage only
+    -> separately authorized merge/tag actions, if selected
+    -> Phase 3 ADR only after Phase 2 closure
 ```
 
-Production optimization, Phase 3 implementation and any unrelated runtime
-change remain unauthorized.
+Merge, baseline tag, production optimization, Phase 3 implementation and any
+unrelated runtime change remain unauthorized.
 
 Current plan:
 [`TASK-20260819-004-basic-orderbook.md`](../tasks/active/TASK-20260819-004-basic-orderbook.md).
@@ -52,7 +54,11 @@ Current plan:
 Current evidence:
 
 - [`PHASE-2-measurement-isolation.md`](../tasks/reports/PHASE-2-measurement-isolation.md)
-  — completed; Human review pending.
+  — completed and accepted as Phase 2 closure evidence.
+- [`PHASE-2-repository-remote-ci-setup.md`](../tasks/reports/PHASE-2-repository-remote-ci-setup.md)
+  — completed and approved; remote CI established.
+- [`PHASE-2-final-closure-review.md`](../tasks/reports/PHASE-2-final-closure-review.md)
+  — prepared; Human approval pending.
 - [`PHASE-2-profiling-execution.md`](../tasks/reports/PHASE-2-profiling-execution.md)
   — completed and approved as evidence collection.
 - [`PHASE-2-benchmark-orderbook-baseline.md`](../tasks/reports/PHASE-2-benchmark-orderbook-baseline.md)

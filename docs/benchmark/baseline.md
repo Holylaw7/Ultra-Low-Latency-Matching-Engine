@@ -51,7 +51,8 @@ Current result:
 
 Next gate:
 
-- Steady-State Evidence Review Human Approval under the approved
+- Phase 2 Final Closure Review Human Approval after the completed
+  Steady-State Evidence Review under the approved
   [`ADR-0010-optimization-decision-after-profiling.md`](../adr/ADR-0010-optimization-decision-after-profiling.md)
   (`Approved`; production optimization remains unauthorized)
 

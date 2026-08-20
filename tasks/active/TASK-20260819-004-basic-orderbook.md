@@ -13,8 +13,8 @@
 | Updated | `2026-08-19` |
 | Related Phase | `Phase 2 - Basic OrderBook` |
 | Related ADR | [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md); [`ADR-0008-structural-limit-matching.md`](../../docs/adr/ADR-0008-structural-limit-matching.md); [`ADR-0009-performance-profiling-evidence.md`](../../docs/adr/ADR-0009-performance-profiling-evidence.md); [`ADR-0010-optimization-decision-after-profiling.md`](../../docs/adr/ADR-0010-optimization-decision-after-profiling.md) |
-| Current Stage | `Measurement-Isolation Execution (Completed - Pending Human Approval)` |
-| Next Approval Gate | `Human Approval - Steady-State Evidence Review` |
+| Current Stage | `Phase 2 Final Closure Review (Prepared - Pending Human Approval)` |
+| Next Approval Gate | `Human Approval - Phase 2 Final Closure` |
 
 ## 2. Background
 
@@ -32,9 +32,9 @@ Human Developer 已于 `2026-08-19` 批准 Structural Limit Matching 实现，
 已经同步到项目文档。Human Developer 随后批准 ADR-0009 和 Profiling ADR /
 Decision，现授权执行 profiling。Profiling execution 已于 `2026-08-19`
 完成并通过 Human Approval。Human Developer 随后批准 ADR-0010，授权
-Measurement-Isolation Execution。隔离实验已完成，当前等待 Steady-State
-Evidence Review 的 Human Approval。不得进行生产性能优化、替换数据结构
-或进入 Phase 3。
+Measurement-Isolation Execution。隔离实验和 Steady-State Evidence Review
+已完成并于 `2026-08-20` 被接受为关闭证据；当前等待 Phase 2 Final Closure
+Review。不得进行生产性能优化、替换数据结构、merge、tag 或进入 Phase 3。
 
 ## 3. Goal
 
@@ -283,7 +283,7 @@ environment, commands, timestamps and raw artifact paths. Profiling execution
 was completed and approved only within ADR-0009. The execution report records
 JFR evidence, sampled CPU/allocation/GC observations and limitations.
 Optimization is governed by approved ADR-0010. Measurement-Isolation
-Execution is complete and pending Steady-State Evidence Review. Custom Tree,
+Execution is complete and accepted for Phase 2 closure evidence. Custom Tree,
 SkipList, Radix, Price Array, off-heap, object-pool, Disruptor, lock-free and
 GC-tuning work remain unauthorized.
 
@@ -410,6 +410,8 @@ must not be mixed into an unrelated implementation commit.
 | 2026-08-19 | Human Developer | Profiling Execution | `Approved` | Profiling execution completed using the authorized fixed workloads and JFR evidence collection. The profiling phase is accepted as evidence collection only. Optimization and Phase 3 remain unauthorized pending evidence review and a separate optimization decision. |
 | 2026-08-19 | Human Developer | Optimization ADR / Decision | `Approved` | ADR-0010 accepted. Current JFR evidence is insufficient to justify production optimization because setup and steady-state matching costs are not isolated. Measurement-Isolation Execution authorized; production optimization and Phase 3 remain unauthorized. |
 | 2026-08-19 | Human Developer | Measurement-Isolation Execution | `Completed - Pending Human Approval` | Isolated steady-state single-level and multi-level matching measurements plus separate lifecycle preparation measurements completed. Current JFR sample counts and profiler outliers remain insufficient to authorize production optimization. |
+| 2026-08-20 | Human Developer | TASK-006 Repository Remote and CI Setup | `Approved / Closed` | Remote repository, SSH tracking, branch push, local verification, GitHub Actions evidence and documentation accepted. Do not merge immediately; enter Phase 2 Final Closure Review. |
+| 2026-08-20 | Human Developer | Steady-State Evidence Review | `Approved for closure evidence` | Phase 2 measurement isolation and evidence tracks accepted as complete. Production optimization remains unauthorized. Final Closure Review is authorized; Phase 3, merge and tag remain gated. |
 
 ## 16. Phase Reports and Approval Gates
 
@@ -428,7 +430,9 @@ must not be mixed into an unrelated implementation commit.
 | Profiling ADR / Decision | [`tasks/reports/PHASE-2-profiling-adr-decision.md`](../reports/PHASE-2-profiling-adr-decision.md) | `Completed` | `Profiling Execution` | Approved 2026-08-19 |
 | Profiling Execution | [`tasks/reports/PHASE-2-profiling-execution.md`](../reports/PHASE-2-profiling-execution.md) | `Completed - Approved` | `Optimization ADR / Decision` | Approved 2026-08-19 |
 | Optimization ADR / Decision | [`tasks/reports/PHASE-2-optimization-adr-decision.md`](../reports/PHASE-2-optimization-adr-decision.md) | `Completed - Approved` | `Measurement-Isolation Execution` | Approved 2026-08-19 |
-| Measurement-Isolation Execution | [`tasks/reports/PHASE-2-measurement-isolation.md`](../reports/PHASE-2-measurement-isolation.md) | `Completed - Pending Human Approval` | `Human Approval - Steady-State Evidence Review` | Pending |
+| Measurement-Isolation Execution | [`tasks/reports/PHASE-2-measurement-isolation.md`](../reports/PHASE-2-measurement-isolation.md) | `Completed - Approved` | `Phase 2 Final Closure Review` | Approved 2026-08-20 |
+| Repository Remote and CI Setup | [`tasks/reports/PHASE-2-repository-remote-ci-setup.md`](../reports/PHASE-2-repository-remote-ci-setup.md) | `Completed - Approved` | `Phase 2 Final Closure Review` | Approved 2026-08-20 |
+| Phase 2 Final Closure Review | [`tasks/reports/PHASE-2-final-closure-review.md`](../reports/PHASE-2-final-closure-review.md) | `Prepared - Pending Human Approval` | `Human Approval - Phase 2 Final Closure` | Pending |
 
 本阶段报告已由 Human Developer 审批，允许进入 Implementation 阶段。实现仍须
 按子阶段输出报告，并在下一阶段前等待 Human approval。当前
@@ -439,8 +443,8 @@ Verification、Benchmark 和 Documentation Synchronization 已于 `2026-08-19`
 获批。ADR-0009 和 Profiling ADR / Decision 已于 `2026-08-19` 获批，当前
 Profiling Execution 已于 `2026-08-19` 完成并通过 Human Approval。Human
 Developer 已批准 ADR-0010 并授权 Measurement-Isolation Execution；该实验
-已完成，当前等待 Steady-State Evidence Review 的 Human Approval。本阶段
-不包含生产性能优化或 Phase 3。
+和 Steady-State Evidence Review 已完成，当前进入 Phase 2 Final Closure
+Review。本阶段不包含 merge、tag、生产性能优化或 Phase 3。
 
 ## 17. Implementation Log
 
@@ -462,6 +466,7 @@ Developer 已批准 ADR-0010 并授权 Measurement-Isolation Execution；该实�
 | 2026-08-19 | Completed - Approved | 完成四组固定 workload 的 JFR profiling，记录 CPU、sampled allocation、GC、monitor-contention 观察和限制；未实施优化 | JFR 与 JMH 原始证据路径已记录；async-profiler 不可用；Human Developer 已批准 profiling evidence collection |
 | 2026-08-19 | Proposed - Pending Human Approval | 审查 JFR 证据并创建 ADR-0010 与 Optimization ADR / Decision 阶段报告；提出在测量隔离前暂缓生产优化 | 未修改生产代码、测试、benchmark 语义、JVM 参数或 GC 设置；等待 Optimization ADR / Decision Human Approval |
 | 2026-08-19 | Completed - Pending Human Approval | Human Developer 批准 ADR-0010 并授权 Measurement-Isolation Execution；完成 steady-state matching 与 lifecycle preparation 隔离测量及 JFR 证据采集 | `mvn -pl benchmark -am verify` 成功；M1 0.423779 us/op；M2 5.590215 us/op；M3 single-level 0.459092 us/op；M3 multi-level 5.772109 us/op；JFR 样本量和 outlier 限制仍不支持生产优化；等待 Steady-State Evidence Review |
+| 2026-08-20 | Prepared - Pending Human Approval | Human Developer 关闭 TASK-006 并接受全部 Phase 2 evidence track；准备 Phase 2 Final Closure Review | Remote `master`/infrastructure branch established; CI runs `32371458037` and `32371665075` passed; merge, tag and Phase 3 remain unauthorized |
 
 ## 18. Completion Checklist
 
