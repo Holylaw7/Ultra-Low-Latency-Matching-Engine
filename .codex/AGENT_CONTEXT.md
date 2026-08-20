@@ -13,7 +13,7 @@
 | Phase | Phase 2 — Basic OrderBook (`Completed`) |
 | Latest product task | [`TASK-20260819-004`](../tasks/completed/TASK-20260819-004-basic-orderbook.md) — Completed |
 | Product stage | Engineering baseline frozen |
-| Product approval | Phase 2 Closed |
+| Product approval | Phase 2 Final Approval recorded; baseline frozen |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `master` |
 | Engineering baseline commit | `cbfa957` |
