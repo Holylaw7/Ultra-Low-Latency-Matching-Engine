@@ -95,6 +95,7 @@ values while allocation remains reserved for the future MatchingEngine.
 has completed its approved Stage 1 Domain/API Foundation. Immutable
 command/result boundary types have
 been added, but no MatchingEngine, OrderBook integration, Trade generation or
-EventSequence allocation exists. MatchingEngine Core and Determinism
-Verification remain separately gated and unauthorized. OrderBook is an external frozen
-dependency and no OrderBook file or API may change.
+EventSequence allocation exists. Stage 2 synchronous MatchingEngine Core is
+authorized with no engine-owned thread, executor, lock or queue. Determinism
+Verification remains separately gated and unauthorized. OrderBook is an
+external frozen dependency and no OrderBook file or API may change.

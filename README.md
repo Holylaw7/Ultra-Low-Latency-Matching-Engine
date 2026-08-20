@@ -35,8 +35,8 @@ is recorded separately and does not replace B0 or authorize production
 optimization. Phase 2 is closed at the engineering baseline tag. Phase 3 ADR
 and TASK-008 are approved. Stage 1 Domain/API Foundation is completed and
 approved; it adds EventSequence plus immutable command/result types only.
-MatchingEngine core implementation remains unauthorized pending a separate
-Stage 2 authorization.
+Synchronous MatchingEngine core implementation is authorized for Stage 2 but
+has not started. Stage 3 verification remains separately gated.
 
 The repository currently contains:
 

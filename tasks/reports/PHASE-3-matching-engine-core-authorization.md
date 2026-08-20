@@ -7,13 +7,13 @@
 | Phase | Phase 3 — MatchingEngine |
 | Task | `TASK-20260820-008` |
 | Stage | Stage 2 Authorization |
-| Result | Proposed — Pending Human Approval |
+| Result | Approved — Implementation Authorized / Not Started |
 | Tests | Not run — documentation-only authorization request |
 | Build | Not run — production code unchanged |
-| CI | Pending authorization-request commit and push |
+| CI | [Run 32385195072](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32385195072) — PASS for `656719d` |
 | Branch | `feature/phase3-matching-engine` |
 | Parent | Stage 1 approval head `282e7a8` |
-| Next Gate | Human Stage 2 Authorization Review |
+| Next Gate | Stage 2 MatchingEngine Core implementation and completion review |
 
 ## Requested Authorization
 
@@ -33,6 +33,8 @@ Command
 
 Only `MatchingEngine.java` and its focused `MatchingEngineTest.java` are added.
 Existing domain, Stage 1 API and OrderBook production files remain unchanged.
+The engine remains a synchronous caller-owned state machine and must not own
+threads, executors, locks, concurrent queues or scheduling infrastructure.
 
 ## Implementation Boundaries
 
@@ -65,11 +67,13 @@ Existing domain, Stage 1 API and OrderBook production files remain unchanged.
 - maker price, maker/taker identity and remaining-quantity mapping;
 - existing and absent cancellation outcomes;
 - pre-apply rejection leaves observable state/counters unchanged;
+- a minimal equal-command-stream check produces equal TradeIds,
+  EventSequences and EngineResults from two genesis engines;
 - `mvn verify`, Checkstyle, diff/path audit and branch CI.
 
-Stage 3 retains full equal-stream/replay determinism, exhaustive failure
-verification and final regression evidence. No Stage 3 work is authorized by
-this request.
+Stage 3 retains comprehensive scenario replay/state equivalence, exhaustive
+failure verification and final determinism evidence. No Stage 3 work is
+authorized by this approval.
 
 ## Explicit Non-Scope
 
@@ -77,6 +81,7 @@ this request.
 - market orders, WAL, replay implementation, snapshot or recovery;
 - network, protocol, publication, callbacks or I/O;
 - queue, Disruptor, threading or multi-symbol orchestration;
+- engine-owned threads, executors, locks or concurrent collections;
 - benchmark, profiling, optimization or performance claims;
 - release, merge, tag or history rewrite.
 
@@ -94,11 +99,14 @@ deferred scope remains excluded. No new architecture decision is introduced.
 - Any ambiguity in post-mutation failure or output ordering returns to the
   approved ADR rather than being resolved silently in code.
 
-## Approval Request
+## Approval Record
+
+| Date | Reviewer | Decision | Notes |
+| --- | --- | --- | --- |
+| 2026-08-20 | Human Developer | Approved | Stage 2 MatchingEngine Core authorized. Scope is limited to synchronous command processing, OrderBook integration and Trade/Execution generation. Phase 2 OrderBook remains frozen. WAL, Replay implementation, Network, concurrency infrastructure and performance work remain out of scope. |
 
 ```text
-Current Stage: Stage 2 Authorization Proposed
-Human Approval: Pending
-Stage 2 Implementation: Not Authorized
+Current Stage: Stage 2 Authorized / Not Started
+Stage 2 Implementation: Authorized within recorded scope
 Stage 3 Verification: Not Authorized
 ```
