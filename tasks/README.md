@@ -13,7 +13,7 @@ tasks/
 ├── completed/
 │   └── TASK-*.md
 ├── reports/
-│   └── PHASE-*.md（可选，长阶段报告使用）
+│   └── PHASE-*.md（每个完成阶段的必需报告）
 └── archive/
     └── TASK-*.md
 ```
@@ -51,12 +51,14 @@ Proposed / Approved / In Progress
 3. 需要长期保留的技术决策必须先创建或更新 `Proposed` ADR 草案，再进行技术决策和任务审批。
 4. `Proposed` 状态的方案未获 Human 确认前，不得修改生产代码。
 5. 方案获批后才能将状态改为 `Approved`，开始实现时改为 `In Progress`。
-6. 每个开发阶段完成后必须输出阶段报告、将下一门禁设为 `Pending Human Approval` 并停止；Human 审批记录完成后才能进入下一阶段。
+6. 每个开发阶段完成后必须在 `tasks/reports/` 输出独立阶段报告、将下一门禁设为 `Pending Human Approval` 并停止；Human 审批记录完成后才能进入下一阶段。
 7. 实现过程中如果范围、架构、协议、数据格式或验收标准发生变化，必须先更新方案并重新审批；如果影响技术决策，必须同步 ADR。
 8. 完成后必须同步 ADR、任务方案、规范、相关项目文档和 `AGENT_CONTEXT.md`，再将任务文件移动到 `completed/`。
 9. 长期保留的历史任务可以移动到 `archive/`，不得删除已完成方案作为清理手段。
 10. 一个任务只对应一个逻辑主题，不得用一个方案承载无关功能。
 11. 任务方案的 `Decision` 小节必须写入对应 ADR 的具体路径、状态、决策摘要和范围边界；不需要 ADR 时必须记录理由。
+12. 每个任务必须按需包含 `Benchmark / Profile` 和 `Completion` 阶段；不适用时必须明确记录 `Not applicable`，不能静默跳过。
+13. 报告和任务必须记录 Branch、Commit、Remote、Push、CI 和 Working Tree 的真实状态；没有配置或无法观察时记录 `Not configured` / `Unavailable` / `Pending`。
 
 ## 命名规则
 
@@ -103,7 +105,9 @@ ADR / Decision
     -> Task Approval
     -> Implementation
     -> Verification
+    -> Benchmark / Profile（适用时）
     -> Documentation and Synchronization
+    -> Completion
 ```
 
 每个阶段完成后，必须在任务方案的 `Phase Reports and Approval Gates` 中记录：
@@ -114,6 +118,8 @@ ADR / Decision
 - 与已批准方案的偏差、风险、限制和未验证内容。
 - 下一阶段目标和需要 Human 审批的事项。
 
-阶段报告可以直接写在任务方案中；报告较长时，可以在 `tasks/reports/` 创建 `PHASE-*.md` 并从任务方案链接。阶段报告完成后，下一门禁必须标记为 `Pending Human Approval`，并暂停后续开发。审批结果必须记录日期、审批人、决定、约束和备注。
+每个完成阶段必须在 `tasks/reports/` 创建可独立阅读的 `PHASE-*.md`，并从任务方案链接。报告开头必须提供包含 Phase、Task、Stage、Result、Tests、Build、CI、Commit 和 Next Gate 的状态面板；正文记录变更、范围、验证、性能证据（适用时）、ADR 对齐、Git 证据、风险、项目影响、下一阶段及显式审批请求。阶段报告完成后，下一门禁必须标记为 `Pending Human Approval`，并暂停后续开发。审批结果必须记录日期、审批人、决定、约束和备注。
+
+正常、非破坏性的 push 属于已经批准且完成阶段的仓库同步步骤；force push、共享历史改写、远程分支或标签删除、默认/保护分支修改和 Release 发布始终需要 Human 明确授权。未配置 remote 时不得声称已同步，CI 未观察到结果时不得声称通过。
 
 审批被拒绝、增加约束或发现范围变化时，必须先更新任务方案；如果影响技术决策，必须先创建或更新 ADR，再重新申请审批。所有阶段完成后必须同步 ADR、任务方案、规范、相关项目文档和 `AGENT_CONTEXT.md`，同步完成前不得将任务标记为 `Completed`。

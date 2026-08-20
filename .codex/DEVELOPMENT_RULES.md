@@ -1,5 +1,10 @@
 # DEVELOPMENT_RULES - Matching Engine Development Rules
 
+本文件只定义实现、测试、性能、安全和 Git 工程规则。治理规则由
+`.codex/MASTER_PROMPT.md` 管理，当前状态由 `.codex/AGENT_CONTEXT.md`
+管理，获批工作和阶段状态由 `tasks/` 管理。发生冲突时必须停止并按该
+事实源边界完成同步。
+
 ## 1. General Rules
 
 ### Rule 1 - Read Before Modify
@@ -610,7 +615,9 @@ ADR / Decision
     -> Task Approval
     -> Implementation
     -> Verification
+    -> Benchmark / Profile（适用时）
     -> Documentation and Synchronization
+    -> Completion
 ```
 
 阶段可以包含多个原子开发动作，但不得跨越未审批的阶段边界。
@@ -624,7 +631,7 @@ ADR / Decision
    - 与已批准方案的偏差
    - 新增风险、限制和未验证内容
    - 下一阶段目标和所需审批事项
-2. 在任务方案的 `Phase Reports and Approval Gates` 中记录报告位置、阶段状态和下一审批门禁。报告较长时可以另建 `tasks/reports/` 文件并链接。
+2. 每个完成阶段必须在 `tasks/reports/` 创建可独立阅读的阶段报告，并在任务方案的 `Phase Reports and Approval Gates` 中记录报告位置、阶段状态和下一审批门禁。报告必须以 Phase、Task、Stage、Result、Tests、Build、CI、Commit 和 Next Gate 状态面板开始。
 3. 将下一门禁标记为 `Pending Human Approval`，停止进入下一阶段。
 4. 等待 Human 明确批准，并把日期、审批人、决定、约束和备注写入任务方案的 `Approval Record` 或阶段报告。
 
@@ -744,9 +751,10 @@ Git 是项目变更的唯一追踪来源。任何代码、测试、配置或文�
 ```bash
 git status --short --branch
 git branch --show-current
-git log --oneline --decorate -5
+git log --oneline --decorate -10
 git diff --stat
 git diff --cached --stat
+git remote -v
 ```
 
 必须先理解未提交修改，再开始编辑。
@@ -904,7 +912,9 @@ git show --stat --oneline HEAD
 
 ### 25.8 Push、Merge 和 Release
 
-未经明确授权不得执行 `git push`。
+已获批且完成的逻辑阶段，可以按 `.codex/MASTER_PROMPT.md` 执行正常、非破坏性的 `git push` 作为仓库同步步骤。执行前必须确认 remote、目标分支、工作区、验证结果和提交历史；执行后记录远程分支和可观察的 CI 状态。
+
+以下操作始终需要 Human 明确授权：force push、共享历史改写、删除远程分支、删除标签、修改默认或保护分支、Release 发布。禁止向默认分支 force push。
 
 Push 或 Merge 前必须确认：
 
@@ -915,6 +925,16 @@ Push 或 Merge 前必须确认：
 - 不包含敏感或临时文件
 
 Release Tag 只能建立在已验证提交上，并必须记录版本、变更、验证结果、Benchmark 结果和已知限制。
+
+### 25.9 Artifact Policy
+
+应提交可审查、可复现的摘要证据：Benchmark 报告、Profiling 摘要、
+Architecture、ADR、复现命令和小型确定性 fixture。通常忽略 `target/`、
+原始 JFR、较大的 profiler dump、临时 Benchmark 输出、IDE metadata 和
+本地日志。
+
+未提交的原始证据必须在已提交报告中记录路径、生成命令、摘要和限制。
+不得提交 secret、token、password 或未明确授权的大型生成物。
 
 ---
 
@@ -928,6 +948,8 @@ Release Tag 只能建立在已验证提交上，并必须记录版本、变更�
 - Benchmark 报告
 - Recovery 文档
 - `AGENT_CONTEXT.md`
+
+`AGENT_CONTEXT.md` 是紧凑的当前状态索引，不是项目日记。它必须维护 Project Progress、当前 Phase/Task/Stage/Approval、Branch、HEAD 基线、Remote Sync、CI、Next Gate、关键证据链接和真实风险；详细历史保留在 ADR、Task、Stage Report 和 Git 中，不得整段复制。
 
 每个任务的决策步骤必须与对应 ADR 同步。任务完成前必须确认：
 
@@ -967,6 +989,7 @@ Release Tag 只能建立在已验证提交上，并必须记录版本、变更�
 - 每个开发阶段均有阶段报告，且下一阶段开始前已有 Human 审批
 - 文档已同步
 - `AGENT_CONTEXT.md` 已同步
+- 仓库已按 Git policy 同步，或已明确记录 remote/CI 不可用
 - Commit 已完成或未提交原因已说明
 - 提交后 Git 状态已确认
 - 没有明显回归

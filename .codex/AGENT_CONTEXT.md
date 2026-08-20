@@ -1,711 +1,149 @@
-# AGENT_CONTEXT - Matching Engine
+# AGENT_CONTEXT — Matching Engine Current State
 
-> Last Updated: 2026-08-19
-> Project Status: Phase 2 - Measurement-Isolation Execution (completed - pending Human Approval)
-> Owner: Human Developer
-> Primary Agent: Codex
+> Last Updated: 2026-08-20
+> Purpose: compact current-state index; detailed history lives in Tasks, Stage
+> Reports, ADRs and Git.
 
----
+## Project Dashboard
 
-## 1. Project Identity
+| Item | Current State |
+| --- | --- |
+| Project | Ultra-Low-Latency Matching Engine |
+| Product scope | Single-node, in-memory, deterministic matching engine |
+| Phase | Phase 2 — Basic OrderBook |
+| Product task | `TASK-20260819-004` — Basic OrderBook (`In Progress`) |
+| Product stage | Measurement-Isolation Execution completed |
+| Product approval | Steady-State Evidence Review pending Human approval |
+| Latest documentation task | [`TASK-20260820-005`](../tasks/completed/TASK-20260820-005-master-prompt-documentation-alignment.md) — completed |
+| Branch | `feature/domain-model` |
+| Baseline HEAD | `6fa8f46` — latest completed engineering-stage commit before this documentation commit |
+| Remote | Not configured |
+| Remote sync | Not available |
+| CI | Workflow exists; current remote CI status unavailable |
 
-Project:
+## Project Progress
 
-Ultra-Low-Latency Matching Engine
+| Phase | Status | Evidence |
+| --- | --- | --- |
+| Phase 0 — Bootstrap | Completed | Maven reactor, Java 21, JUnit 5, JMH, Checkstyle and CI workflow |
+| Phase 1 — Domain Model | Completed / Approved | [`PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md) |
+| Phase 2 — Basic OrderBook | In Progress | OrderBook tests, JMH baseline and Phase 2 reports |
+| Phase 3 — Matching Engine | Pending / Not Authorized | Requires completion and approval of the current Phase 2 gate |
+| Phase 4+ — Pipeline, network, recovery and performance evolution | Future Work | Architecture documents and future ADRs/tasks |
 
-Type:
+## Current Product Gate
 
-Single-node high-performance matching engine.
-
-Primary Goals:
-
-1. Build a correct matching engine.
-2. Establish deterministic execution and replay.
-3. Measure throughput, latency, allocation, GC, and recovery behavior.
-4. Use evidence-based performance engineering.
-
----
-
-## 2. Engineering Philosophy
-
-The project follows:
+The approved Phase 2 OrderBook structure, structural limit matching,
+correctness verification, component benchmark, profiling and
+measurement-isolation experiment are complete. The next product action is:
 
 ```text
-Human Architecture
-    +
-Codex Implementation
-    +
-Automated Testing
-    +
-Benchmark
-    +
-Profiling
-    +
-Evidence-based Optimization
+Steady-State Evidence Review
+    -> Human Approval
+    -> approved next Task/Stage only
 ```
 
-Human owns architecture and final decisions.
-Codex owns implementation assistance.
+Production optimization, Phase 3 implementation and any unrelated runtime
+change remain unauthorized.
 
----
+Current plan:
+[`TASK-20260819-004-basic-orderbook.md`](../tasks/active/TASK-20260819-004-basic-orderbook.md).
 
-## 3. Current Status
+Current evidence:
 
-### Phase
+- [`PHASE-2-measurement-isolation.md`](../tasks/reports/PHASE-2-measurement-isolation.md)
+  — completed; Human review pending.
+- [`PHASE-2-profiling-execution.md`](../tasks/reports/PHASE-2-profiling-execution.md)
+  — completed and approved as evidence collection.
+- [`PHASE-2-benchmark-orderbook-baseline.md`](../tasks/reports/PHASE-2-benchmark-orderbook-baseline.md)
+  — approved component-level baseline.
+- [`PHASE-2-verification-structural-limit-matching.md`](../tasks/reports/PHASE-2-verification-structural-limit-matching.md)
+  — approved correctness evidence.
 
-Phase 2 - Measurement-Isolation Execution (completed - pending Human Approval)
+## Accepted Decisions
 
-### Completed
+| Decision | Status | Source |
+| --- | --- | --- |
+| Domain model and correctness baseline | Accepted with constraints | [`ADR-0005`](../docs/adr/ADR-0005-domain-model-and-correctness-baseline.md) |
+| ADR-first governance | Accepted | [`ADR-0006`](../docs/adr/ADR-0006-adr-first-decision-governance.md) |
+| TreeMap side books, intrusive FIFO and active OrderId index | Accepted with constraints | [`ADR-0007`](../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md) |
+| Structural limit matching and `MatchFragment` boundary | Approved | [`ADR-0008`](../docs/adr/ADR-0008-structural-limit-matching.md) |
+| JFR-first profiling evidence | Approved | [`ADR-0009`](../docs/adr/ADR-0009-performance-profiling-evidence.md) |
+| Defer production optimization until measurement isolation | Approved | [`ADR-0010`](../docs/adr/ADR-0010-optimization-decision-after-profiling.md) |
 
-- [x] Repository initialized
-- [x] Maven project
-- [x] Java 21
-- [x] JUnit
-- [x] JMH
-- [x] CI
-- [x] Documentation structure
-- [x] Task workspace and plan-first workflow
-- [x] Domain model and correctness baseline
-- [x] ADR linkage recorded for the domain decision
-- [x] ADR-first decision and phase approval governance
+If a Task and linked ADR disagree, stop and synchronize them before work.
 
-### Current Task
+## Verified Current Implementation
 
-`TASK-20260819-004` - Establish Basic OrderBook baseline (`In Progress`,
-`Measurement-Isolation Execution` completed; pending Steady-State Evidence
-Review Human Approval).
+- Positive `long`-backed domain identifiers, price, quantity and sequence.
+- Controlled limit/market order lifecycle plus deterministic Trade and
+  Execution value objects.
+- `TreeMap` bid/ask price indexes with intrusive FIFO levels.
+- Active `OrderId -> OrderNode` cancellation index.
+- Deterministic structural limit matching with price-time priority, maker
+  price, partial/full fills and one-time residual resting.
+- OrderBook-focused correctness, invariant and determinism tests.
 
-### Next Task
+`MatchingEngine` orchestration, market-order execution, event publication,
+Disruptor pipeline, Netty protocol, WAL, snapshot and recovery are not
+implemented.
 
-Phase 2 - Measurement-Isolation Execution. Sub-stages 1-3, ADR-0008, Structural
-Limit Matching, Verification, the OrderBook baseline benchmark and
-Documentation Synchronization are approved within the recorded scope. Human
-Developer approved ADR-0009 and profiling execution on `2026-08-19`, then
-approved ADR-0010 and authorized Measurement-Isolation Execution. The
-isolation experiment is complete and awaits Steady-State Evidence Review;
-production optimization and Phase 3 must not begin before the next approval.
+## Performance Evidence
 
-Current task plan:
-[`tasks/active/TASK-20260819-004-basic-orderbook.md`](../tasks/active/TASK-20260819-004-basic-orderbook.md).
+Verified fact:
 
-Current architecture ADR:
-[`docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md`](../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md)
-(`Accepted with constraints`).
+- A component-level JMH OrderBook baseline and JFR/measurement-isolation
+  evidence exist under the linked Phase 2 reports.
+- Raw JSON and JFR artifacts are local and ignored; reports record their paths,
+  generation commands, summaries and limitations.
 
-Current sub-stage ADR:
-[`docs/adr/ADR-0008-structural-limit-matching.md`](../docs/adr/ADR-0008-structural-limit-matching.md)
-(`Approved`, implementation authorized).
+Not verified:
 
-Current profiling ADR:
-[`docs/adr/ADR-0009-performance-profiling-evidence.md`](../docs/adr/ADR-0009-performance-profiling-evidence.md)
-(`Approved`; profiling execution completed and approved).
+- 1M+ orders/s
+- Microsecond P99
+- Zero GC or zero-copy
+- Lock-free/wait-free execution
+- End-to-end system throughput
 
-Latest completed Phase 2 report:
-[`tasks/reports/PHASE-2-verification-structural-limit-matching.md`](../tasks/reports/PHASE-2-verification-structural-limit-matching.md).
+These remain targets or hypotheses, never measured project claims.
 
-Implementation sub-stage report:
-[`tasks/reports/PHASE-2-implementation-structural-limit-matching.md`](../tasks/reports/PHASE-2-implementation-structural-limit-matching.md).
-
-Current Verification report:
-[`tasks/reports/PHASE-2-verification-structural-limit-matching.md`](../tasks/reports/PHASE-2-verification-structural-limit-matching.md).
-
-Current Benchmark report:
-[`tasks/reports/PHASE-2-benchmark-orderbook-baseline.md`](../tasks/reports/PHASE-2-benchmark-orderbook-baseline.md).
-
-Documentation synchronization report:
-[`tasks/reports/PHASE-2-documentation-synchronization.md`](../tasks/reports/PHASE-2-documentation-synchronization.md).
-
-Latest completed decision-stage report:
-[`tasks/reports/PHASE-2-structural-limit-matching-adr-decision.md`](../tasks/reports/PHASE-2-structural-limit-matching-adr-decision.md).
-
-Current profiling decision-stage report:
-[`tasks/reports/PHASE-2-profiling-adr-decision.md`](../tasks/reports/PHASE-2-profiling-adr-decision.md).
-
-Current profiling execution report:
-[`tasks/reports/PHASE-2-profiling-execution.md`](../tasks/reports/PHASE-2-profiling-execution.md).
-
-Current optimization ADR:
-[`docs/adr/ADR-0010-optimization-decision-after-profiling.md`](../docs/adr/ADR-0010-optimization-decision-after-profiling.md)
-(`Approved`; no production optimization authorized).
-
-Current optimization decision-stage report:
-[`tasks/reports/PHASE-2-optimization-adr-decision.md`](../tasks/reports/PHASE-2-optimization-adr-decision.md).
-
-Current measurement-isolation report:
-[`tasks/reports/PHASE-2-measurement-isolation.md`](../tasks/reports/PHASE-2-measurement-isolation.md)
-(`Completed - Pending Human Approval`; next gate is Steady-State Evidence
-Review).
-
-Phase 1 report:
-[`tasks/reports/PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md).
-
-The Phase 1 implementation and verification are complete. Human Developer
-approved the Phase 1 hand-off on `2026-08-19`. Human Developer approved
-ADR-0007 and TASK-20260819-004 on `2026-08-19`, authorizing Phase 2
-implementation within the recorded constraints. The current implementation
-sub-stage `OrderNode + OrderQueue + PriceLevel` was approved on `2026-08-19`.
-Human Developer then authorized and the implementation completed the
-`BidBook / AskBook` sub-stage, which was approved on `2026-08-19`. Human
-Developer then authorized and the implementation completed the `OrderBook +
-active OrderId index` sub-stage, which was approved on `2026-08-19`. The
-Structural Limit Matching ADR / Decision stage was approved on `2026-08-19`.
-Production matching implementation and its correctness tests are complete
-within the approved scope, and Human Developer approved that implementation on
-`2026-08-19`. Verification added cross-structure active-index/node identity,
-price-level quantity, non-crossed final-state and deterministic-state evidence.
-Human Developer explicitly authorized the baseline benchmark on `2026-08-19`.
-Benchmark evidence and documentation synchronization were approved on
-`2026-08-19`. ADR-0009 and its phase report were approved on `2026-08-19`;
-profiling execution was approved on `2026-08-19`. The evidence review produced
-ADR-0010, which was approved on `2026-08-19`. Measurement-Isolation Execution
-was authorized and completed without changing production code, B0 semantics or
-JVM configuration. Production optimization and Phase 3 remain unauthorized
-pending Steady-State Evidence Review.
-
----
-
-## 4. Planned Architecture
+## Planned System Framework
 
 ```text
 Client
-    |
-    v
-Netty
-    |
-    v
-Decoder
-    |
-    v
-Ingress
-    |
-    v
-Disruptor / RingBuffer
-    |
-    v
-Matching Engine
-    |
-    v
-OrderBook
-    |
-    +---- Bid
-    +---- Ask
-    |
-    v
-Trade Event
-    |
-    +---- WAL
-    +---- Output
-    +---- Metrics
+  -> Netty / Protocol                 [Future Work]
+  -> Decoder / Validation             [Future Work]
+  -> Ingress + RingBuffer/Disruptor   [Future Work]
+  -> MatchingEngine                   [Phase 3]
+  -> OrderBook                        [Phase 2 baseline implemented]
+       -> BidBook / AskBook
+       -> PriceLevel / OrderQueue
+       -> active OrderId index
+  -> Trade / Execution events         [Domain types implemented; orchestration future]
+       -> WAL / Recovery              [Future Work]
+       -> Output / Metrics            [Future Work]
 ```
 
----
-
-## 5. Core Domain
-
-Planned entities:
-
-- Order
-- Trade
-- Execution
-- Price
-- Quantity
-- OrderId
-- Sequence
-
-Planned enums:
-
-- Side
-- OrderType
-- OrderStatus
-
-Implemented Phase 1 baseline:
-
-- Positive `long`-backed identifiers, prices, quantities, and sequences.
-- Limit and market orders with controlled lifecycle transitions.
-- Deterministic `Trade` and `Execution` value objects.
-- Correctness tests for boundaries, terminal states, idempotent cancellation,
-  and equal-input determinism.
-
----
-
-## 6. Matching Rules
-
-Primary matching rule:
-
-Price-Time Priority.
-
-Buy:
-
-Higher price first.
-
-Sell:
-
-Lower price first.
-
-Same price:
-
-Earlier sequence first.
-
----
-
-## 7. OrderBook Design
-
-Initial implementation:
-
-```text
-TreeMap + intrusive order queue + OrderId index
-```
-
-Potential future alternatives:
-
-- Custom Red-Black Tree
-- SkipList
-- Radix Tree
-- Price Array
-- Hybrid price index
-
-Any replacement requires benchmark evidence.
-
----
-
-## 8. Concurrency Model
-
-Default model:
-
-One Matching Thread owns one Symbol OrderBook.
-
-Multiple symbols may later be partitioned across matching workers.
-
-Do not introduce multi-threaded mutation of a single OrderBook without an explicit architecture decision.
-
----
-
-## 9. Performance Targets
-
-These are targets, not guaranteed results:
-
-- High single-node throughput
-- Microsecond-level core latency
-- Stable tail latency
-- Minimal allocation
-- Minimal GC interference
-
-Aspirational target:
-
-> 1M+ orders/s
-
-Actual performance must come from reproducible benchmarks.
-
----
-
-## 10. Benchmark Strategy
-
-Benchmark layers:
-
-### Level 1
-
-Pure OrderBook.
-
-### Level 2
-
-Pure Matching Engine.
-
-### Level 3
-
-RingBuffer or Disruptor Pipeline.
-
-### Level 4
-
-WAL.
-
-### Level 5
-
-Netty TCP End-to-End.
-
-Every result should report:
-
-- Throughput
-- P50
-- P95
-- P99
-- P999
-- Allocation
-- GC
-- CPU
-
----
-
-## 11. Recovery Model
-
-Planned:
-
-```text
-WAL
-    v
-Snapshot
-    v
-Restart
-    v
-Snapshot Load
-    v
-WAL Replay
-    v
-State Hash Verification
-```
-
-Recovery must be deterministic.
-
----
-
-## 12. Important Constraints
-
-The project is intentionally:
-
-- Single-node
-- In-memory
-- Performance-focused
-- Deterministic
-- JVM-focused
-
-Do not turn this into:
-
-- Microservice system
-- Cloud-native system
-- Distributed exchange
-- CRUD trading platform
-
-unless explicitly requested.
-
----
-
-## 13. Non-Goals
-
-Not currently planned:
-
-- Real-money operation
-- Real exchange connectivity
-- User management
-- Payment
-- KYC
-- Web frontend
-- Cryptocurrency integration
-- Production financial deployment
-- Multi-region deployment
-
-This is a research and engineering project, not a real trading platform.
-
----
-
-## 14. Current Technical Decisions
-
-| Decision | Status | Reason |
-| --- | --- | --- |
-| Java 21 | Accepted | JVM performance and existing expertise |
-| Single-threaded matching core | Accepted | Deterministic mutation |
-| Integer domain units | Accepted with constraints | Avoid floating-point rounding in the matching core |
-| Domain lifecycle baseline | Accepted with constraints | Fixed order states and controlled transitions |
-| Trade/Execution separation | Accepted with constraints | Distinguish one match from one order's execution result |
-| Logical event sequence | Accepted with constraints | Deterministic ordering independent of time and scheduling |
-| ADR-0005 domain model | Accepted with constraints | Long-term record of Phase 1 domain semantics |
-| ADR-0006 governance | Accepted | ADR-first decisions, phase reports, Human approval gates, and document synchronization |
-| ADR-0007 Basic OrderBook | Accepted with constraints | TreeMap side books, intrusive FIFO levels, active cancellation index, best-price cache, and limit-order matching boundaries; implementation remains strictly scoped |
-| ADR-0008 Structural Limit Matching | Approved | `matchLimit` and immutable `MatchFragment` boundary, deterministic price-time traversal, maker-price fragments, lifecycle synchronization and residual resting; implementation authorized within scope |
-| ADR-0009 Performance Profiling Evidence | Approved | JFR-first profiling of the approved OrderBook baseline; execution completed and approved as evidence collection; optimization and Phase 3 remain out of scope |
-| ADR-0010 Optimization Decision After Profiling | Approved | Current evidence did not isolate steady-state matching cost; production optimization is deferred and measurement-isolation evidence is under review |
-| Netty | Planned | High-performance networking |
-| Disruptor | Planned | Low-contention event pipeline |
-| WAL | Planned | Crash recovery |
-| JMH | Accepted | Reliable microbenchmark |
-| JFR | Planned | JVM profiling |
-| async-profiler | Planned | CPU and allocation profiling |
-
----
-
-## 15. Open Questions
-
-These must be resolved through experiments rather than assumptions:
-
-1. TreeMap vs custom tree
-2. SkipList vs tree
-3. Object-based vs flat memory layout
-4. Array-based vs linked price levels
-5. Disruptor vs custom ring buffer
-6. Heap vs off-heap
-7. WAL fsync policy
-8. Snapshot format
-9. Symbol partitioning
-10. CPU affinity strategy
-
----
-
-## 16. Benchmark Evidence
-
-Phase 2 OrderBook baseline benchmark completed and was approved on
-`2026-08-19`. The run used JMH 1.37, Java 21.0.12, two forks, one thread,
-three one-second warmup iterations and five one-second measurement iterations
-on Windows 11 x64 with an Intel i9-13900H (14 cores / 20 logical processors).
-
-Measured operations:
-
-- price-level insertion;
-- Best Bid / Best Ask lookup;
-- cancel by OrderId;
-- empty-level cleanup;
-- one-level matching;
-- 64-level multi-level matching.
-
-Raw JSON is local and ignored by Git:
-`benchmark-results/orderbook-baseline.json`.
-The result table and limitations are in
-`tasks/reports/PHASE-2-benchmark-orderbook-baseline.md`.
-Allocation, GC, profiling, optimization and production performance claims
-remain outside the current authorization. Profiling evidence is recorded under
-approved ADR-0009; the separate measurement-isolation report records the
-completed experiment. Production optimization and Phase 3 remain unauthorized.
-
-## 17. Profiling and Optimization Decision Status
-
-ADR-0009 and its phase report define the controlled profiling evidence stage.
-JFR recordings for the approved workloads are recorded in
-`tasks/reports/PHASE-2-profiling-execution.md` and the local ignored
-`profiler-results/` directory. async-profiler was unavailable. Profiling
-execution was approved as evidence collection. Approved ADR-0010 deferred
-production optimization until setup and profiler overhead were isolated. The
-measurement-isolation harness is complete; no production code, B0 semantics or
-optimization may be changed before Steady-State Evidence Review.
-
-Do not claim the following until experimentally verified:
-
-- 1M orders/s
-- Microsecond P99
-- Zero GC
-- Zero-copy
-- Lock-free execution
-
----
-
-## 18. Known Risks
-
-### Risk 1
-
-Over-optimization before correctness.
-
-Mitigation:
-
-Correctness first.
-
-### Risk 2
-
-Benchmark gaming.
-
-Mitigation:
-
-Independent benchmark module and reproducible parameters.
-
-### Risk 3
-
-Excessive complexity.
-
-Mitigation:
-
-Baseline implementation first.
-
-### Risk 4
-
-AI-generated code that cannot be explained.
-
-Mitigation:
-
-Human review and technical verification.
-
----
-
-## 19. Agent Session Protocol
-
-At the beginning of every session:
-
-1. Read `MASTER_PROMPT.md`
-2. Read `DEVELOPMENT_RULES.md`
-3. Read `AGENT_CONTEXT.md`
-4. Read `tasks/README.md`
-5. Read relevant plans in `tasks/active/`
-6. Check Git status
-7. Check current branch
-8. Check build status
-9. Inspect recent commits
-10. Identify current phase
-11. Confirm task scope and approval status
-12. Confirm current development stage, phase report status, and next approval gate
-
-At the end:
-
-1. Run relevant tests
-2. Run relevant benchmark
-3. Inspect Git diff
-4. Update `AGENT_CONTEXT.md`
-5. Update the active task plan and move completed plans to `tasks/completed/`
-6. If a stage is complete, write its phase report, set the next gate to
-   `Pending Human Approval`, and stop before the next stage until Human approval
-   is recorded.
-7. Report:
-   - Changes
-   - Tests
-   - Benchmarks
-   - Risks
-   - Next step
-
----
-
-## 20. Project Evolution
-
-When a major architecture decision is made, create an ADR.
-
-Recommended format:
-
-```text
-docs/adr/ADR-NNNN-title.md
-```
-
-ADR must contain:
-
-- Context
-- Problem
-- Options
-- Decision
-- Consequences
-- Benchmark Evidence
-
----
-
-## 21. Development Governance
-
-All implementation follows this lifecycle:
-
-```text
-Requirement
-    -> ADR Draft
-    -> Human Decision
-    -> Scope and Task Approval
-    -> Implementation
-    -> Phase Report
-    -> Human Approval
-    -> Verification
-    -> Phase Report
-    -> Human Approval
-    -> Documentation and Synchronization
-    -> Phase Report
-    -> Human Approval
-    -> Commit
-    -> Git Status Confirmation
-```
-
-Every technical decision must have an ADR draft before the decision is made.
-Every completed development stage must have a phase report and an explicit
-Human approval before the next stage begins. ADR, task plan, project rules,
-related project documents, and this context file must be synchronized before a
-task is marked `Completed`.
-
-Git status must be checked:
-
-- At the beginning of every session
-- Before editing
-- After editing
-- Before staging
-- After staging
-- Before committing
-- After committing
-- Before the final report
-
-The working tree should be clean after a completed task.
-
-Required repository checks:
-
-```text
-git status --short --branch
-git branch --show-current
-git log --oneline --decorate -5
-git diff --stat
-git diff --cached --stat
-git diff --check
-```
-
-Commit requirements:
-
-- One logical topic per commit
-- Conventional Commits message
-- Tests and applicable quality gates pass
-- Staged diff reviewed
-- No secrets, generated files, or unrelated changes
-- Commit hash and final status reported
-
-Push, rebase, amend, reset, restore, clean, and force push require explicit authorization.
-
----
-
-## 22. Bootstrap Verification
-
-Verified on 2026-08-19:
-
-- Root Maven reactor builds successfully.
-- Core module compiles the root `src/` layout.
-- Java 21 release compilation is enforced.
-- JUnit 5 test suite runs successfully.
-- JMH benchmark module packages successfully.
-- Checkstyle runs with zero violations.
-- GitHub Actions workflow is defined for `mvn verify`.
-- Phase 1 domain tests pass with 12 tests and zero failures.
-- Root `mvn verify` passes after the domain model implementation.
-
-The bootstrap benchmark is an infrastructure smoke test only. It is not a matching-engine performance result.
-
----
-
-## 23. Task Workspace and Plan-First Workflow
-
-All development plans are versioned under `tasks/`.
-
-```text
-Proposed
-    -> Approved
-    -> In Progress
-    -> Completed
-```
-
-The current completed governance task is:
-
-```text
-tasks/completed/TASK-20260819-001-task-workspace-and-plan-first.md
-```
-
-The completed domain-model task is:
-
-```text
-tasks/completed/TASK-20260819-002-domain-model-and-correctness-baseline.md
-```
-
-The completed governance task is:
-
-```text
-tasks/completed/TASK-20260819-003-adr-first-phase-approval-governance.md
-```
-
-All listed tasks have status `Completed` except the approved
-`TASK-20260819-004`, which is currently `In Progress`. No additional production
-code or test scope may be added without an updated approved plan and ADR
-review where applicable.
-
-Each task plan must record:
-
-- Scope and acceptance criteria
-- Design and architecture impact
-- Planned file changes
-- Test and Benchmark plan
-- Risks and rollback
-- Verification commands
-- Approval and implementation log
-- Current stage, phase reports, and approval gates
-- Git commit plan
-
-If implementation changes the approved scope or design, update the task plan
-and obtain approval again before continuing. If a technical decision changes,
-create or update the ADR before requesting the decision again.
+One matching thread owns one symbol OrderBook. Any change to matching semantics,
+core structure, concurrency, event ordering, protocol, persistence or recovery
+requires an approved ADR and Task.
+
+## Known Risks
+
+- Current benchmark evidence is workload-specific and not end-to-end.
+- Windows scheduling and setup/profiler overhead limit performance inference.
+- Raw evidence is local; reproducibility depends on committed commands and
+  summaries.
+- Current branch name predates the broader Phase 2 work.
+- No Git remote is configured, so push and remote CI verification are
+  unavailable.
+
+## Session Recovery Checklist
+
+1. Read `MASTER_PROMPT.md`, `DEVELOPMENT_RULES.md`, this file and
+   `tasks/README.md`.
+2. Read every relevant `tasks/active/*` plan and linked ADR.
+3. Run the mandatory Git bootstrap commands from `MASTER_PROMPT.md`.
+4. Reconcile live Git state with this index; live Git is authoritative for
+   repository state.
+5. Confirm the current approval gate before any modification.

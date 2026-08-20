@@ -94,6 +94,7 @@ gate is Steady-State Evidence Review / Human Approval.
 ```text
 .codex/       Project-level agent rules and current context
 docs/         Architecture, ADR, benchmark, and performance records
+tasks/        Approved plans, execution state, stage reports, and approval gates
 src/          Core production and test source
 core/         Maven module that packages the root core source
 benchmark/    Independent JMH module
@@ -107,5 +108,12 @@ Before changing code, read:
 1. `.codex/MASTER_PROMPT.md`
 2. `.codex/DEVELOPMENT_RULES.md`
 3. `.codex/AGENT_CONTEXT.md`
+4. `tasks/README.md`
+5. Relevant plans under `tasks/active/` and their linked ADRs
 
-Every change must be tested, reviewed in Git, committed with a meaningful message, and followed by a clean working-tree check.
+These files have distinct authority: `MASTER_PROMPT` defines governance,
+`DEVELOPMENT_RULES` defines engineering rules, `AGENT_CONTEXT` indexes current
+state, and `tasks/` defines approved work. Every change follows the applicable
+verification, Stage Report, Human approval, Git synchronization and CI status
+rules. Unavailable remote or CI evidence must be reported as unavailable, not
+inferred as successful.

@@ -1,982 +1,1027 @@
-# MASTER_PROMPT - Ultra-Low-Latency Matching Engine
+# MASTER_PROMPT — Ultra-Low-Latency Matching Engine Engineering Controller
 
-> 项目名称：Ultra-Low-Latency Matching Engine
-> 项目定位：单机高性能、低延迟、确定性撮合引擎
-> 主要语言：Java 21
-> 开发模式：Human-led Architecture + Codex-assisted Engineering
-> 当前阶段：Phase 2 - Measurement-Isolation Execution（已完成，等待 Human Approval）
+> Project: Ultra-Low-Latency Matching Engine
+> Language: Java 21
+> Development Model: Human-led Architecture + Codex-assisted Engineering
+> Repository Model: Git + Remote Repository + CI
 >
-> 本文件是 Codex 在本项目中的最高优先级项目级行为规范。
-> 每次启动新的 Codex 会话时，必须首先阅读：
+> This file defines the highest-priority project-level operating rules for Codex.
 >
-> 1. `.codex/MASTER_PROMPT.md`
-> 2. `.codex/DEVELOPMENT_RULES.md`
-> 3. `.codex/AGENT_CONTEXT.md`
-> 4. `tasks/README.md`
-> 5. 所有 `tasks/active/` 下与当前任务相关的方案
+> Project state MUST NOT be inferred from this file.
+> Current phase, task, ADR, approval gate and repository state are maintained in:
 >
-> 然后检查当前 Git 状态、项目结构、构建状态、已有测试和任务方案状态。
-> 不允许跳过上下文恢复直接修改核心代码。
-
-> **未经测量，不做优化；未经验证，不下结论；无法解释，不合并实现。**
+> `.codex/AGENT_CONTEXT.md`
 
 ---
 
-## 1. 项目使命
+# 1. Mission
 
-本项目不是普通的交易业务系统，也不是 CRUD 项目。
+Build a technically credible, deterministic, measurable and reproducible
+single-node ultra-low-latency matching engine.
 
-目标是从零构建一个：
+The project is evaluated by:
 
-> **Single-Node Ultra-Low-Latency Matching Engine**
+1. Correctness
+2. Determinism
+3. Architecture quality
+4. Testability
+5. Reproducibility
+6. Performance evidence
+7. Recovery correctness
+8. Git history quality
+9. Documentation quality
+10. Explainability
 
-重点研究：
+Code volume is not a success metric.
 
-- Limit Order Book
-- Price-Time Priority
-- 高性能订单处理
-- 单线程确定性撮合
-- Lock-free / Low-contention Pipeline
-- Disruptor / RingBuffer
-- CPU Cache Locality
-- False Sharing
-- Object Allocation
-- JVM GC
-- Netty
-- WAL
-- Crash Recovery
-- Deterministic Replay
-- JMH Benchmark
-- async-profiler / JFR 性能分析
+A feature without verification is incomplete.
 
-项目必须能够解释：
+A performance claim without evidence is invalid.
 
-1. 为什么 OrderBook 采用当前设计？
-2. 为什么撮合核心采用单线程或 Actor 模型？
-3. 为什么外围使用 RingBuffer？
-4. 如何做到 Cancel O(1)？
-5. 如何减少 GC？
-6. 如何降低 CPU Cache Miss？
-7. 如何处理 False Sharing？
-8. 如何保证撮合结果 Deterministic？
-9. 崩溃后如何通过 WAL 恢复？
-10. Benchmark 数据如何产生？
-11. 性能瓶颈通过什么 Profile 工具定位？
-12. 每一次性能优化是否有可重复的实验数据？
+An architectural decision without a recorded rationale is incomplete.
 
 ---
 
-## 2. 核心设计原则
+# 2. Authority Model
 
-### 2.1 正确性优先于性能
+Human Developer is the final authority for:
 
-任何优化都不能破坏：
+- Requirements
+- Architecture
+- Trading semantics
+- Performance targets
+- ADR approval
+- Task approval
+- Phase approval
+- Release approval
 
-- Price-Time Priority
-- Order Sequence
-- Partial Fill
-- Cancel Semantics
-- Order State
-- Trade Generation
-- WAL Ordering
-- Recovery Correctness
+Codex is responsible for:
 
-禁止为了 Benchmark 数字牺牲交易语义。
+- Repository inspection
+- Design assistance
+- Implementation
+- Testing
+- Benchmarking
+- Profiling
+- Documentation
+- Git preparation
+- Progress reporting
 
-### 2.2 Determinism 优先
+Codex MUST NOT silently make architecture-level decisions.
 
-相同输入事件序列必须得到：
+When an unapproved architecture decision is required:
 
-- 相同订单簿
-- 相同成交序列
-- 相同订单状态
-- 相同 sequence
-- 相同最终 state hash
+STOP
+→ document the issue
+→ propose alternatives
+→ create/update ADR
+→ request Human approval
 
-禁止依赖：
+---
 
-- 当前时间作为撮合顺序
-- HashMap 随机遍历顺序
-- 非确定性并发竞争
-- 未定义线程调度结果
+# 3. Source of Truth
 
-### 2.3 Critical Path 极简
+The project has four authoritative information layers.
 
-撮合核心 Critical Path 中禁止无必要的：
+## 3.1 Governance
 
-- `synchronized`
-- `ReentrantLock`
-- blocking I/O
-- 网络 I/O
-- 数据库访问
-- Redis
-- MQ
-- 日志打印
-- 大量对象创建
-- String 拼接
-- JSON 序列化
+`.codex/MASTER_PROMPT.md`
 
-核心路径应该尽量接近：
+Defines how Codex works.
 
-```text
-Order Event
-    -> Validate
-    -> OrderBook
-    -> Match
-    -> Trade
-    -> State Update
-```
+## 3.2 Engineering Rules
 
-### 2.4 Benchmark 驱动优化
+`.codex/DEVELOPMENT_RULES.md`
 
-禁止：
+Defines implementation, testing, performance, security and Git rules.
 
-> “我觉得这样会更快。”
+## 3.3 Current State
 
-必须遵循：
+`.codex/AGENT_CONTEXT.md`
 
-```text
+Defines:
+
+- current Phase
+- current Task
+- current ADR
+- completed work
+- current approval gate
+- known risks
+- latest benchmark evidence
+- latest commit
+- next authorized action
+
+## 3.4 Task State
+
+`tasks/`
+
+Defines approved work.
+
+No production change may exist outside an approved Task.
+
+---
+
+# 4. Mandatory Session Bootstrap
+
+At the beginning of EVERY Codex session:
+
+1. Read `.codex/MASTER_PROMPT.md`
+2. Read `.codex/DEVELOPMENT_RULES.md`
+3. Read `.codex/AGENT_CONTEXT.md`
+4. Read `tasks/README.md`
+5. Read current `tasks/active/*`
+6. Read linked ADRs
+7. Inspect repository state
+
+Run:
+
+git status --short --branch
+git branch --show-current
+git log --oneline --decorate -10
+git diff --stat
+git diff --cached --stat
+git remote -v
+
+Determine:
+
+- current branch
+- HEAD
+- working tree state
+- remote tracking state
+- current Phase
+- current Task
+- Task status
+- current Stage
+- ADR status
+- Human approval status
+- next authorized action
+
+DO NOT modify files before completing context recovery.
+
+If repository state conflicts with AGENT_CONTEXT or Task state:
+
+STOP.
+
+Report the inconsistency before implementation.
+
+---
+
+# 5. Software Engineering Lifecycle
+
+Every engineering change MUST follow:
+
+Requirement
+↓
+Discovery
+↓
+Scope
+↓
+ADR / Design Decision
+↓
+Human Approval
+↓
+Task Plan
+↓
+Human Approval
+↓
+Implementation
+↓
+Focused Verification
+↓
+Regression Verification
+↓
+Review
+↓
+Documentation Synchronization
+↓
+Stage Report
+↓
+Human Approval
+↓
+Git Commit
+↓
+Remote Push
+↓
+CI Verification
+↓
+Stage Closure
+
+Performance work extends this lifecycle:
+
 Baseline
-    -> Benchmark
-    -> Profile
-    -> Identify Bottleneck
-    -> Form Hypothesis
-    -> Optimize
-    -> Benchmark
-    -> Compare
-    -> Keep/Revert
-```
+↓
+Benchmark
+↓
+Profile
+↓
+Evidence
+↓
+Hypothesis
+↓
+Optimization ADR
+↓
+Human Approval
+↓
+Optimize
+↓
+Re-benchmark
+↓
+Compare
+↓
+Keep / Revert
 
-任何性能优化必须有数据支持。
-
----
-
-## 3. 系统总体架构
-
-目标架构：
-
-```text
-Client
-    |
-    v
-Netty
-    |
-    v
-Decoder
-    |
-    v
-Ingress
-    |
-    v
-RingBuffer / Disruptor
-    |
-    v
-Matching Engine
-    |
-    v
-OrderBook
-    |
-    v
-Trade Event
-    |
-    v
-Event Consumer
-    |
-    +---- WAL
-    +---- Output
-    +---- Metrics
-```
-
-核心撮合：
-
-```text
-Matching Engine
-    |
-    +---- Bid Side
-    +---- Ask Side
-```
-
-订单簿必须实现：
-
-- Price Priority
-- Time Priority
-- O(1) Cancel
-- Efficient Best Bid/Ask
-- Partial Fill
-- Empty Price Level Cleanup
+No step may be skipped because the change appears simple.
 
 ---
 
-## 4. 技术栈
+# 6. Task Planning
 
-默认技术栈：
+Any modification to:
 
-- Java 21
-- Maven
-- JUnit 5
-- JMH
-- Netty
-- LMAX Disruptor
-- Java NIO
-- JFR
-- async-profiler
-- GitHub Actions
-
-除非存在明确技术原因，不得随意增加第三方依赖。
-
-任何新增依赖必须说明：
-
-1. 为什么需要
-2. 是否可以自行实现
-3. 对性能和维护性的影响
-4. License 是否合适
-
----
-
-## 5. 开发阶段
-
-必须按照以下阶段推进。
-
-### Phase 0 - Project Bootstrap
-
-建立：
-
-- Maven 项目
-- Java 21
-- Git
-- CI
-- 基础测试框架
-- Benchmark 模块
-- 文档结构
-
-### Phase 1 - Domain Model
-
-实现：
-
-- Order
-- OrderType
-- Side
-- OrderStatus
-- Trade
-- Execution
-- OrderId
-- Price
-- Quantity
-- Sequence
-
-首先保证模型正确。
-
-### Phase 2 - Basic OrderBook
-
-实现：
-
-- BidBook
-- AskBook
-- PriceLevel
-- OrderQueue
-- Structural Limit Matching
-- MatchFragment
-
-支持：
-
-- Add
-- Cancel
-- Best Bid
-- Best Ask
-- Deterministic limit matching
-
-### Phase 3 - Matching Engine
-
-实现：
-
-- Market Order
-- Trade / Execution orchestration
-- Event sequence allocation
-- Event publication
-- Matching policy boundaries
-
-建立完整的 correctness test suite。
-
-### Phase 4 - High Performance OrderBook
-
-依次研究：
-
-1. TreeMap
-2. Custom Tree
-3. SkipList
-4. Intrusive Linked List
-5. OrderId Index
-6. Cache-friendly layout
-
-每一个版本必须 Benchmark。
-禁止无数据重构。
-
-### Phase 5 - Event Pipeline
-
-引入：
-
-- RingBuffer
-- Disruptor
-- Single Producer / Multi Producer 对比
-- Single Consumer
-
-研究：
-
-- Lock contention
-- Throughput
-- Latency
-- Backpressure
-
-### Phase 6 - Network Layer
-
-使用 Netty 实现：
-
-- TCP Server
-- Binary Protocol
-- Decoder
-- Encoder
-- Connection Management
-
-禁止 JSON 作为核心性能路径协议。
-可以提供 JSON 或文本协议用于 Debug。
-
-### Phase 7 - WAL
-
-实现：
-
-- Sequential WAL
-- Sequence Number
-- CRC
-- Append
-- Flush Policy
-- Segment
+- production code
+- tests
+- build configuration
+- benchmark
+- profiling
+- protocol
+- persistence
+- WAL
+- Snapshot
 - Recovery
+- architecture documentation
+- runtime behavior
 
-必须保证：
+requires a Task Plan under:
 
-> WAL Replay 后状态与崩溃前状态一致。
+tasks/active/
 
-### Phase 8 - Snapshot + Recovery
+Task Plan MUST contain:
 
-实现：
+- Task ID
+- Title
+- Background
+- Goal
+- Non-Goals
+- Requirements
+- Acceptance Criteria
+- Current Implementation
+- Scope
+- Design
+- Alternatives
+- ADR Linkage
+- Planned File Changes
+- Test Plan
+- Benchmark/Profile Plan
+- Risks
+- Rollback Plan
+- Verification Commands
+- Git Plan
+- Phase Gates
+- Approval Record
+- Implementation Log
 
-```text
-Snapshot
-    -> WAL Position
-    -> Restart
-    -> Snapshot Load
-    -> WAL Replay
-    -> State Verification
-```
+Task lifecycle:
 
-### Phase 9 - Deterministic Replay
-
-输入：
-
-```text
-orders.log
-```
-
-输出：
-
-- trades
-- order states
-- order book
-- state hash
-
-相同日志必须得到相同结果。
-
-### Phase 10 - Performance Engineering
-
-使用：
-
-- JMH
-- JFR
-- async-profiler
-- GC logs
-- Linux perf（如果环境支持）
-
-重点分析：
-
-- CPU cycles
-- Allocation rate
-- GC
-- Branch prediction
-- Cache locality
-- Lock contention
-- False sharing
-- Context switching
-
-### Phase 11 - Benchmark Suite
-
-至少包含：
-
-- Benchmark A：Pure Matching
-- Benchmark B：OrderBook
-- Benchmark C：RingBuffer Pipeline
-- Benchmark D：WAL
-- Benchmark E：Recovery
-- Benchmark F：TCP End-to-End
-
-### Phase 12 - Chaos / Failure Testing
-
-测试：
-
-- Process crash
-- WAL partial write
-- Duplicate Order
-- Duplicate Cancel
-- Invalid Order
-- Sequence Gap
-- Corrupted WAL
-- Recovery
-
-### Phase 13 - Release
-
-最终必须具备：
-
-- 完整测试
-- Benchmark
-- Performance Report
-- Architecture Document
-- ADR
-- Recovery Document
-- README
-- CI
-- Release Tag
-
----
-
-## 6. Agent 工作方式
-
-Codex 不应该一次性实现整个系统。
-
-必须采用：
-
-> Small Step -> Test -> Review -> Commit
-
-### 6.1 方案先行
-
-任何开发任务必须先在 `tasks/active/` 创建任务方案，方案至少包含：
-
-- Task ID 和标题
-- 背景、目标和非目标
-- 需求与验收标准
-- 当前实现和影响范围
-- 设计方案与候选方案
-- 文件变更计划
-- 测试计划
-- Benchmark / Profile 计划
-- 风险与回滚方案
-- Git 提交计划
-- 当前开发阶段、下一审批门禁和阶段报告记录方式
-
-任务状态必须遵循：
-
-```text
 Proposed
-    -> Approved
-    -> In Progress
-    -> Completed
-```
+↓ Human Approval
+Approved
+↓ Work begins
+In Progress
+↓ All DoD satisfied
+Completed
 
-方案处于 `Proposed` 状态时：
+Codex MUST NOT convert Proposed → Approved.
 
-- Codex 可以阅读代码、补充方案和执行只读验证。
-- Codex 不得修改生产代码、测试代码、构建配置或运行时行为。
-- 方案涉及架构、协议、事件顺序、WAL、Snapshot 或恢复策略时，必须明确标记需要 Human 决策。
-
-### 6.2 决策与 ADR 关联
-
-任务方案的 `Decision` 小节必须明确记录 ADR 关联：
-
-- 识别出需要长期保留的技术决策时，必须先创建或更新 `docs/adr/` 下状态为 `Proposed` 的 ADR 草案。
-- ADR 草案必须先记录 Context、Problem、Options、Proposed Decision、Scope Boundary、Consequences 和验证计划，再进行技术决策或审批。
-- Human Review 和技术决策只能发生在 ADR 草案存在之后，结果必须回写 ADR 状态。
-- 任务方案必须记录 ADR 的相对路径、编号、标题和当前状态。
-- ADR 状态与审批结果一致后，任务方案才能获批并进入实现。
-- 任务方案中的决策必须与 ADR 中的 `Decision` 内容一致；任务方案负责执行范围，ADR 负责长期决策记录。
-- 如果明确不需要 ADR，必须写明 `ADR: Not required` 及不需要的理由，不能留空或只勾选 `No architecture change`。
-- ADR 路径失效、状态不一致或决策发生变化时，必须先同步任务方案和 ADR，再继续实现。
-
-只有 Human 明确审批后，任务才能进入 `Approved`，随后才允许开始实现。开始实现时将状态改为 `In Progress`，完成验收、测试、文档和 Git 提交后改为 `Completed`，并将方案移动到 `tasks/completed/`。
-
-如果实现范围、设计、验收标准或风险发生变化，必须先更新任务方案并重新审批。不得通过代码先行的方式绕过方案审批。
-
-### 6.3 阶段报告与逐步审批
-
-任务必须按风险和交付边界划分为若干开发阶段，至少区分：
-
-```text
-ADR / Decision
-    -> Task Approval
-    -> Implementation
-    -> Verification
-    -> Documentation and Synchronization
-```
-
-每个阶段完成后，Codex 必须：
-
-1. 输出并在任务方案的 `Phase Reports and Approval Gates` 中记录阶段报告。
-2. 报告目标、实际完成内容、文件范围、验证证据、偏差、风险、限制和下一阶段提案。
-3. 将下一审批门禁设为 `Pending Human Approval` 并停止执行下一阶段。
-4. 等待 Human 明确批准，并记录日期、审批人、决定、约束和备注。
-
-只有审批记录完成后才能进入下一阶段。审批被拒绝、增加约束或发现范围变化时，必须先更新任务方案；如果影响技术决策，必须先创建或更新 ADR，再重新申请审批。
-
-阶段完成后的文档、ADR、任务方案、规范和 `AGENT_CONTEXT.md` 必须同步；同步未完成时不能将任务标记为 `Completed`。
-
-每次任务：
-
-1. 理解当前架构
-2. 找到并确认 `tasks/active/` 中对应的已审批方案
-3. 找到最小修改范围
-4. 实现
-5. 编写或更新测试
-6. 执行相关测试
-7. 检查性能影响
-8. 检查 Git diff
-9. 输出阶段报告并等待 Human 审批
-10. 审批通过后进入下一阶段
-11. 更新任务状态、文档和上下文
-12. 总结结果
+Only Human approval can do so.
 
 ---
 
-## 7. Codex 禁止行为
+# 7. ADR Governance
 
-禁止：
+ADR is required when changing:
 
-- 未经确认修改整体架构
-- 大规模重构
-- 删除测试来让 Build 通过
-- 修改 Benchmark 数据
-- 编造性能数据
-- 删除失败 Benchmark
-- 用 Mock 冒充真实测试
-- 用注释解释错误实现
-- 为了测试通过修改正确性规则
-- 引入不必要依赖
-- 把业务逻辑塞进 Infrastructure
-- 在 Critical Path 中加入日志
-- 用 `synchronized` 解决所有并发问题
-- 用线程数量堆吞吐
-- 声称性能目标已经达成而没有 Benchmark 证据
+- Matching semantics
+- Core OrderBook structure
+- Concurrency model
+- Event ordering
+- Protocol
+- WAL format
+- Snapshot format
+- Recovery model
+- Persistence model
+- Critical dependency
+- Performance architecture
+
+ADR lifecycle:
+
+Proposed
+↓
+Human Review
+↓
+Accepted / Accepted with Constraints / Rejected / Superseded
+
+Implementation MUST NOT begin while the required ADR is Proposed.
+
+Task Plan and ADR MUST agree.
+
+If they disagree:
+
+STOP
+→ synchronize
+→ request approval again.
 
 ---
 
-## 8. 性能数据可信度原则
+# 8. Implementation Rules
 
-所有性能数据必须包含：
+Implementation MUST be:
+
+- minimal
+- scoped
+- explainable
+- testable
+- deterministic where required
+- compatible with approved architecture
+
+Codex MUST NOT:
+
+- perform unrelated refactoring
+- redesign APIs without approval
+- upgrade dependencies without justification
+- hide failures
+- weaken assertions
+- delete tests to make CI green
+- introduce benchmark-specific production paths
+- optimize without evidence
+
+Use:
+
+Small Step
+↓
+Test
+↓
+Inspect
+↓
+Continue
+
+Do not implement an entire Phase in one uncontrolled change.
+
+---
+
+# 9. Verification Model
+
+Verification depth MUST match risk.
+
+Domain logic:
+→ Unit Tests
+
+Module interaction:
+→ Integration Tests
+
+Matching determinism:
+→ Replay / State comparison
+
+Network:
+→ Integration / System Test
+
+WAL / Recovery:
+→ Crash / Replay / Corruption tests
+
+Performance:
+→ JMH + profiling evidence
+
+Every implementation stage MUST verify:
+
+- happy path
+- boundary cases
+- invalid input
+- state transitions
+- repeated operations
+- invariants
+- regression behavior
+
+Never treat compilation alone as verification.
+
+---
+
+# 10. Performance Engineering
+
+Performance claims MUST be reproducible.
+
+Required process:
+
+Baseline
+→ Benchmark
+→ Profile
+→ Identify Bottleneck
+→ Form Hypothesis
+→ Human Approval
+→ Optimize
+→ Re-benchmark
+→ Compare
+→ Keep/Revert
+
+Never optimize because:
+
+“this should be faster.”
+
+Performance reports MUST record where applicable:
 
 - CPU
-- CPU Core
+- CPU topology
 - RAM
 - OS
-- JVM
-- JDK Version
-- JVM Arguments
-- Benchmark Duration
+- JDK
+- JVM arguments
+- GC
+- Benchmark version
 - Warmup
+- Measurement
+- Forks
 - Threads
-- Dataset Size
-- Order Distribution
-- Price Distribution
-
-Benchmark 报告必须区分：
-
+- Dataset
+- Workload
 - Throughput
 - P50
 - P95
 - P99
 - P999
-- Allocation Rate
-- GC
-- CPU Usage
+- Allocation
+- GC behavior
+- limitations
 
-禁止只报告平均延迟。
-
----
-
-## 9. 工程质量
-
-代码必须：
-
-- 可读
-- 可维护
-- 有测试
-- 有 Benchmark
-- 有 ADR
-
-文档必须覆盖：
-
-- Architecture
-- Design Decisions
-- Benchmark
-- Recovery
-- Performance Analysis
-
-每一个重大技术决策必须能够回答：
-
-> Why?
+Microbenchmark results MUST NOT be represented as end-to-end system throughput.
 
 ---
 
-## 10. 人类决策权
+# 11. Git Repository Strategy
 
-Human 是：
+Git is the authoritative history of engineering changes.
 
-- Architecture Owner
-- Product Owner
-- Performance Target Owner
-- Final Reviewer
+## 11.1 Branches
 
-Codex 是：
+Use short-lived branches based on logical work:
 
-- Implementation Agent
-- Test Agent
-- Refactoring Agent
-- Benchmark Agent
-- Documentation Agent
+feature/<topic>
+fix/<topic>
+perf/<topic>
+docs/<topic>
+test/<topic>
 
-Codex 不得自行决定：
+Do not create a branch for every tiny edit.
 
-- 核心架构
-- 性能指标
-- 发布标准
-- 删除重大功能
-- 改变交易规则
+A branch should correspond to a coherent Task or major sub-stage.
 
-遇到架构级问题必须先报告。
+## 11.2 Commits
 
----
+One commit = one logically reviewable change.
 
-## 11. 每次任务结束必须输出
+Use Conventional Commits:
 
-### Implementation Summary
+feat(orderbook): ...
+fix(match): ...
+perf(orderbook): ...
+test(recovery): ...
+docs(architecture): ...
+build(ci): ...
+refactor(core): ...
 
-- 修改内容
-- 修改原因
+Do NOT use:
 
-### Tests
-
-- 执行命令
-- 测试数量
-- 成功或失败
-
-### Benchmark
-
-如果涉及性能：
-
-- Baseline
-- Current
-- Improvement
-- Regression
-
-### Risks
-
-- 已知风险
-- 未验证内容
-
-### Next Step
-
-- 建议下一步
-
----
-
-## 12. 最终成功标准
-
-项目完成不以代码量为标准。
-
-最终必须证明：
-
-1. 撮合语义正确
-2. OrderBook 正确
-3. Cancel 高效
-4. Critical Path 低分配
-5. Pipeline 高吞吐
-6. WAL 可恢复
-7. Replay Deterministic
-8. Crash Recovery 正确
-9. Benchmark 可重复
-10. 性能优化有证据
-
-最终目标：
-
-> Build a technically credible, measurable, deterministic, single-node ultra-low-latency matching engine.
-
----
-
-## 13. 软件工程交付流程
-
-所有开发任务必须遵循以下生命周期：
-
-```text
-需求确认
-    -> 创建 ADR 草案
-    -> Human 决策和审批
-    -> 范围与验收标准
-    -> 任务方案审批
-    -> 最小实现
-    -> 阶段报告
-    -> Human 审批
-    -> 测试与静态检查
-    -> 阶段报告
-    -> Human 审批
-    -> 文档与上下文同步
-    -> 阶段报告
-    -> Human 审批
-    -> Git Commit
-    -> 状态确认
-```
-
-每个任务开始前必须明确：
-
-- 目标
-- 非目标
-- 输入与输出
-- 验收标准
-- 决策及其对应的 ADR 文档，或明确记录不需要 ADR 的理由
-- 影响范围
-- 风险
-- 需要执行的验证命令
-- 阶段划分、阶段报告位置和每个阶段的审批门禁
-
-需求不明确、验收标准冲突或涉及架构变化时，Codex 必须先报告，不得自行扩大范围。
-
-实现时必须：
-
-- 保持模块边界清晰
-- 优先复用现有抽象和项目约定
-- 将业务逻辑与 Infrastructure 分离
-- 避免在同一变更中混合功能、无关重构和格式化
-- 保持 API、数据格式和事件顺序的兼容性，除非已有明确决策
-- 对失败路径、边界条件和资源释放进行处理
-
-交付前必须完成：
-
-- 相关测试
-- 构建和静态检查
-- 代码差异审查
-- 相关 Benchmark 或 Profile
-- 文档和 `AGENT_CONTEXT.md` 更新
-- 每个完成阶段的报告和 Human 审批记录
-- ADR、任务方案、规范和 `AGENT_CONTEXT.md` 的最终同步
-- Git 提交前后状态确认
-
----
-
-## 14. Git 工作流与状态确认
-
-Git 是项目变更的唯一追踪来源。任何代码、测试、配置或文档修改都必须通过 Git 管理。
-
-### 14.1 会话开始检查
-
-每次会话开始必须执行并理解：
-
-```bash
-git status --short --branch
-git branch --show-current
-git log --oneline --decorate -5
-git diff --stat
-git diff --cached --stat
-```
-
-如果存在未提交修改：
-
-- 先区分当前任务修改与既有修改
-- 不得覆盖、撤销或重置用户已有修改
-- 不得把无关修改混入当前提交
-- 若既有修改影响当前任务，必须先报告风险
-
-### 14.2 修改前检查
-
-开始编辑前必须确认：
-
-- 当前分支正确
-- 工作区状态已记录
-- 目标文件属于当前任务范围
-- 不存在未处理的冲突
-- 依赖、构建和测试基线已知
-
-### 14.3 分支规则
-
-除初始化或明确授权外，不直接在稳定分支上开发。
-
-分支命名必须使用以下前缀之一：
-
-```text
-feature/<short-description>
-fix/<short-description>
-perf/<short-description>
-test/<short-description>
-refactor/<short-description>
-docs/<short-description>
-chore/<short-description>
-```
-
-分支必须只承载一个逻辑主题。不得通过创建大量无意义分支规避整理变更。
-
-### 14.4 暂存与 Diff 审查
-
-禁止无审查地执行全量暂存作为默认流程。优先显式指定相关文件：
-
-```bash
-git add <file1> <file2>
-git status --short
-git diff --cached --stat
-git diff --cached --check
-git diff --cached
-```
-
-暂存区审查必须确认：
-
-- 没有密钥、口令、Token、个人配置或敏感数据
-- 没有构建产物、临时文件或 IDE 文件
-- 没有无关格式化和重命名
-- 没有删除测试或降低校验强度
-- 变更与任务目标一致
-
-### 14.5 提交前门禁
-
-提交前必须根据变更范围执行：
-
-```bash
-git diff --check
-git diff --cached --check
-```
-
-并执行适用的：
-
-- 编译
-- 单元测试
-- 集成测试
-- 静态分析
-- 格式检查
-- 相关 Benchmark
-- 相关 Recovery / Replay 测试
-
-任何门禁失败时，不得提交“先提交再修复”的半成品。若确需提交未完成工作，必须明确标记并先报告。
-
-### 14.6 提交规范
-
-每个 Commit 必须：
-
-- 只包含一个逻辑完整变更
-- 能够独立解释修改原因
-- 通过适用的验证
-- 使用 Conventional Commits 风格
-- 不包含无关修改
-
-格式：
-
-```text
-<type>(<scope>): <imperative summary>
-```
-
-允许的 `type`：
-
-```text
-feat
-fix
-perf
-test
-refactor
-docs
-build
-ci
-chore
-```
-
-示例：
-
-```text
-feat(orderbook): implement price level
-fix(match): preserve time priority after partial fill
-perf(orderbook): reduce cancel allocation
-test(recovery): verify deterministic replay
-docs(benchmark): record baseline methodology
-```
-
-禁止使用以下无意义提交信息：
-
-```text
 update
-fix
-test
-aaa
 final
 temp
-```
+fix stuff
+test
+aaa
 
-除非用户明确要求，Codex 不得执行：
+Before commit:
 
-- `git reset --hard`
-- `git checkout -- <path>`
-- `git restore <path>`
-- `git clean`
-- `git commit --amend`
-- `git rebase`
-- 强制推送
+git status --short
+git diff --stat
+git diff
+git diff --check
+git diff --cached --check
 
-这些操作可能破坏已有工作或历史，必须先获得明确授权。
+Review staged files explicitly.
 
-### 14.7 提交后确认
+Never commit:
 
-每次提交完成后必须执行：
+- secrets
+- tokens
+- passwords
+- IDE state
+- local absolute paths
+- generated benchmark recordings
+- JFR recordings
+- build output
+- temporary files
 
-```bash
+unless explicitly intended and documented.
+
+## 11.3 Remote Push Policy
+
+A completed logical stage SHOULD be pushed to the configured remote when:
+
+- Human approval for that stage has been recorded
+- local quality gates pass
+- commit history is coherent
+- working tree is clean
+- no secrets or local artifacts exist
+- target branch is correct
+
+Before push:
+
 git status --short --branch
-git log -1 --oneline --decorate
-git show --stat --oneline HEAD
-```
+git log --oneline --decorate -5
+git remote -v
+git branch -vv
 
-除非存在明确说明的未完成修改，提交后的工作区必须干净。
+Normal non-destructive push of an already approved completed stage is part of
+repository synchronization.
 
-最终报告必须包含：
+The following ALWAYS require explicit Human authorization:
 
-- 当前分支
-- Commit hash
-- Commit message
-- 提交包含的文件或逻辑范围
-- 执行过的验证命令
-- 验证结果
-- 是否存在未提交修改
+- force push
+- history rewrite
+- rebase of shared history
+- reset --hard
+- destructive clean
+- deleting remote branches
+- deleting tags
+- changing protected/default branch
+- release publication
 
-### 14.8 推送与发布
+Never force push to the default branch.
 
-未经用户明确要求，不执行 `git push`。
+## 11.4 CI
 
-推送前必须确认：
+After push:
 
-- 本地工作区干净
-- 当前分支和远端目标正确
-- 最新提交已通过本地验证
-- 没有敏感文件
-- 提交历史和变更范围合理
+- confirm remote branch
+- confirm CI trigger when available
+- record CI status when observable
+- do not claim CI passed unless evidence exists
 
-Release Tag 必须建立在已验证的稳定提交上，并记录：
+A local BUILD SUCCESS is not equivalent to remote CI success.
 
-- 版本号
-- 变更摘要
-- 测试结果
-- Benchmark 结果
-- 已知限制
+## 11.5 Merge
+
+Merge only after:
+
+- stage approval
+- local gates pass
+- remote CI passes when configured
+- diff reviewed
+- documentation synchronized
+
+Prefer reviewable history.
+
+Do not mix unrelated tasks into one merge.
 
 ---
 
-## 15. Codex 会话完成标准
+# 12. Artifact Policy
 
-一次开发任务只有同时满足以下条件才算完成：
+Generated evidence should be classified.
 
-1. 需求范围明确。
-2. 实现与现有架构一致。
-3. 相关测试已新增或更新。
-4. 构建和适用的质量门禁通过。
-5. 性能相关结论有 Benchmark 或 Profile 证据。
-6. 代码 Diff 已审查。
-7. 每个开发阶段都有阶段报告，且进入下一阶段前已有 Human 审批。
-8. 文档和 `AGENT_CONTEXT.md` 已同步。
-9. Git Commit 已完成或明确说明未提交原因。
-10. 提交后 Git 状态已确认。
-11. 最终报告完整记录变更、验证、风险和下一步。
+Commit:
+
+- benchmark reports
+- summarized profiling reports
+- architecture documents
+- ADRs
+- reproducibility instructions
+- small deterministic fixtures
+
+Usually ignore:
+
+- target/
+- raw JFR recordings
+- large profiler dumps
+- temporary benchmark output
+- IDE metadata
+- local logs
+
+Raw evidence that is intentionally not committed MUST have:
+
+- path recorded
+- generation command recorded
+- summary committed
+- limitation documented
+
+---
+
+# 13. Stage Gates
+
+Every Task MUST be divided into explicit stages.
+
+Typical lifecycle:
+
+ADR / Decision
+↓
+Implementation
+↓
+Verification
+↓
+Benchmark / Profile (when applicable)
+↓
+Documentation Synchronization
+↓
+Completion
+
+At the end of EVERY stage:
+
+1. stop implementation
+2. run required gates
+3. inspect Git diff
+4. synchronize relevant documentation
+5. write Stage Report
+6. update AGENT_CONTEXT
+7. mark next gate Pending Human Approval
+8. stop
+
+Codex MUST NOT cross an approval gate automatically.
+
+---
+
+# 14. Stage Report Standard
+
+Every completed stage MUST create a readable report under:
+
+tasks/reports/
+
+Recommended filename:
+
+PHASE-<N>-<stage>-<topic>.md
+
+The report MUST start with a human-readable dashboard.
+
+Example:
+
+# Phase 3 — Matching Engine / Implementation Report
+
+## Executive Status
+
+| Item      | Status               |
+| --------- | -------------------- |
+| Phase     | Phase 3              |
+| Task      | TASK-...             |
+| Stage     | Implementation       |
+| Result    | Completed            |
+| Tests     | 86 passed / 0 failed |
+| Build     | PASS                 |
+| CI        | Pending              |
+| Commit    | abc1234              |
+| Next Gate | Human Approval       |
+
+## Progress
+
+Phase 3
+[████████████░░░░░░░░] 60%
+
+Completed:
+
+- Domain orchestration
+- Limit matching integration
+
+Pending:
+
+- Market orders
+- Verification
+- Benchmark
+
+## What Changed
+
+Explain the actual engineering changes in plain language.
+
+## Scope
+
+### Completed
+
+...
+
+### Explicitly Not Implemented
+
+...
+
+## Verification Evidence
+
+| Gate       | Command | Result |
+| ---------- | ------- | ------ |
+| Unit tests | ...     | PASS   |
+| Full build | ...     | PASS   |
+| Checkstyle | ...     | PASS   |
+| Diff check | ...     | PASS   |
+
+## Performance Evidence
+
+Only when applicable.
+
+Clearly separate:
+
+- baseline
+- current
+- delta
+- limitations
+
+## Architecture / ADR Alignment
+
+State:
+
+- linked ADR
+- ADR status
+- whether implementation deviated
+- whether new architecture decisions were discovered
+
+## Git Evidence
+
+- Branch
+- HEAD before
+- Commit
+- Commit message
+- Remote
+- Push status
+- CI status
+- Working tree
+
+## Risks and Limitations
+
+List only real known limitations.
+
+## Project Impact
+
+Explain what capability the project gained.
+
+## Next Stage
+
+State exactly:
+
+- proposed next work
+- what is NOT authorized
+- approval required
+
+## Approval Request
+
+End with an explicit gate:
+
+Current Stage:
+Completed
+
+Human Approval:
+Pending
+
+Next Stage:
+Not Authorized
+
+The report MUST be understandable without reading Git diff.
+
+Do not dump raw terminal output unless needed as evidence.
+
+---
+
+# 15. Progress Tracking
+
+AGENT_CONTEXT MUST contain a compact project dashboard.
+
+Example:
+
+## Project Progress
+
+| Phase                   | Status      | Evidence       |
+| ----------------------- | ----------- | -------------- |
+| Phase 0 Bootstrap       | Completed   | CI + build     |
+| Phase 1 Domain          | Completed   | 12 tests       |
+| Phase 2 OrderBook       | Completed   | 45 tests + JMH |
+| Phase 3 Matching Engine | In Progress | TASK-...       |
+| Phase 4 Performance     | Pending     | -              |
+
+Current:
+
+Phase: Phase 3
+Task: TASK-...
+Stage: Implementation
+Approval: Approved
+HEAD: abc1234
+Branch: feature/matching-engine
+Remote Sync: Up to date
+CI: Passing
+
+Next Gate:
+Verification Human Approval
+
+Do not duplicate entire historical reports inside AGENT_CONTEXT.
+
+Link to them.
+
+AGENT_CONTEXT is a state index, not a project diary.
+
+---
+
+# 16. Documentation Synchronization
+
+Before a Task becomes Completed, synchronize as applicable:
+
+- README
+- Architecture
+- ADR
+- Benchmark documentation
+- Performance documentation
+- Recovery documentation
+- Task Plan
+- Stage Report
+- AGENT_CONTEXT
+
+Documentation must distinguish:
+
+Verified Fact
+Target
+Hypothesis
+Future Work
+
+Never turn an aspirational target into a measured result.
+
+---
+
+# 17. Definition of Done
+
+A Task is Completed only when:
+
+- approved scope is implemented
+- acceptance criteria are satisfied
+- tests pass
+- build passes
+- static checks pass
+- applicable benchmark/profile/recovery gates pass
+- no unexplained regression exists
+- Git diff reviewed
+- ADR synchronized
+- documentation synchronized
+- Stage Reports exist
+- Human approvals recorded
+- logical commits created
+- repository synchronized according to Git policy
+- CI status recorded when available
+- working tree state confirmed
+- AGENT_CONTEXT updated
+
+If one is missing:
+
+Task != Completed
+
+---
+
+# 18. Failure Protocol
+
+When something fails:
+
+Observe
+↓
+Reproduce
+↓
+Classify
+↓
+Root Cause
+↓
+Fix
+↓
+Focused Verification
+↓
+Regression Verification
+↓
+Document
+
+Do not immediately change tests.
+
+Do not hide failures.
+
+Do not silently change requirements.
+
+If a failure exposes an architecture problem:
+
+STOP
+→ ADR / Human Decision.
+
+---
+
+# 19. Release Governance
+
+Release is a separate engineering stage.
+
+A release candidate requires:
+
+- clean repository
+- approved completed tasks
+- full verification
+- CI success
+- architecture synchronization
+- benchmark report
+- known limitations
+- recovery evidence when applicable
+- release notes
+
+Release flow:
+
+Release Candidate
+↓
+Verification
+↓
+Human Release Approval
+↓
+Tag
+↓
+Push Tag
+↓
+Release Publication
+↓
+Post-release Verification
+
+Never create a release solely because development appears finished.
+
+---
+
+# 20. Final Codex Response Standard
+
+At the end of a working session, output a concise readable summary:
+
+## Status
+
+Phase:
+Task:
+Stage:
+Result:
+
+## Completed
+
+- ...
+
+## Verification
+
+Tests:
+Build:
+Benchmark:
+CI:
+
+## Git
+
+Branch:
+Commit:
+Remote:
+Push:
+Working Tree:
+
+## Risks
+
+- ...
+
+## Next Gate
+
+...
+
+If the stage is complete:
+
+STOP after reporting the approval request.
+
+Do not begin the next stage.
+
+---
+
+# 21. Non-Negotiable Rules
+
+Never:
+
+- fabricate benchmark data
+- fabricate test results
+- claim CI success without evidence
+- claim a push occurred when it did not
+- claim 1M+ orders/s without valid evidence
+- optimize without measurement
+- weaken correctness for benchmark numbers
+- bypass Human approval
+- overwrite unrelated user changes
+- commit secrets
+- rewrite shared Git history without authorization
+- silently change architecture
+- cross an unapproved stage gate
+
+Always:
+
+Correctness
+before
+Performance
+
+Evidence
+before
+Claims
+
+Design
+before
+Implementation
+
+Verification
+before
+Completion
+
+Human Approval
+before
+Next Stage

@@ -15,6 +15,10 @@
 | Related ADR | `None` |
 | Current Stage | `ADR / Decision` |
 | Next Approval Gate | `Pending Human Approval` |
+| Branch |  |
+| Baseline HEAD |  |
+| Remote | `Not configured` / remote name |
+| CI | `Pending` / `Unavailable` / observed result |
 
 ## 2. Background
 
@@ -139,7 +143,7 @@
 列出实现前、实现中和提交前需要执行的命令。
 ```
 
-## 14. Git Commit Plan
+## 14. Git Plan
 
 计划提交信息：
 
@@ -150,6 +154,12 @@
 提交边界和拆分策略：
 
 -
+
+Remote、Push 和 CI 计划：
+
+- Remote:
+- Push: `Not configured` / `Planned after approval` / `Not applicable`
+- CI verification:
 
 ## 15. Approval Record
 
@@ -166,7 +176,9 @@ ADR / Decision
     -> Task Approval
     -> Implementation
     -> Verification
+    -> Benchmark / Profile（when applicable）
     -> Documentation and Synchronization
+    -> Completion
 ```
 
 | Stage | Report Location | Status | Next Approval Gate | Human Approval |
@@ -175,9 +187,11 @@ ADR / Decision
 | Task Approval |  | Pending | `Pending Human Approval` |  |
 | Implementation |  | Pending | `Pending Human Approval` |  |
 | Verification |  | Pending | `Pending Human Approval` |  |
+| Benchmark / Profile |  | `Not applicable` / Pending | `Pending Human Approval` |  |
 | Documentation and Synchronization |  | Pending | `Pending Human Approval` |  |
+| Completion |  | Pending | `Pending Human Approval` |  |
 
-每份阶段报告至少记录：目标、实际完成内容、修改范围、验证证据、方案偏差、风险/限制、未验证内容、下一阶段提案和审批请求。阶段完成后不得直接进入下一阶段，必须先记录 Human 审批。
+每个完成阶段必须在 `tasks/reports/` 建立独立报告。报告开头使用状态面板记录 Phase、Task、Stage、Result、Tests、Build、CI、Commit 和 Next Gate；正文至少记录目标、实际完成内容、修改范围、验证证据、性能证据（适用时）、ADR 对齐、Git 证据、方案偏差、风险/限制、项目影响、未验证内容、下一阶段提案和显式审批请求。阶段完成后不得直接进入下一阶段，必须先记录 Human 审批。
 
 ## 17. Implementation Log
 
@@ -201,4 +215,6 @@ ADR / Decision
 - [ ] `AGENT_CONTEXT.md` updated
 - [ ] Diff reviewed
 - [ ] Commit created
+- [ ] Remote synchronization completed or explicitly recorded as unavailable/not applicable
+- [ ] CI status recorded when observable
 - [ ] Post-commit Git status confirmed
