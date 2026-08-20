@@ -19,7 +19,7 @@
 | Baseline HEAD | `f4a21c5` on `master` |
 | Engineering Baseline | `v0.1.0-engineering-baseline` at `cbfa957` |
 | Remote | `origin` |
-| CI | Master run `32374543039` PASS before branch creation |
+| CI | Proposal commit `df0dc05`: [run 32375889447](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32375889447) PASS |
 
 ## 2. Background
 
@@ -70,7 +70,7 @@ Produce a reviewable ADR proposal that freezes or explicitly defers:
 - [x] Open Human decisions are explicit and individually approvable.
 - [x] Task, architecture document, Stage Report and `AGENT_CONTEXT` agree.
 - [x] No production/test/build/benchmark file changes are present.
-- [ ] Documentation diff and remote CI pass.
+- [x] Documentation diff and remote CI pass.
 
 ## 6. Current Implementation and Scope
 
@@ -221,6 +221,7 @@ context. Normal branch push; no merge.
 | --- | --- | --- | --- |
 | 2026-08-20 | In Progress | Recovered Phase 2 baseline and inspected current domain/OrderBook boundaries | Read-only source, ADR and repository review |
 | 2026-08-20 | Proposal Prepared | Proposed synchronous ownership, distinct sequence domains, deterministic output and command-WAL boundary | ADR-0011 decisions D1-D7; no implementation files changed |
+| 2026-08-20 | Proposal Verified | Committed and pushed ADR-stage documentation | `df0dc05`; GitHub Actions run `32375889447` PASS |
 
 ## 18. Completion Checklist
 
@@ -229,6 +230,6 @@ context. Normal branch push; no merge.
 - [x] Production implementation absent
 - [x] Benchmark/Profile not applicable
 - [x] Stage report completed
-- [ ] Diff reviewed and committed
-- [ ] Branch pushed and CI status recorded
+- [x] Diff reviewed and committed
+- [x] Branch pushed and CI status recorded
 - [ ] Human ADR decision recorded before implementation

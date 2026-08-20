@@ -21,7 +21,7 @@
 | Engineering baseline tag | `v0.1.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
 | Remote sync | `master` and engineering baseline tag published |
-| CI | Latest pre-branch master PASS for `f4a21c5` — [GitHub Actions run 32374543039](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32374543039); proposal branch CI pending |
+| CI | ADR proposal `df0dc05` PASS — [GitHub Actions run 32375889447](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32375889447) |
 
 ## Project Progress
 

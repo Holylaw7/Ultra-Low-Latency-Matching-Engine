@@ -13,6 +13,8 @@
 | Branch | `docs/phase3-matching-engine-adr` |
 | Baseline | `f4a21c5` from `master` |
 | ADR | ADR-0011 — `Proposed` |
+| Proposal commit | `df0dc05` |
+| Proposal CI | [Run 32375889447](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32375889447) — PASS |
 | Next Gate | Human decisions D1-D7; implementation remains unauthorized |
 
 ## Outcome
@@ -93,9 +95,11 @@ is changed, so no Maven or JMH conclusion is claimed. Repository validation
 for the proposal consists of documentation diff checks, exact file-scope
 review, branch push and GitHub Actions on the committed branch head.
 
-Commit and CI evidence are recorded in TASK-007 after the first proposal
-commit completes. The final evidence-only commit is reported at handoff to
-avoid a recursive documentation/CI update loop.
+The proposal is committed at `df0dc05`, pushed to
+`origin/docs/phase3-matching-engine-adr`, and verified by GitHub Actions run
+`32375889447` with conclusion `success`. The final evidence-only commit and its
+CI result are reported at handoff to avoid a recursive documentation/CI update
+loop.
 
 ## Risks Requiring Review
 
