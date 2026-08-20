@@ -6,15 +6,15 @@
 | --- | --- |
 | Phase | Phase 3 — MatchingEngine |
 | Task | `TASK-20260820-008` |
-| Stage | Task Planning |
-| Result | Plan Completed — Pending Human Approval |
+| Stage | Task Plan Approval |
+| Result | TASK-008 Approved — Stage 1 Authorized / Not Started |
 | Tests | Not run — planning-only documentation |
 | Build | Not run locally — planning-only documentation |
 | CI | [Run 32378870274](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32378870274) — PASS |
 | Commit | `bd7fdf0` |
 | Branch | `docs/phase3-matching-engine-task-plan` |
 | Parent | ADR branch head `96fe50b` |
-| Next Gate | Human TASK-008 Plan Review |
+| Next Gate | Stage 1 Domain/API Foundation completion review |
 
 ## Planning Outcome
 
@@ -134,23 +134,28 @@ to ADR review before implementation.
 The evidence synchronization commit and its CI result are reported at handoff
 to avoid a recursive documentation/CI update loop.
 
-## Approval Request
+## Approval Outcome and Next Gate
 
-Please approve, revise or reject:
+The Human Developer approved the exact command/result boundary, private engine
+ownership, processing/failure ordering, file allowlist, tests and
+Benchmark/Profile exclusion.
 
-1. exact command/result API boundary;
-2. private MatchingEngine counter/validation ownership;
-3. processing and failure ordering;
-4. production/test file allowlist and OrderBook prohibition;
-5. acceptance criteria and staged implementation gates;
-6. Benchmark/Profile as not applicable to TASK-008.
+Two constraints are repeated as release conditions:
 
-Approval authorizes only the first implementation sub-stage on a dedicated
-implementation branch. Later stages remain subject to their recorded Human
-gates.
+1. OrderBook is an external frozen dependency. No algorithm, production file,
+   API, visibility, convenience method or test hook may be changed.
+2. Implementation proceeds through three separate approval gates: Domain/API
+   Foundation, MatchingEngine Core, then Determinism Verification.
+
+Only Stage 1 is authorized. Its completion report must show exact files,
+tests, build, CI and absence of OrderBook changes before Stage 2 can be
+considered. Stage 1 must run on `feature/phase3-matching-engine`, created from
+the final approved planning head; that branch has not been created in this
+approval-sync stage.
 
 ## Approval Record
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
 | 2026-08-20 | Human Developer | `Planning Authorized` | Create TASK-008 as Proposed. Production implementation remains unauthorized pending Task Plan approval. |
+| 2026-08-20 | Human Developer | `Approved` | TASK-008 implementation plan approved. Scope limited to synchronous MatchingEngine correctness baseline. Phase 2 OrderBook remains a frozen external dependency. Implementation must follow staged approval gates. Performance optimization, WAL, network and recovery remain out of scope. |

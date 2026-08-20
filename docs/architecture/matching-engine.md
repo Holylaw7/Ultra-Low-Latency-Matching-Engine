@@ -89,7 +89,8 @@ Disruptor/Actor scheduling, market-order policy, publication, networking,
 WAL implementation, snapshot, recovery and optimization remain deferred.
 
 `Sequence` is reserved for commands, MatchingEngine owns `EventSequence`, and
-`Trade.sequence` is semantically revised to `Trade.eventSequence`. The next
-gate is Human review of the Proposed
-[`TASK-20260820-008-phase3-matching-engine-implementation.md`](../../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md).
-Only approval of that plan may authorize the first implementation sub-stage.
+`Trade.sequence` is semantically revised to `Trade.eventSequence`.
+[`TASK-20260820-008-phase3-matching-engine-implementation.md`](../../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md)
+is approved. Only Stage 1 Domain/API Foundation is authorized; MatchingEngine
+Core and Determinism Verification remain separately gated. OrderBook is an
+external frozen dependency and no OrderBook file or API may change.

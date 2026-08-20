@@ -6,20 +6,21 @@
 | --- | --- |
 | Task ID | `TASK-20260820-008` |
 | Title | Implement Phase 3 MatchingEngine Orchestration Baseline |
-| Status | `Proposed` |
+| Status | `Approved — Implementation not started` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created | `2026-08-20` |
 | Updated | `2026-08-20` |
 | Related Phase | Phase 3 — MatchingEngine |
 | Related ADR | ADR-0005 sequence revision and ADR-0011 (`Approved`) |
-| Current Stage | `Task Planning completed — Pending Human Approval` |
-| Next Approval Gate | `Human Task Plan Approval` |
+| Current Stage | `Task Plan approved — Stage 1 not started` |
+| Next Approval Gate | `Stage 1 Domain/API Foundation completion review` |
 | Branch | `docs/phase3-matching-engine-task-plan` |
+| Approved Implementation Branch | `feature/phase3-matching-engine` (not created) |
 | Parent Branch / HEAD | `docs/phase3-matching-engine-adr` at `96fe50b` |
 | Engineering Baseline | `v0.1.0-engineering-baseline` at `cbfa957` |
 | Remote | `origin` |
-| CI | Planning commit `bd7fdf0`: [run 32378870274](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32378870274) PASS |
+| CI | Planning evidence head `5550552`: [run 32378966053](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32378966053) PASS before approval sync |
 
 ## 2. Background
 
@@ -36,7 +37,8 @@ finally approved and freezes a synchronous, single-owner MatchingEngine that:
 ADR-0005 revision R1-R6 reserves `Sequence` for input commands and introduces
 an explicit MatchingEngine-owned `EventSequence` for output match aggregates.
 This Task converts those accepted decisions into a reviewable implementation
-plan. No implementation is authorized while this Task remains `Proposed`.
+plan. The Human Developer approved the plan on `2026-08-20`. Only Stage 1
+Domain/API Foundation is authorized next; later stages remain gated.
 
 ## 3. Goal
 
@@ -339,6 +341,10 @@ network, pipeline, WAL, snapshot or recovery packages
 If an approved implementation cannot proceed without one of these changes,
 stop and request a Task/ADR scope revision.
 
+The Phase 2 OrderBook is an external frozen dependency for TASK-008. This
+prohibition includes convenience methods, visibility changes, constructors,
+query APIs and test-only hooks: no file under `orderbook/**` may be changed.
+
 ## 9. Test Plan
 
 ### Unit Tests
@@ -460,6 +466,11 @@ test(matching-engine): verify ordering and replay determinism
 docs(matching-engine): record phase3 implementation evidence
 ```
 
+The approved implementation branch name is
+`feature/phase3-matching-engine`. Create it from the final approved planning
+head before Stage 1 changes. Do not continue implementation work on the
+documentation branch.
+
 Commit boundaries may be combined only when tests remain coherent and review
 scope stays clear. No squash, force push, history rewrite, merge, tag or
 release is authorized by this plan.
@@ -475,16 +486,16 @@ release is authorized by this plan.
 | Date | Reviewer | Stage | Decision | Constraints / Notes |
 | --- | --- | --- | --- | --- |
 | 2026-08-20 | Human Developer | TASK-008 creation | `Planning Authorized` | Create a Proposed implementation plan on a dedicated documentation branch. No production code or implementation is authorized before Task approval. |
-| Pending | Human Developer | Task Plan Review | `Pending` | Approve, revise or reject exact API, scope, tests and staged implementation. |
+| 2026-08-20 | Human Developer | Task Plan Review | `Approved` | Scope is limited to the synchronous MatchingEngine correctness baseline. OrderBook is an external frozen dependency and its API/files must not change. Implementation must follow Stage 1 Domain/API Foundation, Stage 2 MatchingEngine Core and Stage 3 Determinism Verification with separate approval gates. Performance optimization, WAL, network and recovery remain out of scope. |
 
 ## 16. Phase Reports and Approval Gates
 
 | Stage | Report Location | Status | Next Approval Gate | Human Approval |
 | --- | --- | --- | --- | --- |
 | ADR / Decision | `tasks/reports/PHASE-3-matching-engine-adr-decision.md` | Completed | Task Planning | ADR-0011 approved 2026-08-20 |
-| Task Planning | `tasks/reports/PHASE-3-matching-engine-implementation-planning.md` | Completed — Pending Human Approval | Task Plan Review | Planning authorized 2026-08-20 |
-| Task Approval | Same planning report | Pending | Domain/API Foundation | Pending |
-| Domain/API Foundation | Not created | Not Authorized | Human Stage Approval | Not Authorized |
+| Task Planning | `tasks/reports/PHASE-3-matching-engine-implementation-planning.md` | Completed | Task Plan Review | Approved 2026-08-20 |
+| Task Approval | Same planning report | Completed | Domain/API Foundation | Approved 2026-08-20 |
+| Domain/API Foundation | Not created | Authorized / Not Started | Human Stage Approval | Start authorized 2026-08-20 |
 | MatchingEngine Implementation | Not created | Not Authorized | Human Stage Approval | Not Authorized |
 | Correctness / Determinism Verification | Not created | Not Authorized | Human Stage Approval | Not Authorized |
 | Benchmark / Profile | Not applicable | Not applicable | Documentation Sync | Not applicable |
@@ -497,6 +508,7 @@ release is authorized by this plan.
 | --- | --- | --- | --- |
 | 2026-08-20 | Proposed | Converted approved ADR-0005/ADR-0011 decisions into exact API, file, test and gate plan | Documentation only; production code unchanged |
 | 2026-08-20 | Planning Verified | Pushed dedicated planning branch and observed exact-SHA CI | `bd7fdf0`; GitHub Actions run `32378870274` PASS |
+| 2026-08-20 | Approved | Human approved TASK-008 with frozen OrderBook and three-stage implementation constraints | Stage 1 authorized but not started; no production code changed |
 
 ## 18. Completion Checklist
 
@@ -511,7 +523,7 @@ release is authorized by this plan.
 - [x] Every completed stage has a phase report
 - [x] Human approval is recorded before each completed next stage
 - [x] Task plan and `AGENT_CONTEXT.md` synchronized for planning
-- [x] `AGENT_CONTEXT.md` updated for Proposed task gate
+- [x] `AGENT_CONTEXT.md` updated for approved Stage 1 gate
 - [ ] Implementation diff reviewed
 - [ ] Implementation commits created
 - [ ] Implementation remote synchronization completed
