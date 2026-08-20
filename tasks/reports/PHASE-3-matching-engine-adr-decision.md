@@ -6,8 +6,8 @@
 | --- | --- |
 | Phase | Phase 3 — MatchingEngine |
 | Task | `TASK-20260820-007` |
-| Stage | Conditional Approval / D3 Semantic Revision |
-| Result | ADR-0011 Approved with Conditions — Implementation Blocked |
+| Stage | D3 Semantic Revision Approved / Final ADR Review |
+| Result | D3 Condition Satisfied — ADR-0011 Final Approval Pending |
 | Production code | Not changed |
 | Tests / benchmark | Not run — documentation-only stage |
 | Branch | `docs/phase3-matching-engine-adr` |
@@ -17,14 +17,16 @@
 | Proposal CI | [Run 32375889447](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32375889447) — PASS |
 | Proposal evidence commit | `a226c50` |
 | Proposal head CI | [Run 32375989030](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32375989030) — PASS |
-| Next Gate | Human approval of ADR-0005 revision R1-R6; implementation remains unauthorized |
+| Conditional approval commit | `e98481a` |
+| Conditional approval CI | [Run 32376750616](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32376750616) — PASS |
+| Next Gate | Human final approval of ADR-0011; implementation remains unauthorized |
 
 ## Outcome
 
-The Human Developer approved the orchestration direction with one blocking
-condition. D1, D2 and D4-D7 are approved. D3 is conditionally approved and
-must be resolved through an explicit ADR-0005 semantic revision before
-ADR-0011 can be fully accepted. No production implementation has begun.
+The Human Developer approved ADR-0005 revision R1-R6 after adding explicit
+EventSequence ownership and replay determinism scope. D1-D7 are now approved
+at the decision-item level. ADR-0011 still awaits its separate final approval
+record, and no production implementation has begun.
 
 Recommended direction:
 
@@ -55,7 +57,7 @@ publication and persistence implementations.
 | --- | --- | --- |
 | D1 | Synchronous single-owner core | Approved |
 | D2 | Upstream command allocation; engine verifies exact next sequence | Approved |
-| D3 | Separate command, TradeId and output-event sequence domains | Conditional — ADR-0005 R1-R6 pending |
+| D3 | Separate command, TradeId and output-event sequence domains | Approved — R1-R6 accepted |
 | D4 | One ordered aggregate per MatchFragment | Approved |
 | D5 | Immutable return value with no callbacks or I/O | Approved |
 | D6 | Commands are canonical WAL/replay input | Approved in principle; implementation deferred |
@@ -74,8 +76,11 @@ review:
   independent sequence in the Phase 3 baseline;
 - replay must reproduce TradeId and EventSequence counters.
 
-These items are ADR-0005 R1-R6 and remain pending Human approval. Production
-types are unchanged.
+These items are approved as ADR-0005 R1-R6. EventSequence is owned exclusively
+by MatchingEngine. Replay determinism covers observable OrderBook state,
+TradeId, EventSequence, Trade price/quantity and maker/taker Execution data; it
+does not cover memory addresses, object identity or allocation order.
+Production types remain unchanged until implementation is separately approved.
 
 ## Scope Boundary
 
@@ -104,10 +109,11 @@ for the proposal consists of documentation diff checks, exact file-scope
 review, branch push and GitHub Actions on the committed branch head.
 
 The proposal is committed at `df0dc05`, with evidence recorded at `a226c50`.
-Both were pushed to `origin/docs/phase3-matching-engine-adr`; GitHub Actions
-runs `32375889447` and `32375989030` completed successfully. The conditional
-approval synchronization commit and its CI result are reported at handoff to
-avoid a recursive documentation/CI update loop.
+The conditional approval is recorded at `e98481a`. All were pushed to
+`origin/docs/phase3-matching-engine-adr`; GitHub Actions runs `32375889447`,
+`32375989030` and `32376750616` completed successfully. The R1-R6 approval
+synchronization commit and its CI result are reported at handoff to avoid a
+recursive documentation/CI update loop.
 
 ## Risks Requiring Review
 
@@ -120,14 +126,14 @@ avoid a recursive documentation/CI update loop.
 
 ## Approval Request
 
-Please record accept/reject/revise for ADR-0005 revision items R1-R6. Approval
-of all six items satisfies ADR-0011 condition D3.
+Please record the final accept/reject/revise decision for ADR-0011. D3 is no
+longer blocking at the semantic-revision level.
 
 Approval of ADR-0011 does not authorize implementation. The next sequence is:
 
 ```text
-Human approval of ADR-0005 R1-R6
-    -> ADR-0011 final approval record
+ADR-0005 R1-R6 approved
+    -> Human ADR-0011 final approval record
     -> exact implementation Task Plan
     -> Human Task approval
     -> implementation
@@ -139,3 +145,4 @@ Human approval of ADR-0005 R1-R6
 | --- | --- | --- | --- |
 | 2026-08-20 | Human Developer | `Proposal Authorized` | Only Phase 3 ADR / Decision work is authorized. Implementation remains gated. |
 | 2026-08-20 | Human Developer | `ADR-0011 Approved with conditions` | D1, D2 and D4-D7 approved. D3 requires an explicit ADR-0005 sequence semantic revision before final approval or implementation planning. |
+| 2026-08-20 | Human Developer | `ADR-0005 R1-R6 Approved` | EventSequence ownership and replay determinism scope clarified. D3 condition satisfied; ADR-0011 final approval remains pending. |

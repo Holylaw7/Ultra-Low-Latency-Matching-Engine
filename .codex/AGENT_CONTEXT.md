@@ -10,18 +10,18 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 3 — MatchingEngine (`ADR conditionally approved`) |
+| Phase | Phase 3 — MatchingEngine (`D3 satisfied; final ADR approval pending`) |
 | Latest product task | [`TASK-20260819-004`](../tasks/completed/TASK-20260819-004-basic-orderbook.md) — Completed |
-| Current planning task | [`TASK-20260820-007`](../tasks/active/TASK-20260820-007-phase3-matching-engine-adr-decision.md) — D3 remediation pending approval |
-| Product stage | ADR-0011 Approved with conditions; ADR-0005 R1-R6 proposed |
-| Product approval | D1, D2 and D4-D7 approved; D3 and implementation blocked |
+| Current planning task | [`TASK-20260820-007`](../tasks/active/TASK-20260820-007-phase3-matching-engine-adr-decision.md) — ADR-0011 final approval pending |
+| Product stage | ADR-0005 R1-R6 approved; ADR-0011 final approval pending |
+| Product approval | D1-D7 approved; implementation remains unauthorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `docs/phase3-matching-engine-adr` |
 | Engineering baseline commit | `cbfa957` |
 | Engineering baseline tag | `v0.1.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
 | Remote sync | `master` and engineering baseline tag published |
-| CI | ADR proposal head `a226c50` PASS — [GitHub Actions run 32375989030](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32375989030); conditional-approval sync pending |
+| CI | Conditional-approval head `e98481a` PASS — [GitHub Actions run 32376750616](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32376750616); R1-R6 approval sync pending |
 
 ## Project Progress
 
@@ -30,24 +30,24 @@
 | Phase 0 — Bootstrap | Completed | Maven reactor, Java 21, JUnit 5, JMH, Checkstyle and CI workflow |
 | Phase 1 — Domain Model | Completed / Approved | [`PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md) |
 | Phase 2 — Basic OrderBook | Completed / Approved | `v0.1.0-engineering-baseline`, 45 tests, JMH/JFR evidence and passing master CI |
-| Phase 3 — Matching Engine | ADR Conditionally Approved / Implementation Not Authorized | D3 requires ADR-0005 R1-R6 approval; [`ADR-0011`](../docs/adr/ADR-0011-matching-engine-orchestration-model.md) |
+| Phase 3 — Matching Engine | D3 Satisfied / Final ADR Approval Pending / Implementation Not Authorized | ADR-0005 R1-R6 approved; [`ADR-0011`](../docs/adr/ADR-0011-matching-engine-orchestration-model.md) |
 | Phase 4+ — Pipeline, network, recovery and performance evolution | Future Work | Architecture documents and future ADRs/tasks |
 
 ## Current Product Gate
 
-Phase 2 is closed and frozen at `v0.1.0-engineering-baseline`. ADR-0011 is
-approved with conditions. The current gate is:
+Phase 2 is closed and frozen at `v0.1.0-engineering-baseline`. ADR-0005 R1-R6
+are approved and ADR-0011 condition D3 is satisfied. The current gate is:
 
 ```text
-ADR-0011 Conditional Approval
-    -> Human approval of ADR-0005 R1-R6
-    -> ADR-0011 Final Approval
+ADR-0005 R1-R6 Approved
+    -> Human ADR-0011 Final Approval
     -> new Task Plan and Human approval
     -> implementation only after both approvals
 ```
 
 Phase 3 implementation, Release, production optimization and history rewrite
-remain unauthorized until separately approved. D3 is the active blocker.
+remain unauthorized until separately approved. Final ADR-0011 approval is the
+active blocker.
 
 Completed plan:
 [`TASK-20260819-004-basic-orderbook.md`](../tasks/completed/TASK-20260819-004-basic-orderbook.md).
@@ -55,7 +55,7 @@ Completed plan:
 Current evidence:
 
 - [`PHASE-3-matching-engine-adr-decision.md`](../tasks/reports/PHASE-3-matching-engine-adr-decision.md)
-  — conditionally approved; ADR-0005 sequence revision pending approval.
+  — D3 revision approved; ADR-0011 final approval pending.
 - [`PHASE-2-measurement-isolation.md`](../tasks/reports/PHASE-2-measurement-isolation.md)
   — completed and accepted as Phase 2 closure evidence.
 - [`PHASE-2-repository-remote-ci-setup.md`](../tasks/reports/PHASE-2-repository-remote-ci-setup.md)
@@ -73,13 +73,13 @@ Current evidence:
 
 | Decision | Status | Source |
 | --- | --- | --- |
-| Domain model and correctness baseline | Accepted with constraints; Phase 3 sequence revision proposed | [`ADR-0005`](../docs/adr/ADR-0005-domain-model-and-correctness-baseline.md) |
+| Domain model and correctness baseline | Accepted with constraints; Phase 3 sequence revision approved | [`ADR-0005`](../docs/adr/ADR-0005-domain-model-and-correctness-baseline.md) |
 | ADR-first governance | Accepted | [`ADR-0006`](../docs/adr/ADR-0006-adr-first-decision-governance.md) |
 | TreeMap side books, intrusive FIFO and active OrderId index | Accepted with constraints | [`ADR-0007`](../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md) |
 | Structural limit matching and `MatchFragment` boundary | Approved | [`ADR-0008`](../docs/adr/ADR-0008-structural-limit-matching.md) |
 | JFR-first profiling evidence | Approved | [`ADR-0009`](../docs/adr/ADR-0009-performance-profiling-evidence.md) |
 | Defer production optimization until measurement isolation | Approved | [`ADR-0010`](../docs/adr/ADR-0010-optimization-decision-after-profiling.md) |
-| MatchingEngine orchestration model | Approved with conditions / D3 blocked | [`ADR-0011`](../docs/adr/ADR-0011-matching-engine-orchestration-model.md) |
+| MatchingEngine orchestration model | D1-D7 approved / Final approval pending | [`ADR-0011`](../docs/adr/ADR-0011-matching-engine-orchestration-model.md) |
 
 If a Task and linked ADR disagree, stop and synchronize them before work.
 

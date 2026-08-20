@@ -6,20 +6,20 @@
 | --- | --- |
 | Task ID | `TASK-20260820-007` |
 | Title | Phase 3 MatchingEngine ADR / Decision Proposal |
-| Status | `In Progress — Conditional approval / D3 remediation` |
+| Status | `In Progress — D3 satisfied / ADR-0011 final approval pending` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created | `2026-08-20` |
 | Updated | `2026-08-20` |
 | Related Phase | Phase 3 — MatchingEngine |
-| Related ADR | ADR-0011 (`Approved with conditions`) and ADR-0005 sequence revision (`Proposed`) |
-| Current Stage | `D3 sequence semantic revision proposal completed` |
-| Next Approval Gate | `Human approval of ADR-0005 R1-R6 / final ADR-0011 decision` |
+| Related ADR | ADR-0011 (`Approved with conditions`) and ADR-0005 sequence revision (`Approved`) |
+| Current Stage | `D3 semantic revision approved and synchronized` |
+| Next Approval Gate | `Human final approval of ADR-0011` |
 | Branch | `docs/phase3-matching-engine-adr` |
 | Baseline HEAD | `f4a21c5` on `master` |
 | Engineering Baseline | `v0.1.0-engineering-baseline` at `cbfa957` |
 | Remote | `origin` |
-| CI | Proposal head `a226c50`: [run 32375989030](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32375989030) PASS before conditional-approval sync |
+| CI | Conditional-approval head `e98481a`: [run 32376750616](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32376750616) PASS before R1-R6 approval sync |
 
 ## 2. Background
 
@@ -77,7 +77,7 @@ Produce a reviewable ADR proposal that freezes or explicitly defers:
 - [x] Task, architecture document, Stage Report and `AGENT_CONTEXT` agree.
 - [x] No production/test/build/benchmark file changes are present.
 - [x] Documentation diff and remote CI pass.
-- [ ] ADR-0005 revision items R1-R6 receive Human approval.
+- [x] ADR-0005 revision items R1-R6 receive Human approval.
 - [ ] ADR-0011 final approval is recorded before implementation planning.
 
 ## 6. Current Implementation and Scope
@@ -133,7 +133,7 @@ WAL ADR.
 | --- | --- |
 | ADR | `docs/adr/ADR-0011-matching-engine-orchestration-model.md` |
 | Status | `Approved with conditions` |
-| Decision Summary | D1, D2 and D4-D7 approved; D3 awaits ADR-0005 R1-R6 approval |
+| Decision Summary | D1-D7 approved; D3 clarification satisfied; final ADR-0011 approval pending |
 | Scope Boundary | Documentation and decision only; implementation prohibited |
 
 ### Architecture Impact
@@ -221,7 +221,7 @@ context. Normal branch push; no merge.
 | --- | --- | --- | --- | --- |
 | ADR / Decision Proposal | `tasks/reports/PHASE-3-matching-engine-adr-decision.md` | Completed — Pending Human Approval | Human Architecture Review | Proposal authorized 2026-08-20 |
 | Conditional Architecture Review | Same report | Completed | ADR-0005 R1-R6 approval | ADR-0011 conditionally approved 2026-08-20 |
-| D3 Semantic Revision | ADR-0005 revision section | Proposed | Human Domain/Architecture Review | Pending |
+| D3 Semantic Revision | ADR-0005 revision section | Approved | ADR-0011 Final Approval | R1-R6 approved 2026-08-20 |
 | Task Approval | Same report | Pending | Human Approval | Pending |
 | Implementation | Not created | Not Authorized | Approved ADR + Task required | Not Authorized |
 
@@ -234,6 +234,7 @@ context. Normal branch push; no merge.
 | 2026-08-20 | Proposal Verified | Committed and pushed ADR-stage documentation | `df0dc05`; GitHub Actions run `32375889447` PASS |
 | 2026-08-20 | Conditional Approval | Recorded D1, D2 and D4-D7 approval; implementation remains blocked by D3 | Human review; ADR-0011 Approved with conditions |
 | 2026-08-20 | D3 Revision Prepared | Proposed `Sequence` input-only semantics and explicit `EventSequence` output semantics in ADR-0005 | R1-R6 pending Human approval; no code changes |
+| 2026-08-20 | D3 Revision Approved | Added explicit MatchingEngine ownership and observable replay determinism scope | ADR-0005 R1-R6 approved; ADR-0011 final approval pending |
 
 ## 18. Completion Checklist
 

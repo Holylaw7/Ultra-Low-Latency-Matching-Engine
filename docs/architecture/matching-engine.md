@@ -70,8 +70,8 @@ Phase 2 is closed and frozen at `v0.1.0-engineering-baseline`. The first Phase
 3 architecture proposal is
 [`ADR-0011-matching-engine-orchestration-model.md`](../adr/ADR-0011-matching-engine-orchestration-model.md).
 Its current status is `Approved with conditions`; it does not authorize
-implementation. D1, D2 and D4-D7 are approved. D3 remains blocked pending
-Human approval of the proposed sequence semantic revision in
+implementation. D1-D7 are approved at the decision-item level. The D3
+condition was satisfied by the approved sequence semantic revision in
 [`ADR-0005-domain-model-and-correctness-baseline.md`](../adr/ADR-0005-domain-model-and-correctness-baseline.md).
 
 The proposal recommends a synchronous, single-owner MatchingEngine boundary:
@@ -89,7 +89,7 @@ ownership, and treats a future command WAL as the canonical replay input.
 Disruptor/Actor scheduling, market-order policy, publication, networking,
 WAL implementation, snapshot, recovery and optimization remain deferred.
 
-The next gate is Human review of ADR-0005 revision items R1-R6: reserve
-`Sequence` for commands, introduce `EventSequence`, and replace
-`Trade.sequence` with `Trade.eventSequence`. Only final ADR approval plus a
+`Sequence` is reserved for commands, MatchingEngine owns `EventSequence`, and
+`Trade.sequence` is semantically revised to `Trade.eventSequence`. The next
+gate is final Human approval of ADR-0011. Only that final approval plus a
 separately approved implementation Task Plan may authorize Phase 3 code.

@@ -2,18 +2,18 @@
 
 ## Status
 
-Accepted with constraints — Phase 3 sequence revision proposed; Human approval
-pending
+Accepted with constraints — Phase 3 sequence revision approved on `2026-08-20`
 
 ## Revision Record
 
 | Date | Scope | Status | Related Decision |
 | --- | --- | --- | --- |
-| 2026-08-20 | Separate input command sequence from output event sequence | `Proposed — Pending Human Approval` | [`ADR-0011`](ADR-0011-matching-engine-orchestration-model.md), condition D3 |
+| 2026-08-20 | Separate input command sequence from output event sequence | `Approved` | [`ADR-0011`](ADR-0011-matching-engine-orchestration-model.md), condition D3 |
 
 The original Phase 1 baseline remains accepted and implemented. The revision
-below is a proposal only: it does not change production types or authorize
-Phase 3 implementation until separately approved.
+below is now an accepted semantic decision, but it does not itself change
+production types or authorize Phase 3 implementation. Code changes still
+require an approved Phase 3 implementation Task Plan.
 
 ## Context
 
@@ -85,7 +85,7 @@ terminal order cannot receive another execution.
   caller.
 - They do not read system time or generate random identifiers.
 
-## Proposed Phase 3 Sequence Semantic Revision
+## Approved Phase 3 Sequence Semantic Revision
 
 ### Problem
 
@@ -95,9 +95,9 @@ type. Phase 3 allows one input command to produce multiple matches. Reusing
 one sequence namespace would therefore make command order and output order
 ambiguous and would weaken deterministic WAL/replay verification.
 
-### Proposed Semantic Contract
+### Semantic Contract
 
-If approved, the Phase 3 domain model will use three distinct concepts:
+The Phase 3 domain model will use three distinct concepts:
 
 | Concept | Owner | Cardinality | Meaning |
 | --- | --- | --- | --- |
@@ -108,14 +108,16 @@ If approved, the Phase 3 domain model will use three distinct concepts:
 `Sequence` remains the input command sequence and retains its existing meaning
 for `Order.sequence()`. It must not be used as an output-event counter.
 
-Introduce a positive `long`-backed `EventSequence` value type. The current
-Trade component:
+The implementation will introduce a positive `long`-backed `EventSequence`
+value type. Only MatchingEngine owns and advances this counter. OrderBook,
+Trade and Execution must never generate an EventSequence. The current Trade
+component:
 
 ```text
 Trade.sequence : Sequence
 ```
 
-is proposed to become:
+is semantically revised to become:
 
 ```text
 Trade.eventSequence : EventSequence
@@ -137,43 +139,54 @@ between command `Sequence`, `TradeId` or `EventSequence` may be assumed.
 ### Determinism and Recovery Consequences
 
 - Equal initial state and equal accepted command streams must reproduce the
-  same TradeIds, EventSequences, Trades and Executions.
+  same observable OrderBook state, TradeIds, EventSequences, Trade prices and
+  quantities, and maker/taker Execution order, sides and order identifiers.
 - Command sequence is the canonical replay order described by ADR-0011.
 - EventSequence orders derived match-result aggregates; it is not a second
   WAL authority.
 - TradeId and EventSequence counters become future snapshot/recovery state.
 - Neither sequence is derived from time, randomness or thread scheduling.
 
+Replay equality does not include memory addresses, Java object identity,
+internal allocation order, collection-node identity or other implementation
+artifacts that cannot affect observable matching behavior.
+
 ### Compatibility and Implementation Gate
 
-This proposal deliberately creates a source-incompatible `Trade` signature
+This revision deliberately requires a source-incompatible `Trade` signature
 before a public protocol, persistent event format or product release exists.
-If approved, the future Phase 3 implementation Task must update the Trade
-type, constructors, tests, documentation and ADR-0011 together.
+The future Phase 3 implementation Task must update the Trade type,
+constructors, tests, documentation and ADR-0011 together.
 
-Until approval:
+Until implementation authorization:
 
 - the existing Phase 1 and frozen Phase 2 production code remains unchanged;
 - `EventSequence` must not be introduced in code;
-- ADR-0011 remains conditionally approved;
+- ADR-0011 awaits its separate final approval record;
 - Phase 3 implementation remains unauthorized.
 
 ### Revision Approval Gate
 
-The Human Developer must explicitly approve or revise:
+The Human Developer recorded the following decisions:
 
 | ID | Proposed revision | Current state |
 | --- | --- | --- |
-| R1 | Reserve `Sequence` exclusively for accepted input-command order | Pending |
-| R2 | Introduce positive `long`-backed `EventSequence` | Pending |
-| R3 | Replace `Trade.sequence` with `Trade.eventSequence` | Pending |
-| R4 | Allocate one EventSequence per match-result aggregate | Pending |
-| R5 | Keep maker/taker Execution order inside the aggregate, without independent Execution sequences | Pending |
-| R6 | Snapshot/replay must reproduce TradeId and EventSequence counters | Pending |
+| R1 | Reserve `Sequence` exclusively for accepted input-command order | Approved |
+| R2 | Introduce positive `long`-backed `EventSequence` | Approved |
+| R3 | Replace `Trade.sequence` with `Trade.eventSequence` | Approved |
+| R4 | Allocate one EventSequence per match-result aggregate; owner is MatchingEngine | Approved |
+| R5 | Keep maker/taker Execution order inside the aggregate, without independent Execution sequences | Approved |
+| R6 | Replay must reproduce observable matching state, TradeId and EventSequence, excluding implementation identity | Approved |
 
 Approval of R1-R6 satisfies ADR-0011 condition D3. It still does not authorize
-implementation; a separate implementation Task Plan and Human approval remain
-required.
+implementation; ADR-0011 requires a separate final approval record, followed
+by a separate implementation Task Plan and Human approval.
+
+### Revision Approval Record
+
+| Date | Reviewer | Decision | Notes |
+| --- | --- | --- | --- |
+| 2026-08-20 | Human Developer | `R1-R6 Approved` | EventSequence ownership is explicitly assigned to MatchingEngine. Replay determinism covers observable book/trade/execution state and excludes memory identity and allocation order. Phase 3 implementation remains unauthorized. |
 
 ### Scope Boundary
 
