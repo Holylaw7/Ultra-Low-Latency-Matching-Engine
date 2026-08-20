@@ -14,10 +14,10 @@ Input Event
 
 ## Supported Semantics
 
-The planned baseline supports:
+The long-term planned system supports:
 
 - Limit orders
-- Market orders
+- Market orders (future policy; not part of the current Phase 3 proposal)
 - Price-time priority
 - Partial fills
 - Full fills
@@ -62,5 +62,30 @@ and approved as evidence collection on `2026-08-19`. ADR-0010 was approved on
 `2026-08-19`; measurement isolation, evidence review and Phase 2 Final Closure
 have completed. Optimization is governed by
 [`ADR-0010-optimization-decision-after-profiling.md`](../adr/ADR-0010-optimization-decision-after-profiling.md);
-production optimization and the future MatchingEngine stage remain
-unauthorized.
+production optimization remains unauthorized.
+
+## Phase 3 Orchestration Gate
+
+Phase 2 is closed and frozen at `v0.1.0-engineering-baseline`. The first Phase
+3 architecture proposal is
+[`ADR-0011-matching-engine-orchestration-model.md`](../adr/ADR-0011-matching-engine-orchestration-model.md).
+Its current status is `Proposed`; it does not authorize implementation.
+
+The proposal recommends a synchronous, single-owner MatchingEngine boundary:
+
+```text
+Sequenced Command
+    -> MatchingEngine
+    -> OrderBook
+    -> ordered MatchFragments
+    -> immutable Trade/Execution result
+```
+
+It separates input command sequence, TradeId and output event sequence
+ownership, and treats a future command WAL as the canonical replay input.
+Disruptor/Actor scheduling, market-order policy, publication, networking,
+WAL implementation, snapshot, recovery and optimization remain deferred.
+
+The next gate is Human review of ADR-0011 decisions D1-D7. Only an accepted
+ADR plus a separately approved implementation Task Plan may authorize Phase 3
+code.
