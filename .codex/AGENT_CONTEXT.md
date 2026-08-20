@@ -14,12 +14,12 @@
 | Product task | `TASK-20260819-004` — Basic OrderBook (`In Progress`) |
 | Product stage | Measurement-Isolation Execution completed |
 | Product approval | Steady-State Evidence Review pending Human approval |
-| Latest documentation task | [`TASK-20260820-005`](../tasks/completed/TASK-20260820-005-master-prompt-documentation-alignment.md) — completed |
-| Branch | `feature/domain-model` |
-| Baseline HEAD | `6fa8f46` — latest completed engineering-stage commit before this documentation commit |
-| Remote | Not configured |
-| Remote sync | Not available |
-| CI | Workflow exists; current remote CI status unavailable |
+| Current infrastructure task | [`TASK-20260820-006`](../tasks/active/TASK-20260820-006-repository-remote-ci-setup.md) — In Progress |
+| Branch | `chore/repository-remote-ci` |
+| Baseline HEAD | `89ba9e2` |
+| Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
+| Remote sync | Pending initial branch push |
+| CI | GitHub Actions workflow exists; remote verification pending |
 
 ## Project Progress
 
@@ -134,9 +134,10 @@ requires an approved ADR and Task.
 - Windows scheduling and setup/profiler overhead limit performance inference.
 - Raw evidence is local; reproducibility depends on committed commands and
   summaries.
-- Current branch name predates the broader Phase 2 work.
-- No Git remote is configured, so push and remote CI verification are
-  unavailable.
+- The older `feature/domain-model` branch name predates the broader Phase 2
+  work; new infrastructure work uses a dedicated branch.
+- Remote synchronization and CI evidence are pending completion of
+  `TASK-20260820-006`.
 
 ## Session Recovery Checklist
 
