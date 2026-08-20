@@ -19,7 +19,7 @@
 | Parent Branch / HEAD | `docs/phase3-matching-engine-adr` at `96fe50b` |
 | Engineering Baseline | `v0.1.0-engineering-baseline` at `cbfa957` |
 | Remote | `origin` |
-| CI | Parent ADR head `96fe50b`: [run 32377951264](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32377951264) PASS; planning branch pending |
+| CI | Planning commit `bd7fdf0`: [run 32378870274](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32378870274) PASS |
 
 ## 2. Background
 
@@ -496,6 +496,7 @@ release is authorized by this plan.
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-20 | Proposed | Converted approved ADR-0005/ADR-0011 decisions into exact API, file, test and gate plan | Documentation only; production code unchanged |
+| 2026-08-20 | Planning Verified | Pushed dedicated planning branch and observed exact-SHA CI | `bd7fdf0`; GitHub Actions run `32378870274` PASS |
 
 ## 18. Completion Checklist
 
