@@ -11,14 +11,14 @@ class TradeExecutionTest {
     void tradeAndExecutionAreValueObjects() {
         final Trade firstTrade = new Trade(
                 new TradeId(1),
-                new Sequence(10),
+                new EventSequence(10),
                 new Price(10025),
                 new Quantity(50),
                 new OrderId(1),
                 new OrderId(2));
         final Trade secondTrade = new Trade(
                 new TradeId(1),
-                new Sequence(10),
+                new EventSequence(10),
                 new Price(10025),
                 new Quantity(50),
                 new OrderId(1),
@@ -33,6 +33,7 @@ class TradeExecutionTest {
 
         assertEquals(firstTrade, secondTrade);
         assertEquals(firstTrade.hashCode(), secondTrade.hashCode());
+        assertEquals(new EventSequence(10), firstTrade.eventSequence());
         assertEquals(new OrderId(2), execution.orderId());
         assertEquals(0, execution.remainingQuantityUnits());
     }
@@ -43,7 +44,7 @@ class TradeExecutionTest {
                 IllegalArgumentException.class,
                 () -> new Trade(
                         new TradeId(1),
-                        new Sequence(10),
+                        new EventSequence(10),
                         new Price(100),
                         new Quantity(1),
                         new OrderId(1),
@@ -62,14 +63,14 @@ class TradeExecutionTest {
     void equalInputsProduceEqualResults() {
         final Trade tradeA = new Trade(
                 new TradeId(9),
-                new Sequence(20),
+                new EventSequence(20),
                 new Price(101),
                 new Quantity(3),
                 new OrderId(10),
                 new OrderId(11));
         final Trade tradeB = new Trade(
                 new TradeId(9),
-                new Sequence(20),
+                new EventSequence(20),
                 new Price(101),
                 new Quantity(3),
                 new OrderId(10),

@@ -6,7 +6,7 @@ import java.util.Objects;
  * One deterministic match between a maker and a taker order.
  *
  * @param tradeId stable trade identifier
- * @param sequence logical sequence at which the trade was emitted
+ * @param eventSequence output sequence at which the match result was emitted
  * @param price execution price
  * @param quantity executed quantity
  * @param makerOrderId resting order identifier
@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 public record Trade(
         TradeId tradeId,
-        Sequence sequence,
+        EventSequence eventSequence,
         Price price,
         Quantity quantity,
         OrderId makerOrderId,
@@ -25,7 +25,7 @@ public record Trade(
      */
     public Trade {
         Objects.requireNonNull(tradeId, "tradeId");
-        Objects.requireNonNull(sequence, "sequence");
+        Objects.requireNonNull(eventSequence, "eventSequence");
         Objects.requireNonNull(price, "price");
         Objects.requireNonNull(quantity, "quantity");
         Objects.requireNonNull(makerOrderId, "makerOrderId");
