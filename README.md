@@ -32,8 +32,11 @@ The approved benchmark is component-level experimental baseline evidence, not a
 production throughput or latency claim. Profiling execution evidence is
 recorded and approved as evidence collection. Measurement-isolation evidence
 is recorded separately and does not replace B0 or authorize production
-optimization. Phase 2 is closed at the engineering baseline tag; Phase 3 is
-not authorized and must begin with a separate ADR and Task approval.
+optimization. Phase 2 is closed at the engineering baseline tag. Phase 3 ADR
+and TASK-008 are approved. Stage 1 Domain/API Foundation is complete pending
+Human review; it adds EventSequence plus immutable command/result types only.
+MatchingEngine core implementation remains unauthorized until that review is
+accepted.
 
 The repository currently contains:
 
@@ -49,8 +52,10 @@ The repository currently contains:
 
 Implemented Phase 2 behavior includes deterministic limit-order matching,
 price-time priority, maker-price fragments, partial/full fills, and residual
-resting. MatchingEngine, Trade/Execution publication, WAL, network and
-performance optimization remain outside the current scope.
+resting. Stage 1 adds `EventSequence` and immutable engine boundary values;
+it does not add MatchingEngine processing, OrderBook integration, Trade or
+Execution generation. Publication, WAL, network and performance optimization
+remain outside the current scope.
 
 ## Build
 

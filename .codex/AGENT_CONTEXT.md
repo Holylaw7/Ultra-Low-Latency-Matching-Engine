@@ -10,19 +10,19 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 3 — MatchingEngine (`TASK-008 approved; Stage 1 not started`) |
+| Phase | Phase 3 — MatchingEngine (`TASK-008 Stage 1 completed; Human review pending`) |
 | Latest product task | [`TASK-20260819-004`](../tasks/completed/TASK-20260819-004-basic-orderbook.md) — Completed |
 | Latest architecture task | [`TASK-20260820-007`](../tasks/completed/TASK-20260820-007-phase3-matching-engine-adr-decision.md) — Completed |
 | Current planning task | [`TASK-20260820-008`](../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md) — Approved |
-| Product stage | Stage 1 Domain/API Foundation authorized / not started |
-| Product approval | Stage 1 only; Stage 2/3 remain unauthorized |
+| Product stage | Stage 1 Domain/API Foundation completed / pending Human approval |
+| Product approval | Stage 2/3 remain unauthorized pending Stage 1 review |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
-| Branch | `docs/phase3-matching-engine-task-plan` |
+| Branch | `feature/phase3-matching-engine` |
 | Engineering baseline commit | `cbfa957` |
 | Engineering baseline tag | `v0.1.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
 | Remote sync | `master` and engineering baseline tag published |
-| CI | TASK-008 planning evidence `5550552` PASS — [GitHub Actions run 32378966053](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32378966053); approval sync pending |
+| CI | Stage 1 branch CI pending push; local `mvn verify` evidence recorded before review |
 
 ## Project Progress
 
@@ -31,7 +31,7 @@
 | Phase 0 — Bootstrap | Completed | Maven reactor, Java 21, JUnit 5, JMH, Checkstyle and CI workflow |
 | Phase 1 — Domain Model | Completed / Approved | [`PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md) |
 | Phase 2 — Basic OrderBook | Completed / Approved | `v0.1.0-engineering-baseline`, 45 tests, JMH/JFR evidence and passing master CI |
-| Phase 3 — Matching Engine | Task Approved / Stage 1 Authorized | [`TASK-008`](../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md); no implementation started |
+| Phase 3 — Matching Engine | Stage 1 Completed / Pending Human Approval | [`TASK-008`](../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md); Stage 2 remains locked |
 | Phase 4+ — Pipeline, network, recovery and performance evolution | Future Work | Architecture documents and future ADRs/tasks |
 
 ## Current Product Gate
@@ -57,7 +57,9 @@ Completed plan:
 Current evidence:
 
 - [`PHASE-3-matching-engine-implementation-planning.md`](../tasks/reports/PHASE-3-matching-engine-implementation-planning.md)
-  — TASK-008 plan approved; Stage 1 authorized but not started.
+  — TASK-008 plan approved; Stage 1 completion is awaiting Human review.
+- [`PHASE-3-matching-engine-domain-api-foundation.md`](../tasks/reports/PHASE-3-matching-engine-domain-api-foundation.md)
+  — Stage 1 implementation evidence; no MatchingEngine or OrderBook integration.
 - [`PHASE-3-matching-engine-adr-decision.md`](../tasks/reports/PHASE-3-matching-engine-adr-decision.md)
   — completed; ADR-0011 final approval recorded and architecture frozen.
 - [`PHASE-2-measurement-isolation.md`](../tasks/reports/PHASE-2-measurement-isolation.md)
@@ -89,16 +91,20 @@ If a Task and linked ADR disagree, stop and synchronize them before work.
 
 ## Verified Current Implementation
 
-- Positive `long`-backed domain identifiers, price, quantity and sequence.
+- Positive `long`-backed domain identifiers, price, quantity, input Sequence
+  and output EventSequence.
 - Controlled limit/market order lifecycle plus deterministic Trade and
-  Execution value objects.
+  Execution value objects; Trade uses EventSequence rather than input Sequence.
+- Immutable engine command/result boundary types: submit-limit, cancel,
+  outcome, match aggregate and defensive EngineResult collection.
 - `TreeMap` bid/ask price indexes with intrusive FIFO levels.
 - Active `OrderId -> OrderNode` cancellation index.
 - Deterministic structural limit matching with price-time priority, maker
   price, partial/full fills and one-time residual resting.
 - OrderBook-focused correctness, invariant and determinism tests.
 
-`MatchingEngine` orchestration, market-order execution, event publication,
+`MatchingEngine` orchestration, OrderBook integration, trade generation,
+event-sequence allocation, market-order execution, event publication,
 Disruptor pipeline, Netty protocol, WAL, snapshot and recovery are not
 implemented.
 
@@ -128,7 +134,7 @@ Client
   -> Netty / Protocol                 [Future Work]
   -> Decoder / Validation             [Future Work]
   -> Ingress + RingBuffer/Disruptor   [Future Work]
-  -> MatchingEngine                   [TASK-008 approved; Stage 1 not started]
+  -> MatchingEngine                   [Stage 1 API only; core remains locked]
   -> OrderBook                        [Phase 2 baseline implemented]
        -> BidBook / AskBook
        -> PriceLevel / OrderQueue

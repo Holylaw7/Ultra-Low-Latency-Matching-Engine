@@ -88,9 +88,12 @@ ownership, and treats a future command WAL as the canonical replay input.
 Disruptor/Actor scheduling, market-order policy, publication, networking,
 WAL implementation, snapshot, recovery and optimization remain deferred.
 
-`Sequence` is reserved for commands, MatchingEngine owns `EventSequence`, and
-`Trade.sequence` is semantically revised to `Trade.eventSequence`.
+`Sequence` is reserved for commands. `Trade.sequence` has been migrated to
+`Trade.eventSequence`; the value type validates and orders output sequence
+values while allocation remains reserved for the future MatchingEngine.
 [`TASK-20260820-008-phase3-matching-engine-implementation.md`](../../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md)
-is approved. Only Stage 1 Domain/API Foundation is authorized; MatchingEngine
-Core and Determinism Verification remain separately gated. OrderBook is an
-external frozen dependency and no OrderBook file or API may change.
+is in Stage 1 completion review. Immutable command/result boundary types have
+been added, but no MatchingEngine, OrderBook integration, Trade generation or
+EventSequence allocation exists. MatchingEngine Core and Determinism
+Verification remain separately gated. OrderBook is an external frozen
+dependency and no OrderBook file or API may change.

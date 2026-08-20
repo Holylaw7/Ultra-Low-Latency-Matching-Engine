@@ -6,17 +6,17 @@
 | --- | --- |
 | Task ID | `TASK-20260820-008` |
 | Title | Implement Phase 3 MatchingEngine Orchestration Baseline |
-| Status | `Approved — Implementation not started` |
+| Status | `In Progress — Stage 1 completed pending Human approval` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created | `2026-08-20` |
 | Updated | `2026-08-20` |
 | Related Phase | Phase 3 — MatchingEngine |
 | Related ADR | ADR-0005 sequence revision and ADR-0011 (`Approved`) |
-| Current Stage | `Task Plan approved — Stage 1 not started` |
+| Current Stage | `Stage 1 Domain/API Foundation completed — pending Human approval` |
 | Next Approval Gate | `Stage 1 Domain/API Foundation completion review` |
-| Branch | `docs/phase3-matching-engine-task-plan` |
-| Approved Implementation Branch | `feature/phase3-matching-engine` (not created) |
+| Branch | `feature/phase3-matching-engine` |
+| Approved Implementation Branch | `feature/phase3-matching-engine` |
 | Parent Branch / HEAD | `docs/phase3-matching-engine-adr` at `96fe50b` |
 | Engineering Baseline | `v0.1.0-engineering-baseline` at `cbfa957` |
 | Remote | `origin` |
@@ -131,8 +131,7 @@ observable results without embedding infrastructure concerns.
 ### Current Implementation
 
 - `Order.sequence()` stores a positive upstream logical input sequence.
-- `Trade` currently carries `TradeId` plus `Sequence`; it has not yet received
-  the approved EventSequence type migration.
+- `Trade` carries `TradeId` plus the approved output `EventSequence`.
 - `Execution` contains TradeId, OrderId, price, quantity and remaining units.
 - `OrderBook.matchLimit(Order)` mutates the book and returns immutable ordered
   `List<MatchFragment>`.
@@ -140,7 +139,8 @@ observable results without embedding infrastructure concerns.
   active order is absent.
 - `OrderBook.activeOrderCount()` provides a conservative upper bound for the
   fragments one incoming order can create.
-- No engine command, engine result, match aggregate or MatchingEngine exists.
+- Immutable engine commands and result aggregates exist; `MatchingEngine` does
+  not yet exist.
 
 ### In Scope
 
@@ -495,7 +495,7 @@ release is authorized by this plan.
 | ADR / Decision | `tasks/reports/PHASE-3-matching-engine-adr-decision.md` | Completed | Task Planning | ADR-0011 approved 2026-08-20 |
 | Task Planning | `tasks/reports/PHASE-3-matching-engine-implementation-planning.md` | Completed | Task Plan Review | Approved 2026-08-20 |
 | Task Approval | Same planning report | Completed | Domain/API Foundation | Approved 2026-08-20 |
-| Domain/API Foundation | Not created | Authorized / Not Started | Human Stage Approval | Start authorized 2026-08-20 |
+| Domain/API Foundation | `tasks/reports/PHASE-3-matching-engine-domain-api-foundation.md` | Completed / Pending Human Approval | Human Stage 1 Completion Review | Awaiting review |
 | MatchingEngine Implementation | Not created | Not Authorized | Human Stage Approval | Not Authorized |
 | Correctness / Determinism Verification | Not created | Not Authorized | Human Stage Approval | Not Authorized |
 | Benchmark / Profile | Not applicable | Not applicable | Documentation Sync | Not applicable |
@@ -509,23 +509,24 @@ release is authorized by this plan.
 | 2026-08-20 | Proposed | Converted approved ADR-0005/ADR-0011 decisions into exact API, file, test and gate plan | Documentation only; production code unchanged |
 | 2026-08-20 | Planning Verified | Pushed dedicated planning branch and observed exact-SHA CI | `bd7fdf0`; GitHub Actions run `32378870274` PASS |
 | 2026-08-20 | Approved | Human approved TASK-008 with frozen OrderBook and three-stage implementation constraints | Stage 1 authorized but not started; no production code changed |
+| 2026-08-20 | Stage 1 Completed | Added EventSequence/Trade migration, immutable command/result API and API-boundary tests | `mvn -pl core -am test` 49 tests passed; `mvn verify` and remote CI pending final evidence commit/push |
 
 ## 18. Completion Checklist
 
-- [ ] Scope and acceptance criteria satisfied
-- [ ] Tests added or updated
-- [ ] Build passed
-- [ ] Static or format checks passed
+- [x] Stage 1 scope and acceptance criteria satisfied
+- [x] Stage 1 tests added or updated
+- [x] Stage 1 build passed
+- [x] Stage 1 static or format checks passed
 - [x] Benchmark or profile recorded as not applicable
-- [ ] Documentation updated after implementation
+- [x] Stage 1 documentation updated after implementation
 - [x] Decision and ADR linkage verified
 - [x] ADR existed before the technical decision and task approval
 - [x] Every completed stage has a phase report
 - [x] Human approval is recorded before each completed next stage
 - [x] Task plan and `AGENT_CONTEXT.md` synchronized for planning
 - [x] `AGENT_CONTEXT.md` updated for approved Stage 1 gate
-- [ ] Implementation diff reviewed
-- [ ] Implementation commits created
-- [ ] Implementation remote synchronization completed
-- [ ] Implementation CI status recorded
-- [ ] Post-implementation Git status confirmed
+- [x] Stage 1 implementation diff reviewed
+- [x] Stage 1 implementation commits created
+- [ ] Stage 1 implementation remote synchronization completed
+- [ ] Stage 1 implementation CI status recorded
+- [ ] Stage 1 post-implementation Git status confirmed
