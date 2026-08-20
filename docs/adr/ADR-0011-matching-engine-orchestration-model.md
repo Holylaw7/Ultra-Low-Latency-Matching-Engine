@@ -2,15 +2,14 @@
 
 ## Status
 
-Approved with conditions — D3 condition satisfied; final approval record
-pending; Phase 3 implementation not authorized
+Approved — Phase 3 implementation requires a separately approved Task Plan
 
 ## Decision Record
 
 - Proposal date: `2026-08-20`
 - Reviewer: `Human Developer`
 - Decision date: `2026-08-20`
-- Decision: `Approved with conditions`
+- Decision: `Approved`
 - Related decisions:
   - [`ADR-0001-matching-model.md`](ADR-0001-matching-model.md)
   - [`ADR-0005-domain-model-and-correctness-baseline.md`](ADR-0005-domain-model-and-correctness-baseline.md)
@@ -20,9 +19,11 @@ pending; Phase 3 implementation not authorized
 
 The Human Developer approved D1, D2 and D4-D7 on `2026-08-20`. ADR-0005
 revision R1-R6 was subsequently approved with ownership and replay-scope
-clarifications, satisfying the D3 condition. ADR-0011 still requires a
-separate final approval record before implementation planning. This decision
-authorizes no production implementation.
+clarifications, satisfying D3. ADR-0011 received final approval on
+`2026-08-20` and is the frozen Phase 3 architecture decision.
+
+This approval authorizes creation and review of a separate Phase 3
+implementation Task Plan. It does not by itself authorize production code.
 
 ## Context
 
@@ -135,7 +136,7 @@ trade identity.
 **Decision: approved after semantic revision.** ADR-0005 R1-R6 explicitly
 reserve `Sequence` for commands, assign `EventSequence` ownership to
 MatchingEngine, and define replay determinism scope. The condition is
-satisfied, but final ADR-0011 approval is still pending.
+satisfied and included in the final architecture approval.
 
 ### WAL option A — commands are authoritative
 
@@ -164,7 +165,7 @@ This creates two competing sources of truth and additional consistency rules.
 **Decision: rejected. Outputs may be recorded or verified, but are not a second
 recovery authority.**
 
-## Conditionally Approved Decision
+## Decision
 
 ### 1. Core Execution Boundary
 
@@ -255,7 +256,7 @@ The approved domain refinement replaces `Trade.sequence` with
 `Trade.eventSequence` using an explicit `EventSequence` value type. The exact
 semantic revision and approved items R1-R6 are recorded in ADR-0005. Only
 MatchingEngine owns EventSequence allocation. No implementation may begin
-before final ADR-0011 approval and a separately approved implementation Task.
+before a separately approved implementation Task.
 
 ### 5. Engine Result Boundary
 
@@ -396,10 +397,10 @@ The first architecture review produced these decisions:
 | D6 | Command log is canonical replay input; derived outputs are non-authoritative | Approved in principle; WAL implementation deferred |
 | D7 | Market order, pipeline, WAL implementation and optimization remain deferred | Approved |
 
-The D3 condition is satisfied. The next gate is a separate Human final approval
-of ADR-0011. Full ADR approval alone still does not authorize code: a separate
-implementation Task Plan must define exact types, failure API, tests, files
-and verification commands and receive Human approval.
+All decision items and the D3 condition are approved. ADR-0011 is final. This
+approval alone does not authorize code: TASK-20260820-008 or its approved
+successor must define exact types, failure API, tests, files and verification
+commands and receive Human approval.
 
 ## Approval Record
 
@@ -408,3 +409,4 @@ and verification commands and receive Human approval.
 | 2026-08-20 | Human Developer | `Proposal Authorized` | Phase 3 ADR / Decision proposal may be prepared. Architecture selection and implementation remain unauthorized pending review. |
 | 2026-08-20 | Human Developer | `Approved with conditions` | D1, D2 and D4-D7 approved. D3 is approved only after explicit ADR-0005 sequence semantic revision. Phase 3 implementation remains unauthorized. |
 | 2026-08-20 | Human Developer | `D3 / ADR-0005 R1-R6 Approved` | EventSequence owner and replay determinism scope clarified. D3 condition satisfied. ADR-0011 final approval and Phase 3 implementation authorization remain pending. |
+| 2026-08-20 | Human Developer | `Approved` | ADR-0011 D1-D7 approved. ADR-0005 sequence semantics revised and accepted. EventSequence ownership assigned to MatchingEngine. Replay determinism scope finalized. Phase 3 implementation may proceed only after TASK-20260820-008 approval. |

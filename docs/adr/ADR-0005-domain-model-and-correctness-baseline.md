@@ -162,7 +162,7 @@ Until implementation authorization:
 
 - the existing Phase 1 and frozen Phase 2 production code remains unchanged;
 - `EventSequence` must not be introduced in code;
-- ADR-0011 awaits its separate final approval record;
+- ADR-0011 is finally approved, but does not itself authorize code;
 - Phase 3 implementation remains unauthorized.
 
 ### Revision Approval Gate
@@ -178,9 +178,9 @@ The Human Developer recorded the following decisions:
 | R5 | Keep maker/taker Execution order inside the aggregate, without independent Execution sequences | Approved |
 | R6 | Replay must reproduce observable matching state, TradeId and EventSequence, excluding implementation identity | Approved |
 
-Approval of R1-R6 satisfies ADR-0011 condition D3. It still does not authorize
-implementation; ADR-0011 requires a separate final approval record, followed
-by a separate implementation Task Plan and Human approval.
+Approval of R1-R6 satisfies ADR-0011 condition D3. ADR-0011 has subsequently
+received final approval. Implementation still requires a separate
+TASK-20260820-008 Task Plan and Human approval.
 
 ### Revision Approval Record
 
