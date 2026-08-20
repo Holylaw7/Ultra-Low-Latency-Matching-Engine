@@ -13,8 +13,8 @@
 | Updated | `2026-08-19` |
 | Related Phase | `Phase 2 - Basic OrderBook` |
 | Related ADR | [`ADR-0007-basic-orderbook-structure-and-boundaries.md`](../../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md); [`ADR-0008-structural-limit-matching.md`](../../docs/adr/ADR-0008-structural-limit-matching.md); [`ADR-0009-performance-profiling-evidence.md`](../../docs/adr/ADR-0009-performance-profiling-evidence.md); [`ADR-0010-optimization-decision-after-profiling.md`](../../docs/adr/ADR-0010-optimization-decision-after-profiling.md) |
-| Current Stage | `Phase 2 Final Closure Review (Prepared - Pending Human Approval)` |
-| Next Approval Gate | `Human Approval - Phase 2 Final Closure` |
+| Current Stage | `Phase 2 Closure Approved` |
+| Next Approval Gate | `Merge -> master CI -> engineering baseline tag -> Task Completion` |
 
 ## 2. Background
 
@@ -412,6 +412,7 @@ must not be mixed into an unrelated implementation commit.
 | 2026-08-19 | Human Developer | Measurement-Isolation Execution | `Completed - Pending Human Approval` | Isolated steady-state single-level and multi-level matching measurements plus separate lifecycle preparation measurements completed. Current JFR sample counts and profiler outliers remain insufficient to authorize production optimization. |
 | 2026-08-20 | Human Developer | TASK-006 Repository Remote and CI Setup | `Approved / Closed` | Remote repository, SSH tracking, branch push, local verification, GitHub Actions evidence and documentation accepted. Do not merge immediately; enter Phase 2 Final Closure Review. |
 | 2026-08-20 | Human Developer | Steady-State Evidence Review | `Approved for closure evidence` | Phase 2 measurement isolation and evidence tracks accepted as complete. Production optimization remains unauthorized. Final Closure Review is authorized; Phase 3, merge and tag remain gated. |
+| 2026-08-20 | Human Developer | Phase 2 Final Closure Review | `Approved` | Basic OrderBook and all correctness/performance/repository evidence accepted. Authorized normal `--no-ff` merge to master, master CI verification, annotated `v0.1.0-engineering-baseline` tag and TASK-004 closure. Release, Phase 3 implementation, production optimization and history rewrite remain unauthorized. |
 
 ## 16. Phase Reports and Approval Gates
 
@@ -432,7 +433,7 @@ must not be mixed into an unrelated implementation commit.
 | Optimization ADR / Decision | [`tasks/reports/PHASE-2-optimization-adr-decision.md`](../reports/PHASE-2-optimization-adr-decision.md) | `Completed - Approved` | `Measurement-Isolation Execution` | Approved 2026-08-19 |
 | Measurement-Isolation Execution | [`tasks/reports/PHASE-2-measurement-isolation.md`](../reports/PHASE-2-measurement-isolation.md) | `Completed - Approved` | `Phase 2 Final Closure Review` | Approved 2026-08-20 |
 | Repository Remote and CI Setup | [`tasks/reports/PHASE-2-repository-remote-ci-setup.md`](../reports/PHASE-2-repository-remote-ci-setup.md) | `Completed - Approved` | `Phase 2 Final Closure Review` | Approved 2026-08-20 |
-| Phase 2 Final Closure Review | [`tasks/reports/PHASE-2-final-closure-review.md`](../reports/PHASE-2-final-closure-review.md) | `Prepared - Pending Human Approval` | `Human Approval - Phase 2 Final Closure` | Pending |
+| Phase 2 Final Closure Review | [`tasks/reports/PHASE-2-final-closure-review.md`](../reports/PHASE-2-final-closure-review.md) | `Completed - Approved` | `Merge / master CI / baseline tag` | Approved 2026-08-20 |
 
 本阶段报告已由 Human Developer 审批，允许进入 Implementation 阶段。实现仍须
 按子阶段输出报告，并在下一阶段前等待 Human approval。当前
@@ -467,6 +468,7 @@ Review。本阶段不包含 merge、tag、生产性能优化或 Phase 3。
 | 2026-08-19 | Proposed - Pending Human Approval | 审查 JFR 证据并创建 ADR-0010 与 Optimization ADR / Decision 阶段报告；提出在测量隔离前暂缓生产优化 | 未修改生产代码、测试、benchmark 语义、JVM 参数或 GC 设置；等待 Optimization ADR / Decision Human Approval |
 | 2026-08-19 | Completed - Pending Human Approval | Human Developer 批准 ADR-0010 并授权 Measurement-Isolation Execution；完成 steady-state matching 与 lifecycle preparation 隔离测量及 JFR 证据采集 | `mvn -pl benchmark -am verify` 成功；M1 0.423779 us/op；M2 5.590215 us/op；M3 single-level 0.459092 us/op；M3 multi-level 5.772109 us/op；JFR 样本量和 outlier 限制仍不支持生产优化；等待 Steady-State Evidence Review |
 | 2026-08-20 | Prepared - Pending Human Approval | Human Developer 关闭 TASK-006 并接受全部 Phase 2 evidence track；准备 Phase 2 Final Closure Review | Remote `master`/infrastructure branch established; CI runs `32371458037` and `32371665075` passed; merge, tag and Phase 3 remain unauthorized |
+| 2026-08-20 | Closure Approved | Human Developer 批准 Phase 2 Final Closure Review，授权普通 merge、master CI 验证、engineering baseline tag 和任务关闭 | 禁止 squash、Release、Phase 3 implementation、production optimization 和 history rewrite |
 
 ## 18. Completion Checklist
 

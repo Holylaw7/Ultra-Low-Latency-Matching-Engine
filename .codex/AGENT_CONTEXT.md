@@ -12,8 +12,8 @@
 | Product scope | Single-node, in-memory, deterministic matching engine |
 | Phase | Phase 2 — Basic OrderBook |
 | Product task | `TASK-20260819-004` — Basic OrderBook (`In Progress`) |
-| Product stage | Phase 2 Final Closure Review prepared |
-| Product approval | Final Closure pending Human approval |
+| Product stage | Phase 2 closure actions |
+| Product approval | Final Closure Review approved |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `chore/repository-remote-ci` |
 | Latest remote-verified commit | `f1f2a85` |
@@ -27,26 +27,24 @@
 | --- | --- | --- |
 | Phase 0 — Bootstrap | Completed | Maven reactor, Java 21, JUnit 5, JMH, Checkstyle and CI workflow |
 | Phase 1 — Domain Model | Completed / Approved | [`PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md) |
-| Phase 2 — Basic OrderBook | Execution complete / Final Closure pending | OrderBook tests, JMH/JFR evidence, remote repository and passing CI |
+| Phase 2 — Basic OrderBook | Closure Approved | OrderBook tests, JMH/JFR evidence, remote repository and passing CI |
 | Phase 3 — Matching Engine | Pending / Not Authorized | Requires completion and approval of the current Phase 2 gate |
 | Phase 4+ — Pipeline, network, recovery and performance evolution | Future Work | Architecture documents and future ADRs/tasks |
 
 ## Current Product Gate
 
-The approved Phase 2 OrderBook structure, structural limit matching,
-correctness verification, component benchmark, profiling,
-measurement-isolation experiment and Repository/CI setup are complete and
-Human-reviewed. The next product action is:
+The Phase 2 implementation and evidence tracks are complete. Final Closure
+Review was approved on `2026-08-20`. The authorized closure sequence is:
 
 ```text
-Phase 2 Final Closure Review
-    -> Human Approval
-    -> separately authorized merge/tag actions, if selected
-    -> Phase 3 ADR only after Phase 2 closure
+normal --no-ff merge to master
+    -> verify master locally and in GitHub Actions
+    -> create/push v0.1.0-engineering-baseline
+    -> close TASK-20260819-004
 ```
 
-Merge, baseline tag, production optimization, Phase 3 implementation and any
-unrelated runtime change remain unauthorized.
+Release, production optimization, Phase 3 implementation and history rewrite
+remain unauthorized.
 
 Current plan:
 [`TASK-20260819-004-basic-orderbook.md`](../tasks/active/TASK-20260819-004-basic-orderbook.md).
@@ -58,7 +56,7 @@ Current evidence:
 - [`PHASE-2-repository-remote-ci-setup.md`](../tasks/reports/PHASE-2-repository-remote-ci-setup.md)
   — completed and approved; remote CI established.
 - [`PHASE-2-final-closure-review.md`](../tasks/reports/PHASE-2-final-closure-review.md)
-  — prepared; Human approval pending.
+  — approved; closure actions authorized.
 - [`PHASE-2-profiling-execution.md`](../tasks/reports/PHASE-2-profiling-execution.md)
   — completed and approved as evidence collection.
 - [`PHASE-2-benchmark-orderbook-baseline.md`](../tasks/reports/PHASE-2-benchmark-orderbook-baseline.md)
