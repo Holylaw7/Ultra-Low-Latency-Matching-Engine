@@ -15,8 +15,8 @@ Completed / Evidence PASS
 TASK-021:
 Completed / Evidence PASS
 
-TASK-022..023:
-TASK-022 Completed / Evidence PASS; TASK-023 Authorized / Next
+TASK-023:
+Completed / Evidence PASS
 
 Phase 6 Closure:
 Not Authorized
@@ -128,7 +128,7 @@ Not implemented:
 | Commit | `7f0d5ad` |
 | Exact-SHA CI | [32490394814](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490394814) PASS |
 
-## Next Gate
+## TASK-021 Checkpoint
 
 TASK-022 may begin under the approved Blueprint. It must verify deterministic
 loopback response streams, every-frame fragmentation, coalesced-frame
@@ -158,8 +158,50 @@ Implemented evidence:
 | Commit | `c7d9399` |
 | Exact-SHA CI | [32490942307](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490942307) PASS |
 
-## Next Gate
+## TASK-022 Checkpoint
 
-TASK-023 is authorized after TASK-022 exact-SHA CI is confirmed. It must add
+TASK-023 was authorized after TASK-022 exact-SHA CI was confirmed. It added
 only the approved bounded benchmark and synchronized evidence/Closure proposal;
-Phase 6 must stop at Human Closure Review.
+Phase 6 now stops at Human Closure Review.
+
+## TASK-023 — Network Benchmark, Documentation and Closure Preparation
+
+Implemented:
+
+- `NetworkBenchmark` JMH workloads for fixed Submit/Cancel request decoding,
+  command/match/error response encoding and one-request-in-flight loopback
+  TCP round trips;
+- Java 21 full-matrix evidence with environment, workload, message-size,
+  SampleTime P50/P99/P999 and claim-boundary metadata;
+- network architecture and benchmark documentation, README/overview status
+  synchronization and a separate Phase 6 Closure Proposal;
+- no production semantic, durability-default, allocator or wait-strategy
+  changes driven by benchmark values.
+
+## TASK-023 Evidence
+
+| Evidence | Result |
+| --- | --- |
+| Benchmark package / Checkstyle | PASS |
+| Java 21 smoke and full JMH matrix | PASS |
+| Full `mvn verify` | 129 tests passed; 0 failures |
+| Frozen Domain/OrderBook/Engine/WAL/Recovery paths | 0 diff |
+| Benchmark commit | `0c924dd` |
+| Benchmark exact-SHA CI | [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) PASS |
+| Full-matrix loopback | `0.017 ops/us`; P50 `50.048 us`; P99 `169.108 us`; P999 `260.719 us` |
+| Full-matrix codec throughput | decode `7.004`–`7.869 ops/us`; encode `4.691`–`5.333 ops/us` |
+
+The raw CSV is local/ignored at
+`benchmark-results/phase6-network-full-jdk21.csv`; reproducible commands,
+environment and limitations are recorded in
+[`network.md`](../../docs/benchmark/network.md). These are component/local
+loopback observations only, not durable acknowledgements, client-receipt
+proof, concurrent-client capacity or Product Release evidence.
+
+## Closure Preparation
+
+The Closure Proposal is prepared at
+[`PHASE-6-network-protocol-closure.md`](PHASE-6-network-protocol-closure.md).
+TASK-019 through TASK-023 have completed their dependency-ordered evidence
+gates. Phase 6 is now stopped at Human Phase 6 Closure Review; merge to master,
+`v0.5.0-engineering-baseline`, Phase 7 and Product Release remain unauthorized.

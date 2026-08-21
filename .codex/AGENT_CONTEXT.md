@@ -10,20 +10,20 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 6 — Binary Network Protocol and Single-Session Gateway (`Implementation Authorized`) |
-| Latest product task | [`TASK-20260821-023`](../tasks/active/TASK-20260821-023-phase6-network-benchmark-docs.md) — Authorized / Next |
+| Phase | Phase 6 — Binary Network Protocol and Single-Session Gateway (`Closure Review Pending`) |
+| Latest product task | [`TASK-20260821-023`](../tasks/active/TASK-20260821-023-phase6-network-benchmark-docs.md) — Completed / Evidence PASS |
 | Latest architecture decision | [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md) — Approved |
-| Current planning task | TASK-023 implementation; Phase 6 Closure remains unauthorized |
+| Current planning task | TASK-023 complete; Phase 6 Closure Review pending |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
-| Product stage | Phase 5 Baseline Frozen / Phase 6 Implementation Authorized |
-| Product approval | Phase 6 Blueprint approved; implementation authorized in dependency order; merge/tag and Product Release not authorized |
+| Product stage | Phase 5 Baseline Frozen / Phase 6 Implementation complete; Closure pending |
+| Product approval | Phase 6 TASK-019..023 evidence accepted; merge/tag and Product Release not authorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `feature/phase6-network-protocol` |
 | Engineering baseline commit | `f1e453a` |
 | Engineering baseline tag | `v0.4.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/master` at `2cf34b5`; `origin/feature/phase6-network-protocol` at `7f0d5ad`; annotated `v0.4.0-engineering-baseline` remains fixed at `f1e453a` |
-| CI | TASK-022 [32490942307](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490942307) PASS; TASK-021 [32490394814](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490394814) PASS; TASK-020 [32488893108](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32488893108) PASS; TASK-019 [32488339314](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32488339314) PASS; Blueprint approval [32487610108](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32487610108) PASS; Phase 5 final master [32483798483](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32483798483) PASS |
+| Remote sync | `origin/master` at `2cf34b5`; Phase 6 feature branch contains TASK-023 evidence; annotated `v0.4.0-engineering-baseline` remains fixed at `f1e453a` |
+| CI | TASK-023 benchmark [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) PASS; TASK-022 [32490942307](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490942307) PASS; TASK-021 [32490394814](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490394814) PASS; TASK-020 [32488893108](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32488893108) PASS; TASK-019 [32488339314](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32488339314) PASS; Blueprint approval [32487610108](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32487610108) PASS |
 
 ## Project Progress
 
@@ -36,7 +36,7 @@
 | Governance — Phase Blueprint Mode | Completed / Approved / Active | [`TASK-009`](../tasks/completed/TASK-20260821-009-phase-blueprint-governance.md); master CI PASS |
 | Phase 4 — Event Pipeline | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-4-event-pipeline-closure.md); `v0.3.0-engineering-baseline` |
 | Phase 5 — Command WAL and Deterministic Replay Foundation | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md); [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md); [`Closure`](../tasks/reports/PHASE-5-command-wal-replay-closure.md); `v0.4.0-engineering-baseline` |
-| Phase 6 — Binary Network Protocol and Single-Session Gateway | TASK-022 Completed / TASK-023 Authorized / Next | [`Blueprint`](../tasks/blueprints/PHASE-6-network-protocol-blueprint.md); [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md) |
+| Phase 6 — Binary Network Protocol and Single-Session Gateway | TASK-019..023 Completed / Evidence PASS; Closure Review pending | [`Blueprint`](../tasks/blueprints/PHASE-6-network-protocol-blueprint.md); [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md); [`Closure`](../tasks/reports/PHASE-6-network-protocol-closure.md) |
 | Phase 7+ — Snapshot/recovery integration and performance evolution | Future Work | separately approved future Blueprints |
 
 ## Current Product Gate
@@ -90,7 +90,9 @@ ADR-0011 Final Approved
     -> TASK-020 [Completed / exact-SHA CI PASS]
     -> TASK-021 [Completed / exact-SHA CI PASS]
     -> TASK-022 [Completed / exact-SHA CI PASS]
-    -> TASK-023 [Authorized / Next]
+    -> TASK-023 [Completed / exact-SHA CI PASS]
+    -> Phase 6 Closure Proposal [Prepared]
+    -> Human Phase 6 Closure Review [Pending]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
@@ -120,18 +122,25 @@ R3 documentation synchronization is complete at `0e6ac95` with exact-SHA CI
 `f1e453a`; master CI `32482831419` and annotated baseline tag CI `32482900227`
 passed. TASK-014 through TASK-018 were archived by `915c3ac`, whose exact-SHA
 CI `32483612937` passed, and Phase 5 is frozen at
-`v0.4.0-engineering-baseline`. Phase 6 now implements the approved binary TCP
-protocol and single-session Netty gateway in dependency order. Product Release,
-live WAL integration and Phase Closure remain separately governed.
+`v0.4.0-engineering-baseline`. Phase 6 implements the approved binary TCP
+protocol and single-session Netty gateway in dependency order. TASK-019 through
+TASK-023 have completed their evidence gates, including deterministic network
+verification and Java 21 component/loopback JMH evidence. The Closure Proposal
+is prepared and the phase is stopped at Human Phase 6 Closure Review. Product
+Release, live WAL integration, Snapshot and online Recovery remain separately
+governed.
 
 Current Blueprint Proposal:
 [`PHASE-6-network-protocol-blueprint.md`](../tasks/blueprints/PHASE-6-network-protocol-blueprint.md).
 
+Current Phase 6 Closure Proposal:
+[`PHASE-6-network-protocol-closure.md`](../tasks/reports/PHASE-6-network-protocol-closure.md).
+
 Current proposal report:
 [`PHASE-6-network-protocol-blueprint-proposal.md`](../tasks/reports/PHASE-6-network-protocol-blueprint-proposal.md).
 
-Current cumulative implementation report:
-[`PHASE-5-command-wal-replay.md`](../tasks/reports/PHASE-5-command-wal-replay.md).
+Current cumulative Phase 6 implementation report:
+[`PHASE-6-network-protocol.md`](../tasks/reports/PHASE-6-network-protocol.md).
 
 Current Closure Record:
 [`PHASE-5-command-wal-replay-closure.md`](../tasks/reports/PHASE-5-command-wal-replay-closure.md).
@@ -192,6 +201,7 @@ Current evidence:
 | MatchingEngine orchestration model | Approved | [`ADR-0011`](../docs/adr/ADR-0011-matching-engine-orchestration-model.md) |
 | Event pipeline execution and backpressure | Approved with Blueprint conditions | [`ADR-0012`](../docs/adr/ADR-0012-event-pipeline-execution-and-backpressure.md) |
 | Versioned command WAL and strict offline deterministic replay | Approved / Implemented / Baseline Frozen | [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md) |
+| Binary protocol v1 and single-session Netty gateway | Approved / Implemented; Closure Review pending | [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md) |
 
 If a Task and linked ADR disagree, stop and synchronize them before work.
 
@@ -199,12 +209,12 @@ If a Task and linked ADR disagree, stop and synchronize them before work.
 
 | Decision | Status | Source |
 | --- | --- | --- |
-| Binary protocol v1 and single-session Netty gateway | Approved / TASK-019 implementation authorized | [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md) |
+| Binary protocol v1 and single-session Netty gateway | Approved / TASK-019..023 complete; Closure Review pending | [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md) |
 
 ADR-0014 approves one active TCP session, one request in flight, gateway-owned
-Command Sequence and bounded ordered result frames. Implementation does not
-include live WAL integration, multi-client ingress, Snapshot, online Recovery
-or Release.
+Command Sequence and bounded ordered result frames. TASK-019..023 implement
+that boundary and its evidence; the implementation does not include live WAL
+integration, multi-client ingress, Snapshot, online Recovery or Release.
 
 ## Verified Current Implementation
 
@@ -242,6 +252,9 @@ Verified fact:
 - Phase 5 component JMH evidence separates WAL append, strict scan and offline
   replay across durability modes, segment sizes and command counts; see
   [`recovery.md`](../docs/benchmark/recovery.md).
+- Phase 6 component/loopback JMH evidence covers fixed protocol decode/encode
+  vectors and one-request-in-flight local TCP round trips; see
+  [`network.md`](../docs/benchmark/network.md).
 - Raw JSON and JFR artifacts are local and ignored; reports record their paths,
   generation commands, summaries and limitations.
 
@@ -259,8 +272,8 @@ These remain targets or hypotheses, never measured project claims.
 
 ```text
 Client
-  -> Netty / Protocol                 [Future Work]
-  -> Decoder / Validation             [Future Work]
+  -> Netty / Protocol                 [Phase 6 implementation; Closure pending]
+  -> Decoder / Validation             [Phase 6 implemented]
   -> Ingress + RingBuffer/Disruptor   [Phase 4 baseline frozen]
   -> MatchingEngine                   [Phase 3 baseline frozen]
   -> OrderBook                        [Phase 2 baseline implemented]

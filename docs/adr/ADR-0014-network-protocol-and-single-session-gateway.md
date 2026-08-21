@@ -396,7 +396,7 @@ readiness.
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | `Proposal Authorized` | Phase 6 Discovery, ADR draft, complete Blueprint and TASK-019 through TASK-023 proposals only. No implementation. |
-| 2026-08-21 | Human Developer | `Approved` | ADR-0014 D1-D10 and the complete Phase 6 Blueprint approved. TASK-019 through TASK-023 authorized in strict dependency order; frozen boundaries, Exception Gate and separate Closure approval remain active. |
+| 2026-08-21 | Human Developer | `Approved` | ADR-0014 D1-D10 and the complete Phase 6 Blueprint approved. TASK-019 through TASK-023 authorized in strict dependency order; all task evidence gates are complete and separate Closure approval remains active. |
 
 ## Next Gate
 
@@ -404,7 +404,7 @@ readiness.
 ADR-0014: Approved
 Phase 6 Blueprint: Approved
 Implementation: Authorized in dependency order
-Current Task: TASK-023
-Phase Closure: Not Authorized
-Next Gate: TASK-023 Implementation / Evidence Gate
+Current Task: TASK-023 Completed
+Phase Closure: Pending Human Review
+Next Gate: Human Phase 6 Closure Review
 ```

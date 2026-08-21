@@ -5,14 +5,14 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-023` / Phase 6 Network Benchmark, Documentation and Closure Preparation |
-| Status | `Conditionally Authorized` |
+| Status | `Completed / Evidence PASS` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 6 / ADR-0014 / [`PHASE-6`](../blueprints/PHASE-6-network-protocol-blueprint.md) |
 | Authorization Mode | Blueprint |
-| Current Stage / Next Gate | Awaiting TASK-022 evidence / TASK-023 evidence gate then Closure Review |
+| Current Stage / Next Gate | Completed / Human Phase 6 Closure Review |
 | Branch / Baseline | `feature/phase6-network-protocol` after approval / approved proposal commit |
-| Remote / CI | `origin` / Pending |
+| Remote / CI | `origin` / benchmark CI [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) PASS; final docs CI recorded at completion |
 
 ## 2. Background
 
@@ -32,24 +32,24 @@ synchronize all Phase 6 documents and prepare the Closure Report.
 
 ## 5. Requirements and Acceptance Criteria
 
-- [ ] benchmark deterministic Submit/Cancel decode and result encode workloads;
-- [ ] benchmark sequential loopback request-to-complete-result round trip;
-- [ ] validate benchmark outputs to prevent dead-code/semantic drift;
-- [ ] record CPU/topology, RAM, OS, JDK/JVM, GC, Netty/modules, allocator,
+- [x] benchmark deterministic Submit/Cancel decode and result encode workloads;
+- [x] benchmark sequential loopback request-to-complete-result round trip;
+- [x] validate benchmark outputs to prevent dead-code/semantic drift;
+- [x] record CPU/topology, RAM, OS, JDK/JVM, GC, Netty/modules, allocator,
   warmup, measurements, forks, threads, message mix/sizes and commands;
-- [ ] record throughput and SampleTime P50/P99/P999 where meaningful;
-- [ ] keep raw output local/ignored and record path/command/summary/limitations;
-- [ ] distinguish codec, loopback, pipeline and durability boundaries;
-- [ ] synchronize README, architecture, ADR, Blueprint, Tasks, reports and
+- [x] record throughput and SampleTime P50/P99/P999 where meaningful;
+- [x] keep raw output local/ignored and record path/command/summary/limitations;
+- [x] distinguish codec, loopback, pipeline and durability boundaries;
+- [x] synchronize README, architecture, ADR, Blueprint, Tasks, reports and
   AGENT_CONTEXT;
-- [ ] prepare Closure Proposal and stop for Human review.
+- [x] prepare Closure Proposal and stop for Human review.
 
 ## 6. Current Implementation and Scope
 
 ### Current Implementation
 
-`docs/benchmark/network.md` contains only a future measurement list and no
-Netty/network benchmark class exists.
+`NetworkBenchmark` and the network benchmark/architecture evidence are now
+implemented within the approved component and sequential loopback scope.
 
 ### In Scope
 
@@ -125,7 +125,7 @@ Revert benchmark/docs only. Do not change runtime behavior to preserve a number.
 
 ```text
 mvn verify
-java -jar benchmark/target/matching-engine-benchmark-0.1.0-SNAPSHOT.jar NetworkBenchmark -wi 1 -i 1 -f 1
+& 'E:\Java\microsoft-jdk-21\bin\java.exe' -jar benchmark/target/matching-engine-benchmark-0.1.0-SNAPSHOT.jar NetworkBenchmark -wi 1 -i 2 -f 1 -t 1 -rff benchmark-results/phase6-network-full-jdk21.csv -rf csv
 <Blueprint-approved full JMH matrix>
 git diff --check
 frozen path audit
@@ -152,20 +152,22 @@ Push checkpoints and record exact-SHA CI. Stop after Closure Proposal.
 
 | Stage | Report | Status | Next Gate | Authorization |
 | --- | --- | --- | --- | --- |
-| Approval | Phase 6 proposal | Pending | Blueprint Approval | Pending |
-| Benchmark/Docs | cumulative report | Pending | exact-SHA CI | Blueprint |
-| Completion | Closure Proposal | Pending | Human Phase Closure Review | Strict Human gate |
+| Approval | Phase 6 proposal | Approved | Blueprint Approval | Completed |
+| Benchmark/Docs | cumulative report | Completed / Evidence PASS | Human Phase Closure Review | Blueprint |
+| Completion | Closure Proposal | Prepared | Human Phase Closure Review | Strict Human gate |
 
 ## 17. Implementation Log
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-21 | Proposed | evidence/closure plan | baseline PASS |
+| 2026-08-21 | Implemented | `NetworkBenchmark` codec and sequential loopback evidence | `0c924dd`; exact-SHA CI [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) PASS |
+| 2026-08-21 | Synchronized | benchmark, architecture, cumulative report and Closure Proposal | final docs commit / exact-SHA CI recorded at completion |
 
 ## 18. Completion Checklist
 
-- [ ] benchmark smoke/full evidence complete and bounded claims recorded
-- [ ] documentation/context/ADR/Blueprint/Tasks synchronized
-- [ ] full build/static/diff/frozen audit and exact-SHA CI pass
-- [ ] Closure Proposal prepared
-- [ ] stop at Human Phase 6 Closure Review
+- [x] benchmark smoke/full evidence complete and bounded claims recorded
+- [x] documentation/context/ADR/Blueprint/Tasks synchronized
+- [x] full build/static/diff/frozen audit and exact-SHA CI pass
+- [x] Closure Proposal prepared
+- [x] stop at Human Phase 6 Closure Review
