@@ -13,16 +13,17 @@
 | Phase | Phase 3 — MatchingEngine (`Completed / Approved / Baseline Frozen`) |
 | Latest product task | [`TASK-20260820-008`](../tasks/completed/TASK-20260820-008-phase3-matching-engine-implementation.md) — Completed |
 | Latest architecture task | [`TASK-20260820-007`](../tasks/completed/TASK-20260820-007-phase3-matching-engine-adr-decision.md) — Completed |
-| Current planning task | None — next-phase work not authorized |
+| Current planning task | [`TASK-20260821-009`](../tasks/active/TASK-20260821-009-phase-blueprint-governance.md) — Governance only / In Progress |
+| Governance mode | Phase Blueprint Mode adoption in progress; no product Phase authorized |
 | Product stage | Phase 3 Closed / Baseline Frozen |
 | Product approval | Phase 3 approved and closed; next-phase ADR requires separate authorization |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
-| Branch | `master` |
+| Branch | `docs/phase-blueprint-governance` |
 | Engineering baseline commit | `9281124` |
 | Engineering baseline tag | `v0.2.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `master` and `v0.2.0-engineering-baseline` published |
-| CI | Master baseline [run 32449941033](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32449941033) PASS; tag [run 32449993233](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32449993233) PASS; final closure [run 32450198615](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32450198615) PASS; local `mvn verify` PASS (61 tests) |
+| Remote sync | `master` and `v0.2.0-engineering-baseline` published; governance branch pending |
+| CI | Governance change pending; Phase 3 final [run 32450269825](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32450269825) PASS |
 
 ## Project Progress
 
@@ -32,6 +33,7 @@
 | Phase 1 — Domain Model | Completed / Approved | [`PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md) |
 | Phase 2 — Basic OrderBook | Completed / Approved | `v0.1.0-engineering-baseline`, 45 tests, JMH/JFR evidence and passing master CI |
 | Phase 3 — Matching Engine | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-3-matching-engine-closure-authorization.md); `v0.2.0-engineering-baseline` |
+| Governance — Phase Blueprint Mode | In Progress / Human Authorized | [`TASK-009`](../tasks/active/TASK-20260821-009-phase-blueprint-governance.md); documentation only |
 | Phase 4+ — Pipeline, network, recovery and performance evolution | Future Work | Architecture documents and future ADRs/tasks |
 
 ## Current Product Gate
@@ -65,6 +67,12 @@ production test hooks. Phase 3 is closed at the annotated and CI-verified
 `v0.2.0-engineering-baseline`. Release, next-phase ADR/implementation,
 production optimization and history rewrite remain unauthorized. OrderBook
 remains the frozen Phase 2 dependency.
+
+The current authorized work is governance-only: adopt Phase Blueprint Mode so
+future multi-task Phases use one Human Blueprint Approval, automated
+implementation evidence gates, mandatory Exception Gates and one Human Phase
+Closure Approval. No Phase 4 Blueprint, ADR or product implementation is
+authorized by TASK-009.
 
 Latest completed plan:
 [`TASK-20260820-008-phase3-matching-engine-implementation.md`](../tasks/completed/TASK-20260820-008-phase3-matching-engine-implementation.md).
@@ -193,7 +201,8 @@ requires an approved ADR and Task.
 
 1. Read `MASTER_PROMPT.md`, `DEVELOPMENT_RULES.md`, this file and
    `tasks/README.md`.
-2. Read every relevant `tasks/active/*` plan and linked ADR.
+2. Read the active Phase Blueprint when one exists, then every relevant
+   `tasks/active/*` plan and linked ADR.
 3. Run the mandatory Git bootstrap commands from `MASTER_PROMPT.md`.
 4. Reconcile live Git state with this index; live Git is authoritative for
    repository state.
