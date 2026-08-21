@@ -10,20 +10,20 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 5 — Command WAL and Deterministic Replay Foundation (`Completed / Approved / Baseline Frozen`) |
-| Latest product task | [`TASK-20260821-018`](../tasks/completed/TASK-20260821-018-phase5-wal-benchmark-docs.md) — Completed / Archived |
-| Latest architecture decision | [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md) — Approved |
-| Current planning task | None; Phase 6 is not authorized and requires a new Complete Blueprint |
+| Phase | Phase 6 — Binary Network Protocol and Single-Session Gateway (`Blueprint Proposed`) |
+| Latest product task | [`TASK-20260821-019`](../tasks/active/TASK-20260821-019-phase6-network-protocol-codec.md) — Proposed; implementation unauthorized |
+| Latest architecture decision | [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md) — Proposed |
+| Current planning task | Phase 6 Complete Blueprint and TASK-019 through TASK-023 — Pending Human Blueprint Approval |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
-| Product stage | Phase 5 Closed / Baseline Frozen |
-| Product approval | Phase 5 closure workflow completed; Product Release and Phase 6 not authorized |
+| Product stage | Phase 5 Baseline Frozen / Phase 6 Blueprint Proposal |
+| Product approval | Phase 6 proposal authorized; implementation, merge/tag and Product Release not authorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
-| Branch | `master` |
+| Branch | `docs/phase6-network-protocol-blueprint` |
 | Engineering baseline commit | `f1e453a` |
 | Engineering baseline tag | `v0.4.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/master` synchronized through Phase 5 archive/docs commit `915c3ac`; annotated `v0.4.0-engineering-baseline` remains fixed at merge commit `f1e453a` |
-| CI | Archive/docs [32483612937](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32483612937) PASS; master merge [32482831419](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482831419) PASS; tag [32482900227](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482900227) PASS; closure approval [32482702491](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482702491) PASS; remediation final gate [32482214913](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482214913) PASS |
+| Remote sync | `origin/master` at `2cf34b5`; Phase 6 proposal branch not yet pushed; annotated `v0.4.0-engineering-baseline` remains fixed at `f1e453a` |
+| CI | Phase 5 final master [32483798483](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32483798483) PASS; archive/docs [32483612937](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32483612937) PASS; baseline tag [32482900227](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482900227) PASS; Phase 6 proposal CI pending |
 
 ## Project Progress
 
@@ -36,7 +36,8 @@
 | Governance — Phase Blueprint Mode | Completed / Approved / Active | [`TASK-009`](../tasks/completed/TASK-20260821-009-phase-blueprint-governance.md); master CI PASS |
 | Phase 4 — Event Pipeline | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-4-event-pipeline-closure.md); `v0.3.0-engineering-baseline` |
 | Phase 5 — Command WAL and Deterministic Replay Foundation | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md); [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md); [`Closure`](../tasks/reports/PHASE-5-command-wal-replay-closure.md); `v0.4.0-engineering-baseline` |
-| Phase 6+ — Network, Snapshot/recovery integration and performance evolution | Future Work | separately approved future Blueprints |
+| Phase 6 — Binary Network Protocol and Single-Session Gateway | Blueprint Proposed / Implementation Not Authorized | [`Blueprint`](../tasks/blueprints/PHASE-6-network-protocol-blueprint.md); [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md) |
+| Phase 7+ — Snapshot/recovery integration and performance evolution | Future Work | separately approved future Blueprints |
 
 ## Current Product Gate
 
@@ -83,7 +84,9 @@ ADR-0011 Final Approved
     -> v0.4.0-engineering-baseline / tag CI [Completed / PASS]
     -> TASK-014 through TASK-018 [Archived]
     -> Phase 5 [Baseline Frozen]
-    -> Phase 6 [Not Authorized]
+    -> Phase 6 Discovery / ADR / Complete Blueprint [Prepared]
+    -> Human Phase 6 Blueprint Approval [Pending]
+    -> TASK-019 through TASK-023 implementation [Not Authorized]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
@@ -113,13 +116,15 @@ R3 documentation synchronization is complete at `0e6ac95` with exact-SHA CI
 `f1e453a`; master CI `32482831419` and annotated baseline tag CI `32482900227`
 passed. TASK-014 through TASK-018 were archived by `915c3ac`, whose exact-SHA
 CI `32483612937` passed, and Phase 5 is frozen at
-`v0.4.0-engineering-baseline`. Product Release and Phase 6 remain unauthorized.
+`v0.4.0-engineering-baseline`. Phase 6 Discovery now proposes a binary TCP
+protocol and single-session Netty gateway. Product Release and Phase 6
+implementation remain unauthorized pending Human Blueprint Approval.
 
-Current approved Blueprint:
-[`PHASE-5-command-wal-and-replay-blueprint.md`](../tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md).
+Current Blueprint Proposal:
+[`PHASE-6-network-protocol-blueprint.md`](../tasks/blueprints/PHASE-6-network-protocol-blueprint.md).
 
 Current proposal report:
-[`PHASE-5-command-wal-replay-blueprint-proposal.md`](../tasks/reports/PHASE-5-command-wal-replay-blueprint-proposal.md).
+[`PHASE-6-network-protocol-blueprint-proposal.md`](../tasks/reports/PHASE-6-network-protocol-blueprint-proposal.md).
 
 Current cumulative implementation report:
 [`PHASE-5-command-wal-replay.md`](../tasks/reports/PHASE-5-command-wal-replay.md).
@@ -188,7 +193,13 @@ If a Task and linked ADR disagree, stop and synchronize them before work.
 
 ## Pending Architecture Proposal
 
-None. Phase 6 remains unauthorized and requires a new Complete Blueprint.
+| Decision | Status | Source |
+| --- | --- | --- |
+| Binary protocol v1 and single-session Netty gateway | Proposed / Pending Human Phase 6 Blueprint Approval | [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md) |
+
+ADR-0014 proposes one active TCP session, one request in flight, gateway-owned
+Command Sequence and bounded ordered result frames. It does not authorize live
+WAL integration, multi-client ingress, Snapshot, online Recovery or Release.
 
 ## Verified Current Implementation
 

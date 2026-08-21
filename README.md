@@ -49,6 +49,13 @@ and Deterministic Offline Replay is completed, approved and frozen at
 `v0.4.0-engineering-baseline`. TASK-014 through TASK-018 are archived.
 Product Release and Phase 6 remain separate Human gates.
 
+Phase 6 Discovery is now represented by a proposed complete Blueprint for a
+versioned binary TCP protocol and single-session Netty gateway. The proposal
+does not authorize implementation and keeps live WAL/pipeline integration,
+multi-client ingress, Snapshot, online Recovery and Product Release excluded.
+See the [Phase 6 Blueprint](tasks/blueprints/PHASE-6-network-protocol-blueprint.md)
+and [ADR-0014](docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md).
+
 The repository currently contains:
 
 - Java 21 Maven multi-module build
