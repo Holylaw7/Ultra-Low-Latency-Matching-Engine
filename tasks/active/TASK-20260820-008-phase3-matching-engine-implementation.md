@@ -20,7 +20,7 @@
 | Parent Branch / HEAD | `docs/phase3-matching-engine-adr` at `96fe50b` |
 | Engineering Baseline | `v0.1.0-engineering-baseline` at `cbfa957` |
 | Remote | `origin` |
-| CI | Stage 2 closure `0b60cf6`: [run 32445740452](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32445740452) PASS |
+| CI | Stage 3 authorization proposal `62f59aa`: [run 32446230919](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32446230919) PASS |
 
 ## 2. Background
 
@@ -693,7 +693,7 @@ Review; Phase 3 closure does not start automatically.
 | 2026-08-20 | Stage 2 Authorized | Human approved synchronous MatchingEngine Core implementation with no thread model or infrastructure | Stage 2.1-2.3 may proceed; Stage 3 remains unauthorized |
 | 2026-08-20 | Stage 2 Completed | Implemented command lifecycle, frozen OrderBook delegation and deterministic fragment translation | `c1fe408`, `f0e24cc`, `dbeaee6`; `mvn verify` PASS, 56 tests and Checkstyle 0; remote CI pending final evidence push |
 | 2026-08-21 | Stage 2 Approved | Human accepted the implementation, verification, ADR alignment and frozen OrderBook boundary | `0ad45fa`; GitHub Actions run `32387974864` PASS; Stage 3 remains unauthorized |
-| 2026-08-21 | Stage 3 Authorization Proposed | Froze value equality, public-API state probes, reachable failure atomicity and explicit unreachable-failure limitations | Documentation only; Stage 3 test execution remains unauthorized pending Human review |
+| 2026-08-21 | Stage 3 Authorization Proposed | Froze value equality, public-API state probes, reachable failure atomicity and explicit unreachable-failure limitations | `62f59aa`; GitHub Actions run `32446230919` PASS; execution remains unauthorized pending Human review |
 
 ## 20. Completion Checklist
 

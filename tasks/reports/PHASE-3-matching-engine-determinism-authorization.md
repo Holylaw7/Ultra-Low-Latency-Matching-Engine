@@ -10,8 +10,8 @@
 | Result | Proposed — Pending Human Approval |
 | Tests | Not run — documentation-only authorization request |
 | Build | Not run — production and test code unchanged |
-| CI | Pending push of authorization proposal |
-| Commit | Pending authorization proposal commit |
+| CI | [Run 32446230919](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32446230919) — PASS for `62f59aa` |
+| Commit | `62f59aa` — `docs:request-stage3-determinism-authorization` |
 | Branch | `feature/phase3-matching-engine` |
 | Parent | Stage 2 closure head `0b60cf6` |
 | Next Gate | Human Stage 3 Authorization Review |
