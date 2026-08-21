@@ -10,13 +10,13 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 4 — Event Pipeline (`Implementation / Evidence Complete; Closure Pending`) |
-| Latest product task | [`TASK-20260821-013`](../tasks/active/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) — Evidence complete; Closure pending |
+| Phase | Phase 4 — Event Pipeline (`Closure Approved / Baseline Freeze In Progress`) |
+| Latest product task | [`TASK-20260821-013`](../tasks/active/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) — Completed / Closure approved |
 | Latest architecture task | [`TASK-20260820-007`](../tasks/completed/TASK-20260820-007-phase3-matching-engine-adr-decision.md) — Completed |
 | Current planning task | [`TASK-20260821-013`](../tasks/active/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) under the approved Phase 4 Blueprint |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
-| Product stage | Phase 3 Closed / Baseline Frozen; Phase 4 implementation and evidence complete; Closure pending |
-| Product approval | Phase 4 Blueprint approved; TASK-010 through TASK-013 evidence gates passed |
+| Product stage | Phase 3 Closed / Baseline Frozen; Phase 4 Closure approved; baseline freeze in progress |
+| Product approval | Phase 4 Closure approved; normal merge, master CI and engineering-baseline tag authorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `feature/phase4-event-pipeline` |
 | Engineering baseline commit | `9281124` |
@@ -34,7 +34,7 @@
 | Phase 2 — Basic OrderBook | Completed / Approved | `v0.1.0-engineering-baseline`, 45 tests, JMH/JFR evidence and passing master CI |
 | Phase 3 — Matching Engine | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-3-matching-engine-closure-authorization.md); `v0.2.0-engineering-baseline` |
 | Governance — Phase Blueprint Mode | Completed / Approved / Active | [`TASK-009`](../tasks/completed/TASK-20260821-009-phase-blueprint-governance.md); master CI PASS |
-| Phase 4 — Event Pipeline | Implementation / Verification / Component Evidence Complete; Closure Pending | [`Closure Proposal`](../tasks/reports/PHASE-4-event-pipeline-closure.md); TASK-010 through TASK-013 complete |
+| Phase 4 — Event Pipeline | Closure Approved / Baseline Freeze In Progress | [`Closure Approval`](../tasks/reports/PHASE-4-event-pipeline-closure.md); TASK-010 through TASK-013 complete |
 | Phase 5+ — Network, recovery and performance evolution | Future Work | Future Blueprints, ADRs and Tasks |
 
 ## Current Product Gate
@@ -65,7 +65,8 @@ ADR-0011 Final Approved
     -> TASK-011 core [Completed / evidence PASS]
     -> TASK-012 verification [Completed / evidence PASS]
     -> TASK-013 benchmark/docs [Completed / evidence PASS]
-    -> Phase 4 Closure [Human approval required]
+    -> Phase 4 Closure [Human approval recorded]
+    -> normal merge / master CI / baseline tag [Authorized / in progress]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
@@ -82,7 +83,8 @@ the Human Blueprint Approval. The bounded single-producer/single-consumer
 pipeline, deterministic result handling, backpressure, lifecycle, verification
 and component evidence are implemented. Automated evidence gates and Exception
 Gates remain mandatory. Existing Domain, OrderBook and MatchingEngine
-production files remain frozen. Phase 4 Closure remains pending Human approval.
+production files remain frozen. Phase 4 Closure is approved; merge, master CI
+and the engineering-baseline tag workflow are authorized.
 
 Current proposal:
 [`PHASE-4-event-pipeline-blueprint.md`](../tasks/blueprints/PHASE-4-event-pipeline-blueprint.md).
@@ -162,7 +164,8 @@ TradeId/EventSequence allocation, and Trade/Execution result mapping.
 
 Market-order execution, Netty protocol, WAL, snapshot and recovery are not
 implemented. The approved Disruptor pipeline is implemented as a bounded
-component boundary; Phase 4 Closure and baseline tagging remain pending.
+component boundary; Phase 4 Closure is approved and baseline tagging is in
+progress.
 
 ## Performance Evidence
 
@@ -192,7 +195,7 @@ These remain targets or hypotheses, never measured project claims.
 Client
   -> Netty / Protocol                 [Future Work]
   -> Decoder / Validation             [Future Work]
-  -> Ingress + RingBuffer/Disruptor   [Phase 4 implemented / Closure pending]
+  -> Ingress + RingBuffer/Disruptor   [Phase 4 Closure approved / freeze pending]
   -> MatchingEngine                   [Phase 3 baseline frozen]
   -> OrderBook                        [Phase 2 baseline implemented]
        -> BidBook / AskBook

@@ -5,8 +5,9 @@
 `Approved` by
 [`ADR-0012`](../adr/ADR-0012-event-pipeline-execution-and-backpressure.md) and
 the [`Phase 4 Blueprint`](../../tasks/blueprints/PHASE-4-event-pipeline-blueprint.md).
-Human Phase Blueprint Approval is recorded. The dependency-gated implementation
-and component evidence are complete; Phase Closure is not yet approved.
+Human Phase Blueprint and Closure approvals are recorded. The dependency-gated
+implementation and component evidence are accepted; baseline-freeze execution
+is authorized.
 
 ## Implemented Flow
 

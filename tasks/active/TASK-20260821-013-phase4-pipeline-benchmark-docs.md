@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260821-013` |
 | Title | Benchmark and Document Phase 4 Event Pipeline |
-| Status | `Completed — evidence gate passed; Closure pending Human approval` |
+| Status | `Completed — Closure approved` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Related Phase | Phase 4 — Event Pipeline |
@@ -14,7 +14,7 @@
 | Phase Blueprint | [`PHASE-4 Blueprint`](../blueprints/PHASE-4-event-pipeline-blueprint.md) — Approved |
 | Authorization Mode | `Blueprint inherited Human approval` |
 | Current Stage | `Benchmark / Documentation / Closure Preparation` |
-| Next Gate | `Human Phase 4 Closure Approval` |
+| Next Gate | `Approved merge / master CI / baseline tag execution` |
 | Branch | `feature/phase4-event-pipeline` |
 | Baseline HEAD | TASK-012 evidence commit `1636a56` |
 | Remote / CI | `origin/feature/phase4-event-pipeline`; benchmark `e546051` / CI `32459574518` PASS; closure `524f3e1` / CI `32459760130` PASS |
@@ -59,7 +59,7 @@ prepare the consolidated Phase 4 Closure Report.
   Blueprint-compatible change;
 - [x] full `mvn verify`, Checkstyle, diff/link/scope checks and CI pass;
 - [x] all known limitations and deferred capabilities remain explicit;
-- [x] Closure status is `Pending Human Phase Closure Approval`.
+- [x] Closure remained pending until the independent Human approval was recorded.
 
 ## 6. Current Implementation and Scope
 
@@ -227,5 +227,5 @@ authorized until Human Phase Closure Approval.
 - [x] full build/static/diff/link/scope gates pass
 - [x] no unsupported performance claim
 - [x] checkpoint commits pushed and exact-SHA CI recorded
-- [x] Closure Report prepared with Human approval pending
+- [x] Closure Report prepared and Human approval recorded
 - [x] no Exception Gate unresolved

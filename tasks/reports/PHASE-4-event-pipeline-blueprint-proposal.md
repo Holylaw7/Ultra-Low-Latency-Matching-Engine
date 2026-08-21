@@ -56,7 +56,7 @@ The durable decision record is
 | [`TASK-010`](../active/TASK-20260821-010-phase4-pipeline-foundation.md) | dependency, configuration and public pipeline contracts | Completed / evidence PASS |
 | [`TASK-011`](../active/TASK-20260821-011-phase4-pipeline-core.md) | bounded runtime, lifecycle, matching and result handling | Completed / evidence PASS |
 | [`TASK-012`](../active/TASK-20260821-012-phase4-pipeline-verification.md) | determinism, ordering, backpressure and failure evidence | Completed / evidence PASS |
-| [`TASK-013`](../active/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) | component benchmark, documentation and Closure preparation | Completed / Closure pending |
+| [`TASK-013`](../active/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) | component benchmark, documentation and Closure preparation | Completed / Closure approved |
 
 The complete scope, file boundaries, acceptance criteria, evidence plan,
 risks, rollback, Git strategy and Closure plan are in the
@@ -99,6 +99,6 @@ through automated evidence checkpoints, subject to the Blueprint's Exception
 Gates. It did not approve Phase Closure, merge to `master`, the candidate
 `v0.3.0-engineering-baseline` tag, or any non-goal.
 
-**Phase Blueprint — Approved. TASK-010 through TASK-013 evidence is complete;
-Phase 4 Closure remains pending Human approval.** See the
+**Phase Blueprint — Approved. TASK-010 through TASK-013 evidence and Phase 4
+Closure are approved; baseline-freeze execution is authorized.** See the
 [`Closure Proposal`](PHASE-4-event-pipeline-closure.md).

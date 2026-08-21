@@ -7,13 +7,13 @@
 | Phase | Phase 4 — Event Pipeline |
 | Task | TASK-20260821-013 — Benchmark / Documentation / Closure Preparation |
 | Stage | Benchmark / Documentation / Closure Preparation |
-| Result | `TASK-013 Completed — evidence gate passed; Closure pending Human approval` |
+| Result | `TASK-013 Completed — Phase 4 Closure approved` |
 | Tests | Full run: 83 tests, 0 failures; focused verification repeated 3 times |
 | Build | `mvn verify` PASS; Maven reactor 3/3 SUCCESS |
 | Checkstyle | 0 violations in focused run |
 | Commit | Closure evidence checkpoint `524f3e13e906d28dba99405a227324749d49630d` |
 | Remote / CI | [run 32459760130](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459760130) PASS; benchmark checkpoint [run 32459574518](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459574518) PASS |
-| Next Gate | Human Phase 4 Closure Approval |
+| Next Gate | Approved merge / master CI / baseline tag execution |
 
 ## TASK-010 Foundation (Completed)
 
@@ -115,11 +115,11 @@ optimization remain deferred.
 ## Next State
 
 TASK-010 through TASK-013 are `Completed` under the approved dependency order.
-The Phase 4 Closure proposal is prepared and awaits Human Phase Closure
-Approval. Merge to `master`, the `v0.3.0-engineering-baseline` tag and Release
-remain unauthorized until that approval. Any need to modify existing
+The Phase 4 Closure proposal is approved. Normal `--no-ff` merge to `master`,
+master verification/CI and the annotated `v0.3.0-engineering-baseline` tag are
+authorized. Product Release and Phase 5 remain unauthorized. Any need to modify existing
 Engine/Domain/OrderBook contracts or change the dependency is an Exception
 Gate.
 
 **Blueprint execution complete — TASK-013 evidence gate passed; Phase 4 Closure
-is pending Human approval.**
+approved and baseline-freeze execution authorized.**

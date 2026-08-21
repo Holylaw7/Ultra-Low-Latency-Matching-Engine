@@ -14,7 +14,7 @@
 | Planning Baseline | `bbf909c` |
 | Blueprint Branch | `docs/phase4-event-pipeline-blueprint` |
 | Planned Tasks | `TASK-20260821-010` through `TASK-20260821-013` |
-| Next Gate | `Human Phase 4 Closure Approval` |
+| Next Gate | `Approved merge / master CI / baseline tag execution` |
 
 ```text
 Blueprint: Approved
@@ -445,7 +445,7 @@ Approval checklist:
 ```text
 Blueprint Status: Approved
 Implementation: Authorized in dependency order
-Next Gate: Human Phase 4 Closure Approval
+Next Gate: Approved merge / master CI / baseline tag execution
 ```
 
 ## 19. Execution Checkpoints
@@ -458,6 +458,7 @@ Next Gate: Human Phase 4 Closure Approval
 | 2026-08-21 | TASK-011 Core | Completed | commit `a3986df`; exact-SHA CI [32457723272](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32457723272) PASS | TASK-012 Verification |
 | 2026-08-21 | TASK-012 Verification | Completed | commit `4df2e33`; exact-SHA CI [32458220212](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32458220212) PASS | TASK-013 Benchmark / Docs |
 | 2026-08-21 | TASK-013 Benchmark / Docs | Completed | JDK 21 smoke/full JMH matrix; benchmark `e546051` / CI [32459574518](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459574518); closure `524f3e1` / CI [32459760130](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459760130) — both PASS | Human Phase 4 Closure Approval |
+| 2026-08-21 | Phase 4 Closure | Approved | TASK-010 through TASK-013 evidence accepted; normal `--no-ff` merge, master CI and `v0.3.0-engineering-baseline` tag authorized | Merge / master CI / tag CI |
 
 ## 20. Phase Closure Checklist
 
@@ -471,7 +472,7 @@ Next Gate: Human Phase 4 Closure Approval
 - [x] Phase 2/3 frozen production paths have zero diff
 - [x] architecture and documentation synchronized
 - [x] Phase Closure Report prepared
-- [ ] Human Phase Closure Approval recorded
+- [x] Human Phase Closure Approval recorded
 - [ ] authorized merge/tag/baseline actions verified
 - [ ] active Tasks moved to completed
 - [ ] Phase 5 remains explicitly unauthorized

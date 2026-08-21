@@ -2,7 +2,7 @@
 
 ## Status
 
-`Evidence collected — Phase 4 Closure pending Human approval`
+`Evidence accepted — Phase 4 Closure approved`
 
 This document records component-level JMH evidence for the Phase 4 event
 pipeline. It is not a product performance claim and does not replace the
@@ -102,6 +102,6 @@ thread affinity and production wait-strategy selection remain outside Phase 4.
 ## Evidence gate
 
 The benchmark module compiled, the smoke and full matrix completed under Java
-21, and the result/lifecycle assertions passed. Final Phase 4 Closure remains
-`Pending Human Phase Closure Approval`; merge to `master`, baseline tagging and
-release are not authorized by TASK-013.
+21, and the result/lifecycle assertions passed. Human Phase 4 Closure Approval
+accepted this component evidence and authorized the normal merge/master-CI/
+engineering-baseline-tag workflow. Product Release remains unauthorized.

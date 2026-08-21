@@ -42,9 +42,9 @@ contain WAL, Replay, Snapshot, Recovery, Network or production optimization.
 Phase Blueprint Mode is completed, approved and active as the governance
 standard for future multi-task phases. The complete Phase 4 Event Pipeline
 Blueprint, ADR-0012 and TASK-010 through TASK-013 have received Human Blueprint
-Approval. Phase 4 implementation, verification and component benchmark
-evidence are complete; Phase 4 Closure remains pending Human approval. The
-frozen `v0.2.0-engineering-baseline` remains unchanged.
+Approval. Phase 4 implementation, verification, component benchmark evidence
+and Closure are approved. The normal merge/master-CI/baseline-tag workflow is
+authorized; the frozen `v0.2.0-engineering-baseline` remains unchanged.
 
 The repository currently contains:
 

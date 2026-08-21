@@ -2,8 +2,7 @@
 
 ## Status
 
-Approved — implementation and component evidence recorded; Phase 4 Closure
-pending Human approval
+Approved — implementation, component evidence and Phase 4 Closure accepted
 
 ## Decision Record
 

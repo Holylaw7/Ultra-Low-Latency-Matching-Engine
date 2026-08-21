@@ -2,10 +2,12 @@
 
 ## Status
 
-`Prepared — Pending Human Phase Closure Approval`
+`Approved — Baseline freeze execution authorized`
 
-This report is a closure proposal, not an approval record. It does not
-authorize a merge, baseline tag or Release.
+Human Phase 4 Closure Approval is recorded below. It authorizes the normal
+`--no-ff` merge, master verification/CI and annotated
+`v0.3.0-engineering-baseline` tag workflow. It does not authorize a product
+Release or Phase 5.
 
 ## Scope completed
 
@@ -57,7 +59,7 @@ default without a new evidence review and approved decision update.
 
 ## Candidate baseline
 
-If Human Closure Approval is granted, the authorized follow-up sequence is:
+The authorized follow-up sequence is:
 
 ```text
 verify final branch
@@ -67,13 +69,14 @@ verify final branch
     -> tag CI PASS
 ```
 
-The candidate tag is `v0.3.0-engineering-baseline`; it has not been created.
+The candidate tag is `v0.3.0-engineering-baseline`; it remains uncreated until
+the approved merge and master evidence gates pass.
 
 ## Approval record
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
-| 2026-08-21 | Human Developer | `Pending` | Review TASK-010 through TASK-013 evidence, frozen boundary, benchmark limitations and candidate baseline actions. |
+| 2026-08-21 | Human Developer | `Approved` | Phase 4 Event Pipeline closure accepted. TASK-010 through TASK-013 completed with correctness, determinism, backpressure, failure and component benchmark evidence. Frozen Phase 2/3 production paths remain unchanged. Authorized actions: normal `--no-ff` merge to master, master verification and CI, creation of `v0.3.0-engineering-baseline`, tag push and tag CI verification. Product Release and next Phase remain separately governed. |
 
 ## Current gate
 
@@ -81,6 +84,7 @@ The candidate tag is `v0.3.0-engineering-baseline`; it has not been created.
 TASK-010 through TASK-013
         -> evidence complete
         -> Closure proposal prepared
-        -> Human Phase Closure Approval required
-        -> merge/tag only after approval
+        -> Human Phase Closure Approval recorded
+        -> normal merge / master verification / CI
+        -> annotated baseline tag / tag CI
 ```
