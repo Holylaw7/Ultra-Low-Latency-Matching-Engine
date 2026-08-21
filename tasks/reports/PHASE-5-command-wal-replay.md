@@ -5,14 +5,14 @@
 | Field | Value |
 | --- | --- |
 | Phase | Phase 5 — Command WAL and Deterministic Replay Foundation |
-| Current Task | TASK-20260821-015 — Segmented WAL Storage |
-| Completed Task | TASK-20260821-014 — WAL Format and Command Codec Foundation |
-| Result | `TASK-014 Completed / Evidence Gate Passed` |
+| Current Task | TASK-20260821-016 — Deterministic Command Replay |
+| Completed Task | TASK-20260821-015 — Segmented Command WAL Storage |
+| Result | `TASK-015 Completed / Evidence Gate Passed` |
 | Baseline | `v0.3.0-engineering-baseline` remains frozen |
 | Full Verification | `mvn verify` PASS; 92 tests, 0 failures; Maven reactor 3/3 SUCCESS |
 | Checkstyle | 0 violations |
-| TASK-014 Commit | `e5e4c9677ca926c5f774930472d092e42f50008e` |
-| TASK-014 CI | [run 32464648365](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32464648365) PASS |
+| Latest Commit | `7da0069a82d821cecd95815cfeae37fe50268830` |
+| Latest CI | [run 32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050) PASS |
 | Branch | `feature/phase5-command-wal-replay` |
 | Next Gate | TASK-015 Implementation / Evidence Gate |
 
@@ -80,12 +80,58 @@ Commit `e5e4c9677ca926c5f774930472d092e42f50008e` passed exact-SHA GitHub
 Actions CI run
 [32464648365](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32464648365).
 
+## TASK-015 Segmented Command WAL Storage (Completed)
+
+TASK-015 adds synchronous caller-owned segmented storage around the approved
+codec:
+
+- `CommandWalWriter` creates or reopens a configured directory, owns one
+  active segment with an exclusive `FileLock`, writes complete positional
+  records and rotates before a record would exceed the configured bound;
+- `SYNC_EACH_APPEND` forces the channel after complete bytes are written and
+  before logical append success; `BUFFERED` performs no durability claim and
+  is never the configuration default;
+- exact-next command sequences are enforced before mutation, close is
+  idempotent, and any write/force/rotation failure makes the writer terminal;
+- `CommandWalReader` strictly orders segments by validated first sequence,
+  validates headers, lengths, CRC and command sequences, and reports path and
+  byte offset for corruption;
+- strict reads never mutate files. Explicit `CommandWalWriter.reopen` may
+  truncate only an incomplete final physical record or remove an empty
+  trailing segment, then rescans before accepting appends;
+- complete-record corruption, earlier truncation, segment gaps and bad
+  headers fail closed; no salvage or background I/O is introduced.
+
+The implementation remains isolated under the WAL package. Domain, OrderBook,
+MatchingEngine and Pipeline production paths are unchanged.
+
+## TASK-015 Evidence Gate
+
+The focused storage matrix was run three consecutive times:
+
+```text
+mvn -pl core -am test "-Dtest=CommandWalWriterTest,CommandWalReaderTest" \
+  "-Dsurefire.failIfNoSpecifiedTests=false"
+```
+
+Each run passed 10 tests. The matrix covers multi-segment rotation, exact-next
+sequence rejection, idempotent close, exclusive ownership, final torn-tail
+reopen, complete corruption, earlier truncation, segment gaps, header
+corruption and empty trailing segments.
+
+Full `mvn verify` passed with 102 tests, 0 failures, Checkstyle 0 violations
+and Maven reactor 3/3 SUCCESS. `git diff --check` and frozen-path audit passed.
+Commit `7da0069a82d821cecd95815cfeae37fe50268830` passed exact-SHA GitHub
+Actions CI run
+[32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050).
+
 ## Next State
 
-TASK-014 is completed under the approved dependency order. TASK-015 is the
-next authorized task and may begin without another routine Human approval as
-long as its Evidence Gate passes and no Exception Gate is triggered. Phase
-Closure, merge and baseline-tag actions remain separate Human decisions.
+TASK-014 and TASK-015 are completed under the approved dependency order.
+TASK-016 is the next authorized task and may begin without another routine
+Human approval as long as its Evidence Gate passes and no Exception Gate is
+triggered. Phase Closure, merge and baseline-tag actions remain separate Human
+decisions.
 
 ## Known Scope Boundary
 
