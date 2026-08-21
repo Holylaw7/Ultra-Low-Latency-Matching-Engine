@@ -11,10 +11,10 @@
 | Tests | 61 passed / 0 failed |
 | Build | `mvn verify` — PASS; reactor 3/3 |
 | Static analysis | Checkstyle — 0 violations |
-| CI | [Run 32447560720](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32447560720) — PASS for Stage 3 approval commit `4c46567` |
+| CI | [Run 32447826712](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32447826712) — PASS for closure proposal commit `5ea0cdb` |
 | Branch | `feature/phase3-matching-engine` |
 | Preparation base | `4c46567` |
-| Proposal commit | Pending documentation commit |
+| Proposal commit | `5ea0cdb` — `docs(phase3): prepare closure authorization` |
 | Proposed baseline tag | `v0.2.0-engineering-baseline` — not created |
 | Next Gate | Human Phase 3 Closure Approval |
 
@@ -96,6 +96,7 @@ EngineCommand
 | Stage 3 full build | `mvn verify` | PASS; reactor 3/3; Checkstyle 0 |
 | Stage 3 evidence CI | [Run 32447036906](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32447036906) for `1f268e9` | PASS |
 | Stage 3 approval CI | [Run 32447560720](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32447560720) for `4c46567` | PASS |
+| Closure proposal CI | [Run 32447826712](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32447826712) for `5ea0cdb` | PASS |
 | Phase 2 boundary audit | `git diff --name-status v0.1.0-engineering-baseline..4c46567 -- src/main/java/com/ultralatency/matching/orderbook/**` | No changes |
 
 The latest full Maven verification belongs to the approved Stage 3 evidence.
@@ -191,7 +192,8 @@ optimization is proposed.
 - Preparation base: `4c46567`
 - Remote branch: `origin/feature/phase3-matching-engine`
 - Base and remote SHA: equal at preparation start
-- Latest observed CI: run `32447560720` PASS for `4c46567`
+- Closure proposal commit: `5ea0cdb`
+- Latest observed CI: run `32447826712` PASS for `5ea0cdb`
 - Phase 2 baseline: `v0.1.0-engineering-baseline` at `cbfa957`
 - Phase 3 baseline tag: not created
 - Merge into master: not executed

@@ -20,7 +20,7 @@
 | Parent Branch / HEAD | `docs/phase3-matching-engine-adr` at `96fe50b` |
 | Engineering Baseline | `v0.1.0-engineering-baseline` at `cbfa957` |
 | Remote | `origin` |
-| CI | Stage 3 completion approval `4c46567`: [run 32447560720](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32447560720) PASS |
+| CI | Phase 3 closure proposal `5ea0cdb`: [run 32447826712](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32447826712) PASS |
 
 ## 2. Background
 
@@ -705,7 +705,7 @@ Review; Phase 3 closure does not start automatically.
 | 2026-08-21 | Stage 3 Authorized | Human approved verification-only execution and made collection order part of observable determinism | Only `MatchingEngineDeterminismTest.java` may be added; Phase 3 closure remains unauthorized |
 | 2026-08-21 | Stage 3 Completed | Added fixed dual-engine determinism, public-API probes and reachable failure-atomicity evidence | `6eb31ea`, `e7d26f0`, `1f268e9`; focused 5 tests, core 61 tests, `mvn verify` PASS, Checkstyle 0 and GitHub Actions run `32447036906` PASS; pending Human completion review |
 | 2026-08-21 | Stage 3 Approved | Human accepted determinism scope, observable ordering, public-API behavior and reachable failure atomicity | Stage 3 closed; Phase 3 Closure is ready for separate authorization and remains unauthorized |
-| 2026-08-21 | Closure Proposal Prepared | Consolidated Stage 1-3 evidence, frozen boundary, limitations and proposed `v0.2.0-engineering-baseline` sequence | Documentation only; Human Phase 3 Closure Approval pending; merge and tag remain unauthorized |
+| 2026-08-21 | Closure Proposal Prepared | Consolidated Stage 1-3 evidence, frozen boundary, limitations and proposed `v0.2.0-engineering-baseline` sequence | `5ea0cdb`; GitHub Actions run `32447826712` PASS; Human Phase 3 Closure Approval pending; merge and tag remain unauthorized |
 
 ## 20. Completion Checklist
 
