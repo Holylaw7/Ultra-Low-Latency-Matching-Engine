@@ -9,7 +9,12 @@ has Human approval. Its dependency-gated implementation, verification and
 component benchmark evidence and Closure are approved and frozen at
 `v0.3.0-engineering-baseline`. Phase 5 adds a versioned command WAL and strict
 offline deterministic replay as a persistence/replay engineering baseline and
-is completed, approved and frozen at `v0.4.0-engineering-baseline`.
+is completed, approved and frozen at `v0.4.0-engineering-baseline`. Phase 6
+implementation of the approved binary Network Protocol and single-session
+Netty gateway is complete on its feature branch: TASK-019 through TASK-023
+passed their evidence gates, including deterministic network verification and
+component/loopback benchmark evidence. Phase 6 is stopped at Human Closure
+Review; merge/tag and Product Release remain unauthorized.
 
 ## Scope
 
@@ -18,10 +23,10 @@ The system is a single-node, deterministic matching engine. A symbol's order boo
 ## Overall Framework
 
 ```text
-Client                                       [Future Work]
-  -> Netty Network Adapter / Binary Protocol [Future Work]
-  -> Decoder / Validation                    [Future Work]
-  -> Ingress                                 [Future Work]
+Client
+  -> Netty Network Adapter / Binary Protocol [Phase 6 implementation complete; Closure pending]
+  -> Decoder / Validation                    [Phase 6 implemented]
+  -> Ingress                                 [Phase 6 single session / one in-flight]
   -> RingBuffer / Disruptor Pipeline         [Phase 4 implemented / evidence recorded]
   -> MatchingEngine                          [Phase 3 baseline frozen]
        -> sequence / orchestration
@@ -47,6 +52,8 @@ remain outside the frozen Phase 3 baseline.
 
 See [`order-book.md`](order-book.md) and
 [`matching-engine.md`](matching-engine.md) for the detailed boundary.
+See [`network.md`](network.md) for the implemented transport boundary and
+explicit non-goals.
 
 ## Boundary Rules
 
@@ -69,7 +76,8 @@ See [`order-book.md`](order-book.md) and
    `v0.3.0-engineering-baseline`**.
 5. Versioned command WAL and strict offline deterministic replay — **Completed
    and frozen at `v0.4.0-engineering-baseline`**.
-6. Network adapter and protocol — **Future Work**.
+6. Network adapter and protocol — **Implementation and evidence complete;
+   Human Closure Review pending**.
 7. Snapshot and online Recovery — **Future Work**.
 8. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.

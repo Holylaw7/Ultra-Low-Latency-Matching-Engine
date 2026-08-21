@@ -47,7 +47,18 @@ and Closure are complete and frozen at `v0.3.0-engineering-baseline`. The
 earlier `v0.2.0-engineering-baseline` remains immutable. Phase 5 Command WAL
 and Deterministic Offline Replay is completed, approved and frozen at
 `v0.4.0-engineering-baseline`. TASK-014 through TASK-018 are archived.
-Product Release and Phase 6 remain separate Human gates.
+Product Release remains a separate Human gate. Phase 6 implementation is
+complete on the approved feature branch for a versioned binary TCP protocol and
+single-session Netty gateway. TASK-019 through TASK-023 passed their
+dependency-ordered evidence gates, including deterministic network verification
+and component/loopback JMH evidence. The phase is stopped at the separate Human
+Closure Review; merge, a future `v0.5.0-engineering-baseline` tag and Product
+Release remain unauthorized. Live WAL/pipeline integration, multi-client
+ingress, request pipelining, Snapshot and online Recovery remain excluded.
+See the [Phase 6 Blueprint](tasks/blueprints/PHASE-6-network-protocol-blueprint.md),
+[network boundary](docs/architecture/network.md),
+[network benchmark evidence](docs/benchmark/network.md) and
+[ADR-0014](docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md).
 
 The repository currently contains:
 
@@ -84,6 +95,13 @@ excludes live pipeline durability integration, Snapshot, online Recovery and
 Network. See
 [`PHASE-5-command-wal-and-replay-blueprint.md`](tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md)
 and [`recovery.md`](docs/benchmark/recovery.md).
+
+Phase 6 adds a single-session, one-request-in-flight Netty adapter around the
+frozen pipeline and matching core. Its protocol, gateway failure behavior,
+fragmentation/coalescing checks and bounded codec/loopback benchmark are
+component evidence only; a local write is not a durable or client-receipt
+acknowledgement. See [`network.md`](docs/benchmark/network.md) and the
+[Phase 6 Closure Proposal](tasks/reports/PHASE-6-network-protocol-closure.md).
 
 ## Build
 
@@ -139,6 +157,21 @@ limitations are recorded in
 [`docs/benchmark/recovery.md`](docs/benchmark/recovery.md). These are
 component observations, not durable acknowledgement, recovery-time or
 production throughput claims.
+
+Run the Phase 6 network component/loopback baseline with Java 21:
+
+```powershell
+mvn -pl benchmark -am -DskipTests package
+& 'E:\Java\microsoft-jdk-21\bin\java.exe' -jar `
+  benchmark/target/matching-engine-benchmark-0.1.0-SNAPSHOT.jar `
+  NetworkBenchmark -wi 1 -i 2 -f 1 -t 1 `
+  -rff benchmark-results/phase6-network-full-jdk21.csv -rf csv
+```
+
+This measures fixed Submit/Cancel codec vectors and a sequential loopback
+request-to-complete-result round trip. Results are local-host component
+evidence, not durable ACK, concurrent-client, Internet or Product Release
+claims; see [`network.md`](docs/benchmark/network.md).
 
 ## Structure
 

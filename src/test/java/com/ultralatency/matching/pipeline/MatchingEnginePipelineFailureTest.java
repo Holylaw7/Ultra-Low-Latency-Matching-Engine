@@ -100,19 +100,47 @@ class MatchingEnginePipelineFailureTest {
 
     @Test
     void resultHandlerFailureIsTerminalAndRejectsLaterCommands() throws InterruptedException {
+        final AtomicInteger failureCount = new AtomicInteger();
+        final AtomicReference<Throwable> observedFailure = new AtomicReference<>();
         final MatchingEnginePipeline pipeline = new MatchingEnginePipeline(
                 new PipelineConfiguration(8, PipelineWaitMode.BLOCKING), result -> {
                     throw new IllegalStateException("handler failure");
+                }, failure -> {
+                    failureCount.incrementAndGet();
+                    observedFailure.compareAndSet(null, failure);
                 });
         pipeline.start();
         assertEquals(PipelinePublishOutcome.ACCEPTED, pipeline.tryPublish(PipelineCommandFixture.command(1, 1)));
 
         awaitState(pipeline, PipelineState.FAILED);
+        awaitCount(failureCount, 1);
 
         assertEquals("handler failure", pipeline.failureCause().orElseThrow().getMessage());
+        assertEquals(1, failureCount.get());
+        assertEquals(pipeline.failureCause().orElseThrow(), observedFailure.get());
         assertThrows(
                 IllegalStateException.class,
                 () -> pipeline.tryPublish(PipelineCommandFixture.command(2, 2)));
+    }
+
+    @Test
+    void observerFailureCannotReplaceFirstPipelineCause() throws InterruptedException {
+        final AtomicInteger failureCount = new AtomicInteger();
+        final MatchingEnginePipeline pipeline = new MatchingEnginePipeline(
+                new PipelineConfiguration(8, PipelineWaitMode.BLOCKING), result -> {
+                    throw new IllegalStateException("first cause");
+                }, failure -> {
+                    failureCount.incrementAndGet();
+                    throw new AssertionError("observer failure");
+                });
+        pipeline.start();
+        assertEquals(PipelinePublishOutcome.ACCEPTED, pipeline.tryPublish(PipelineCommandFixture.command(1, 1)));
+
+        awaitState(pipeline, PipelineState.FAILED);
+        awaitCount(failureCount, 1);
+
+        assertEquals(1, failureCount.get());
+        assertEquals("first cause", pipeline.failureCause().orElseThrow().getMessage());
     }
 
     @Test
