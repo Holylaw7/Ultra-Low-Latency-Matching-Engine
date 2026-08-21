@@ -10,8 +10,8 @@
 | Result | Completed — Pending Human Governance Completion Review |
 | Tests | Not applicable — no executable code changed |
 | Build | Not run — documentation-only change |
-| CI | Pending governance commit |
-| Commit | Pending governance commit |
+| CI | [run `32453171948`](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32453171948) — PASS |
+| Commit | `91611d6` — `docs(governance): adopt phase blueprint mode` |
 | Branch | `docs/phase-blueprint-governance` |
 | Baseline | `7ec4e29` — Phase 3 final closure evidence |
 | Next Gate | Human Governance Completion Review |
@@ -147,6 +147,17 @@ Reference: https://developers.openai.com/api/docs/models
 | Local links | Resolve local Markdown targets in all changed files | PASS |
 | Templates | Blueprint/Task link and required-section inspection | PASS |
 | Tests / build | Not applicable | No executable files changed |
+| Remote CI | GitHub Actions for exact commit `91611d6` | PASS — run `32453171948` |
+
+## Git Evidence
+
+```text
+Branch: docs/phase-blueprint-governance
+Implementation commit: 91611d6
+Remote: origin/docs/phase-blueprint-governance
+CI run: 32453171948
+CI conclusion: success
+```
 
 ## Risks and Limitations
 
