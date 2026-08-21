@@ -62,7 +62,8 @@ The durable draft is
 | [`TASK-019`](../active/TASK-20260821-019-phase6-network-protocol-codec.md) | dependency, protocol contracts and codec | Completed / Evidence PASS |
 | [`TASK-020`](../active/TASK-20260821-020-phase6-pipeline-failure-observer.md) | additive terminal pipeline observer | Completed / Evidence PASS |
 | [`TASK-021`](../active/TASK-20260821-021-phase6-netty-gateway.md) | single-session TCP gateway | Completed / Evidence PASS |
-| [`TASK-022`](../active/TASK-20260821-022-phase6-network-verification.md) | protocol/system/failure evidence | Authorized / Next |
+| [`TASK-022`](../active/TASK-20260821-022-phase6-network-verification.md) | protocol/system/failure evidence | Completed / Evidence PASS |
+| [`TASK-023`](../active/TASK-20260821-023-phase6-network-benchmark-docs.md) | benchmark, documentation and Closure preparation | Authorized / Next |
 | [`TASK-023`](../active/TASK-20260821-023-phase6-network-benchmark-docs.md) | benchmark, documentation and Closure preparation | Conditionally Authorized |
 
 The complete scope, wire layout, acceptance criteria, test/benchmark plan,
@@ -129,17 +130,17 @@ changes, Snapshot/Recovery, Release or destructive Git actions.
 ## Human Decision Record
 
 The Human Developer approved the complete Phase 6 Blueprint and ADR-0014 D1-D10
-for dependency-ordered implementation. TASK-019 through TASK-021 have completed
-their evidence gates; TASK-022 is the current authorized task. TASK-023 remains
-conditionally authorized after its predecessor evidence gate.
+for dependency-ordered implementation. TASK-019 through TASK-022 have completed
+their evidence gates; TASK-023 is now the current authorized task. The Exception
+Gate and separate Phase Closure approval remain active.
 The Exception Gate and separate Phase Closure approval remain active.
 
 ```text
 Phase 6 Blueprint: Approved
 ADR-0014: Approved
 Implementation: Authorized in dependency order
-Current Task: TASK-022
+Current Task: TASK-023
 Phase Closure: Not Authorized
 Merge / v0.5.0 tag: Not Authorized
-Next Gate: TASK-022 Implementation / Evidence Gate
+Next Gate: TASK-023 Implementation / Evidence Gate
 ```

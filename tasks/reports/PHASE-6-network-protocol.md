@@ -16,7 +16,7 @@ TASK-021:
 Completed / Evidence PASS
 
 TASK-022..023:
-Conditionally Authorized
+TASK-022 Completed / Evidence PASS; TASK-023 Authorized / Next
 
 Phase 6 Closure:
 Not Authorized
@@ -134,3 +134,32 @@ TASK-022 may begin under the approved Blueprint. It must verify deterministic
 loopback response streams, every-frame fragmentation, coalesced-frame
 one-in-flight rejection, FULL identity preservation and bounded failure
 semantics without adding production hooks or broadening the gateway scope.
+
+## TASK-022 — Network Determinism and Failure Verification
+
+Implemented evidence:
+
+- two genesis loopback runs over the fixed Submit stream produce identical
+  ordered response transcripts;
+- one-byte TCP fragmentation produces the same complete command result;
+- coalesced second request is rejected while the first is in flight and does
+  not produce a second command result;
+- malformed magic fails closed with an error before command publication;
+- focused verification repeated five times without failure.
+
+## TASK-022 Evidence
+
+| Evidence | Result |
+| --- | --- |
+| `NetworkVerificationTest` | 4 passed; repeated 5/5 |
+| Full `mvn verify` | 129 tests passed; 0 failures |
+| Checkstyle | 0 violations |
+| Frozen Domain/OrderBook/Engine/WAL/Recovery paths | 0 diff |
+| Commit | `c7d9399` |
+| Exact-SHA CI | [32490942307](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490942307) PASS |
+
+## Next Gate
+
+TASK-023 is authorized after TASK-022 exact-SHA CI is confirmed. It must add
+only the approved bounded benchmark and synchronized evidence/Closure proposal;
+Phase 6 must stop at Human Closure Review.

@@ -5,14 +5,14 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-022` / Phase 6 Network Determinism and Failure Verification |
-| Status | `Authorized / Next` |
+| Status | `Completed / Evidence PASS` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 6 / ADR-0014 / [`PHASE-6`](../blueprints/PHASE-6-network-protocol-blueprint.md) |
 | Authorization Mode | Blueprint |
-| Current Stage / Next Gate | Implementation / TASK-022 Evidence Gate |
+| Current Stage / Next Gate | Completed / TASK-023 Evidence Gate |
 | Branch / Baseline | `feature/phase6-network-protocol` after approval / approved proposal commit |
-| Remote / CI | `origin/feature/phase6-network-protocol` / pending TASK-022 evidence |
+| Remote / CI | `origin/feature/phase6-network-protocol` / exact-SHA CI [32490942307](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490942307) PASS |
 
 ## 2. Background
 
@@ -146,19 +146,20 @@ exact-SHA CI before TASK-023.
 | Stage | Report | Status | Next Gate | Authorization |
 | --- | --- | --- | --- | --- |
 | Approval | Phase 6 proposal | Pending | Blueprint Approval | Pending |
-| Verification | cumulative report | Pending | exact-SHA CI | Blueprint |
+| Verification | [`PHASE-6-network-protocol.md`](../reports/PHASE-6-network-protocol.md) | Completed / PASS | TASK-023 | Blueprint |
 | Benchmark | Not applicable | N/A | completion | Blueprint |
-| Completion | cumulative report | Pending | TASK-023 / Exception Gate | Blueprint |
+| Completion | cumulative report | Completed / PASS | TASK-023 / Exception Gate | Blueprint |
 
 ## 17. Implementation Log
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-21 | Proposed | system evidence plan | baseline PASS |
+| 2026-08-21 | Completed / Evidence PASS | deterministic genesis transcript, one-byte fragmentation, coalesced in-flight rejection and malformed-frame fail-closed evidence | focused NetworkVerificationTest 4 passed; repeated 5/5; full 129 tests PASS; Checkstyle 0; frozen diff 0; exact-SHA CI pending run lookup for `c7d9399` |
 
 ## 18. Completion Checklist
 
-- [ ] full deterministic/failure matrix passes repeatedly
-- [ ] build/static/diff/frozen audit pass
-- [ ] evidence commit/CI/report recorded
-- [ ] no Exception Gate
+- [x] full deterministic/failure matrix passes repeatedly
+- [x] build/static/diff/frozen audit pass
+- [x] evidence commit/CI/report recorded
+- [x] no Exception Gate
