@@ -132,9 +132,10 @@ TASK-019 through TASK-023 completed in dependency order on the approved
 implementation branch. The latest benchmark commit is `0c924dd` with exact-SHA
 CI [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494)
 PASS. Documentation, architecture status and the Closure Proposal were
-synchronized in `d628ffb`; its exact-SHA CI
-[32492948441](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32492948441)
-also passed. Phase 6 is stopped at Human Closure Review. Merge, a future
+synchronized in `d628ffb`; the final evidence/status checkpoint `0b95826`
+passed exact-SHA CI
+[32493107003](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493107003).
+Phase 6 is stopped at Human Closure Review. Merge, a future
 `v0.5.0-engineering-baseline` tag, Phase 7 and Product Release remain
 unauthorized.
 

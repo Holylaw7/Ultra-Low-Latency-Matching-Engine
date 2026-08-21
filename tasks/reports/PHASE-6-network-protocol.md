@@ -188,7 +188,7 @@ Implemented:
 | Frozen Domain/OrderBook/Engine/WAL/Recovery paths | 0 diff |
 | Benchmark commit | `0c924dd` |
 | Benchmark exact-SHA CI | [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) PASS |
-| Documentation synchronization | `d628ffb`; exact-SHA CI [32492948441](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32492948441) PASS |
+| Documentation synchronization | `0b95826`; exact-SHA CI [32493107003](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493107003) PASS |
 | Full-matrix loopback | `0.017 ops/us`; P50 `50.048 us`; P99 `169.108 us`; P999 `260.719 us` |
 | Full-matrix codec throughput | decode `7.004`–`7.869 ops/us`; encode `4.691`–`5.333 ops/us` |
 

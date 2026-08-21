@@ -12,7 +12,7 @@
 | Authorization Mode | Blueprint |
 | Current Stage / Next Gate | Completed / Human Phase 6 Closure Review |
 | Branch / Baseline | `feature/phase6-network-protocol` after approval / approved proposal commit |
-| Remote / CI | `origin` / benchmark CI [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) PASS; final docs CI [32492948441](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32492948441) PASS |
+| Remote / CI | `origin` / benchmark CI [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) PASS; final evidence checkpoint [32493107003](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493107003) PASS |
 
 ## 2. Background
 
@@ -162,7 +162,7 @@ Push checkpoints and record exact-SHA CI. Stop after Closure Proposal.
 | --- | --- | --- | --- |
 | 2026-08-21 | Proposed | evidence/closure plan | baseline PASS |
 | 2026-08-21 | Implemented | `NetworkBenchmark` codec and sequential loopback evidence | `0c924dd`; exact-SHA CI [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) PASS |
-| 2026-08-21 | Synchronized | benchmark, architecture, cumulative report and Closure Proposal | `d628ffb`; exact-SHA CI [32492948441](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32492948441) PASS |
+| 2026-08-21 | Synchronized | benchmark, architecture, cumulative report and Closure Proposal | `0b95826`; exact-SHA CI [32493107003](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493107003) PASS |
 
 ## 18. Completion Checklist
 
