@@ -7,14 +7,14 @@
 | Phase | Phase 3 — MatchingEngine |
 | Task | `TASK-20260820-008` |
 | Stage | Stage 3 — Determinism Verification Authorization |
-| Result | Proposed — Pending Human Approval |
+| Result | Approved — Verification Authorized / Not Started |
 | Tests | Not run — documentation-only authorization request |
 | Build | Not run — production and test code unchanged |
 | CI | [Run 32446230919](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32446230919) — PASS for `62f59aa` |
 | Commit | `62f59aa` — `docs:request-stage3-determinism-authorization` |
 | Branch | `feature/phase3-matching-engine` |
 | Parent | Stage 2 closure head `0b60cf6` |
-| Next Gate | Human Stage 3 Authorization Review |
+| Next Gate | Stage 3 verification execution and Human Completion Review |
 
 ## Requested Authorization
 
@@ -54,6 +54,10 @@ produce structurally equal ordered results. Equality covers:
 The baseline has no serialized result encoding, so Stage 3 requires exact
 Java value/record equality, not byte-for-byte equality of an unspecified wire
 format.
+
+Result collection ordering is part of observable behavior. Comparisons must
+preserve and verify list position; equal elements in a different order are not
+an equal deterministic result.
 
 ### Equality Explicitly Not Required
 
@@ -175,12 +179,16 @@ boundary remains logical and unimplemented.
   push and exact-SHA CI status;
 - implementation stops for Human Stage 3 Completion Review.
 
-## Approval Request
+## Stage 3 Authorization Approval
+
+| Date | Reviewer | Decision | Notes |
+| --- | --- | --- | --- |
+| 2026-08-21 | Human Developer | Approved | Stage 3 Determinism Verification authorized. Scope includes dual-engine deterministic comparison, an extended command stream, public-API observable state comparison and reachable failure atomicity checks. Result collection order is significant. WAL, Replay subsystem, reflection and production test hooks remain prohibited. |
 
 ```text
 Stage 1 Domain/API Foundation:    Completed / Approved
 Stage 2 MatchingEngine Core:      Completed / Approved
-Stage 3 Authorization Proposal:   Completed / Pending Human Approval
-Stage 3 Verification Execution:   Not Authorized
+Stage 3 Authorization:            Approved
+Stage 3 Verification Execution:   Authorized / Not Started
 Phase 3 Closure:                  Not Authorized
 ```
