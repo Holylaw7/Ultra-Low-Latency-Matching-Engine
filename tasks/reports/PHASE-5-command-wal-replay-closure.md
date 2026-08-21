@@ -2,10 +2,12 @@
 
 ## Status
 
-`Prepared — Remediation synchronized; Pending Final Human Phase 5 Closure Review`
+`Approved — Closure Execution Authorized`
 
-This document is a review proposal only. It does not authorize merge, a
-baseline tag, Product Release or the next Phase.
+Human Phase 5 Closure Approval is recorded below. Normal `--no-ff` merge,
+master verification/CI, annotated `v0.4.0-engineering-baseline` tag workflow,
+Task archival and final documentation synchronization are authorized. Product
+Release and Phase 6 remain unauthorized.
 
 ## Proposed Closure
 
@@ -88,21 +90,29 @@ failures are not dynamically injected through the public API. The component
 benchmark uses one fork and one one-second measurement on a Windows local
 filesystem, so its numbers are workload- and environment-specific.
 
-## Requested Human Decision
+## Human Closure Decision
 
 ```text
-Approve Phase 5 Closure: YES / NO
+Decision: APPROVED
 
-If approved, authorize separately:
+Authorized:
 - normal --no-ff merge to master;
 - master verification and CI;
 - annotated v0.4.0-engineering-baseline tag and tag CI.
+- archive TASK-014 through TASK-018;
+- final documentation and context synchronization.
 
-Remain unauthorized until separately approved:
+Remain unauthorized:
 - live integration, Network, Snapshot, online Recovery;
 - Product Release and performance optimization;
 - any change to frozen Domain/OrderBook/MatchingEngine/Pipeline paths.
 ```
+
+## Approval Record
+
+| Date | Reviewer | Decision | Notes |
+| --- | --- | --- | --- |
+| 2026-08-21 | Human Developer | `Approved` | Phase 5 Command WAL and Deterministic Replay closure accepted. TASK-014 through TASK-018, WAL format v1, strict corruption/torn-tail behavior, deterministic offline replay, component benchmark and Limited Closure Remediation are accepted. The absence of dynamic `force(true)` fault injection is accepted as a known limitation; no hardware power-loss guarantee is claimed. Authorized actions: normal `--no-ff` merge, master verification/CI, annotated `v0.4.0-engineering-baseline`, tag CI, Task archival and final documentation synchronization. Product Release, Phase 6 and all excluded live integration/recovery work remain unauthorized. |
 
 ## Current Gate
 
@@ -111,7 +121,7 @@ v0.3.0-engineering-baseline: Frozen
 ADR-0013: Approved
 TASK-014..018: Completed / remediation evidence synchronized
 R1/R2/R3: exact-SHA CI PASS; final evidence HEAD `0e6ac95`
-Phase 5 Closure: Changes remediated / Final Human Closure Review pending
-Merge / v0.4.0 tag: Not Authorized
+Phase 5 Closure: Approved
+Merge / v0.4.0 tag: Authorized / Pending Execution
 Next Phase: Not Authorized
 ```

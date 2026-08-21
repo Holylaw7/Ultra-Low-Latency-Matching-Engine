@@ -7,14 +7,14 @@
 | Phase | Phase 5 — Command WAL and Deterministic Replay Foundation |
 | Current Task | Limited Closure Remediation R1-R3 |
 | Completed Task | TASK-20260821-018 — WAL Benchmark, Documentation and Closure Preparation |
-| Result | `Remediation completed / Final Closure Review Pending` |
+| Result | `Phase 5 Closure Approved / Merge and Baseline Execution Authorized` |
 | Baseline | `v0.3.0-engineering-baseline` remains frozen |
 | Full Verification | `mvn verify` PASS; 114 tests, 0 failures; Maven reactor 3/3 SUCCESS |
 | Checkstyle | 0 violations |
 | Latest Commit | `0e6ac954a2525fbea19b4c9e818f7c6c90098d97` (R3 documentation synchronization) |
 | Latest CI | [run 32482054086](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482054086) PASS |
 | Branch | `feature/phase5-command-wal-replay` |
-| Next Gate | Final Human Phase 5 Closure Review after R3 exact-SHA CI |
+| Next Gate | Normal `--no-ff` merge / master verification / CI / baseline tag |
 
 ## Human Blueprint Authorization
 
@@ -228,16 +228,17 @@ Evidence gate:
 - R2 mixed-command benchmark commit `bd37382` passed exact-SHA CI [run 32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533);
 - architecture, README, ADR, Blueprint, Task and context documents were
   synchronized by R3 commit `0e6ac95`; its exact-SHA CI `32482054086` passed.
-  Final Closure Review remains pending.
+  Final Human Closure Review approved the evidence and authorized baseline
+  execution.
 
 ## Next State
 
 TASK-014 through TASK-018 and the authorized limited remediation are complete.
-Phase 5 Closure is **not** approved: merge to `master`,
-`v0.4.0-engineering-baseline`, live pipeline/WAL integration, Snapshot, online
-Recovery, Network and Product Release remain unauthorized. Stop after the R3
-documentation commit and exact-SHA CI for the final Human Phase 5 Closure
-Review.
+Phase 5 Closure is approved. Normal `--no-ff` merge to `master`, master
+verification/CI, annotated `v0.4.0-engineering-baseline`, tag CI, Task archival
+and final documentation synchronization are authorized. Live pipeline/WAL
+integration, Snapshot, online Recovery, Network, Phase 6 implementation and
+Product Release remain unauthorized.
 
 ## Known Scope Boundary
 

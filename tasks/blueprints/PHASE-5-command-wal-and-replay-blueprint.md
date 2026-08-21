@@ -14,7 +14,7 @@
 | Proposal Base HEAD | `fbcbe53` |
 | Blueprint Branch | `docs/phase5-command-wal-replay-blueprint` |
 | Planned Tasks | `TASK-20260821-014` through `TASK-20260821-018` |
-| Next Gate | `Final Human Phase 5 Closure Review after Limited Remediation` |
+| Next Gate | `Authorized merge / master CI / baseline tag execution` |
 
 ## 2. Discovery and Phase Goal
 
@@ -516,7 +516,8 @@ Required execution/closure artifacts after approval:
 ```text
 Blueprint Status: Approved
 Implementation: TASK-014 through TASK-018 completed; limited remediation R1-R3 authorized
-Next Gate: Final Human Phase 5 Closure Review after remediation exact-SHA CI
+Closure: Human Approved
+Next Gate: Authorized merge / master CI / baseline tag execution
 ```
 
 Approval must explicitly confirm:
@@ -561,7 +562,7 @@ Approval must explicitly confirm:
 - [x] Limited Closure Remediation R1 rotation-failure evidence recorded
 - [x] Limited Closure Remediation R2 benchmark evidence recorded
 - [x] force-failure dynamic injection limitation explicitly recorded without adding a production seam
-- [ ] Human Phase Closure Approval recorded
+- [x] Human Phase Closure Approval recorded
 - [ ] authorized merge/tag/baseline actions verified
 - [ ] active Tasks moved to completed
 - [x] next Phase remains explicitly unauthorized

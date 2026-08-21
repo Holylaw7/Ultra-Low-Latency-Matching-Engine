@@ -78,9 +78,10 @@ offline deterministic replay. TASK-014 through TASK-018 and the authorized
 limited closure remediation are implemented with 114 passing tests,
 corruption/torn-tail evidence, deterministic rotation-failure evidence and
 component-level JMH evidence. Phase 5 Closure, merge,
-`v0.4.0-engineering-baseline` and Product Release remain separate Human gates.
-The phase deliberately excludes live pipeline durability integration, Snapshot,
-online Recovery and Network. See
+`v0.4.0-engineering-baseline` execution is authorized by Human Phase 5 Closure
+Approval; Product Release remains separately governed. The phase deliberately
+excludes live pipeline durability integration, Snapshot, online Recovery and
+Network. See
 [`PHASE-5-command-wal-and-replay-blueprint.md`](tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md)
 and [`recovery.md`](docs/benchmark/recovery.md).
 

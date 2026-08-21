@@ -310,6 +310,7 @@ Trade-offs and limitations:
 | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | `Proposal Authorized` | Phase 5 Discovery, ADR draft and Complete Blueprint Proposal may be created. Implementation remains unauthorized pending Human Blueprint Approval. |
 | 2026-08-21 | Human Developer | `Approved` | D1-D10 and TASK-014 through TASK-018 approved through the Phase Blueprint. Execution is authorized in strict dependency order. Existing Domain, OrderBook, MatchingEngine and Pipeline production files remain unchanged. A failed force is not proof of physical record absence; strict scan/reopen determines the valid persisted boundary. Phase Closure, merge and `v0.4.0-engineering-baseline` remain unauthorized. |
+| 2026-08-21 | Human Developer | `Closure Approved` | Phase 5 evidence and Limited Closure Remediation accepted. Normal `--no-ff` merge, master verification/CI, annotated `v0.4.0-engineering-baseline`, tag CI, Task archival and final documentation synchronization authorized. Product Release, Phase 6 and excluded live integration/recovery work remain unauthorized. |
 
 ## Implementation Evidence Synchronization
 
@@ -328,7 +329,7 @@ and [R3 CI 32482054086](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-E
 all PASS.
 
 This evidence does not change the approved scope or durability claims. Phase 5
-remains a persistence/replay engineering baseline: live pipeline integration,
-durable client acknowledgement, Snapshot, online Recovery, Network,
-optimization, merge and `v0.4.0-engineering-baseline` remain unauthorized until
-separate Human Phase Closure approval.
+remains a persistence/replay engineering baseline. Human Closure Approval now
+authorizes the merge/master CI/baseline-tag workflow only. Live pipeline
+integration, durable client acknowledgement, Snapshot, online Recovery,
+Network, optimization, Product Release and Phase 6 remain unauthorized.

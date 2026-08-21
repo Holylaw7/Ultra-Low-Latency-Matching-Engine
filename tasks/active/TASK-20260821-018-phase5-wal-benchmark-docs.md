@@ -5,13 +5,13 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-018` / Phase 5 WAL Benchmark, Documentation and Closure Preparation |
-| Status | `Completed / Remediation Evidence Passed; Final Closure Review Pending` |
+| Status | `Completed / Closure Approved; Archive Pending` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 5 / ADR-0013 / `PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
 | Depends On | TASK-017 exact-SHA evidence PASS |
-| Current Stage / Next Gate | Remediation completed / Final Human Phase 5 Closure Review |
+| Current Stage / Next Gate | Closure approved / authorized merge-tag workflow |
 | Branch / CI | `feature/phase5-command-wal-replay` / R3 [run 32482054086](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482054086) PASS for `0e6ac95` |
 
 ## 2. Background and Goal
@@ -151,8 +151,8 @@ Push each checkpoint and record exact-SHA CI. Merge/tag wait for Human Closure.
 | Stage | Report | Status | Next Gate |
 | --- | --- | --- | --- |
 | Proposal | Phase 5 proposal report | Approved | TASK-017 evidence |
-| Benchmark / Docs | cumulative Phase 5 report | Completed / Remediation Evidence PASS | Final Human Phase 5 Closure Review |
-| Closure Preparation | Phase 5 Closure Report | Prepared / Remediation synchronized | Final Human Phase 5 Closure Review |
+| Benchmark / Docs | cumulative Phase 5 report | Completed / Remediation Evidence PASS | authorized baseline workflow |
+| Closure Preparation | Phase 5 Closure Report | Human Approved | authorized baseline workflow |
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |

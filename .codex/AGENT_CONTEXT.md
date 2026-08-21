@@ -10,13 +10,13 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 5 — Command WAL and Deterministic Replay Foundation (`Final Closure Review Pending`) |
-| Latest product task | [`TASK-20260821-018`](../tasks/active/TASK-20260821-018-phase5-wal-benchmark-docs.md) — Remediation Evidence Passed |
+| Phase | Phase 5 — Command WAL and Deterministic Replay Foundation (`Closure Approved / Baseline Execution Pending`) |
+| Latest product task | [`TASK-20260821-018`](../tasks/active/TASK-20260821-018-phase5-wal-benchmark-docs.md) — Closure Approved / Archive Pending |
 | Latest architecture decision | [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md) — Approved |
-| Current planning task | Limited Closure Remediation R1-R3 completed; final Human Phase 5 Closure Review next |
+| Current planning task | Execute authorized `--no-ff` merge, master CI, baseline tag, archive and final synchronization |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 4 Closed / Baseline Frozen; Phase 5 implementation completed |
-| Product approval | Phase 5 Blueprint approved; TASK-014..018 and remediation evidence passed; Closure, merge/tag and Product Release not authorized |
+| Product approval | Phase 5 Closure approved; merge/tag/archive authorized; Product Release and Phase 6 not authorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `feature/phase5-command-wal-replay` |
 | Engineering baseline commit | `d28abbe` |
@@ -35,7 +35,7 @@
 | Phase 3 — Matching Engine | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-3-matching-engine-closure-authorization.md); `v0.2.0-engineering-baseline` |
 | Governance — Phase Blueprint Mode | Completed / Approved / Active | [`TASK-009`](../tasks/completed/TASK-20260821-009-phase-blueprint-governance.md); master CI PASS |
 | Phase 4 — Event Pipeline | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-4-event-pipeline-closure.md); `v0.3.0-engineering-baseline` |
-| Phase 5 — Command WAL and Deterministic Replay Foundation | Implementation and limited remediation completed / Final Closure Review Pending | [`Blueprint`](../tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md); [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md); [`Closure`](../tasks/reports/PHASE-5-command-wal-replay-closure.md) |
+| Phase 5 — Command WAL and Deterministic Replay Foundation | Closure Approved / Baseline Execution Pending | [`Blueprint`](../tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md); [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md); [`Closure`](../tasks/reports/PHASE-5-command-wal-replay-closure.md) |
 | Phase 6+ — Network, Snapshot/recovery integration and performance evolution | Future Work | separately approved future Blueprints |
 
 ## Current Product Gate
@@ -78,7 +78,8 @@ ADR-0011 Final Approved
     -> TASK-017 [Completed / exact-SHA CI PASS]
     -> TASK-018 [Completed / remediation R2 evidence PASS]
     -> Limited Closure Remediation R1-R3 [Completed; exact-SHA CI PASS]
-    -> Final Human Phase 5 Closure Review [Next; merge/tag not authorized]
+    -> Final Human Phase 5 Closure Review [Approved]
+    -> normal merge / master verification / CI / baseline tag [Authorized / Next]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
@@ -103,8 +104,10 @@ dependency-ordered execution. All five Tasks now have exact-SHA CI evidence.
 Limited Closure Remediation added deterministic rotation-failure evidence and a
 complete mixed-command benchmark with environment/workload/P50/P99 metadata.
 R3 documentation synchronization is complete at `0e6ac95` with exact-SHA CI
-`32482054086` PASS. Phase Closure, merge, tag and Product Release remain
-unauthorized.
+`32482054086` PASS, and the final gate record `a2176d5` passed CI
+`32482214913`. Human Phase 5 Closure is approved. Normal merge, master CI,
+baseline tag, Task archival and final synchronization are authorized; Product
+Release and Phase 6 remain unauthorized.
 
 Current approved Blueprint:
 [`PHASE-5-command-wal-and-replay-blueprint.md`](../tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md).
@@ -248,7 +251,7 @@ Client
        -> PriceLevel / OrderQueue
        -> active OrderId index
   -> Trade / Execution results        [Engine generation implemented]
-  -> Command WAL / Offline Replay     [Phase 5 implemented; Closure Review pending]
+  -> Command WAL / Offline Replay     [Phase 5 Closure approved; baseline execution pending]
   -> Snapshot / Online Recovery       [Future Work]
   -> Output / Metrics                 [Future Work]
 ```

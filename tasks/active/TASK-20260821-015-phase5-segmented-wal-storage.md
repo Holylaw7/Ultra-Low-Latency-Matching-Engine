@@ -13,7 +13,7 @@
 | Phase Blueprint | `tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
 | Depends On | TASK-014 evidence PASS |
-| Current Stage / Next Gate | Remediation completed / Final Phase 5 Closure Review |
+| Current Stage / Next Gate | Closure approved / archive after baseline workflow |
 | Branch / Baseline | `feature/phase5-command-wal-replay` / approved TASK-014 commit |
 | CI | Original [run 32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050) PASS; remediation [run 32481266960](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481266960) PASS for `83e5544` |
 
