@@ -13,7 +13,7 @@
 | Baseline | `v0.4.0-engineering-baseline` -> `f1e453a`; proposal base `2cf34b5` |
 | Blueprint Branch | `docs/phase6-network-protocol-blueprint` |
 | Planned Tasks | `TASK-20260821-019` through `TASK-20260821-023` |
-| Next Gate | `TASK-019 Evidence Gate / exact-SHA CI` |
+| Next Gate | `TASK-020 Evidence Gate / exact-SHA CI` |
 
 ## 2. Phase Goal
 
@@ -414,11 +414,12 @@ scope, evidence/Exception Gates and separate Phase Closure.
 | --- | --- | --- | --- | --- |
 | 2026-08-21 | Discovery / Blueprint Proposal | Prepared / pushed | `ecf0c27`; baseline 114 tests; Checkstyle 0; frozen diff 0; exact-SHA CI [32485900404](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32485900404) PASS | Human Phase 6 Blueprint Approval |
 | 2026-08-21 | Human Blueprint Approval | Approved | ADR-0014 D1-D10 and TASK-019..023 authorized in dependency order | Begin TASK-019; stop on Exception Gate |
+| 2026-08-21 | TASK-019 | Completed / Evidence PASS | `fdb68e3`; 120 tests; Checkstyle 0; frozen diff 0; exact-SHA CI [32488339314](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32488339314) PASS | TASK-020 Authorized / Next |
 
 ## 20. Phase Closure Checklist
 
 - [x] Blueprint approval recorded and synchronized into ADR-0014/Tasks
-- [ ] TASK-019 protocol/codec completed
+- [x] TASK-019 protocol/codec completed
 - [ ] TASK-020 pipeline failure observer completed
 - [ ] TASK-021 Netty gateway completed
 - [ ] TASK-022 network verification completed

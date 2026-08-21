@@ -59,8 +59,8 @@ The durable draft is
 
 | Task | Purpose | Status |
 | --- | --- | --- |
-| [`TASK-019`](../active/TASK-20260821-019-phase6-network-protocol-codec.md) | dependency, protocol contracts and codec | Authorized / Next |
-| [`TASK-020`](../active/TASK-20260821-020-phase6-pipeline-failure-observer.md) | additive terminal pipeline observer | Conditionally Authorized |
+| [`TASK-019`](../active/TASK-20260821-019-phase6-network-protocol-codec.md) | dependency, protocol contracts and codec | Completed / Evidence PASS |
+| [`TASK-020`](../active/TASK-20260821-020-phase6-pipeline-failure-observer.md) | additive terminal pipeline observer | Authorized / Next |
 | [`TASK-021`](../active/TASK-20260821-021-phase6-netty-gateway.md) | single-session TCP gateway | Conditionally Authorized |
 | [`TASK-022`](../active/TASK-20260821-022-phase6-network-verification.md) | determinism/system/failure evidence | Conditionally Authorized |
 | [`TASK-023`](../active/TASK-20260821-023-phase6-network-benchmark-docs.md) | benchmark, documentation and Closure preparation | Conditionally Authorized |

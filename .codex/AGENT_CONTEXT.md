@@ -11,19 +11,19 @@
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
 | Phase | Phase 6 — Binary Network Protocol and Single-Session Gateway (`Implementation Authorized`) |
-| Latest product task | [`TASK-20260821-019`](../tasks/active/TASK-20260821-019-phase6-network-protocol-codec.md) — Authorized / Next |
+| Latest product task | [`TASK-20260821-020`](../tasks/active/TASK-20260821-020-phase6-pipeline-failure-observer.md) — Authorized / Next |
 | Latest architecture decision | [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md) — Approved |
-| Current planning task | TASK-019 implementation; TASK-020 through TASK-023 conditionally authorized by predecessor evidence |
+| Current planning task | TASK-020 implementation; TASK-021 through TASK-023 conditionally authorized by predecessor evidence |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 5 Baseline Frozen / Phase 6 Implementation Authorized |
 | Product approval | Phase 6 Blueprint approved; implementation authorized in dependency order; merge/tag and Product Release not authorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
-| Branch | `docs/phase6-network-protocol-blueprint` |
+| Branch | `feature/phase6-network-protocol` |
 | Engineering baseline commit | `f1e453a` |
 | Engineering baseline tag | `v0.4.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/master` at `2cf34b5`; Phase 6 proposal branch synchronized at `2f1630a`; implementation branch to be created from approved proposal; annotated `v0.4.0-engineering-baseline` remains fixed at `f1e453a` |
-| CI | Phase 6 proposal content [32485900404](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32485900404) PASS; Phase 5 final master [32483798483](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32483798483) PASS; baseline tag [32482900227](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482900227) PASS |
+| Remote sync | `origin/master` at `2cf34b5`; `origin/feature/phase6-network-protocol` at `fdb68e3`; annotated `v0.4.0-engineering-baseline` remains fixed at `f1e453a` |
+| CI | TASK-019 [32488339314](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32488339314) PASS; Blueprint approval [32487610108](https://github.com/Holylaw7/Ultra-Latency-Matching-Engine/actions/runs/32487610108) PASS; Phase 5 final master [32483798483](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32483798483) PASS |
 
 ## Project Progress
 
@@ -36,7 +36,7 @@
 | Governance — Phase Blueprint Mode | Completed / Approved / Active | [`TASK-009`](../tasks/completed/TASK-20260821-009-phase-blueprint-governance.md); master CI PASS |
 | Phase 4 — Event Pipeline | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-4-event-pipeline-closure.md); `v0.3.0-engineering-baseline` |
 | Phase 5 — Command WAL and Deterministic Replay Foundation | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md); [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md); [`Closure`](../tasks/reports/PHASE-5-command-wal-replay-closure.md); `v0.4.0-engineering-baseline` |
-| Phase 6 — Binary Network Protocol and Single-Session Gateway | Blueprint Approved / TASK-019 Authorized | [`Blueprint`](../tasks/blueprints/PHASE-6-network-protocol-blueprint.md); [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md) |
+| Phase 6 — Binary Network Protocol and Single-Session Gateway | TASK-019 Completed / TASK-020 Authorized | [`Blueprint`](../tasks/blueprints/PHASE-6-network-protocol-blueprint.md); [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md) |
 | Phase 7+ — Snapshot/recovery integration and performance evolution | Future Work | separately approved future Blueprints |
 
 ## Current Product Gate
@@ -86,8 +86,9 @@ ADR-0011 Final Approved
     -> Phase 5 [Baseline Frozen]
     -> Phase 6 Discovery / ADR / Complete Blueprint [Prepared]
     -> Human Phase 6 Blueprint Approval [Approved]
-    -> TASK-019 [Authorized / Next]
-    -> TASK-020 through TASK-023 [Conditionally Authorized after predecessor evidence]
+    -> TASK-019 [Completed / exact-SHA CI PASS]
+    -> TASK-020 [Authorized / Next]
+    -> TASK-021 through TASK-023 [Conditionally Authorized after predecessor evidence]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and

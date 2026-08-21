@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260821-019` |
 | Title | Phase 6 Network Dependency, Protocol Contracts and Codec |
-| Status | `Authorized / Next` |
+| Status | `Completed / Evidence PASS` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created / Updated | `2026-08-21` |
@@ -15,10 +15,10 @@
 | Phase Blueprint | [`PHASE-6`](../blueprints/PHASE-6-network-protocol-blueprint.md) |
 | Authorization Mode | Blueprint |
 | Current Stage | Implementation |
-| Next Gate | TASK-019 Evidence Gate / exact-SHA CI |
+| Next Gate | TASK-020 Evidence Gate / exact-SHA CI |
 | Branch | `feature/phase6-network-protocol` after approval |
 | Baseline HEAD | approved Phase 6 proposal commit based on `2cf34b5` |
-| Remote / CI | `origin` / pending TASK-019 evidence |
+| Remote / CI | `origin/feature/phase6-network-protocol` / exact-SHA CI [32488339314](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32488339314) PASS |
 
 ## 2. Background
 
@@ -39,14 +39,14 @@ request decoding and response encoding with exact golden vectors.
 
 ## 5. Requirements and Acceptance Criteria
 
-- [ ] use `io.netty:netty-bom:4.2.17.Final` and only transport/codec modules;
-- [ ] implement the exact ADR-0014 header, type codes, lengths and field codes;
-- [ ] reject invalid magic/version/type/flags/reserved/length/numeric values;
-- [ ] decode SubmitLimit/Cancel values without assigning Command Sequence;
-- [ ] encode CommandResult, ordered MatchResult and Error response frames;
-- [ ] fragmented/coalesced frames decode deterministically;
-- [ ] Netty reference-counted buffers are released by normal pipeline ownership;
-- [ ] no frozen production file changes.
+- [x] use `io.netty:netty-bom:4.2.17.Final` and only transport/codec modules;
+- [x] implement the exact ADR-0014 header, type codes, lengths and field codes;
+- [x] reject invalid magic/version/type/flags/reserved/length/numeric values;
+- [x] decode SubmitLimit/Cancel values without assigning Command Sequence;
+- [x] encode CommandResult, ordered MatchResult and Error response frames;
+- [x] fragmented/coalesced frames decode deterministically;
+- [x] Netty reference-counted buffers are released by normal pipeline ownership;
+- [x] no frozen production file changes.
 
 ## 6. Current Implementation and Scope
 
@@ -160,21 +160,22 @@ Push each logical commit after gates; exact-SHA CI must pass before TASK-020.
 | Stage | Report | Status | Next Gate | Authorization |
 | --- | --- | --- | --- | --- |
 | ADR / Task Approval | Phase 6 proposal report | Approved | TASK-019 implementation | Blueprint |
-| Implementation | cumulative Phase 6 report | Pending | verification | Blueprint |
-| Verification | cumulative report | Pending | exact-SHA CI | Blueprint |
+| Implementation | [`PHASE-6-network-protocol.md`](../reports/PHASE-6-network-protocol.md) | Completed | verification | Blueprint |
+| Verification | cumulative report | Completed / PASS | TASK-020 | Blueprint |
 | Benchmark / Profile | Not applicable | N/A | documentation | Blueprint |
-| Completion | cumulative report | Pending | TASK-020 / Exception Gate | Blueprint |
+| Completion | cumulative report | Completed / PASS | TASK-020 | Blueprint |
 
 ## 17. Implementation Log
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-21 | Authorized | protocol/codec implementation authorized after Blueprint Approval | baseline 114 tests PASS; next evidence gate TASK-019 |
+| 2026-08-21 | Completed / Evidence PASS | Netty dependency, project-owned protocol values and strict codecs implemented | 120 tests PASS; Checkstyle 0; frozen diff 0; exact-SHA CI 32488339314 PASS |
 
 ## 18. Completion Checklist
 
-- [ ] scope and tests complete
-- [ ] full build/Checkstyle/diff/frozen audit pass
-- [ ] ADR/Blueprint/report synchronized
-- [ ] logical commits pushed and exact-SHA CI recorded
-- [ ] no Exception Gate
+- [x] scope and tests complete
+- [x] full build/Checkstyle/diff/frozen audit pass
+- [x] ADR/Blueprint/report synchronized
+- [x] logical commits pushed and exact-SHA CI recorded
+- [x] no Exception Gate
