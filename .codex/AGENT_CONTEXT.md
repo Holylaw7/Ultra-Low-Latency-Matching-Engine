@@ -10,19 +10,19 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 3 — MatchingEngine (`Closure execution authorized`) |
-| Latest product task | [`TASK-20260819-004`](../tasks/completed/TASK-20260819-004-basic-orderbook.md) — Completed |
+| Phase | Phase 3 — MatchingEngine (`Completed / Approved / Baseline Frozen`) |
+| Latest product task | [`TASK-20260820-008`](../tasks/completed/TASK-20260820-008-phase3-matching-engine-implementation.md) — Completed |
 | Latest architecture task | [`TASK-20260820-007`](../tasks/completed/TASK-20260820-007-phase3-matching-engine-adr-decision.md) — Completed |
-| Current planning task | [`TASK-20260820-008`](../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md) — Approved |
-| Product stage | Phase 3 Closure Execution |
-| Product approval | Approved; merge, master verification, baseline tag and TASK closure authorized |
+| Current planning task | None — next-phase work not authorized |
+| Product stage | Phase 3 Closed / Baseline Frozen |
+| Product approval | Phase 3 approved and closed; next-phase ADR requires separate authorization |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
-| Branch | `feature/phase3-matching-engine` |
-| Engineering baseline commit | `cbfa957` |
-| Engineering baseline tag | `v0.1.0-engineering-baseline` |
+| Branch | `master` |
+| Engineering baseline commit | `9281124` |
+| Engineering baseline tag | `v0.2.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `master` and engineering baseline tag published |
-| CI | Phase 3 closure proposal `5ea0cdb`: [run 32447826712](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32447826712) PASS; latest implementation `mvn verify` PASS (61 tests) |
+| Remote sync | `master` and `v0.2.0-engineering-baseline` published |
+| CI | Master [run 32449941033](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32449941033) PASS; tag [run 32449993233](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32449993233) PASS; local `mvn verify` PASS (61 tests) |
 
 ## Project Progress
 
@@ -31,7 +31,7 @@
 | Phase 0 — Bootstrap | Completed | Maven reactor, Java 21, JUnit 5, JMH, Checkstyle and CI workflow |
 | Phase 1 — Domain Model | Completed / Approved | [`PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md) |
 | Phase 2 — Basic OrderBook | Completed / Approved | `v0.1.0-engineering-baseline`, 45 tests, JMH/JFR evidence and passing master CI |
-| Phase 3 — Matching Engine | Closure Approved / Execution Pending | [`Closure Authorization`](../tasks/reports/PHASE-3-matching-engine-closure-authorization.md); verified merge and baseline freeze authorized |
+| Phase 3 — Matching Engine | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-3-matching-engine-closure-authorization.md); `v0.2.0-engineering-baseline` |
 | Phase 4+ — Pipeline, network, recovery and performance evolution | Future Work | Architecture documents and future ADRs/tasks |
 
 ## Current Product Gate
@@ -52,20 +52,22 @@ ADR-0011 Final Approved
     -> Human Stage 3 completion review [Completed]
     -> Phase 3 Closure proposal [Prepared]
     -> Human Phase 3 Closure approval [Approved]
-    -> merge / master verification / engineering baseline tag [Authorized]
+    -> normal merge / master verification [Completed / PASS]
+    -> v0.2.0-engineering-baseline / tag CI [Completed / PASS]
+    -> TASK-20260820-008 [Completed]
+    -> next-phase ADR proposal [Not Authorized]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
 approved. Stage 3 verification-only execution and Human completion review are
 complete with ordered result comparison, public-API state probes and no
-production test hooks. The Phase 3 Closure Authorization proposal consolidates
-the accepted evidence and limitations. Human closure approval authorizes the
-normal merge, master verification, annotated baseline tag and TASK closure.
-Release, next-phase work, production optimization and history rewrite remain
-unauthorized. OrderBook is an external frozen dependency.
+production test hooks. Phase 3 is closed at the annotated and CI-verified
+`v0.2.0-engineering-baseline`. Release, next-phase ADR/implementation,
+production optimization and history rewrite remain unauthorized. OrderBook
+remains the frozen Phase 2 dependency.
 
-Completed plan:
-[`TASK-20260819-004-basic-orderbook.md`](../tasks/completed/TASK-20260819-004-basic-orderbook.md).
+Latest completed plan:
+[`TASK-20260820-008-phase3-matching-engine-implementation.md`](../tasks/completed/TASK-20260820-008-phase3-matching-engine-implementation.md).
 
 Current evidence:
 
@@ -82,7 +84,7 @@ Current evidence:
 - [`PHASE-3-matching-engine-determinism-verification.md`](../tasks/reports/PHASE-3-matching-engine-determinism-verification.md)
   — Stage 3 completed and approved evidence: 256 commands and 61 core tests.
 - [`PHASE-3-matching-engine-closure-authorization.md`](../tasks/reports/PHASE-3-matching-engine-closure-authorization.md)
-  — closure prerequisites, frozen boundary, limitations and approved baseline sequence; execution pending.
+  — final closure, frozen boundary, limitations, master CI and tag CI evidence.
 - [`PHASE-3-matching-engine-adr-decision.md`](../tasks/reports/PHASE-3-matching-engine-adr-decision.md)
   — completed; ADR-0011 final approval recorded and architecture frozen.
 - [`PHASE-2-measurement-isolation.md`](../tasks/reports/PHASE-2-measurement-isolation.md)
@@ -159,7 +161,7 @@ Client
   -> Netty / Protocol                 [Future Work]
   -> Decoder / Validation             [Future Work]
   -> Ingress + RingBuffer/Disruptor   [Future Work]
-  -> MatchingEngine                   [Stage 3 complete; Phase 3 closure pending]
+  -> MatchingEngine                   [Phase 3 baseline frozen]
   -> OrderBook                        [Phase 2 baseline implemented]
        -> BidBook / AskBook
        -> PriceLevel / OrderQueue

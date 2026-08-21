@@ -1,4 +1,4 @@
-# Phase 3 — MatchingEngine Closure Authorization
+# Phase 3 — MatchingEngine Final Closure and Baseline Freeze
 
 ## Executive Status
 
@@ -6,22 +6,23 @@
 | --- | --- |
 | Phase | Phase 3 — MatchingEngine |
 | Task | `TASK-20260820-008` |
-| Stage | Closure Preparation / Authorization |
-| Result | Approved — Closure Execution Authorized |
+| Stage | Final Closure and Baseline Freeze |
+| Result | Completed — Phase 3 Closed |
 | Tests | 61 passed / 0 failed |
 | Build | `mvn verify` — PASS; reactor 3/3 |
 | Static analysis | Checkstyle — 0 violations |
-| CI | [Run 32447826712](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32447826712) — PASS for closure proposal commit `5ea0cdb` |
-| Branch | `feature/phase3-matching-engine` |
+| CI | [Tag run 32449993233](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32449993233) — PASS for `v0.2.0-engineering-baseline` |
+| Branch | `master` |
 | Preparation base | `4c46567` |
 | Proposal commit | `5ea0cdb` — `docs(phase3): prepare closure authorization` |
-| Proposed baseline tag | `v0.2.0-engineering-baseline` — not created |
-| Next Gate | Verified master integration |
+| Merge commit | `9281124` — verified master baseline |
+| Baseline tag | `v0.2.0-engineering-baseline` — annotated, pushed and verified |
+| Next Gate | Next-phase ADR proposal — Not Authorized |
 
-Phase 3 satisfies the documented closure prerequisites, but is not yet closed.
-Human approval authorizes the controlled merge, master verification and
-engineering-baseline freeze described below. Those actions remain pending
-until their execution and evidence are recorded.
+Phase 3 satisfies the documented closure prerequisites and is closed at the
+verified `v0.2.0-engineering-baseline`. The normal merge, local master
+verification, master CI, annotated tag and tag CI are complete. Release and
+next-phase work remain separately gated.
 
 ## Progress
 
@@ -31,9 +32,9 @@ until their execution and evidence are recorded.
 | Stage 2 — MatchingEngine Core | 100% | Approved Stage 2 report and CI |
 | Stage 3 — Determinism Verification | 100% | Approved Stage 3 report and CI |
 | ADR alignment | 100% | ADR-0005 R1-R6 and ADR-0011 D1-D7 approved |
-| Documentation synchronization | 100% prepared | TASK-008, architecture, README and context synchronized |
+| Documentation synchronization | 100% | TASK-008, architecture, README and context synchronized |
 | Human Phase 3 Closure Approval | Approved | Approved on 2026-08-21 |
-| Merge / master verification / tag | Authorized / Pending Execution | Must follow the approved sequence |
+| Merge / master verification / tag | 100% | Merge and both master/tag CI verified |
 
 ## Delivered Phase 3 Capability
 
@@ -140,9 +141,9 @@ readiness or a measured performance claim.
   it is not an end-to-end or MatchingEngine performance measurement.
 - WAL, Replay, Snapshot and Recovery correctness remain unverified future work.
 
-## Approved Engineering Baseline Candidate
+## Frozen Engineering Baseline
 
-Candidate annotated tag:
+Annotated tag:
 
 ```text
 v0.2.0-engineering-baseline
@@ -166,37 +167,39 @@ Not included:
 ```
 
 This name deliberately identifies an engineering baseline rather than a
-product release. Human closure approval is recorded, but the tag does not yet
-exist and must be created only after verified master integration.
+product release. The tag is annotated, published and points to verified master
+merge commit `9281124`.
 
 ## Approved Closure Sequence
 
 ```text
-Human Phase 3 Closure Approval
-    -> normal --no-ff merge feature/phase3-matching-engine into master
-    -> run mvn verify on merged master
-    -> push master and verify exact-SHA GitHub Actions
-    -> create annotated v0.2.0-engineering-baseline on verified master
-    -> push tag and verify tag CI
-    -> close TASK-20260820-008 and move it to tasks/completed
-    -> synchronize final closure evidence
-    -> next-phase ADR proposal only after separate Human authorization
+Human Phase 3 Closure Approval                              [Completed]
+    -> normal --no-ff merge into master                    [Completed]
+    -> mvn verify on merged master                         [PASS]
+    -> master push and exact-SHA GitHub Actions            [PASS]
+    -> annotated v0.2.0-engineering-baseline               [Created]
+    -> tag push and tag GitHub Actions                     [PASS]
+    -> TASK-20260820-008 moved to tasks/completed          [Completed]
+    -> final closure evidence synchronization              [Completed]
+    -> next-phase ADR proposal                             [Not Authorized]
 ```
 
-No squash, rebase, history rewrite, release publication or production
-optimization is proposed.
+No squash, rebase or history rewrite was used. No release, next-phase work or
+production optimization was started.
 
-## Git Evidence at Preparation
+## Final Git Evidence
 
-- Branch: `feature/phase3-matching-engine`
-- Preparation base: `4c46567`
-- Remote branch: `origin/feature/phase3-matching-engine`
-- Base and remote SHA: equal at preparation start
-- Closure proposal commit: `5ea0cdb`
-- Latest observed CI: run `32447826712` PASS for `5ea0cdb`
-- Phase 2 baseline: `v0.1.0-engineering-baseline` at `cbfa957`
-- Phase 3 baseline tag: not created
-- Merge into master: not executed
+- Final branch: `master`
+- Feature approval head: `b9d05a5`
+- Feature approval CI: [run 32449850673](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32449850673) — PASS
+- Merge: normal `--no-ff`; no squash or history rewrite
+- Merge commit: `928112414a9bde581b2ac75e2606373d61be77b8`
+- Local master verification: `mvn verify` PASS; 61 tests; reactor 3/3; Checkstyle 0
+- Master CI: [run 32449941033](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32449941033) — PASS for `9281124`
+- Annotated tag: `v0.2.0-engineering-baseline`
+- Tag target: `928112414a9bde581b2ac75e2606373d61be77b8`
+- Tag CI: [run 32449993233](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32449993233) — PASS
+- Prior baseline: `v0.1.0-engineering-baseline` at `cbfa957`
 - Release: not created
 
 ## Project Impact
@@ -207,22 +210,22 @@ apply limit-order/cancel behavior and produce stable ordered trade results.
 Infrastructure, recovery and production-performance capabilities remain
 separate future architecture decisions.
 
-## Phase 3 Closure Approval
+## Phase 3 Closure Result
 
 ```text
-Current Stage: Phase 3 Closure Execution authorized
+Current Stage: Phase 3 Closed / Baseline Frozen
 Human Phase 3 Closure Approval: Approved 2026-08-21
 
-Authorized actions:
+Completed actions:
 - normal --no-ff merge into master
-- verify merged master locally and in GitHub Actions
-- create and push annotated v0.2.0-engineering-baseline
-- verify tag CI
-- close TASK-20260820-008 and synchronize final evidence
+- merged master verified locally and in GitHub Actions
+- annotated v0.2.0-engineering-baseline created and pushed
+- tag CI verified
+- TASK-20260820-008 closed and final evidence synchronized
 
-Still not authorized:
+Not authorized:
 - release publication
-- next-phase implementation
+- next-phase ADR or implementation
 - production optimization
 - history rewrite
 ```

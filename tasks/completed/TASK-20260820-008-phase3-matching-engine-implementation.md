@@ -6,21 +6,21 @@
 | --- | --- |
 | Task ID | `TASK-20260820-008` |
 | Title | Implement Phase 3 MatchingEngine Orchestration Baseline |
-| Status | `In Progress — Phase 3 closure execution authorized` |
+| Status | `Completed` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created | `2026-08-20` |
 | Updated | `2026-08-21` |
 | Related Phase | Phase 3 — MatchingEngine |
 | Related ADR | ADR-0005 sequence revision and ADR-0011 (`Approved`) |
-| Current Stage | `Phase 3 Closure Execution` |
-| Next Approval Gate | `Verified master integration and baseline freeze` |
-| Branch | `feature/phase3-matching-engine` |
+| Current Stage | `Phase 3 Closed / Baseline Frozen` |
+| Next Approval Gate | `Next-phase ADR proposal — Not Authorized` |
+| Branch | `master` |
 | Approved Implementation Branch | `feature/phase3-matching-engine` |
 | Parent Branch / HEAD | `docs/phase3-matching-engine-adr` at `96fe50b` |
-| Engineering Baseline | `v0.1.0-engineering-baseline` at `cbfa957` |
+| Engineering Baseline | `v0.2.0-engineering-baseline` at `9281124` |
 | Remote | `origin` |
-| CI | Phase 3 closure proposal `5ea0cdb`: [run 32447826712](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32447826712) PASS |
+| CI | Master [run 32449941033](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32449941033) PASS; tag [run 32449993233](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32449993233) PASS |
 
 ## 2. Background
 
@@ -39,9 +39,9 @@ an explicit MatchingEngine-owned `EventSequence` for output match aggregates.
 This Task converts those accepted decisions into a reviewable implementation
 plan. The Human Developer approved the plan on `2026-08-20`. Stage 1 and Stage
 2 are completed and approved. Stage 3 verification was authorized, implemented
-and approved on `2026-08-21`. Phase 3 meets the documented closure
-prerequisites; a closure authorization proposal is prepared, while merge, tag
-creation and final closure remain subject to separate Human approval.
+and approved on `2026-08-21`. Phase 3 was merged into master, verified and
+frozen at annotated tag `v0.2.0-engineering-baseline` on `2026-08-21`.
+Release and all next-phase work remain separately gated.
 
 ## 3. Goal
 
@@ -687,7 +687,7 @@ Review; Phase 3 closure does not start automatically.
 | Correctness / Determinism Verification | `tasks/reports/PHASE-3-matching-engine-determinism-verification.md` | Completed / Approved | Phase 3 Closure Authorization | Approved 2026-08-21 |
 | Benchmark / Profile | Not applicable | Not applicable | Documentation Sync | Not applicable |
 | Documentation and Synchronization | `tasks/reports/PHASE-3-matching-engine-closure-authorization.md` | Completed / Approved | Master Integration | Approved 2026-08-21 |
-| Completion | Same closure report | Authorized / In Progress | Verified Baseline Freeze | Approved 2026-08-21 |
+| Completion | Same closure report | Completed / Approved | Next-phase ADR Proposal | Approved 2026-08-21 |
 
 ## 19. Implementation Log
 
@@ -708,6 +708,8 @@ Review; Phase 3 closure does not start automatically.
 | 2026-08-21 | Stage 3 Approved | Human accepted determinism scope, observable ordering, public-API behavior and reachable failure atomicity | Stage 3 closed; Phase 3 Closure is ready for separate authorization and remains unauthorized |
 | 2026-08-21 | Closure Proposal Prepared | Consolidated Stage 1-3 evidence, frozen boundary, limitations and proposed `v0.2.0-engineering-baseline` sequence | `5ea0cdb`; GitHub Actions run `32447826712` PASS; Human Phase 3 Closure Approval pending; merge and tag remain unauthorized |
 | 2026-08-21 | Closure Execution Authorized | Human approved normal merge, master verification, annotated engineering baseline tag and TASK closure | Execution must preserve history and stop before Release or next-phase work |
+| 2026-08-21 | Master Integration Verified | Merged the approved feature branch with `--no-ff` and ran the complete Maven reactor | Merge `9281124`; 61 tests, reactor 3/3, Checkstyle 0; master CI run `32449941033` PASS |
+| 2026-08-21 | Phase 3 Closed / Baseline Frozen | Created and pushed the annotated MatchingEngine engineering baseline | `v0.2.0-engineering-baseline` targets `9281124`; tag CI run `32449993233` PASS; Release and next phase not authorized |
 
 ## 20. Completion Checklist
 
@@ -738,6 +740,6 @@ Review; Phase 3 closure does not start automatically.
 - [x] Human Stage 3 Completion Review completed
 - [x] Phase 3 Closure Authorization report prepared
 - [x] Human Phase 3 Closure Approval completed
-- [ ] Feature branch merged and verified on master
-- [ ] Annotated Phase 3 engineering baseline tag created and verified
-- [ ] TASK-008 completed and moved to `tasks/completed/`
+- [x] Feature branch merged and verified on master
+- [x] Annotated Phase 3 engineering baseline tag created and verified
+- [x] TASK-008 completed and moved to `tasks/completed/`

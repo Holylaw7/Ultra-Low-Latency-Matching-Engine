@@ -91,7 +91,7 @@ WAL implementation, snapshot, recovery and optimization remain deferred.
 `Sequence` is reserved for commands. `Trade.sequence` has been migrated to
 `Trade.eventSequence`; the value type validates and orders output sequence
 values while allocation remains reserved for the future MatchingEngine.
-[`TASK-20260820-008-phase3-matching-engine-implementation.md`](../../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md)
+[`TASK-20260820-008-phase3-matching-engine-implementation.md`](../../tasks/completed/TASK-20260820-008-phase3-matching-engine-implementation.md)
 has completed its approved Stage 1 Domain/API Foundation. Stage 2 now
 implements a synchronous MatchingEngine Core. It validates exact-next command
 sequence, constructs NEW limit orders, delegates to the frozen OrderBook,
@@ -103,7 +103,7 @@ were completed and approved on 2026-08-21. The verification uses equal command
 re-execution, order-significant result comparison and public-API probes without
 adding WAL/replay infrastructure, state exposure or production test hooks.
 The Phase 3 Closure Authorization proposal records the completed evidence,
-frozen boundary and known limitations. Human closure approval authorizes the
-controlled master merge, verification, engineering-baseline tag and TASK
-closure. Release and further phases remain unauthorized. OrderBook is an
-external frozen dependency and no OrderBook file or API may change.
+frozen boundary and known limitations. The controlled master merge,
+verification and annotated `v0.2.0-engineering-baseline` freeze are complete.
+Phase 3 is closed. Release and further phases remain unauthorized. OrderBook
+is an external frozen dependency and no OrderBook file or API may change.
