@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260821-011` |
 | Title | Implement Bounded Single-Consumer Matching Pipeline |
-| Status | `In Progress` |
+| Status | `Completed` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Related Phase | Phase 4 — Event Pipeline |
@@ -14,10 +14,10 @@
 | Phase Blueprint | [`PHASE-4 Blueprint`](../blueprints/PHASE-4-event-pipeline-blueprint.md) — Approved |
 | Authorization Mode | `Blueprint inherited Human approval` |
 | Current Stage | `Implementation (dependency-gated)` |
-| Next Gate | `Automated Evidence Gate` |
+| Next Gate | `TASK-012 Implementation` |
 | Branch | planned `feature/phase4-event-pipeline` |
 | Baseline HEAD | TASK-010 evidence commit `565f649` |
-| Remote / CI | `origin/feature/phase4-event-pipeline` / pending |
+| Remote / CI | `origin/feature/phase4-event-pipeline`; exact-SHA CI [32457723272](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32457723272) PASS |
 
 ## 2. Background
 
@@ -203,14 +203,15 @@ TASK-012.
 | 2026-08-21 | Proposed | Bounded pipeline implementation scope prepared | Awaiting Blueprint Approval |
 | 2026-08-21 | Approved | Blueprint approval recorded; TASK-011 is dependency-gated | TASK-010 evidence gate |
 | 2026-08-21 | In Progress | Bounded Disruptor adapter, lifecycle and failure-boundary implementation started | TASK-010 evidence CI PASS; focused TASK-011 verification pending |
+| 2026-08-21 | Completed | Bounded SPSC adapter, lifecycle, result handoff, backpressure and terminal failure behavior implemented | commit `a3986df`; 77 tests; exact-SHA CI `32457723272` PASS |
 
 ## 18. Completion Checklist
 
-- [ ] Blueprint approval inherited and TASK-010 evidence confirmed
-- [ ] pipeline implementation and tests complete
-- [ ] focused/full tests and Checkstyle pass
-- [ ] deterministic backpressure/lifecycle evidence recorded
-- [ ] frozen production boundaries unchanged
-- [ ] report/context synchronized
-- [ ] commit pushed and exact-SHA CI recorded
-- [ ] no Exception Gate unresolved
+- [x] Blueprint approval inherited and TASK-010 evidence confirmed
+- [x] pipeline implementation and tests complete
+- [x] focused/full tests and Checkstyle pass
+- [x] deterministic backpressure/lifecycle evidence recorded
+- [x] frozen production boundaries unchanged
+- [x] report/context synchronized
+- [x] commit pushed and exact-SHA CI recorded
+- [x] no Exception Gate unresolved
