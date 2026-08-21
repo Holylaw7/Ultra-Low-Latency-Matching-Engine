@@ -5,16 +5,16 @@
 | Field | Value |
 | --- | --- |
 | Phase | Phase 5 — Command WAL and Deterministic Replay Foundation |
-| Current Task | TASK-20260821-018 — WAL Benchmark, Documentation and Closure Preparation |
+| Current Task | Limited Closure Remediation R1-R3 |
 | Completed Task | TASK-20260821-018 — WAL Benchmark, Documentation and Closure Preparation |
-| Result | `TASK-018 Completed / Evidence Gate Passed; Closure Proposal Prepared` |
+| Result | `Remediation completed / Final Closure Review Pending` |
 | Baseline | `v0.3.0-engineering-baseline` remains frozen |
-| Full Verification | `mvn verify` PASS; 113 tests, 0 failures; Maven reactor 3/3 SUCCESS |
+| Full Verification | `mvn verify` PASS; 114 tests, 0 failures; Maven reactor 3/3 SUCCESS |
 | Checkstyle | 0 violations |
-| Latest Commit | `cd6997c8f456b88e658183483d057aceffe1e1a5` |
-| Latest CI | [run 32467692149](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467692149) PASS |
+| Latest Commit | `bd3738283f191ae30bcef747b7957ca207674f8d` (R2; final docs commit pending) |
+| Latest CI | [run 32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533) PASS |
 | Branch | `feature/phase5-command-wal-replay` |
-| Next Gate | Human Phase 5 Closure Approval |
+| Next Gate | Final Human Phase 5 Closure Review after R3 exact-SHA CI |
 
 ## Human Blueprint Authorization
 
@@ -28,7 +28,9 @@ The approved force-failure interpretation remains in force: a failed write,
 force or rotation is never reported as a successful logical append and makes
 the writer terminal, but a failed `force(true)` does not prove that record
 bytes are physically absent. Strict scan/reopen determines the valid persisted
-boundary.
+boundary. Limited remediation dynamically verifies rotation failure through a
+deterministic segment-name collision; dynamic `force(true)` injection is not
+claimed because it would require a new production test seam.
 
 ## TASK-014 Format / Configuration / Codec (Completed)
 
@@ -190,21 +192,24 @@ boundaries separate:
 Each benchmark state creates and cleans its own temporary fixture outside the
 measured operation. The full JMH matrix used JMH 1.37, OpenJDK 21.0.12, one
 fork, one thread, one 1-second warmup and one 1-second measurement across
-4,128/65,536-byte segments and 256/1,024-command datasets. Raw output remains
-local and ignored at `benchmark-results/wal-full.json`.
+4,128/65,536-byte segments and 256/1,024-command datasets. The remediation
+uses a deterministic alternating SubmitLimit/CancelOrder stream and records
+CPU, storage, JVM/GC, workload bytes/segments and SampleTime P50/P99. Raw
+output remains local and ignored at `benchmark-results/wal-remediation-full.json`.
 
-Representative full-matrix observations (throughput `ops/us`, sample mean
-`us/op`) are recorded in [`docs/benchmark/recovery.md`](../../docs/benchmark/recovery.md):
+The remediation full-matrix observations (throughput `ops/us`, sample mean,
+P50 and P99 in `us/op`) are recorded in
+[`docs/benchmark/recovery.md`](../../docs/benchmark/recovery.md).
 
 ```text
-append SYNC  4128: 0.003542858 ops/us, 283.741 us/op
-append SYNC 65536: 0.004224853 ops/us, 246.111 us/op
-append BUFFERED 4128: 0.120667710 ops/us, 4.796 us/op
-append BUFFERED 65536: 0.335894622 ops/us, 4.510 us/op
-scan  256/4128: 276.955 us/op; 1024/4128: 783.633 us/op
-scan  256/65536: 129.520 us/op; 1024/65536: 154.410 us/op
-replay 256/4128: 348.866 us/op; 1024/4128: 1,013.116 us/op
-replay 256/65536: 205.167 us/op; 1024/65536: 397.084 us/op
+append SYNC  4128: 0.004 ops/us, mean 284.114 us/op, P50 234.752, P99 1,357.414
+append SYNC 65536: 0.004 ops/us, mean 234.691 us/op, P50 209.152, P99 444.508
+append BUFFERED 4128: 0.123 ops/us, mean 7.535 us/op, P50 2.500, P99 115.092
+append BUFFERED 65536: 0.346 ops/us, mean 3.936 us/op, P50 2.400, P99 13.296
+scan 256/4128: mean 225.085 us/op, P50 209.920, P99 448.200
+scan 1024/4128: mean 619.519 us/op, P50 584.704, P99 1,007.155
+replay 256/4128: mean 242.991 us/op, P50 230.400, P99 437.248
+replay 1024/4128: mean 731.966 us/op, P50 690.176, P99 1,231.380
 ```
 
 The numbers are component observations only. `BUFFERED` is not durable
@@ -215,21 +220,24 @@ production claim was changed.
 Evidence gate:
 
 - benchmark smoke and full matrix completed successfully;
-- `mvn verify` passed with 113 tests, 0 failures, Checkstyle 0 violations and
+- `mvn verify` passed with 114 tests, 0 failures, Checkstyle 0 violations and
   Maven reactor 3/3 SUCCESS;
 - `git diff --check` passed and frozen Domain/OrderBook/Engine/Pipeline
   production diff relative to `v0.3.0-engineering-baseline` is zero;
-- benchmark commit `cd6997c` passed exact-SHA CI [run 32467692149](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467692149);
+- R1 rotation-failure test commit `83e5544` passed exact-SHA CI [run 32481266960](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481266960);
+- R2 mixed-command benchmark commit `bd37382` passed exact-SHA CI [run 32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533);
 - architecture, README, ADR, Blueprint, Task and context documents are
-  synchronized; Closure Proposal is prepared.
+  being synchronized by R3; Closure Proposal remains pending final exact-SHA
+  CI.
 
 ## Next State
 
-TASK-014 through TASK-018 are completed under the approved dependency order.
+TASK-014 through TASK-018 and the authorized limited remediation are complete.
 Phase 5 Closure is **not** approved: merge to `master`,
 `v0.4.0-engineering-baseline`, live pipeline/WAL integration, Snapshot, online
-Recovery, Network and Product Release remain unauthorized. Stop now for Human
-Phase 5 Closure Approval.
+Recovery, Network and Product Release remain unauthorized. Stop after the R3
+documentation commit and exact-SHA CI for the final Human Phase 5 Closure
+Review.
 
 ## Known Scope Boundary
 

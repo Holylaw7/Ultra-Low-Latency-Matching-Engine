@@ -2,9 +2,10 @@
 
 ## Status
 
-Completed as TASK-20260821-018 evidence. This is a component-level JMH
-baseline for the approved persistence/replay implementation; it is not an
-end-to-end durability, recovery or exchange-throughput claim.
+Completed as TASK-20260821-018 remediation evidence. This is a
+component-level JMH baseline for the approved persistence/replay
+implementation; it is not an end-to-end durability, recovery or
+exchange-throughput claim.
 
 ## Method
 
@@ -16,70 +17,111 @@ end-to-end durability, recovery or exchange-throughput claim.
 - `walReplay`: strict closed-WAL scan followed by genesis `MatchingEngine`
   replay.
 
-Each JMH state creates its own temporary WAL fixture outside the measured
-operation, consumes the result through a `Blackhole`, and deletes only its own
-temporary directory after the trial. The fixture is rebuilt for each fork and
-parameter set so stale WAL bytes are not reused.
+The append workload is a deterministic alternating command stream:
 
-The full matrix was run with:
+```text
+odd sequence:  SubmitLimitCommand(orderId = (sequence + 1) / 2)
+even sequence: CancelOrderCommand(orderId = sequence / 2)
+```
+
+The fixed scan/replay fixtures use the same stream. Each JMH state creates its
+own temporary WAL fixture outside the measured operation, consumes the result
+through a `Blackhole`, and deletes only its own temporary directory after the
+trial. The fixture is rebuilt for each fork and parameter set so stale WAL
+bytes are not reused.
+
+The remediation full matrix was run with:
 
 ```text
 java -jar benchmark/target/matching-engine-benchmark-0.1.0-SNAPSHOT.jar \
   WalBenchmark -wi 1 -i 1 -f 1 -w 1s -r 1s -t 1 -foe true \
-  -rf json -rff benchmark-results/wal-full.json
+  -rf json -rff benchmark-results/wal-remediation-full.json
 ```
 
-Environment and configuration:
+### Environment and JMH configuration
 
 | Field | Value |
 | --- | --- |
-| JDK | OpenJDK 21.0.12, 64-bit Server VM |
+| OS | Microsoft Windows 11 Home Chinese, 10.0.26200 (build 26200) |
+| CPU | 13th Gen Intel Core i9-13900H; 14 cores / 20 logical processors |
+| Storage volume | `E:` fixed NTFS volume; host reports NVMe SSD media; volume-to-device mapping was not isolated |
+| JDK / VM | OpenJDK 21.0.12 (Microsoft build 21.0.12+8-LTS), 64-bit Server VM |
 | JMH | 1.37 |
-| OS / storage | Windows workspace; local filesystem (device/cache not isolated) |
+| JVM arguments | none (`<none>` in JMH; normal Java launcher defaults) |
+| GC | G1 GC (JDK default; not independently isolated) |
 | Forks / threads | 1 / 1 |
 | Warmup / measurement | 1 x 1 s / 1 x 1 s |
 | Segment sizes | 4,128 and 65,536 bytes |
-| Replay/scan command counts | 256 and 1,024 |
-| Raw output | local ignored `benchmark-results/wal-full.json` |
+| Raw output | local ignored `benchmark-results/wal-remediation-full.json` |
+
+### Deterministic fixture metadata
+
+Submit records are 52 bytes and cancel records are 28 bytes. The table
+includes the 32-byte segment header in total physical bytes. Segment counts
+are deterministic for the approved writer and the listed segment sizes.
+
+| Fixture commands | Submit / Cancel | Record bytes | 4,128-byte segments / total bytes | 65,536-byte segments / total bytes |
+| ---: | ---: | ---: | ---: | ---: |
+| 256 | 128 / 128 | 10,240 | 3 / 10,336 | 1 / 10,272 |
+| 1,024 | 512 / 512 | 40,960 | 11 / 41,312 | 1 / 40,992 |
+
+`walAppend` is intentionally streaming rather than a fixed-size fixture: its
+measured operations alternate 52-byte and 28-byte records, and its total
+bytes/segments grow during the JMH iteration. The fixed command/byte/segment
+metadata above applies to `walScan` and `walReplay` setup fixtures.
 
 ## Recorded Results
 
-Scores below are the single-fork component observations from the full matrix.
-Throughput is `ops/us`; sample-time is `us/op`. The one-iteration setup is
-intended as a reproducible baseline, not statistical production capacity.
+Scores below are single-fork component observations from the remediation full
+matrix. Throughput is `ops/us`; sample-time values are `us/op`. The
+one-iteration setup is a reproducible baseline, not statistical production
+capacity.
 
-### Append
+### Throughput
 
-| Durability | Segment | Throughput (ops/us) | Sample mean (us/op) |
-| --- | ---: | ---: | ---: |
-| SYNC_EACH_APPEND | 4,128 | 0.003542858 | 283.741 |
-| SYNC_EACH_APPEND | 65,536 | 0.004224853 | 246.111 |
-| BUFFERED | 4,128 | 0.120667710 | 4.796 |
-| BUFFERED | 65,536 | 0.335894622 | 4.510 |
+| Operation | Parameters | Throughput (ops/us) |
+| --- | --- | ---: |
+| walAppend | SYNC_EACH_APPEND / 4,128 | 0.004 |
+| walAppend | SYNC_EACH_APPEND / 65,536 | 0.004 |
+| walAppend | BUFFERED / 4,128 | 0.123 |
+| walAppend | BUFFERED / 65,536 | 0.346 |
+| walReplay | 256 / 4,128 | 0.004 |
+| walReplay | 256 / 65,536 | 0.007 |
+| walReplay | 1,024 / 4,128 | 0.001 |
+| walReplay | 1,024 / 65,536 | 0.004 |
+| walScan | 256 / 4,128 | 0.004 |
+| walScan | 256 / 65,536 | 0.008 |
+| walScan | 1,024 / 4,128 | 0.002 |
+| walScan | 1,024 / 65,536 | 0.007 |
 
-### Strict scan and offline replay
+### SampleTime P50 / P99
 
-| Operation | Commands | Segment | Throughput (ops/us) | Sample mean (us/op) |
-| --- | ---: | ---: | ---: | ---: |
-| walScan | 256 | 4,128 | 0.003693626 | 276.955 |
-| walScan | 256 | 65,536 | 0.007988130 | 129.520 |
-| walScan | 1,024 | 4,128 | 0.001272279 | 783.633 |
-| walScan | 1,024 | 65,536 | 0.006502601 | 154.410 |
-| walReplay | 256 | 4,128 | 0.002958416 | 348.866 |
-| walReplay | 256 | 65,536 | 0.005104278 | 205.167 |
-| walReplay | 1,024 | 4,128 | 0.000998311 | 1,013.116 |
-| walReplay | 1,024 | 65,536 | 0.002588236 | 397.084 |
+| Operation | Parameters | Samples | Mean (us/op) | P50 (us/op) | P99 (us/op) |
+| --- | --- | ---: | ---: | ---: | ---: |
+| walAppend | SYNC_EACH_APPEND / 4,128 | 3,519 | 284.114 | 234.752 | 1,357.414 |
+| walAppend | SYNC_EACH_APPEND / 65,536 | 4,281 | 234.691 | 209.152 | 444.508 |
+| walAppend | BUFFERED / 4,128 | 19,222 | 7.535 | 2.500 | 115.092 |
+| walAppend | BUFFERED / 65,536 | 21,723 | 3.936 | 2.400 | 13.296 |
+| walReplay | 256 / 4,128 | 4,110 | 242.991 | 230.400 | 437.248 |
+| walReplay | 256 / 65,536 | 6,843 | 146.338 | 134.912 | 293.151 |
+| walReplay | 1,024 / 4,128 | 1,381 | 731.966 | 690.176 | 1,231.380 |
+| walReplay | 1,024 / 65,536 | 3,087 | 391.928 | 213.760 | 439.296 |
+| walScan | 256 / 4,128 | 4,460 | 225.085 | 209.920 | 448.200 |
+| walScan | 256 / 65,536 | 7,869 | 127.058 | 115.712 | 288.563 |
+| walScan | 1,024 / 4,128 | 1,628 | 619.519 | 584.704 | 1,007.155 |
+| walScan | 1,024 / 65,536 | 6,543 | 152.517 | 138.752 | 369.725 |
 
 The values are workload- and environment-specific. `BUFFERED` is not durable
 throughput, and `SYNC_EACH_APPEND` does not establish a hardware power-loss
-guarantee beyond the approved `FileChannel.force(true)` boundary.
+guarantee beyond the approved `FileChannel.force(true)` boundary. The large
+tail observations remain evidence, not a production latency claim.
 
 ## Verification and Claim Limits
 
-- `mvn verify`: 113 tests passed, 0 failures, Maven reactor 3/3 SUCCESS;
-  Checkstyle reported 0 violations.
-- Benchmark smoke and full matrix completed successfully; the raw JSON remains
-  local and ignored rather than committed.
+- `mvn verify`: remediation run passed, with 114 tests, 0 failures, Maven
+  reactor 3/3 SUCCESS; Checkstyle reported 0 violations.
+- Focused WAL writer/replay tests and the full benchmark smoke/full matrix
+  completed successfully; the raw JSON remains local and ignored.
 - No result changes the `SYNC_EACH_APPEND` default or WAL format.
 - Append timing excludes client acknowledgement, pipeline admission, trade
   publication and network I/O.

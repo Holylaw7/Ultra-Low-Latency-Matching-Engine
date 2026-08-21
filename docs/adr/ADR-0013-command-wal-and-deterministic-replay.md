@@ -317,9 +317,13 @@ TASK-014 through TASK-018 have completed in the approved dependency order. The
 version-1 codec, segmented writer/reader/reopen behavior, deterministic offline
 replay, strict corruption/torn-tail verification and component benchmark are
 implemented without changes to the frozen Domain, OrderBook, MatchingEngine or
-Pipeline production paths. The latest local verification is 113 passing tests,
-0 Checkstyle violations and a successful exact-SHA CI for the benchmark
-checkpoint [`32467692149`](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467692149).
+Pipeline production paths. Limited Closure Remediation added deterministic
+rotation-failure evidence and a deterministic SubmitLimit/CancelOrder benchmark
+mix with environment/workload/P50/P99 metadata. R3 final documentation
+synchronization remains before the final Closure Review. The remediation
+checkpoints are [R1 CI 32481266960](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481266960)
+and [R2 CI 32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533),
+both PASS.
 
 This evidence does not change the approved scope or durability claims. Phase 5
 remains a persistence/replay engineering baseline: live pipeline integration,

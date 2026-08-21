@@ -5,20 +5,22 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-018` / Phase 5 WAL Benchmark, Documentation and Closure Preparation |
-| Status | `Completed / Evidence Gate Passed; Closure Proposal Prepared` |
+| Status | `Completed / Remediation Evidence Passed; Final Closure Review Pending` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 5 / ADR-0013 / `PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
 | Depends On | TASK-017 exact-SHA evidence PASS |
-| Current Stage / Next Gate | Completed / Human Phase 5 Closure Approval |
-| Branch / CI | `feature/phase5-command-wal-replay` / [run 32467692149](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467692149) PASS for `cd6997c` |
+| Current Stage / Next Gate | Remediation completed / Final Human Phase 5 Closure Review |
+| Branch / CI | `feature/phase5-command-wal-replay` / R2 [run 32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533) PASS for `bd37382` |
 
 ## 2. Background and Goal
 
-Measure the completed component without changing it, interpret evidence within
-the approved claim boundary, synchronize architecture/current-state documents
-and prepare (but do not approve) the Phase 5 Closure Report.
+Measure the completed component without changing its production semantics,
+interpret evidence within the approved claim boundary, synchronize
+architecture/current-state documents and prepare (but do not approve) the
+Phase 5 Closure Report. The limited remediation also requires a deterministic
+Submit/Cancel mix and complete environment/workload/percentile metadata.
 
 ## 3. Non-Goals
 
@@ -32,8 +34,11 @@ and prepare (but do not approve) the Phase 5 Closure Report.
 
 - [x] JMH separates append, strict scan and engine replay boundaries;
 - [x] `SYNC_EACH_APPEND` and `BUFFERED` are reported separately;
+- [x] `walAppend` and fixed scan/replay fixtures use the deterministic
+  SubmitLimit/CancelOrder mix required by the Blueprint;
 - [x] dataset, segments, bytes, environment, warmup/measurement/forks/threads,
   JVM/GC and storage limitations are recorded;
+- [x] SampleTime P50 and P99 are recorded for every matrix row;
 - [x] raw evidence remains ignored with path/command/summary documented;
 - [x] no result changes `SYNC_EACH_APPEND` default automatically;
 - [x] architecture/recovery/benchmark/README/context/ADR/Blueprint/Tasks agree;
@@ -77,6 +82,7 @@ durability and replay costs cannot be conflated.
 | ADR/Blueprint/TASK plans | approved implementation status/evidence sync |
 | `tasks/reports/PHASE-5-command-wal-replay.md` | cumulative execution evidence |
 | `tasks/reports/PHASE-5-command-wal-replay-closure.md` | Human Closure proposal |
+| `benchmark-results/wal-remediation-full.json` | local ignored remediation raw evidence |
 
 ## 8. Test and Evidence Plan
 
@@ -128,6 +134,9 @@ Commits:
 perf(wal): add append and replay component baseline
 docs(phase5): synchronize wal replay evidence
 docs(phase5): prepare command wal replay closure
+test(wal): verify terminal rotation failure
+perf(wal): complete mixed command benchmark evidence
+docs(phase5): synchronize remediation evidence
 ```
 
 Push each checkpoint and record exact-SHA CI. Merge/tag wait for Human Closure.
@@ -142,14 +151,15 @@ Push each checkpoint and record exact-SHA CI. Merge/tag wait for Human Closure.
 | Stage | Report | Status | Next Gate |
 | --- | --- | --- | --- |
 | Proposal | Phase 5 proposal report | Approved | TASK-017 evidence |
-| Benchmark / Docs | cumulative Phase 5 report | Completed / Evidence PASS | Human Phase 5 Closure Approval |
-| Closure Preparation | Phase 5 Closure Report | Prepared | Human Phase 5 Closure Approval |
+| Benchmark / Docs | cumulative Phase 5 report | Completed / Remediation Evidence PASS | Final Human Phase 5 Closure Review |
+| Closure Preparation | Phase 5 Closure Report | Prepared / Remediation synchronized | Final Human Phase 5 Closure Review |
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-21 | Approved | Human Blueprint Approval inherited; execution waits for TASK-017 evidence | dependency-gated; Closure remains Human gate |
 | 2026-08-21 | Authorized | TASK-017 Evidence Gate passed with exact-SHA CI `32467018067`; TASK-018 may begin | TASK-018 Evidence Gate; stop at Closure proposal |
 | 2026-08-21 | Completed | JMH append/scan/replay matrix, documentation synchronization and Closure Proposal prepared; `mvn verify` passed with 113 tests and frozen-path diff is zero | Human Phase 5 Closure Approval; merge/tag remain unauthorized |
+| 2026-08-21 | Remediated | Deterministic Submit/Cancel mix benchmark rerun; environment/workload metadata and SampleTime P50/P99 synchronized; raw output `benchmark-results/wal-remediation-full.json` | Full JMH matrix PASS; local `mvn verify` 114 tests; commit `bd37382`; exact-SHA CI `32481451533` PASS; final docs evidence gate pending |
 
 ## 15. Completion Checklist
 
@@ -158,4 +168,5 @@ Push each checkpoint and record exact-SHA CI. Merge/tag wait for Human Closure.
 - [x] all documents/evidence synchronized
 - [x] full build/Checkstyle/diff/frozen audit pass
 - [x] commits/push/exact-SHA CI recorded
-- [x] Closure proposal prepared and execution stopped for Human approval
+- [x] Closure proposal prepared and execution stopped for final Human review
+- [x] Limited Closure Remediation R2 completed without production optimization or default changes

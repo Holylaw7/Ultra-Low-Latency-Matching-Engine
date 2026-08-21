@@ -6,16 +6,16 @@
 | --- | --- |
 | Task ID | `TASK-20260821-015` |
 | Title | Phase 5 Segmented Command WAL Storage |
-| Status | `Completed` |
+| Status | `Completed / Remediation Evidence Passed; Final Closure Review Pending` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Related Phase / ADR | Phase 5 / ADR-0013 |
 | Phase Blueprint | `tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
 | Depends On | TASK-014 evidence PASS |
-| Current Stage / Next Gate | Completed / Evidence Gate Passed / TASK-016 Evidence Gate |
+| Current Stage / Next Gate | Remediation completed / Final Phase 5 Closure Review |
 | Branch / Baseline | `feature/phase5-command-wal-replay` / approved TASK-014 commit |
-| CI | [run 32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050) PASS for `7da0069` |
+| CI | Original [run 32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050) PASS; remediation [run 32481266960](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481266960) PASS for `83e5544` |
 
 ## 2. Background and Goal
 
@@ -38,7 +38,9 @@ exclusive ownership, terminal failures and explicit final torn-tail reopen.
 - [x] `BUFFERED` has no durability claim and is not default;
 - [x] exclusive active-segment lock rejects another writer;
 - [x] close is idempotent and later append is rejected;
-- [x] I/O/force/rotation failure makes writer terminal;
+- [x] deterministic rotation failure makes writer terminal and rejects a later append;
+- [x] write/force/rotation implementation paths are terminal; `force(true)` dynamic
+  failure injection is explicitly not claimed within the frozen no-hook boundary;
 - [x] a failed force is a logical append failure but does not imply physical
   record absence; strict scan/reopen determines the persisted boundary;
 - [x] strict reader validates all segments, records, CRC and sequences;
@@ -92,6 +94,10 @@ Gate review.
   reopen, close and lock ownership.
 - Failure: truncation at envelope/body/checksum bytes, checksum/header/segment
   corruption, sequence gap and complete invalid tail.
+- Remediation: deterministic directory collision at the next segment name proves
+  rotation failure terminality and subsequent append rejection without a
+  production test seam. `force(true)` dynamic failure remains a documented
+  limitation; implementation/code-review evidence is retained.
 - Repeat: deterministic temp fixtures with no sleep or scheduling dependency.
 - Replay: not applicable until TASK-016.
 
@@ -147,6 +153,7 @@ Push after gates; exact-SHA CI PASS is required before TASK-016.
 | 2026-08-21 | Approved | Human Blueprint Approval inherited; execution waits for TASK-014 evidence | dependency-gated |
 | 2026-08-21 | Authorized | TASK-014 Evidence Gate passed with exact-SHA CI `32464648365`; TASK-015 may begin | TASK-015 Evidence Gate |
 | 2026-08-21 | Completed | Segmented writer/reader, rotation, locking, durability modes and explicit torn-tail reopen implemented | 10 focused tests x3; `mvn verify` 102 tests; exact-SHA CI `32466198050` PASS; next TASK-016 |
+| 2026-08-21 | Remediated | Added deterministic rotation-collision failure evidence; writer terminal state and subsequent append rejection verified; no production test hook added | 7 focused writer tests PASS; commit `83e5544`; exact-SHA CI `32481266960` PASS; force-failure dynamic injection not claimed |
 
 ## 15. Completion Checklist
 
@@ -156,3 +163,5 @@ Push after gates; exact-SHA CI PASS is required before TASK-016.
 - [x] frozen diff zero
 - [x] docs/evidence/commit/push/exact-SHA CI recorded
 - [x] no unresolved Exception Gate
+- [x] Limited Closure Remediation R1 recorded; rotation failure dynamically verified
+- [x] `force(true)` dynamic failure limitation explicitly recorded without weakening semantics

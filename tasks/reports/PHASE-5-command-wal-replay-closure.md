@@ -2,7 +2,7 @@
 
 ## Status
 
-`Prepared — Pending Human Phase 5 Closure Approval`
+`Prepared — Remediation synchronized; Pending Final Human Phase 5 Closure Review`
 
 This document is a review proposal only. It does not authorize merge, a
 baseline tag, Product Release or the next Phase.
@@ -33,17 +33,21 @@ EngineCommand
 | TASK-015 storage | `7da0069` | [32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050) | PASS; 102 tests |
 | TASK-016 replay | `f434431` | [32466659845](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466659845) | PASS; 107 tests |
 | TASK-017 failure verification | `16dc957` | [32467018067](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467018067) | PASS; 113 tests |
-| TASK-018 benchmark/docs | `cd6997c` | [32467692149](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467692149) | PASS; 113 tests |
+| TASK-018 benchmark/docs (original) | `cd6997c` | [32467692149](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467692149) | superseded by remediation evidence |
+| R1 TASK-015 rotation failure | `83e5544` | [32481266960](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481266960) | PASS; deterministic rotation collision; 7 focused tests |
+| R2 TASK-018 mixed benchmark | `bd37382` | [32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533) | PASS; mixed Submit/Cancel JMH source |
 
-Final local evidence at `cd6997c`:
+Final local evidence before R3 documentation synchronization was `bd37382`:
 
-- `mvn verify`: 113 tests passed, 0 failures, Maven reactor 3/3 SUCCESS;
+- `mvn verify`: 114 tests passed, 0 failures, Maven reactor 3/3 SUCCESS;
 - Checkstyle: 0 violations;
 - `git diff --check`: PASS;
 - frozen production path audit against `v0.3.0-engineering-baseline`: 0
   changed files;
-- WAL benchmark smoke and full matrix: PASS;
-- raw benchmark JSON: local ignored `benchmark-results/wal-full.json`;
+- WAL benchmark smoke and remediation full matrix: PASS; deterministic
+  SubmitLimit/Cancel mix, environment metadata and SampleTime P50/P99 are
+  recorded in [`docs/benchmark/recovery.md`](../../docs/benchmark/recovery.md);
+- raw benchmark JSON: local ignored `benchmark-results/wal-remediation-full.json`;
 - working tree retains only unrelated untracked `.vscode/`, which was not
   modified, staged, deleted or added to `.gitignore`.
 
@@ -74,10 +78,14 @@ Final local evidence at `cd6997c`:
 A failed write, `force(true)` or rotation is a logical append failure and puts
 the writer in a terminal state, but a failed force does not prove that record
 bytes are physically absent. Strict scan/reopen determines the valid persisted
-boundary. Capacity exhaustion and post-mutation fatal failures are not
-dynamically injected through the public API. The component benchmark uses one
-fork and one one-second measurement on a Windows local filesystem, so its
-numbers are workload- and environment-specific.
+boundary. R1 dynamically verifies rotation failure by colliding with the next
+segment path; `force(true)` dynamic failure injection is **not dynamically
+verified** because adding a production test seam is outside the authorized
+boundary. The implementation path and terminal semantics remain covered by
+code review and existing tests. Capacity exhaustion and post-mutation fatal
+failures are not dynamically injected through the public API. The component
+benchmark uses one fork and one one-second measurement on a Windows local
+filesystem, so its numbers are workload- and environment-specific.
 
 ## Requested Human Decision
 
@@ -100,8 +108,9 @@ Remain unauthorized until separately approved:
 ```text
 v0.3.0-engineering-baseline: Frozen
 ADR-0013: Approved
-TASK-014..018: Completed / exact-SHA CI PASS
-Phase 5 Closure: Pending Human Approval
+TASK-014..018: Completed / remediation evidence synchronized
+R1/R2: exact-SHA CI PASS; R3 documentation commit/CI pending
+Phase 5 Closure: Changes remediated / Final Human Closure Review pending
 Merge / v0.4.0 tag: Not Authorized
 Next Phase: Not Authorized
 ```

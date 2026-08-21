@@ -14,7 +14,7 @@
 | Proposal Base HEAD | `fbcbe53` |
 | Blueprint Branch | `docs/phase5-command-wal-replay-blueprint` |
 | Planned Tasks | `TASK-20260821-014` through `TASK-20260821-018` |
-| Next Gate | `Human Phase 5 Closure Approval` |
+| Next Gate | `Final Human Phase 5 Closure Review after Limited Remediation` |
 
 ## 2. Discovery and Phase Goal
 
@@ -241,56 +241,58 @@ approval is required between approved Tasks unless an Exception Gate fires.
 
 ### Functional / Correctness
 
-- [ ] submit-limit and cancel commands have exact stable version-1 bytes;
-- [ ] encode/decode round trips preserve public value equality;
-- [ ] writer accepts only exact-next positive command sequence;
-- [ ] segment rotation never splits a record;
-- [ ] reopen resumes from the last fully validated record;
-- [ ] strict reader reconstructs all commands across ordered segments;
-- [ ] append after close or terminal failure is rejected;
-- [ ] exclusive writer ownership prevents concurrent writers;
-- [ ] no record or command reference is silently dropped or substituted.
+- [x] submit-limit and cancel commands have exact stable version-1 bytes;
+- [x] encode/decode round trips preserve public value equality;
+- [x] writer accepts only exact-next positive command sequence;
+- [x] segment rotation never splits a record;
+- [x] reopen resumes from the last fully validated record;
+- [x] strict reader reconstructs all commands across ordered segments;
+- [x] append after close or terminal failure is rejected;
+- [x] exclusive writer ownership prevents concurrent writers;
+- [x] no record or command reference is silently dropped or substituted.
 
 ### Determinism / Ordering
 
-- [ ] identical commands produce byte-identical WAL contents for equal
+- [x] identical commands produce byte-identical WAL contents for equal
   configuration except where the segment-size parameter intentionally changes
   physical boundaries;
-- [ ] read order equals command Sequence order and physical record order;
-- [ ] at least 1,024 fixed commands produce equal direct and replayed ordered
+- [x] read order equals command Sequence order and physical record order;
+- [x] at least 1,024 fixed commands produce equal direct and replayed ordered
   `EngineResult` values;
-- [ ] TradeId, EventSequence and result collection order are significant;
-- [ ] canonical replay transcript digests are equal across independent runs;
-- [ ] a fixed public command suffix produces equal results after direct and WAL
+- [x] TradeId, EventSequence and result collection order are significant;
+- [x] canonical replay transcript digests are equal across independent runs;
+- [x] a fixed public command suffix produces equal results after direct and WAL
   replay execution;
-- [ ] no clock, random identity, hash iteration or scheduler order defines
+- [x] no clock, random identity, hash iteration or scheduler order defines
   persisted or replayed behavior.
 
 ### Failure / Recovery
 
-- [ ] invalid magic/version/header/length/type/flags/reserved bytes fail closed;
-- [ ] CRC mismatch reports the exact segment/offset and is never auto-repaired;
-- [ ] segment gaps, duplicate segments and command-sequence gaps fail closed;
-- [ ] incomplete final length/body/checksum is detected as a torn tail;
-- [ ] explicit reopen truncates only the final torn tail to the last validated
+- [x] invalid magic/version/header/length/type/flags/reserved bytes fail closed;
+- [x] CRC mismatch reports the exact segment/offset and is never auto-repaired;
+- [x] segment gaps, duplicate segments and command-sequence gaps fail closed;
+- [x] incomplete final length/body/checksum is detected as a torn tail;
+- [x] explicit reopen truncates only the final torn tail to the last validated
   position and preserves all prior valid records;
-- [ ] an earlier torn/corrupt record is never truncated as a recovery shortcut;
-- [ ] writer I/O or force failure is terminal and cannot be reported as success;
-- [ ] a failed force is treated as logical append failure, while physical tail
+- [x] an earlier torn/corrupt record is never truncated as a recovery shortcut;
+- [x] writer write/rotation failure is dynamically terminal and cannot be
+  reported as success; the `force(true)` implementation path is terminal but
+  dynamic failure injection is not claimed under the frozen no-hook boundary;
+- [x] a failed force is treated as logical append failure, while physical tail
   state is determined only by strict scan/reopen;
-- [ ] a well-formed command rejected by MatchingEngine makes replay fail at its
+- [x] a well-formed command rejected by MatchingEngine makes replay fail at its
   command Sequence without applying later records;
-- [ ] Snapshot restore and online recovery are explicitly not claimed.
+- [x] Snapshot restore and online recovery are explicitly not claimed.
 
 ### Compatibility / Boundary
 
-- [ ] frozen Domain, OrderBook, Engine and Pipeline production diff is zero;
-- [ ] no runtime dependency is added;
-- [ ] persisted bytes do not contain Java class names or serialization metadata;
-- [ ] no LMAX type, ring sequence or network concept enters the WAL format;
-- [ ] `SYNC_EACH_APPEND` remains the default regardless of benchmark result;
-- [ ] no current public API or matching/event-ordering semantic changes;
-- [ ] v0.3.0 tag is not moved or modified.
+- [x] frozen Domain, OrderBook, Engine and Pipeline production diff is zero;
+- [x] no runtime dependency is added;
+- [x] persisted bytes do not contain Java class names or serialization metadata;
+- [x] no LMAX type, ring sequence or network concept enters the WAL format;
+- [x] `SYNC_EACH_APPEND` remains the default regardless of benchmark result;
+- [x] no current public API or matching/event-ordering semantic changes;
+- [x] v0.3.0 tag is not moved or modified.
 
 ### Completion Evidence
 
@@ -513,20 +515,20 @@ Required execution/closure artifacts after approval:
 
 ```text
 Blueprint Status: Approved
-Implementation: TASK-014 through TASK-018 completed
-Next Gate: Human Phase 5 Closure Approval
+Implementation: TASK-014 through TASK-018 completed; limited remediation R1-R3 authorized
+Next Gate: Final Human Phase 5 Closure Review after remediation exact-SHA CI
 ```
 
 Approval must explicitly confirm:
 
-- [ ] ADR-0013 D1-D10;
-- [ ] TASK-014 through TASK-018 in dependency order;
-- [ ] zero changes to frozen Domain/OrderBook/Engine/Pipeline production paths;
-- [ ] `SYNC_EACH_APPEND` remains the correctness default;
-- [ ] Network, live integration, Snapshot and operational Recovery remain
+- [x] ADR-0013 D1-D10;
+- [x] TASK-014 through TASK-018 in dependency order;
+- [x] zero changes to frozen Domain/OrderBook/Engine/Pipeline production paths;
+- [x] `SYNC_EACH_APPEND` remains the correctness default;
+- [x] Network, live integration, Snapshot and operational Recovery remain
   deferred;
-- [ ] automated evidence gates and Exception Gates apply;
-- [ ] Phase Closure remains a separate Human gate.
+- [x] automated evidence gates and Exception Gates apply;
+- [x] Phase Closure remains a separate Human gate.
 
 ## 19. Execution Checkpoints
 
@@ -538,11 +540,13 @@ Approval must explicitly confirm:
 | 2026-08-21 | TASK-015 Evidence Gate | Completed / CI PASS | storage commit `7da0069`; exact-SHA CI [32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050) PASS; 102 full tests | TASK-016 Implementation / Evidence Gate |
 | 2026-08-21 | TASK-016 Evidence Gate | Completed / CI PASS | replay commit `f434431`; exact-SHA CI [32466659845](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466659845) PASS; 107 full tests | TASK-017 Implementation / Evidence Gate |
 | 2026-08-21 | TASK-017 Evidence Gate | Completed / CI PASS | failure matrix commit `16dc957`; exact-SHA CI [32467018067](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467018067) PASS; 113 full tests | TASK-018 Implementation / Evidence Gate; then STOP |
-| 2026-08-21 | TASK-018 Evidence Gate | Completed / CI PASS | benchmark/docs commit `cd6997c`; exact-SHA CI [32467692149](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467692149) PASS; 113 full tests; full JMH matrix recorded | Phase 5 Closure Proposal; STOP for Human approval |
+| 2026-08-21 | TASK-018 Evidence Gate (original) | Superseded by remediation | benchmark/docs commit `cd6997c`; exact-SHA CI [32467692149](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467692149) PASS; original matrix retained as history only | Limited Closure Remediation R2 |
+| 2026-08-21 | Limited Closure Remediation R1 | Completed / CI PASS | rotation-collision test commit `83e5544`; exact-SHA CI [32481266960](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481266960) PASS; 7 focused writer tests | R2 benchmark remediation |
+| 2026-08-21 | Limited Closure Remediation R2 | Completed / CI PASS | mixed Submit/Cancel benchmark commit `bd37382`; exact-SHA CI [32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533) PASS; full JMH raw output and P50/P99 metadata recorded | R3 documentation synchronization |
 
 ## 20. Phase Closure Checklist
 
-- [ ] Blueprint approval recorded and synchronized into ADR-0013/Tasks
+- [x] Blueprint approval recorded and synchronized into ADR-0013/Tasks
 - [x] TASK-014 format/codec completed
 - [x] TASK-015 segmented storage completed
 - [x] TASK-016 deterministic replay completed
@@ -551,9 +555,12 @@ Approval must explicitly confirm:
 - [x] all automated evidence gates and exact-SHA CI pass
 - [x] frozen production-path diff is zero
 - [x] no unresolved Exception Gate
-- [x] architecture and documentation synchronized
+- [x] architecture and documentation synchronized through Limited Closure Remediation R3
 - [x] Phase Closure Report prepared
+- [x] Limited Closure Remediation R1 rotation-failure evidence recorded
+- [x] Limited Closure Remediation R2 benchmark evidence recorded
+- [x] force-failure dynamic injection limitation explicitly recorded without adding a production seam
 - [ ] Human Phase Closure Approval recorded
 - [ ] authorized merge/tag/baseline actions verified
 - [ ] active Tasks moved to completed
-- [ ] next Phase remains explicitly unauthorized
+- [x] next Phase remains explicitly unauthorized
