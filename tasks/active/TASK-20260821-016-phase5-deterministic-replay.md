@@ -5,14 +5,14 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-016` / Phase 5 Deterministic Command Replay |
-| Status | `Proposed` |
+| Status | `Approved` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 5 / ADR-0013 / `PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
 | Depends On | TASK-015 exact-SHA evidence PASS |
-| Current Stage / Next Gate | Proposal / Human Phase 5 Blueprint Approval |
-| Branch / CI | `feature/phase5-command-wal-replay` / Pending |
+| Current Stage / Next Gate | Waiting for TASK-015 evidence / TASK-015 Evidence Gate |
+| Branch / CI | `feature/phase5-command-wal-replay` / Pending for dependency evidence |
 
 ## 2. Background and Goal
 
@@ -57,10 +57,10 @@ uses explicitly framed primitive/domain fields in result order.
 
 | Field | Value |
 | --- | --- |
-| ADR | ADR-0013 (`Proposed`) |
+| ADR | ADR-0013 (`Approved`) |
 | Decision Summary | D2, D4, D8-D10 define authority, strict replay and frozen boundary |
 | Scope Boundary | offline replay/digest/tests only; no storage mutation or online recovery |
-| Blueprint Status | `Proposed`; no implementation authority yet |
+| Blueprint Status | `Approved — inherited Human Blueprint Approval; dependency-gated` |
 | Exception Gates | state exposure, reflection/hook, skip policy, engine/pipeline change |
 
 Alternatives considered: persist derived results, reflect into engine state or
@@ -123,16 +123,17 @@ Push and require exact-SHA CI PASS before TASK-017.
 | Date | Reviewer | Stage | Decision | Notes |
 | --- | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | Proposal creation | `Authorized` | Plan only; implementation awaits Blueprint approval |
+| 2026-08-21 | Human Developer | Phase Blueprint Approval | `Approved (Inherited)` | TASK-016 authorized only after TASK-015 evidence PASS; offline replay only; no Snapshot/online Recovery or frozen-core change |
 
 | Stage | Report | Status | Next Gate |
 | --- | --- | --- | --- |
-| Proposal | Phase 5 proposal report | Proposed | Human Blueprint Approval |
+| Proposal | Phase 5 proposal report | Approved | TASK-015 evidence |
 | Implementation / Verification | cumulative Phase 5 report | Not started | exact-SHA evidence |
 | Completion | cumulative Phase 5 report | Not started | TASK-017 / Exception Gate |
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
-| 2026-08-21 | Proposed | Offline replay plan created | documentation review pending |
+| 2026-08-21 | Approved | Human Blueprint Approval inherited; execution waits for TASK-015 evidence | dependency-gated |
 
 ## 15. Completion Checklist
 

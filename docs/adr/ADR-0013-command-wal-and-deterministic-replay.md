@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed — pending Human Phase 5 Blueprint Approval
+Approved — Human Phase 5 Blueprint Approval recorded on `2026-08-21`
 
 ## Context
 
@@ -149,6 +149,11 @@ Two modes are permitted:
 default automatically. JDK/OS force completion is the strongest Phase 5
 claim; storage-controller or hardware power-loss guarantees are not inferred.
 
+A failed write, force or rotation is never reported as a successful logical
+append and makes the writer terminal. Complete record bytes may nevertheless
+exist physically after a failed force; strict scan/reopen determines the valid
+persisted boundary.
+
 ### D7 — Reopen, torn tail and hard corruption
 
 Only an incomplete final record at the physical end of the last segment is a
@@ -279,7 +284,7 @@ Trade-offs and limitations:
 | Integrity | CRC mismatch, header corruption, segment gap and sequence gap fail closed |
 | Torn tail | strict detection and explicit final-tail truncation only |
 | Replay | identical ordered results, transcript digest and future probe behavior |
-| Failure | no partial logical append after reported failure; poison command fails replay |
+| Failure | no failed write/force/rotation is reported as logical success; physical tail is determined by strict scan/reopen; poison command fails replay |
 | Boundary | zero diff in frozen Domain/OrderBook/Engine/Pipeline production paths |
 | Build | focused tests, repeated recovery matrix, full `mvn verify`, Checkstyle and exact-SHA CI |
 | Evidence | component append/replay benchmark with durability modes separated and limitations recorded |
@@ -288,19 +293,20 @@ Trade-offs and limitations:
 
 | ID | Proposed decision | Current state |
 | --- | --- | --- |
-| D1 | WAL/replay foundation precedes Network/Protocol | Pending |
-| D2 | ordered commands are authoritative; results remain derived | Pending |
-| D3 | versioned big-endian segmented binary format v1 | Pending |
-| D4 | strict length, CRC32C, format and contiguous-sequence validation | Pending |
-| D5 | synchronous single-writer ownership with bounded segments | Pending |
-| D6 | `SYNC_EACH_APPEND` default; `BUFFERED` evidence-only | Pending |
-| D7 | explicit torn-final-tail truncation; all other corruption fails closed | Pending |
-| D8 | strict genesis offline replay with ordered transcript/digest/probes | Pending |
-| D9 | frozen core/pipeline; no live durability integration | Pending |
-| D10 | JDK-only implementation; Snapshot/Recovery/Network/optimization deferred | Pending |
+| D1 | WAL/replay foundation precedes Network/Protocol | Approved |
+| D2 | ordered commands are authoritative; results remain derived | Approved |
+| D3 | versioned big-endian segmented binary format v1 | Approved |
+| D4 | strict length, CRC32C, format and contiguous-sequence validation | Approved |
+| D5 | synchronous single-writer ownership with bounded segments | Approved |
+| D6 | `SYNC_EACH_APPEND` default; `BUFFERED` evidence-only | Approved |
+| D7 | explicit torn-final-tail truncation; all other corruption fails closed | Approved |
+| D8 | strict genesis offline replay with ordered transcript/digest/probes | Approved |
+| D9 | frozen core/pipeline; no live durability integration | Approved |
+| D10 | JDK-only implementation; Snapshot/Recovery/Network/optimization deferred | Approved |
 
 ## Approval Record
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | `Proposal Authorized` | Phase 5 Discovery, ADR draft and Complete Blueprint Proposal may be created. Implementation remains unauthorized pending Human Blueprint Approval. |
+| 2026-08-21 | Human Developer | `Approved` | D1-D10 and TASK-014 through TASK-018 approved through the Phase Blueprint. Execution is authorized in strict dependency order. Existing Domain, OrderBook, MatchingEngine and Pipeline production files remain unchanged. A failed force is not proof of physical record absence; strict scan/reopen determines the valid persisted boundary. Phase Closure, merge and `v0.4.0-engineering-baseline` remain unauthorized. |

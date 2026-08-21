@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Phase | `Phase 5 — Command WAL and Deterministic Replay Foundation` |
-| Blueprint Status | `Proposed` |
+| Blueprint Status | `Approved — Implementation Authorized` |
 | Owner | Human Developer |
 | Architect | Codex / Sol high |
 | Created | `2026-08-21` |
@@ -14,7 +14,7 @@
 | Proposal Base HEAD | `fbcbe53` |
 | Blueprint Branch | `docs/phase5-command-wal-replay-blueprint` |
 | Planned Tasks | `TASK-20260821-014` through `TASK-20260821-018` |
-| Next Gate | `Human Phase 5 Blueprint Approval` |
+| Next Gate | `TASK-014 Implementation / Evidence Gate` |
 
 ## 2. Discovery and Phase Goal
 
@@ -129,20 +129,20 @@ Required draft:
 
 | Decision ID | ADR | Proposed Decision | Scope / Constraint | Approval Result |
 | --- | --- | --- | --- | --- |
-| D1 | ADR-0013 | WAL/replay foundation before Network | persistence not derived from wire protocol | Pending |
-| D2 | ADR-0013 | commands are authoritative; results derived | no Trade/Execution WAL | Pending |
-| D3 | ADR-0013 | exact version-1 big-endian segmented format | only submit-limit and cancel records | Pending |
-| D4 | ADR-0013 | strict format, CRC32C and exact sequence validation | no skip/sort/best-effort decode | Pending |
-| D5 | ADR-0013 | synchronous caller-owned single writer | no internal thread, queue or concurrent writer | Pending |
-| D6 | ADR-0013 | `SYNC_EACH_APPEND` default, `BUFFERED` evidence-only | benchmark cannot change default | Pending |
-| D7 | ADR-0013 | explicit final torn-tail truncation only | complete-record corruption always fails closed | Pending |
-| D8 | ADR-0013 | strict closed-WAL replay into genesis engine | ordered transcript/digest/probe equality | Pending |
-| D9 | ADR-0013 | existing core/pipeline production files frozen | no live durable integration | Pending |
-| D10 | ADR-0013 | JDK-only; Snapshot/Recovery/Network deferred | no product recovery claim | Pending |
+| D1 | ADR-0013 | WAL/replay foundation before Network | persistence not derived from wire protocol | Approved |
+| D2 | ADR-0013 | commands are authoritative; results derived | no Trade/Execution WAL | Approved |
+| D3 | ADR-0013 | exact version-1 big-endian segmented format | only submit-limit and cancel records | Approved |
+| D4 | ADR-0013 | strict format, CRC32C and exact sequence validation | no skip/sort/best-effort decode | Approved |
+| D5 | ADR-0013 | synchronous caller-owned single writer | no internal thread, queue or concurrent writer | Approved |
+| D6 | ADR-0013 | `SYNC_EACH_APPEND` default, `BUFFERED` evidence-only | benchmark cannot change default | Approved |
+| D7 | ADR-0013 | explicit final torn-tail truncation only | complete-record corruption always fails closed | Approved |
+| D8 | ADR-0013 | strict closed-WAL replay into genesis engine | ordered transcript/digest/probe equality | Approved |
+| D9 | ADR-0013 | existing core/pipeline production files frozen | no live durable integration | Approved |
+| D10 | ADR-0013 | JDK-only; Snapshot/Recovery/Network deferred | no product recovery claim | Approved |
 
-Human Blueprint Approval may accept ADR-0013 D1-D10 and TASK-014 through
-TASK-018 together. Implementation remains prohibited until that approval is
-recorded in this Blueprint, ADR-0013 and every Task.
+Human Blueprint Approval accepted ADR-0013 D1-D10 and TASK-014 through
+TASK-018 together. Implementation is authorized only in strict dependency order
+and remains subject to every automated Evidence Gate and Exception Gate.
 
 ## 6. Target Architecture
 
@@ -200,6 +200,9 @@ No conversion among these domains is permitted.
 
 - writer reports an append only after the full record is written and the
   configured durability action succeeds;
+- a failed write, force or rotation is never reported as a successful logical
+  append and makes the writer terminal; complete bytes may nevertheless exist
+  physically, so strict scan/reopen determines the valid persisted boundary;
 - a write/force/rotation failure makes that writer instance terminal;
 - strict reader failure includes segment and byte offset;
 - only an incomplete last physical record is an eligible torn tail;
@@ -273,6 +276,8 @@ approval is required between approved Tasks unless an Exception Gate fires.
   position and preserves all prior valid records;
 - [ ] an earlier torn/corrupt record is never truncated as a recovery shortcut;
 - [ ] writer I/O or force failure is terminal and cannot be reported as success;
+- [ ] a failed force is treated as logical append failure, while physical tail
+  state is determined only by strict scan/reopen;
 - [ ] a well-formed command rejected by MatchingEngine makes replay fail at its
   command Sequence without applying later records;
 - [ ] Snapshot restore and online recovery are explicitly not claimed.
@@ -355,8 +360,8 @@ TASK-018 records component evidence only after correctness gates pass.
 | File or Directory | Task / Stage | Planned Change | Boundary |
 | --- | --- | --- | --- |
 | `docs/adr/ADR-0013-*.md` | Proposal / TASK-018 | decision status/evidence sync | no approval inferred |
-| `tasks/blueprints/PHASE-5-*.md` | Proposal / all | authoritative Phase scope/checkpoints | Proposed until Human approval |
-| `tasks/active/TASK-...-014..018-*.md` | Proposal / each Task | executable plans | remain Proposed before approval |
+| `tasks/blueprints/PHASE-5-*.md` | Approval / all | authoritative Phase scope/checkpoints | Approved; execution dependency-gated |
+| `tasks/active/TASK-...-014..018-*.md` | Approval / each Task | executable plans | Approved; execute only in dependency order |
 | `src/main/java/.../persistence/wal/**` | TASK-014/015 | format, codec, writer, reader and failures | new package only |
 | `src/test/java/.../persistence/wal/**` | TASK-014/015/017 | unit/integration/corruption tests | temp dirs and public contracts |
 | `src/main/java/.../recovery/**` | TASK-016 | offline replay and transcript digest | no snapshot/online recovery |
@@ -504,12 +509,12 @@ Required execution/closure artifacts after approval:
 | Date | Reviewer | Decision | Approved ADRs / Tasks / Stages | Constraints |
 | --- | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | `Proposal Authorized` | Discovery, ADR-0013 draft, TASK-014..018 plans and complete Blueprint Proposal only | No implementation; stop at Human Blueprint Approval |
-|  | Human Developer | `Pending` | ADR-0013 D1-D10; TASK-014 through TASK-018 |  |
+| 2026-08-21 | Human Developer | `Approved` | ADR-0013 D1-D10; TASK-014 through TASK-018 in strict dependency order | Frozen Domain/OrderBook/Engine/Pipeline; SYNC default; force failure is logical failure plus terminal writer, not proof of physical absence; live integration, Network, Snapshot, online Recovery, optimization, Closure, merge and tag excluded |
 
 ```text
-Blueprint Status: Proposed
-Implementation: Not Authorized
-Next Gate: Human Phase 5 Blueprint Approval
+Blueprint Status: Approved
+Implementation: Authorized in dependency order
+Next Gate: TASK-014 Implementation / Evidence Gate
 ```
 
 Approval must explicitly confirm:
@@ -528,6 +533,7 @@ Approval must explicitly confirm:
 | Date | Task / Stage | Result | Evidence | Next State |
 | --- | --- | --- | --- | --- |
 | 2026-08-21 | Discovery / Blueprint Proposal | Prepared / CI PASS | content commit `a2a7c75`; exact-SHA CI [32462826593](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462826593) PASS | Human Phase 5 Blueprint Approval |
+| 2026-08-21 | Human Blueprint Approval | Approved / CI PASS | approval sync commit `341dc5e`; exact-SHA CI [32462992039](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462992039) PASS | TASK-014 Implementation / Evidence Gate |
 
 ## 20. Phase Closure Checklist
 

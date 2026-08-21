@@ -6,16 +6,16 @@
 | --- | --- |
 | Task ID | `TASK-20260821-015` |
 | Title | Phase 5 Segmented Command WAL Storage |
-| Status | `Proposed` |
+| Status | `Approved` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Related Phase / ADR | Phase 5 / ADR-0013 |
 | Phase Blueprint | `tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
 | Depends On | TASK-014 evidence PASS |
-| Current Stage / Next Gate | Proposal / Human Phase 5 Blueprint Approval |
+| Current Stage / Next Gate | Waiting for TASK-014 evidence / TASK-014 Evidence Gate |
 | Branch / Baseline | `feature/phase5-command-wal-replay` / approved TASK-014 commit |
-| CI | `Pending` |
+| CI | `Pending for dependency evidence` |
 
 ## 2. Background and Goal
 
@@ -39,6 +39,8 @@ exclusive ownership, terminal failures and explicit final torn-tail reopen.
 - [ ] exclusive active-segment lock rejects another writer;
 - [ ] close is idempotent and later append is rejected;
 - [ ] I/O/force/rotation failure makes writer terminal;
+- [ ] a failed force is a logical append failure but does not imply physical
+  record absence; strict scan/reopen determines the persisted boundary;
 - [ ] strict reader validates all segments, records, CRC and sequences;
 - [ ] explicit reopen truncates only an incomplete final physical record;
 - [ ] complete-record corruption, earlier truncation and segment gaps fail closed;
@@ -62,15 +64,19 @@ segment names and validated headers, never filesystem iteration order.
 
 | Field | Value |
 | --- | --- |
-| ADR | ADR-0013 (`Proposed`) |
+| ADR | ADR-0013 (`Approved`) |
 | Decision Summary | D3-D7 and D10 define format, integrity, ownership, durability and torn-tail rules |
 | Scope Boundary | new WAL storage/tests only; no replay or live integration |
-| Blueprint Status | `Proposed`; no implementation authority yet |
+| Blueprint Status | `Approved — inherited Human Blueprint Approval; dependency-gated` |
 | Exception Gates | broad repair, format change, background I/O, dependency or frozen-file change |
 
 Alternatives considered: one unbounded file, memory mapping, async/background
 flush and best-effort salvage are rejected or deferred by ADR-0013. The
 synchronous segmented design is selected for explicit correctness boundaries.
+
+The approved Blueprint authorizes this Task only after TASK-014's evidence
+gate; format changes, broad repair and frozen-file changes trigger Exception
+Gate review.
 
 ## 7. Planned File Changes
 
@@ -128,16 +134,17 @@ Push after gates; exact-SHA CI PASS is required before TASK-016.
 | Date | Reviewer | Stage | Decision | Notes |
 | --- | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | Proposal creation | `Authorized` | Plan only; implementation awaits Blueprint approval |
+| 2026-08-21 | Human Developer | Phase Blueprint Approval | `Approved (Inherited)` | TASK-015 authorized only after TASK-014 evidence PASS; failed force is logical failure, not proof of physical absence; frozen production paths unchanged |
 
 | Stage | Report | Status | Next Gate |
 | --- | --- | --- | --- |
-| Proposal | Phase 5 proposal report | Proposed | Human Blueprint Approval |
+| Proposal | Phase 5 proposal report | Approved | TASK-014 evidence |
 | Implementation / Verification | cumulative Phase 5 report | Not started | exact-SHA evidence |
 | Completion | cumulative Phase 5 report | Not started | TASK-016 / Exception Gate |
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
-| 2026-08-21 | Proposed | Segmented storage plan created | documentation review pending |
+| 2026-08-21 | Approved | Human Blueprint Approval inherited; execution waits for TASK-014 evidence | dependency-gated |
 
 ## 15. Completion Checklist
 

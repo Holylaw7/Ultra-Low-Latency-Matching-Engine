@@ -5,14 +5,14 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-017` / Phase 5 Corruption and Recovery-Boundary Verification |
-| Status | `Proposed` |
+| Status | `Approved` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 5 / ADR-0013 / `PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
 | Depends On | TASK-016 exact-SHA evidence PASS |
-| Current Stage / Next Gate | Proposal / Human Phase 5 Blueprint Approval |
-| Branch / CI | `feature/phase5-command-wal-replay` / Pending |
+| Current Stage / Next Gate | Waiting for TASK-016 evidence / TASK-016 Evidence Gate |
+| Branch / CI | `feature/phase5-command-wal-replay` / Pending for dependency evidence |
 
 ## 2. Background and Goal
 
@@ -59,10 +59,10 @@ segment, offset, retained command prefix and replay output.
 
 | Field | Value |
 | --- | --- |
-| ADR | ADR-0013 (`Proposed`) |
+| ADR | ADR-0013 (`Approved`) |
 | Decision Summary | D4, D7-D9 define fail-closed integrity and replay boundary |
 | Scope Boundary | verification and in-scope fixes only; no semantic/format change |
-| Blueprint Status | `Proposed`; no implementation authority yet |
+| Blueprint Status | `Approved — inherited Human Blueprint Approval; dependency-gated` |
 | Exception Gates | required format/policy change, broad salvage, production hook, frozen-file change |
 
 Alternatives considered: mock file channels or broad automatic salvage. Real
@@ -126,16 +126,17 @@ Push and require exact-SHA CI PASS before TASK-018.
 | Date | Reviewer | Stage | Decision | Notes |
 | --- | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | Proposal creation | `Authorized` | Plan only; implementation awaits Blueprint approval |
+| 2026-08-21 | Human Developer | Phase Blueprint Approval | `Approved (Inherited)` | TASK-017 authorized only after TASK-016 evidence PASS; fail-closed/torn-tail criteria cannot be weakened |
 
 | Stage | Report | Status | Next Gate |
 | --- | --- | --- | --- |
-| Proposal | Phase 5 proposal report | Proposed | Human Blueprint Approval |
+| Proposal | Phase 5 proposal report | Approved | TASK-016 evidence |
 | Verification | cumulative Phase 5 report | Not started | exact-SHA evidence |
 | Completion | cumulative Phase 5 report | Not started | TASK-018 / Exception Gate |
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
-| 2026-08-21 | Proposed | Corruption/recovery-boundary plan created | documentation review pending |
+| 2026-08-21 | Approved | Human Blueprint Approval inherited; execution waits for TASK-016 evidence | dependency-gated |
 
 ## 15. Completion Checklist
 

@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260821-014` |
 | Title | Phase 5 WAL Format and Command Codec Foundation |
-| Status | `Proposed` |
+| Status | `Approved` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created / Updated | `2026-08-21` |
@@ -14,11 +14,11 @@
 | Related ADR | `docs/adr/ADR-0013-command-wal-and-deterministic-replay.md` |
 | Phase Blueprint | `tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
-| Current Stage | `Proposal` |
-| Next Gate | `Human Phase 5 Blueprint Approval` |
+| Current Stage | `Implementation` |
+| Next Gate | `TASK-014 Evidence Gate` |
 | Branch | `feature/phase5-command-wal-replay` after approval |
 | Baseline | `v0.3.0-engineering-baseline` / approved proposal commit |
-| CI | `Pending` |
+| CI | `Pending for implementation commit` |
 
 ## 2. Background and Goal
 
@@ -74,17 +74,18 @@ domain constructors so invalid values cannot bypass domain validation.
 | Field | Value |
 | --- | --- |
 | ADR | ADR-0013 |
-| Status | `Proposed` |
+| Status | `Approved` |
 | Decision Summary | D2-D4, D6 and D10 define authority, exact format, validation and dependency boundary |
 | Scope Boundary | codec/contracts/tests only; no I/O or frozen-file change |
 
 | Field | Value |
 | --- | --- |
-| Blueprint Status | `Proposed` |
-| Authorized Task / Stages | None until Human approval; then TASK-014 only |
+| Blueprint Status | `Approved — inherited Human Blueprint Approval` |
+| Authorized Task / Stages | TASK-014 implementation and evidence stage only |
 | Exception Gates | format/CRC/type change, new dependency/command, frozen-file change |
 
-Architecture impact: ADR required and pending through the Phase Blueprint.
+Architecture impact: ADR-0013 approved through the Human Phase Blueprint;
+implementation remains limited to the new codec/configuration boundary.
 
 Alternatives considered are recorded normatively in ADR-0013: Java
 serialization/JSON and implicit Java layouts are rejected in favor of an exact
@@ -143,16 +144,17 @@ Push after local gates; record exact-SHA CI before TASK-015.
 | Date | Reviewer | Stage | Decision | Notes |
 | --- | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | Proposal creation | `Authorized` | Plan only; implementation awaits Blueprint approval |
+| 2026-08-21 | Human Developer | Phase Blueprint Approval | `Approved (Inherited)` | D1-D10 and TASK-014 approved; implement only new WAL codec/configuration files; frozen production paths unchanged |
 
 | Stage | Report | Status | Next Gate |
 | --- | --- | --- | --- |
-| ADR / Blueprint | Phase 5 proposal report | Proposed | Human Blueprint Approval |
+| ADR / Blueprint | Phase 5 proposal report | Approved | TASK-014 Evidence Gate |
 | Implementation | cumulative Phase 5 report | Not started | evidence gate |
 | Completion | cumulative Phase 5 report | Not started | TASK-015 / Exception Gate |
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
-| 2026-08-21 | Proposed | Format/codec plan created; no implementation | documentation review pending |
+| 2026-08-21 | Approved | Human Blueprint Approval inherited; format/codec implementation authorized | D1-D10 approved; TASK-014 is next |
 
 ## 15. Completion Checklist
 

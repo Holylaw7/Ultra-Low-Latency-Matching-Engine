@@ -5,14 +5,14 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-018` / Phase 5 WAL Benchmark, Documentation and Closure Preparation |
-| Status | `Proposed` |
+| Status | `Approved` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 5 / ADR-0013 / `PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
 | Depends On | TASK-017 exact-SHA evidence PASS |
-| Current Stage / Next Gate | Proposal / Human Phase 5 Blueprint Approval |
-| Branch / CI | `feature/phase5-command-wal-replay` / Pending |
+| Current Stage / Next Gate | Waiting for TASK-017 evidence / TASK-017 Evidence Gate |
+| Branch / CI | `feature/phase5-command-wal-replay` / Pending for dependency evidence |
 
 ## 2. Background and Goal
 
@@ -56,10 +56,10 @@ reuse stale WAL data across measurements.
 
 | Field | Value |
 | --- | --- |
-| ADR | ADR-0013 (`Proposed`) |
+| ADR | ADR-0013 (`Approved`) |
 | Decision Summary | D6, D8-D10 define evidence variables and claim limits |
 | Scope Boundary | benchmark/docs/closure proposal only; no optimization or default change |
-| Blueprint Status | `Proposed`; no implementation authority yet |
+| Blueprint Status | `Approved — inherited Human Blueprint Approval; dependency-gated` |
 | Exception Gates | benchmark exposes architecture defect, format/default change, product claim |
 
 Alternatives considered: a single mixed end-to-end number or ad-hoc timing.
@@ -137,16 +137,17 @@ Push each checkpoint and record exact-SHA CI. Merge/tag wait for Human Closure.
 | Date | Reviewer | Stage | Decision | Notes |
 | --- | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | Proposal creation | `Authorized` | Plan only; implementation awaits Blueprint approval |
+| 2026-08-21 | Human Developer | Phase Blueprint Approval | `Approved (Inherited)` | TASK-018 authorized only after TASK-017 evidence PASS; benchmark cannot change SYNC default; Phase Closure remains Human gate |
 
 | Stage | Report | Status | Next Gate |
 | --- | --- | --- | --- |
-| Proposal | Phase 5 proposal report | Proposed | Human Blueprint Approval |
+| Proposal | Phase 5 proposal report | Approved | TASK-017 evidence |
 | Benchmark / Docs | cumulative Phase 5 report | Not started | exact-SHA evidence |
 | Closure Preparation | Phase 5 Closure Report | Not started | Human Phase 5 Closure Approval |
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
-| 2026-08-21 | Proposed | Benchmark/docs/closure plan created | documentation review pending |
+| 2026-08-21 | Approved | Human Blueprint Approval inherited; execution waits for TASK-017 evidence | dependency-gated; Closure remains Human gate |
 
 ## 15. Completion Checklist
 
