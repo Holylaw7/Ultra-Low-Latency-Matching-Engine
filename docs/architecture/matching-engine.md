@@ -98,6 +98,8 @@ sequence, constructs NEW limit orders, delegates to the frozen OrderBook,
 translates ordered MatchFragments and returns immutable Trade/Execution
 results with engine-owned TradeId/EventSequence allocation. It has no
 engine-owned thread, executor, lock or queue. Stage 2 was accepted on
-2026-08-21. Determinism Verification remains separately gated and unauthorized.
-OrderBook is an external frozen dependency and no OrderBook file or API may
-change.
+2026-08-21. A verification-only Stage 3 authorization is proposed; execution
+remains unauthorized pending Human review. The proposal uses equal command
+re-execution and public-API probes without adding WAL/replay infrastructure,
+state exposure or production test hooks. OrderBook is an external frozen
+dependency and no OrderBook file or API may change.

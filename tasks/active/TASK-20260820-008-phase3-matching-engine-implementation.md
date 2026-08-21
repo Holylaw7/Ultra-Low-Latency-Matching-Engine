@@ -13,14 +13,14 @@
 | Updated | `2026-08-21` |
 | Related Phase | Phase 3 — MatchingEngine |
 | Related ADR | ADR-0005 sequence revision and ADR-0011 (`Approved`) |
-| Current Stage | `Stage 2 MatchingEngine Core completed and approved` |
-| Next Approval Gate | `Stage 3 Determinism Verification authorization` |
+| Current Stage | `Stage 3 Determinism Verification authorization proposed` |
+| Next Approval Gate | `Human Stage 3 Authorization Review` |
 | Branch | `feature/phase3-matching-engine` |
 | Approved Implementation Branch | `feature/phase3-matching-engine` |
 | Parent Branch / HEAD | `docs/phase3-matching-engine-adr` at `96fe50b` |
 | Engineering Baseline | `v0.1.0-engineering-baseline` at `cbfa957` |
 | Remote | `origin` |
-| CI | Stage 2 evidence `0ad45fa`: [run 32387974864](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32387974864) PASS |
+| CI | Stage 2 closure `0b60cf6`: [run 32445740452](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32445740452) PASS |
 
 ## 2. Background
 
@@ -37,8 +37,9 @@ finally approved and freezes a synchronous, single-owner MatchingEngine that:
 ADR-0005 revision R1-R6 reserves `Sequence` for input commands and introduces
 an explicit MatchingEngine-owned `EventSequence` for output match aggregates.
 This Task converts those accepted decisions into a reviewable implementation
-plan. The Human Developer approved the plan on `2026-08-20`. Only Stage 1
-Domain/API Foundation is authorized next; later stages remain gated.
+plan. The Human Developer approved the plan on `2026-08-20`. Stage 1 and Stage
+2 are completed and approved. Stage 3 authorization is proposed; verification
+execution remains unauthorized pending Human review.
 
 ## 3. Goal
 
@@ -73,10 +74,10 @@ observable results without embedding infrastructure concerns.
 
 ### Requirements
 
-- [ ] Introduce positive `long`-backed `EventSequence` as approved by ADR-0005.
-- [ ] Replace `Trade.sequence` with `Trade.eventSequence` and update domain
+- [x] Introduce positive `long`-backed `EventSequence` as approved by ADR-0005.
+- [x] Replace `Trade.sequence` with `Trade.eventSequence` and update domain
   tests/documentation explicitly.
-- [ ] Introduce immutable submit-limit and cancel command values carrying one
+- [x] Introduce immutable submit-limit and cancel command values carrying one
   input `Sequence`; submit carries immutable order fields rather than a
   mutable `Order` aggregate.
 - [x] Reject null, malformed, duplicate, gap and out-of-order commands before
@@ -116,8 +117,10 @@ observable results without embedding infrastructure concerns.
 - [x] Invalid fields and active-duplicate submit commands fail before the
   engine sequence advances; market and terminal orders are unrepresentable at
   the command boundary.
-- [x] Equal command streams from empty engines produce equal EngineResults and
-  equal observable OrderBook state, TradeIds and EventSequences.
+- [x] A minimal equal command stream from empty engines produces equal
+  EngineResults, TradeIds and EventSequences.
+- [ ] Comprehensive fixed and extended command streams produce equal results
+  and equal public-API-observable OrderBook behavior; this is Stage 3 evidence.
 - [x] EngineResult and match collections cannot be mutated by callers.
 - [x] MatchingEngine has no I/O, queue, thread, callback, clock, randomness,
   logging, networking or persistence dependency.
@@ -594,7 +597,64 @@ violations, exact diff/path audit, Stage Report, clean Git state, remote push
 and exact-SHA CI evidence. It must then stop for Human Stage 2 Completion
 Review. Stage 3 does not start automatically.
 
-## 16. Approval Record
+## 16. Stage 3 Determinism Verification Authorization Request
+
+### Authorization Status
+
+```text
+Stage 1 Domain/API Foundation:  Completed / Approved
+Stage 2 MatchingEngine Core:    Completed / Approved
+Stage 3 Authorization:          Proposed / Pending Human Approval
+Stage 3 Verification:           Not Authorized
+```
+
+The proposed Stage 3 is verification-only. If approved, it may add exactly:
+
+```text
+src/test/java/com/ultralatency/matching/engine/MatchingEngineDeterminismTest.java
+```
+
+No production or existing test file may change. The test must execute fixed,
+identical command values through two independent genesis engines and compare
+ordered `EngineResult` values, including command outcomes, TradeIds,
+EventSequences, Trade fields, named maker/taker Execution fields and list
+order. Identical probe/cancel suffix commands must establish observable
+resting, residual and canceled state equivalence without exposing OrderBook
+internals.
+
+An extended deterministic fixture must apply at least 256 accepted commands
+with contiguous input sequences and repeated rest, cross and cancel behavior.
+It may use fixed loops/arithmetic, but never time or randomness.
+
+Reachable pre-apply failures must use a subject/control differential. Null,
+sequence-invalid and active-duplicate attempts on the subject engine must
+leave the same exact-next suffix accepted with results equal to a control
+engine that did not receive the rejected attempt.
+
+Required equality is Java value/record equality and public-API behavior. It
+excludes object identity, memory address, allocation order, node identity,
+internal collection layout, timing and performance. No serialized byte format
+exists in this baseline, so byte-for-byte wire equality is not claimed.
+
+This authorization does not include a WAL/replay subsystem. Re-entering fixed
+commands in a test is deterministic re-execution only. It also does not allow
+reflection, unsafe access, counter setters, state/hash exposure, dependency
+injection or test hooks. Counter exhaustion and unexpected post-mutation fatal
+failure are not practically reachable through the public genesis API and must
+be reported as dynamic-verification limitations rather than simulated by
+polluting production code.
+
+All WAL, snapshot, recovery, state-hash format, network, pipeline, concurrency,
+benchmark, profiling, optimization, market-order and OrderBook changes remain
+prohibited. The full proposed boundary is recorded in
+`tasks/reports/PHASE-3-matching-engine-determinism-authorization.md`.
+
+If approved, Stage 3 completion requires focused tests, `mvn verify`, zero
+Checkstyle violations, a production-path diff audit, a Stage Report, remote
+push and exact-SHA CI evidence. It must then stop for Human Stage 3 Completion
+Review; Phase 3 closure does not start automatically.
+
+## 17. Approval Record
 
 | Date | Reviewer | Stage | Decision | Constraints / Notes |
 | --- | --- | --- | --- | --- |
@@ -604,8 +664,9 @@ Review. Stage 3 does not start automatically.
 | 2026-08-20 | Codex | Stage 2 Authorization Request | `Proposed` | MatchingEngine Core scope frozen to synchronous orchestration in one new production file and focused tests. Implementation remains unauthorized pending Human approval. |
 | 2026-08-20 | Human Developer | Stage 2 Authorization Review | `Approved` | Synchronous command processing, frozen OrderBook integration and Trade/Execution generation authorized. No thread model, infrastructure, Stage 3, WAL, replay implementation, network or performance work. |
 | 2026-08-21 | Human Developer | Stage 2 Completion Review | `Approved` | Synchronous command processing, sequence validation, frozen OrderBook integration, MatchFragment conversion, Trade/Execution generation and EventSequence ownership accepted. Stage 3 requires independent authorization. |
+| 2026-08-21 | Codex | Stage 3 Authorization Request | `Proposed` | Verification-only scope proposed for deterministic re-execution, public-API state probes and reachable pre-apply failure atomicity. Production changes, replay infrastructure and artificial failure seams remain unauthorized. |
 
-## 17. Phase Reports and Approval Gates
+## 18. Phase Reports and Approval Gates
 
 | Stage | Report Location | Status | Next Approval Gate | Human Approval |
 | --- | --- | --- | --- | --- |
@@ -614,12 +675,12 @@ Review. Stage 3 does not start automatically.
 | Task Approval | Same planning report | Completed | Domain/API Foundation | Approved 2026-08-20 |
 | Domain/API Foundation | `tasks/reports/PHASE-3-matching-engine-domain-api-foundation.md` | Completed / Approved | Stage 2 Authorization | Approved 2026-08-20 |
 | MatchingEngine Implementation | `tasks/reports/PHASE-3-matching-engine-core-implementation.md` | Completed / Approved | Stage 3 Authorization | Approved 2026-08-21 |
-| Correctness / Determinism Verification | Not created | Not Authorized | Human Stage Approval | Not Authorized |
+| Correctness / Determinism Verification | `tasks/reports/PHASE-3-matching-engine-determinism-authorization.md` | Authorization Proposed / Execution Not Authorized | Human Stage 3 Authorization Review | Pending |
 | Benchmark / Profile | Not applicable | Not applicable | Documentation Sync | Not applicable |
 | Documentation and Synchronization | Not created | Not Authorized | Completion Review | Not Authorized |
 | Completion | Not created | Not Authorized | Human Completion Approval | Not Authorized |
 
-## 18. Implementation Log
+## 19. Implementation Log
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
@@ -632,8 +693,9 @@ Review. Stage 3 does not start automatically.
 | 2026-08-20 | Stage 2 Authorized | Human approved synchronous MatchingEngine Core implementation with no thread model or infrastructure | Stage 2.1-2.3 may proceed; Stage 3 remains unauthorized |
 | 2026-08-20 | Stage 2 Completed | Implemented command lifecycle, frozen OrderBook delegation and deterministic fragment translation | `c1fe408`, `f0e24cc`, `dbeaee6`; `mvn verify` PASS, 56 tests and Checkstyle 0; remote CI pending final evidence push |
 | 2026-08-21 | Stage 2 Approved | Human accepted the implementation, verification, ADR alignment and frozen OrderBook boundary | `0ad45fa`; GitHub Actions run `32387974864` PASS; Stage 3 remains unauthorized |
+| 2026-08-21 | Stage 3 Authorization Proposed | Froze value equality, public-API state probes, reachable failure atomicity and explicit unreachable-failure limitations | Documentation only; Stage 3 test execution remains unauthorized pending Human review |
 
-## 19. Completion Checklist
+## 20. Completion Checklist
 
 - [x] Stage 1 scope and acceptance criteria satisfied
 - [x] Stage 1 tests added or updated
@@ -652,3 +714,9 @@ Review. Stage 3 does not start automatically.
 - [x] Stage 1 implementation remote synchronization completed
 - [x] Stage 1 implementation CI status recorded
 - [x] Stage 1 post-implementation Git status confirmed
+- [x] Stage 2 implementation and focused verification completed
+- [x] Stage 2 completion report and Human approval recorded
+- [x] Stage 2 branch push and exact-SHA CI evidence recorded
+- [x] Stage 3 authorization scope documented without production/test changes
+- [ ] Human Stage 3 Authorization Review completed
+- [ ] Stage 3 determinism verification executed

@@ -10,19 +10,19 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 3 — MatchingEngine (`Stage 2 completed and approved`) |
+| Phase | Phase 3 — MatchingEngine (`Stage 3 authorization proposed`) |
 | Latest product task | [`TASK-20260819-004`](../tasks/completed/TASK-20260819-004-basic-orderbook.md) — Completed |
 | Latest architecture task | [`TASK-20260820-007`](../tasks/completed/TASK-20260820-007-phase3-matching-engine-adr-decision.md) — Completed |
 | Current planning task | [`TASK-20260820-008`](../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md) — Approved |
-| Product stage | Stage 2 MatchingEngine Core completed / approved |
-| Product approval | Stage 3 remains unauthorized pending independent authorization |
+| Product stage | Stage 3 Determinism Verification authorization proposed |
+| Product approval | Stage 3 execution remains unauthorized pending Human review |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `feature/phase3-matching-engine` |
 | Engineering baseline commit | `cbfa957` |
 | Engineering baseline tag | `v0.1.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
 | Remote sync | `master` and engineering baseline tag published |
-| CI | Stage 2 evidence `0ad45fa`: [run 32387974864](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32387974864) PASS; local `mvn verify` PASS (56 tests) |
+| CI | Stage 2 closure `0b60cf6`: [run 32445740452](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32445740452) PASS; local `mvn verify` PASS (56 tests) |
 
 ## Project Progress
 
@@ -31,7 +31,7 @@
 | Phase 0 — Bootstrap | Completed | Maven reactor, Java 21, JUnit 5, JMH, Checkstyle and CI workflow |
 | Phase 1 — Domain Model | Completed / Approved | [`PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md) |
 | Phase 2 — Basic OrderBook | Completed / Approved | `v0.1.0-engineering-baseline`, 45 tests, JMH/JFR evidence and passing master CI |
-| Phase 3 — Matching Engine | Stage 2 Completed / Approved | [`TASK-008`](../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md); Stage 3 remains locked |
+| Phase 3 — Matching Engine | Stage 3 Authorization Proposed | [`TASK-008`](../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md); execution remains locked |
 | Phase 4+ — Pipeline, network, recovery and performance evolution | Future Work | Architecture documents and future ADRs/tasks |
 
 ## Current Product Gate
@@ -47,13 +47,13 @@ ADR-0011 Final Approved
     -> Stage 2 authorization [Approved]
     -> Stage 2.1-2.3 implementation [Completed]
     -> Human Stage 2 completion approval [Completed]
-    -> Stage 3 authorization [Pending]
+    -> Stage 3 authorization proposal [Pending Human Approval]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
-approved. Stage 3 Determinism Verification,
-Release, production optimization and history rewrite remain unauthorized.
-OrderBook is an external frozen dependency.
+approved. Stage 3 has a verification-only authorization proposal, but test
+execution remains unauthorized. Release, production optimization and history
+rewrite remain unauthorized. OrderBook is an external frozen dependency.
 
 Completed plan:
 [`TASK-20260819-004-basic-orderbook.md`](../tasks/completed/TASK-20260819-004-basic-orderbook.md).
@@ -68,6 +68,8 @@ Current evidence:
   — Stage 2 authorization approval and frozen scope.
 - [`PHASE-3-matching-engine-core-implementation.md`](../tasks/reports/PHASE-3-matching-engine-core-implementation.md)
   — Stage 2 completed and approved; CI evidence recorded.
+- [`PHASE-3-matching-engine-determinism-authorization.md`](../tasks/reports/PHASE-3-matching-engine-determinism-authorization.md)
+  — Stage 3 verification-only scope proposed; Human approval pending.
 - [`PHASE-3-matching-engine-adr-decision.md`](../tasks/reports/PHASE-3-matching-engine-adr-decision.md)
   — completed; ADR-0011 final approval recorded and architecture frozen.
 - [`PHASE-2-measurement-isolation.md`](../tasks/reports/PHASE-2-measurement-isolation.md)
@@ -149,7 +151,7 @@ Client
        -> BidBook / AskBook
        -> PriceLevel / OrderQueue
        -> active OrderId index
-  -> Trade / Execution events         [Domain types implemented; orchestration future]
+  -> Trade / Execution results        [Engine generation implemented]
        -> WAL / Recovery              [Future Work]
        -> Output / Metrics            [Future Work]
 ```
@@ -168,6 +170,9 @@ requires an approved ADR and Task.
   work; new infrastructure work uses a dedicated branch.
 - Branch protection, merge policy automation and release evidence remain
   Future Work; they were outside `TASK-20260820-006`.
+- Counter exhaustion and post-mutation fatal handling are not dynamically
+  reachable from the public genesis API without an artificial failure seam;
+  Stage 3 proposes recording this limitation rather than changing production.
 
 ## Session Recovery Checklist
 
