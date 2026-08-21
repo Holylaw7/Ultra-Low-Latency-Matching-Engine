@@ -5,6 +5,7 @@ import com.ultralatency.matching.domain.Price;
 import com.ultralatency.matching.domain.Quantity;
 import com.ultralatency.matching.domain.Sequence;
 import com.ultralatency.matching.domain.Side;
+import com.ultralatency.matching.engine.CancelOrderCommand;
 import com.ultralatency.matching.engine.EngineCommand;
 import com.ultralatency.matching.engine.SubmitLimitCommand;
 import com.ultralatency.matching.persistence.wal.CommandWalReader;
@@ -123,12 +124,20 @@ public class WalBenchmark {
         }
 
         private EngineCommand nextCommand() {
-            final EngineCommand command = new SubmitLimitCommand(
-                    Sequence.of(nextSequence),
-                    OrderId.of(nextSequence),
-                    Side.BUY,
-                    Price.of(100),
-                    Quantity.of(1));
+            final long orderId = (nextSequence + 1) / 2;
+            final EngineCommand command;
+            if ((nextSequence & 1L) == 1L) {
+                command = new SubmitLimitCommand(
+                        Sequence.of(nextSequence),
+                        OrderId.of(orderId),
+                        Side.SELL,
+                        Price.of(100),
+                        Quantity.of(1));
+            } else {
+                command = new CancelOrderCommand(
+                        Sequence.of(nextSequence),
+                        OrderId.of(orderId));
+            }
             nextSequence++;
             return command;
         }
@@ -207,13 +216,19 @@ public class WalBenchmark {
     private static List<EngineCommand> commands(final int count) {
         final List<EngineCommand> commands = new ArrayList<>(count);
         for (int sequence = 1; sequence <= count; sequence++) {
-            final long orderId = sequence;
-            commands.add(new SubmitLimitCommand(
-                    Sequence.of(sequence),
-                    OrderId.of(orderId),
-                    sequence % 2 == 0 ? Side.BUY : Side.SELL,
-                    Price.of(100),
-                    Quantity.of(1)));
+            final long orderId = (sequence + 1L) / 2L;
+            if ((sequence & 1) == 1) {
+                commands.add(new SubmitLimitCommand(
+                        Sequence.of(sequence),
+                        OrderId.of(orderId),
+                        Side.SELL,
+                        Price.of(100),
+                        Quantity.of(1)));
+            } else {
+                commands.add(new CancelOrderCommand(
+                        Sequence.of(sequence),
+                        OrderId.of(orderId)));
+            }
         }
         return List.copyOf(commands);
     }
