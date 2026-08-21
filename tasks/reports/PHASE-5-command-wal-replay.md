@@ -5,24 +5,27 @@
 | Field | Value |
 | --- | --- |
 | Phase | Phase 5 — Command WAL and Deterministic Replay Foundation |
-| Current Task | Limited Closure Remediation R1-R3 |
+| Current Task | None; TASK-014 through TASK-018 archived |
 | Completed Task | TASK-20260821-018 — WAL Benchmark, Documentation and Closure Preparation |
-| Result | `Phase 5 Closure Approved / Merge and Baseline Execution Authorized` |
-| Baseline | `v0.3.0-engineering-baseline` remains frozen |
+| Result | `Completed / Approved / Baseline Frozen` |
+| Baseline | `v0.4.0-engineering-baseline` -> `f1e453a` |
 | Full Verification | `mvn verify` PASS; 114 tests, 0 failures; Maven reactor 3/3 SUCCESS |
 | Checkstyle | 0 violations |
-| Latest Commit | `0e6ac954a2525fbea19b4c9e818f7c6c90098d97` (R3 documentation synchronization) |
-| Latest CI | [run 32482054086](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482054086) PASS |
-| Branch | `feature/phase5-command-wal-replay` |
-| Next Gate | Normal `--no-ff` merge / master verification / CI / baseline tag |
+| Baseline Commit | `f1e453a0b0d2518fd20b422dd117d0119a479e62` (`--no-ff` master merge) |
+| Master / Tag CI | [master 32482831419](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482831419) PASS / [tag 32482900227](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482900227) PASS |
+| Branch | `master` |
+| Next Gate | Phase 6 Complete Blueprint; not authorized |
 
 ## Human Blueprint Authorization
 
 ADR-0013 D1-D10 and TASK-014 through TASK-018 were approved by the Human Phase
-5 Blueprint Approval. Execution is authorized in strict dependency order when
-the preceding automated Evidence Gate and exact-SHA CI pass. Phase Closure,
-merge, `v0.4.0-engineering-baseline`, live pipeline/WAL integration, Network,
-Snapshot, online Recovery and Product Release remain unauthorized.
+5 Blueprint Approval. At that gate, execution was authorized in strict
+dependency order when the preceding automated Evidence Gate and exact-SHA CI
+passed, while Phase Closure, merge and the candidate baseline tag remained
+separately governed. Human Closure was later approved and the authorized merge,
+master CI and `v0.4.0-engineering-baseline` tag workflow completed. Live
+pipeline/WAL integration, Network, Snapshot, online Recovery, Product Release
+and Phase 6 remain unauthorized.
 
 The approved force-failure interpretation remains in force: a failed write,
 force or rotation is never reported as a successful logical append and makes
@@ -231,14 +234,15 @@ Evidence gate:
   Final Human Closure Review approved the evidence and authorized baseline
   execution.
 
-## Next State
+## Final State
 
-TASK-014 through TASK-018 and the authorized limited remediation are complete.
-Phase 5 Closure is approved. Normal `--no-ff` merge to `master`, master
-verification/CI, annotated `v0.4.0-engineering-baseline`, tag CI, Task archival
-and final documentation synchronization are authorized. Live pipeline/WAL
-integration, Snapshot, online Recovery, Network, Phase 6 implementation and
-Product Release remain unauthorized.
+TASK-014 through TASK-018 and the authorized Limited Closure Remediation are
+complete and archived. The normal `--no-ff` merge completed at `f1e453a`,
+local master verification passed with 114 tests and frozen-path diff zero,
+master CI `32482831419` passed, and the annotated
+`v0.4.0-engineering-baseline` tag CI `32482900227` passed. Phase 5 is frozen.
+Live pipeline/WAL integration, Snapshot, online Recovery, Network, Phase 6
+implementation and Product Release remain unauthorized.
 
 ## Known Scope Boundary
 

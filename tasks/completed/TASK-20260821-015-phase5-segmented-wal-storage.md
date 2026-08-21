@@ -6,15 +6,15 @@
 | --- | --- |
 | Task ID | `TASK-20260821-015` |
 | Title | Phase 5 Segmented Command WAL Storage |
-| Status | `Completed / Remediation Evidence Passed; Final Closure Review Pending` |
+| Status | `Completed / Archived` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Related Phase / ADR | Phase 5 / ADR-0013 |
 | Phase Blueprint | `tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
 | Depends On | TASK-014 evidence PASS |
-| Current Stage / Next Gate | Closure approved / archive after baseline workflow |
-| Branch / Baseline | `feature/phase5-command-wal-replay` / approved TASK-014 commit |
+| Current Stage / Next Gate | Archived / Phase 5 baseline frozen |
+| Branch / Baseline | merged to `master` / `v0.4.0-engineering-baseline` |
 | CI | Original [run 32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050) PASS; remediation [run 32481266960](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481266960) PASS for `83e5544` |
 
 ## 2. Background and Goal

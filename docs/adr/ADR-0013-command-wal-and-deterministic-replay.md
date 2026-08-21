@@ -2,7 +2,7 @@
 
 ## Status
 
-Approved — Human Phase 5 Blueprint Approval recorded on `2026-08-21`
+Approved / Implemented / Baseline Frozen — `v0.4.0-engineering-baseline`
 
 ## Context
 
@@ -329,7 +329,8 @@ and [R3 CI 32482054086](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-E
 all PASS.
 
 This evidence does not change the approved scope or durability claims. Phase 5
-remains a persistence/replay engineering baseline. Human Closure Approval now
-authorizes the merge/master CI/baseline-tag workflow only. Live pipeline
+remains a persistence/replay engineering baseline. The authorized `--no-ff`
+merge completed at `f1e453a`; master CI `32482831419` and annotated
+`v0.4.0-engineering-baseline` tag CI `32482900227` passed. Live pipeline
 integration, durable client acknowledgement, Snapshot, online Recovery,
 Network, optimization, Product Release and Phase 6 remain unauthorized.

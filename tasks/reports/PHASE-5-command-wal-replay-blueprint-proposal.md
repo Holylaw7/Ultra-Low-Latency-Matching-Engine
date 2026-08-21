@@ -6,13 +6,13 @@
 | --- | --- |
 | Phase | Phase 5 — Command WAL and Deterministic Replay Foundation |
 | Stage | Discovery / Complete Blueprint Proposal |
-| Result | `Approved — Implementation Authorized in Dependency Order` |
+| Result | `Approved / Implemented / Baseline Frozen` |
 | Production Changes | None |
 | Tests | Baseline `mvn verify` PASS — 83 tests / 0 failures |
 | Build | Maven reactor 3/3 SUCCESS; Checkstyle 0 violations |
 | CI | [run 32462826593](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462826593) PASS |
 | Commit | `a2a7c758109f1dcf0460a99d8eb4e14f26c07787` |
-| Next Gate | TASK-014 Implementation / Evidence Gate |
+| Next Gate | Phase 6 Complete Blueprint; not authorized |
 
 ## Discovery Outcome
 
@@ -53,11 +53,11 @@ The durable draft is
 
 | Task | Purpose | Status |
 | --- | --- | --- |
-| [`TASK-014`](../active/TASK-20260821-014-phase5-wal-format-codec.md) | exact format, configuration and command codec | Approved / Next |
-| [`TASK-015`](../active/TASK-20260821-015-phase5-segmented-wal-storage.md) | segmented writer/reader/durability/reopen | Approved / Dependency-gated |
-| [`TASK-016`](../active/TASK-20260821-016-phase5-deterministic-replay.md) | strict genesis replay and transcript digest | Approved / Dependency-gated |
-| [`TASK-017`](../active/TASK-20260821-017-phase5-corruption-recovery-verification.md) | torn-tail/corruption/sequence/failure evidence | Approved / Dependency-gated |
-| [`TASK-018`](../active/TASK-20260821-018-phase5-wal-benchmark-docs.md) | component evidence, documentation and Closure preparation | Approved / Dependency-gated |
+| [`TASK-014`](../completed/TASK-20260821-014-phase5-wal-format-codec.md) | exact format, configuration and command codec | Completed / Archived |
+| [`TASK-015`](../completed/TASK-20260821-015-phase5-segmented-wal-storage.md) | segmented writer/reader/durability/reopen | Completed / Archived |
+| [`TASK-016`](../completed/TASK-20260821-016-phase5-deterministic-replay.md) | strict genesis replay and transcript digest | Completed / Archived |
+| [`TASK-017`](../completed/TASK-20260821-017-phase5-corruption-recovery-verification.md) | torn-tail/corruption/sequence/failure evidence | Completed / Archived |
+| [`TASK-018`](../completed/TASK-20260821-018-phase5-wal-benchmark-docs.md) | component evidence, documentation and Closure preparation | Completed / Archived |
 
 The complete scope, exact format, file boundaries, acceptance criteria,
 verification matrix, benchmark plan, risks, rollback, Git strategy and Closure
@@ -111,8 +111,11 @@ destructive Git/Release action.
 ## Human Decision Record
 
 Human Blueprint Approval was recorded for ADR-0013 D1-D10 and TASK-014 through
-TASK-018 in dependency order. It grants no Phase Closure, merge, tag, Release,
-Network, Snapshot or online Recovery authority.
+TASK-018 in dependency order. At that gate it granted no Phase Closure, merge,
+tag, Release, Network, Snapshot or online Recovery authority. Human Closure was
+later approved; the authorized merge and engineering-baseline tag workflow is
+complete. Release, Network, Snapshot, online Recovery and Phase 6 remain
+unauthorized.
 
 The implementation interpretation is explicit: a failed write/force/rotation
 must never be reported as a successful logical append and makes the writer
@@ -120,7 +123,7 @@ terminal, but complete record bytes may physically exist. Strict scan/reopen
 determines the valid persisted boundary.
 
 ```text
-Phase 5 Blueprint: Approved
-Implementation: Authorized in dependency order
-Next Action: TASK-014
+Phase 5 Blueprint: Completed / Approved / Baseline Frozen
+Implementation: TASK-014 through TASK-018 completed and archived
+Next Action: Phase 6 Complete Blueprint only after Human authorization
 ```

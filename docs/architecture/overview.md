@@ -8,8 +8,8 @@ MatchingEngine are complete. Phase 3 is frozen at
 has Human approval. Its dependency-gated implementation, verification and
 component benchmark evidence and Closure are approved and frozen at
 `v0.3.0-engineering-baseline`. Phase 5 adds a versioned command WAL and strict
-offline deterministic replay as a persistence/replay engineering baseline;
-Phase 5 Closure, merge and `v0.4.0-engineering-baseline` remain Human gates.
+offline deterministic replay as a persistence/replay engineering baseline and
+is completed, approved and frozen at `v0.4.0-engineering-baseline`.
 
 ## Scope
 
@@ -67,8 +67,8 @@ See [`order-book.md`](order-book.md) and
    `v0.2.0-engineering-baseline`**.
 4. Event pipeline — **Completed and frozen at
    `v0.3.0-engineering-baseline`**.
-5. Versioned command WAL and strict offline deterministic replay — **Phase 5
-   implementation completed; Closure Review pending**.
+5. Versioned command WAL and strict offline deterministic replay — **Completed
+   and frozen at `v0.4.0-engineering-baseline`**.
 6. Network adapter and protocol — **Future Work**.
 7. Snapshot and online Recovery — **Future Work**.
 8. Evidence-driven performance alternatives — **Future Work; benchmark and

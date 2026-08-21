@@ -11,7 +11,7 @@
 | Phase / ADR / Blueprint | Phase 5 / ADR-0013 / `PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
 | Depends On | TASK-015 exact-SHA evidence PASS |
-| Current Stage / Next Gate | Completed / Evidence Gate Passed / TASK-017 Evidence Gate |
+| Current Stage / Next Gate | Completed / Archived in Phase 5 baseline |
 | Branch / CI | `feature/phase5-command-wal-replay` / [run 32466659845](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466659845) PASS |
 
 ## 2. Background and Goal

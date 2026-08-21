@@ -5,14 +5,14 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-018` / Phase 5 WAL Benchmark, Documentation and Closure Preparation |
-| Status | `Completed / Closure Approved; Archive Pending` |
+| Status | `Completed / Archived` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 5 / ADR-0013 / `PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
 | Depends On | TASK-017 exact-SHA evidence PASS |
-| Current Stage / Next Gate | Closure approved / authorized merge-tag workflow |
-| Branch / CI | `feature/phase5-command-wal-replay` / R3 [run 32482054086](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482054086) PASS for `0e6ac95` |
+| Current Stage / Next Gate | Archived / Phase 5 baseline frozen |
+| Branch / CI | merged to `master` at `f1e453a`; master CI [32482831419](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482831419) PASS; tag CI [32482900227](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482900227) PASS |
 
 ## 2. Background and Goal
 

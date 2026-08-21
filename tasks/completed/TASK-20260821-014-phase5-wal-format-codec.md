@@ -14,8 +14,8 @@
 | Related ADR | `docs/adr/ADR-0013-command-wal-and-deterministic-replay.md` |
 | Phase Blueprint | `tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
-| Current Stage | `Completed / Evidence Gate Passed` |
-| Next Gate | `TASK-015 Implementation / Evidence Gate` |
+| Current Stage | `Completed / Archived in Phase 5 baseline` |
+| Next Gate | `None; Phase 6 not authorized` |
 | Branch | `feature/phase5-command-wal-replay` after approval |
 | Baseline | `v0.3.0-engineering-baseline` / approved proposal commit |
 | CI | [run 32464648365](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32464648365) PASS for `e5e4c967` |

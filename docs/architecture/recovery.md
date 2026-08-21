@@ -3,7 +3,8 @@
 ## Status
 
 Phase 5 implements a JDK-only, versioned command WAL and strict offline
-deterministic replay baseline. It does not implement online crash recovery,
+deterministic replay baseline, completed and frozen at
+`v0.4.0-engineering-baseline`. It does not implement online crash recovery,
 Snapshot restore or live pipeline durability.
 
 ## Implemented Offline Flow

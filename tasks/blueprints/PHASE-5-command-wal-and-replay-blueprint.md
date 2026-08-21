@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Phase | `Phase 5 — Command WAL and Deterministic Replay Foundation` |
-| Blueprint Status | `Approved — Implementation Authorized` |
+| Blueprint Status | `Completed / Approved / Baseline Frozen` |
 | Owner | Human Developer |
 | Architect | Codex / Sol high |
 | Created | `2026-08-21` |
@@ -14,7 +14,7 @@
 | Proposal Base HEAD | `fbcbe53` |
 | Blueprint Branch | `docs/phase5-command-wal-replay-blueprint` |
 | Planned Tasks | `TASK-20260821-014` through `TASK-20260821-018` |
-| Next Gate | `Authorized merge / master CI / baseline tag execution` |
+| Next Gate | `Phase 6 Complete Blueprint; not authorized` |
 
 ## 2. Discovery and Phase Goal
 
@@ -215,11 +215,11 @@ No conversion among these domains is permitted.
 
 | Order | Task | Goal | Depends On | Authorized Scope | Report |
 | ---: | --- | --- | --- | --- | --- |
-| 1 | [`TASK-014`](../active/TASK-20260821-014-phase5-wal-format-codec.md) | freeze format types, configuration and exact codec | Blueprint approval | new WAL contracts/codec/tests | `tasks/reports/PHASE-5-command-wal-replay.md` |
-| 2 | [`TASK-015`](../active/TASK-20260821-015-phase5-segmented-wal-storage.md) | implement synchronous segmented writer/reader/reopen | TASK-014 evidence | new WAL storage implementation/tests | same cumulative report |
-| 3 | [`TASK-016`](../active/TASK-20260821-016-phase5-deterministic-replay.md) | replay closed WAL through genesis engine and digest transcript | TASK-015 evidence | new recovery package/tests | same cumulative report |
-| 4 | [`TASK-017`](../active/TASK-20260821-017-phase5-corruption-recovery-verification.md) | prove corruption, torn-tail, sequence and failure boundaries | TASK-016 evidence | tests/fixtures only; fixes within new packages | same cumulative report |
-| 5 | [`TASK-018`](../active/TASK-20260821-018-phase5-wal-benchmark-docs.md) | record component append/replay evidence and synchronize docs | TASK-017 evidence | benchmark/docs/evidence only | cumulative report plus Closure Report |
+| 1 | [`TASK-014`](../completed/TASK-20260821-014-phase5-wal-format-codec.md) | freeze format types, configuration and exact codec | Blueprint approval | new WAL contracts/codec/tests | `tasks/reports/PHASE-5-command-wal-replay.md` |
+| 2 | [`TASK-015`](../completed/TASK-20260821-015-phase5-segmented-wal-storage.md) | implement synchronous segmented writer/reader/reopen | TASK-014 evidence | new WAL storage implementation/tests | same cumulative report |
+| 3 | [`TASK-016`](../completed/TASK-20260821-016-phase5-deterministic-replay.md) | replay closed WAL through genesis engine and digest transcript | TASK-015 evidence | new recovery package/tests | same cumulative report |
+| 4 | [`TASK-017`](../completed/TASK-20260821-017-phase5-corruption-recovery-verification.md) | prove corruption, torn-tail, sequence and failure boundaries | TASK-016 evidence | tests/fixtures only; fixes within new packages | same cumulative report |
+| 5 | [`TASK-018`](../completed/TASK-20260821-018-phase5-wal-benchmark-docs.md) | record component append/replay evidence and synchronize docs | TASK-017 evidence | benchmark/docs/evidence only | cumulative report plus Closure Report |
 
 Dependencies are strict. Each completed Task must pass its evidence gate and
 record an exact-SHA CI result before the next Task begins. No routine Human
@@ -303,7 +303,7 @@ approval is required between approved Tasks unless an Exception Gate fires.
 - [x] benchmark method/results/limitations are committed;
 - [x] frozen-path diff audit equals zero;
 - [x] documentation and `AGENT_CONTEXT` are synchronized;
-- [ ] Phase Closure Report receives separate Human approval.
+- [x] Phase Closure Report receives separate Human approval.
 
 ## 10. Verification Strategy
 
@@ -514,10 +514,10 @@ Required execution/closure artifacts after approval:
 | 2026-08-21 | Human Developer | `Approved` | ADR-0013 D1-D10; TASK-014 through TASK-018 in strict dependency order | Frozen Domain/OrderBook/Engine/Pipeline; SYNC default; force failure is logical failure plus terminal writer, not proof of physical absence; live integration, Network, Snapshot, online Recovery, optimization, Closure, merge and tag excluded |
 
 ```text
-Blueprint Status: Approved
-Implementation: TASK-014 through TASK-018 completed; limited remediation R1-R3 authorized
-Closure: Human Approved
-Next Gate: Authorized merge / master CI / baseline tag execution
+Blueprint Status: Completed / Approved / Baseline Frozen
+Implementation: TASK-014 through TASK-018 completed and archived
+Closure: Human Approved; merge, master CI and baseline tag CI completed
+Next Gate: Phase 6 Complete Blueprint; not authorized
 ```
 
 Approval must explicitly confirm:
@@ -545,6 +545,9 @@ Approval must explicitly confirm:
 | 2026-08-21 | Limited Closure Remediation R1 | Completed / CI PASS | rotation-collision test commit `83e5544`; exact-SHA CI [32481266960](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481266960) PASS; 7 focused writer tests | R2 benchmark remediation |
 | 2026-08-21 | Limited Closure Remediation R2 | Completed / CI PASS | mixed Submit/Cancel benchmark commit `bd37382`; exact-SHA CI [32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533) PASS; full JMH raw output and P50/P99 metadata recorded | R3 documentation synchronization |
 | 2026-08-21 | Limited Closure Remediation R3 | Completed / CI PASS | evidence synchronization commit `0e6ac95`; exact-SHA CI [32482054086](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482054086) PASS; final evidence HEAD recorded | Final Human Phase 5 Closure Review |
+| 2026-08-21 | Human Phase 5 Closure | Approved / CI PASS | approval commit `ea150f7`; exact-SHA CI [32482702491](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482702491) PASS | authorized merge / master CI / baseline tag |
+| 2026-08-21 | Master baseline merge | Completed / CI PASS | `--no-ff` merge `f1e453a`; 114 tests; frozen-path diff zero; master CI [32482831419](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482831419) PASS | annotated baseline tag |
+| 2026-08-21 | Engineering baseline tag | Completed / CI PASS | `v0.4.0-engineering-baseline` -> `f1e453a`; tag CI [32482900227](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482900227) PASS | Task archive / final documentation sync |
 
 ## 20. Phase Closure Checklist
 
@@ -563,6 +566,6 @@ Approval must explicitly confirm:
 - [x] Limited Closure Remediation R2 benchmark evidence recorded
 - [x] force-failure dynamic injection limitation explicitly recorded without adding a production seam
 - [x] Human Phase Closure Approval recorded
-- [ ] authorized merge/tag/baseline actions verified
-- [ ] active Tasks moved to completed
+- [x] authorized merge/tag/baseline actions verified
+- [x] active Tasks moved to completed
 - [x] next Phase remains explicitly unauthorized

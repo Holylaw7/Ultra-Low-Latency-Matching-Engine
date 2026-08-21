@@ -44,10 +44,10 @@ standard for future multi-task phases. The complete Phase 4 Event Pipeline
 Blueprint, ADR-0012 and TASK-010 through TASK-013 have received Human Blueprint
 Approval. Phase 4 implementation, verification, component benchmark evidence
 and Closure are complete and frozen at `v0.3.0-engineering-baseline`. The
-earlier `v0.2.0-engineering-baseline` remains immutable. The Phase 5 Command
-WAL and Deterministic Replay Blueprint is approved, and TASK-014 through
-TASK-018 have completed in dependency order. Phase Closure, merge/tag and
-Product Release remain separate Human gates.
+earlier `v0.2.0-engineering-baseline` remains immutable. Phase 5 Command WAL
+and Deterministic Offline Replay is completed, approved and frozen at
+`v0.4.0-engineering-baseline`. TASK-014 through TASK-018 are archived.
+Product Release and Phase 6 remain separate Human gates.
 
 The repository currently contains:
 
@@ -77,9 +77,9 @@ The approved Phase 5 boundary is a versioned segmented command WAL plus strict
 offline deterministic replay. TASK-014 through TASK-018 and the authorized
 limited closure remediation are implemented with 114 passing tests,
 corruption/torn-tail evidence, deterministic rotation-failure evidence and
-component-level JMH evidence. Phase 5 Closure, merge,
-`v0.4.0-engineering-baseline` execution is authorized by Human Phase 5 Closure
-Approval; Product Release remains separately governed. The phase deliberately
+component-level JMH evidence. Human Phase 5 Closure Approval, normal merge,
+master CI and the annotated `v0.4.0-engineering-baseline` tag workflow are
+complete. Product Release remains separately governed. The phase deliberately
 excludes live pipeline durability integration, Snapshot, online Recovery and
 Network. See
 [`PHASE-5-command-wal-and-replay-blueprint.md`](tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md)

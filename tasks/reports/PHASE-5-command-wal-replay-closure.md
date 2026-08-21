@@ -2,12 +2,12 @@
 
 ## Status
 
-`Approved — Closure Execution Authorized`
+`Completed / Approved / Baseline Frozen`
 
-Human Phase 5 Closure Approval is recorded below. Normal `--no-ff` merge,
-master verification/CI, annotated `v0.4.0-engineering-baseline` tag workflow,
-Task archival and final documentation synchronization are authorized. Product
-Release and Phase 6 remain unauthorized.
+Human Phase 5 Closure Approval is recorded below. The normal `--no-ff` merge,
+master verification/CI, annotated `v0.4.0-engineering-baseline` tag workflow
+and TASK-014 through TASK-018 archival completed. Product Release and Phase 6
+remain unauthorized.
 
 ## Proposed Closure
 
@@ -39,6 +39,9 @@ EngineCommand
 | R1 TASK-015 rotation failure | `83e5544` | [32481266960](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481266960) | PASS; deterministic rotation collision; 7 focused tests |
 | R2 TASK-018 mixed benchmark | `bd37382` | [32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533) | PASS; mixed Submit/Cancel JMH source |
 | R3 evidence synchronization | `0e6ac95` | [32482054086](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482054086) | PASS; cumulative/closure/Blueprint/Task/context/README/ADR sync |
+| Closure approval | `ea150f7` | [32482702491](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482702491) | PASS; Human decision recorded |
+| Master merge | `f1e453a` | [32482831419](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482831419) | PASS; 114 tests; frozen diff zero |
+| Baseline tag | `v0.4.0-engineering-baseline` -> `f1e453a` | [32482900227](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482900227) | PASS; annotated engineering baseline |
 
 Final local evidence before the final evidence-record commit was `0e6ac95`:
 
@@ -114,14 +117,22 @@ Remain unauthorized:
 | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | `Approved` | Phase 5 Command WAL and Deterministic Replay closure accepted. TASK-014 through TASK-018, WAL format v1, strict corruption/torn-tail behavior, deterministic offline replay, component benchmark and Limited Closure Remediation are accepted. The absence of dynamic `force(true)` fault injection is accepted as a known limitation; no hardware power-loss guarantee is claimed. Authorized actions: normal `--no-ff` merge, master verification/CI, annotated `v0.4.0-engineering-baseline`, tag CI, Task archival and final documentation synchronization. Product Release, Phase 6 and all excluded live integration/recovery work remain unauthorized. |
 
+## Engineering Baseline
+
+The annotated `v0.4.0-engineering-baseline` tag is published and CI-verified at
+master merge commit `f1e453a`. It is an engineering baseline, not a Product
+Release. The prior `v0.3.0-engineering-baseline` tag remains immutable.
+
 ## Current Gate
 
 ```text
 v0.3.0-engineering-baseline: Frozen
 ADR-0013: Approved
-TASK-014..018: Completed / remediation evidence synchronized
-R1/R2/R3: exact-SHA CI PASS; final evidence HEAD `0e6ac95`
-Phase 5 Closure: Approved
-Merge / v0.4.0 tag: Authorized / Pending Execution
+TASK-014..018: Completed / Archived
+R1/R2/R3: exact-SHA CI PASS
+Phase 5 Closure: Completed / Approved
+Merge commit: f1e453a / master CI 32482831419 PASS
+Baseline tag: v0.4.0-engineering-baseline / tag CI 32482900227 PASS
+Phase 5: Baseline Frozen
 Next Phase: Not Authorized
 ```
