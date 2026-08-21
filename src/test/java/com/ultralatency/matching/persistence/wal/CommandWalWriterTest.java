@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -76,6 +77,28 @@ class CommandWalWriterTest {
         } finally {
             first.close();
         }
+    }
+
+    @Test
+    void rotationFailureMakesWriterTerminalAndRejectsSubsequentAppend() throws IOException {
+        final WalConfiguration configuration = configuration(WalDurabilityMode.BUFFERED);
+        final Path collidingSegment = directory.resolve(
+                String.format(Locale.ROOT, "wal-%020d.log", 79));
+
+        try (CommandWalWriter writer = new CommandWalWriter(configuration)) {
+            for (int sequence = 1; sequence <= 78; sequence++) {
+                writer.append(command(sequence));
+            }
+
+            Files.createDirectory(collidingSegment);
+            assertThrows(WalStorageException.class, () -> writer.append(command(79)));
+            assertTrue(writer.isTerminal());
+            assertThrows(IllegalStateException.class, () -> writer.append(command(79)));
+        } finally {
+            Files.deleteIfExists(collidingSegment);
+        }
+
+        assertEquals(78, new CommandWalReader(configuration).read().size());
     }
 
     @Test
