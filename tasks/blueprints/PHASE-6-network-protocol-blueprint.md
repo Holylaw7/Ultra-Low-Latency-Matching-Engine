@@ -13,7 +13,7 @@
 | Baseline | `v0.4.0-engineering-baseline` -> `f1e453a`; proposal base `2cf34b5` |
 | Blueprint Branch | `docs/phase6-network-protocol-blueprint` |
 | Planned Tasks | `TASK-20260821-019` through `TASK-20260821-023` |
-| Next Gate | `TASK-021 Implementation / Evidence Gate` |
+| Next Gate | `TASK-022 Implementation / Evidence Gate` |
 
 ## 2. Phase Goal
 
@@ -398,10 +398,10 @@ Execution artifacts after approval:
 ```text
 Blueprint Status: Approved
 Implementation: Authorized in dependency order
-Current Task: TASK-021
+Current Task: TASK-022
 Phase Closure: Not Authorized
 Merge / v0.5.0 tag: Not Authorized
-Next Gate: TASK-021 Implementation / Evidence Gate
+Next Gate: TASK-022 Implementation / Evidence Gate
 ```
 
 Approval must explicitly confirm D1-D10, TASK-019..023 dependency order, the
@@ -416,14 +416,14 @@ scope, evidence/Exception Gates and separate Phase Closure.
 | 2026-08-21 | Human Blueprint Approval | Approved | ADR-0014 D1-D10 and TASK-019..023 authorized in dependency order | Begin TASK-019; stop on Exception Gate |
 | 2026-08-21 | TASK-019 | Completed / Evidence PASS | `fdb68e3`; 120 tests; Checkstyle 0; frozen diff 0; exact-SHA CI [32488339314](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32488339314) PASS | TASK-020 Authorized / Next |
 | 2026-08-21 | TASK-020 | Completed / Evidence PASS | `1c5b0fb`; 121 tests; Checkstyle 0; frozen diff 0; exact-SHA CI [32488893108](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32488893108) PASS | TASK-021 Authorized / Next |
-| 2026-08-21 | TASK-021 | Authorized / Next | predecessor exact-SHA CI passed; implementation not yet started | TASK-021 Implementation / Evidence Gate |
+| 2026-08-21 | TASK-021 | Completed / Evidence PASS | `7f0d5ad`; 125 tests; Checkstyle 0; frozen diff 0; exact-SHA CI [32490394814](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490394814) PASS | TASK-022 Authorized / Next |
 
 ## 20. Phase Closure Checklist
 
 - [x] Blueprint approval recorded and synchronized into ADR-0014/Tasks
 - [x] TASK-019 protocol/codec completed
 - [x] TASK-020 pipeline failure observer completed
-- [ ] TASK-021 Netty gateway completed
+- [x] TASK-021 Netty gateway completed
 - [ ] TASK-022 network verification completed
 - [ ] TASK-023 benchmark/documentation completed
 - [ ] all automated evidence gates and exact-SHA CI pass

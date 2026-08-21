@@ -404,7 +404,7 @@ readiness.
 ADR-0014: Approved
 Phase 6 Blueprint: Approved
 Implementation: Authorized in dependency order
-Current Task: TASK-021
+Current Task: TASK-022
 Phase Closure: Not Authorized
-Next Gate: TASK-021 Implementation / Evidence Gate
+Next Gate: TASK-022 Implementation / Evidence Gate
 ```

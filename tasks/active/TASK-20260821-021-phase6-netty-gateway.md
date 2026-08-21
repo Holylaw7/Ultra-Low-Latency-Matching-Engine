@@ -5,14 +5,14 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-021` / Phase 6 Single-Session Netty Gateway |
-| Status | `Authorized / Next` |
+| Status | `Completed / Evidence PASS` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 6 / ADR-0014 / [`PHASE-6`](../blueprints/PHASE-6-network-protocol-blueprint.md) |
 | Authorization Mode | Blueprint |
-| Current Stage / Next Gate | Implementation |
+| Current Stage / Next Gate | Completed / TASK-022 Evidence Gate |
 | Branch / Baseline | `feature/phase6-network-protocol` after approval / approved proposal commit |
-| Remote / CI | `origin/feature/phase6-network-protocol` / pending TASK-021 evidence |
+| Remote / CI | `origin/feature/phase6-network-protocol` / exact-SHA CI [32490394814](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490394814) PASS |
 
 ## 2. Background
 
@@ -152,19 +152,20 @@ TASK-022.
 | Stage | Report | Status | Next Gate | Authorization |
 | --- | --- | --- | --- | --- |
 | Decision/Approval | Phase 6 proposal | Pending | Blueprint Approval | Pending |
-| Implementation/Verification | cumulative report | Pending | exact-SHA CI | Blueprint |
+| Implementation/Verification | [`PHASE-6-network-protocol.md`](../reports/PHASE-6-network-protocol.md) | Completed / PASS | TASK-022 | Blueprint |
 | Benchmark | Not applicable | N/A | completion | Blueprint |
-| Completion | cumulative report | Pending | TASK-022 / Exception Gate | Blueprint |
+| Completion | cumulative report | Completed / PASS | TASK-022 / Exception Gate | Blueprint |
 
 ## 17. Implementation Log
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-21 | Proposed | gateway plan prepared | baseline PASS |
+| 2026-08-21 | Completed / Evidence PASS | single-session Netty NIO gateway, manual-read admission, ordered result egress and fail-stop lifecycle implemented | 4 focused tests; 125 full tests; Checkstyle 0; frozen diff 0; exact-SHA CI 32490394814 PASS |
 
 ## 18. Completion Checklist
 
-- [ ] lifecycle/admission/result/failure evidence complete
-- [ ] full build/static/diff/frozen audit pass
-- [ ] exact-SHA CI/report synchronized
-- [ ] no Exception Gate
+- [x] lifecycle/admission/result/failure evidence complete
+- [x] full build/static/diff/frozen audit pass
+- [x] exact-SHA CI/report synchronized
+- [x] no Exception Gate

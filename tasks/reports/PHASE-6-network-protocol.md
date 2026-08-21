@@ -13,7 +13,7 @@ TASK-020:
 Completed / Evidence PASS
 
 TASK-021:
-Authorized / Next
+Completed / Evidence PASS
 
 TASK-022..023:
 Conditionally Authorized
@@ -121,16 +121,16 @@ Not implemented:
 
 | Evidence | Result |
 | --- | --- |
-| Gateway-focused tests | Pending implementation |
-| Full `mvn verify` | Pending implementation |
-| Checkstyle | Pending implementation |
-| Frozen Domain/OrderBook/Engine/WAL/Recovery paths | Required: 0 diff |
-| Commit | Pending implementation |
-| Exact-SHA CI | Pending implementation |
+| Gateway-focused tests | 4 passed |
+| Full `mvn verify` | 125 tests passed; 0 failures |
+| Checkstyle | 0 violations |
+| Frozen Domain/OrderBook/Engine/WAL/Recovery paths | 0 diff |
+| Commit | `7f0d5ad` |
+| Exact-SHA CI | [32490394814](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490394814) PASS |
 
 ## Next Gate
 
-After TASK-021 focused and full evidence passes, TASK-022 may begin under the
-approved Blueprint. The gateway must preserve one active session, one request
-in flight, identity-domain separation and the ambiguous-result boundary on
-disconnect/write failure.
+TASK-022 may begin under the approved Blueprint. It must verify deterministic
+loopback response streams, every-frame fragmentation, coalesced-frame
+one-in-flight rejection, FULL identity preservation and bounded failure
+semantics without adding production hooks or broadening the gateway scope.
