@@ -22,8 +22,8 @@
 | Engineering baseline commit | `9281124` |
 | Engineering baseline tag | `v0.2.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/feature/phase4-event-pipeline`; benchmark checkpoint `e546051`; `v0.2.0-engineering-baseline` remains frozen at `9281124` |
-| CI | TASK-013 benchmark [run 32459574518](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459574518) PASS for exact SHA `e546051`; documentation checkpoint pending |
+| Remote sync | `origin/feature/phase4-event-pipeline`; TASK-013 evidence `bbb30f5`; `v0.2.0-engineering-baseline` remains frozen at `9281124` |
+| CI | TASK-013 documentation [run 32459663240](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459663240) PASS for exact SHA `bbb30f5` |
 
 ## Project Progress
 
@@ -64,7 +64,7 @@ ADR-0011 Final Approved
     -> TASK-010 foundation [Completed / evidence PASS]
     -> TASK-011 core [Completed / evidence PASS]
     -> TASK-012 verification [Completed / evidence PASS]
-    -> TASK-013 benchmark/docs [Benchmark checkpoint PASS; docs checkpoint pending]
+    -> TASK-013 benchmark/docs [Completed / evidence PASS]
     -> Phase 4 Closure [Human approval required]
 ```
 

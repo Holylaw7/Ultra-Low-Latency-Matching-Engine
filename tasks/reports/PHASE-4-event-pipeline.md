@@ -11,9 +11,9 @@
 | Tests | Full run: 83 tests, 0 failures; focused verification repeated 3 times |
 | Build | `mvn verify` PASS; Maven reactor 3/3 SUCCESS |
 | Checkstyle | 0 violations in focused run |
-| Commit | Benchmark checkpoint `e546051ed792253cf854a2644bc3f0dda7fc5f27` |
-| Remote / CI | [run 32459574518](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459574518) PASS; documentation checkpoint pending |
-| Next Gate | Documentation checkpoint / Human Phase 4 Closure Approval |
+| Commit | Documentation/evidence checkpoint `bbb30f5309eff37f385d2b704663c1981f078f01` |
+| Remote / CI | [run 32459663240](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459663240) PASS; benchmark checkpoint [run 32459574518](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459574518) PASS |
+| Next Gate | Human Phase 4 Closure Approval |
 
 ## TASK-010 Foundation (Completed)
 

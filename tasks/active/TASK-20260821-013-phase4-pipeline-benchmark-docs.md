@@ -17,7 +17,7 @@
 | Next Gate | `Human Phase 4 Closure Approval` |
 | Branch | `feature/phase4-event-pipeline` |
 | Baseline HEAD | TASK-012 evidence commit `1636a56` |
-| Remote / CI | `origin/feature/phase4-event-pipeline`; benchmark checkpoint `e546051` / CI `32459574518` PASS; docs checkpoint pending |
+| Remote / CI | `origin/feature/phase4-event-pipeline`; benchmark `e546051` / CI `32459574518` PASS; docs `bbb30f5` / CI `32459663240` PASS |
 
 ## 2. Background
 
@@ -217,7 +217,7 @@ authorized until Human Phase Closure Approval.
 | 2026-08-21 | Proposed | Benchmark/documentation/Closure scope prepared | Awaiting Blueprint Approval |
 | 2026-08-21 | Approved | Blueprint approval recorded; TASK-013 is dependency-gated | TASK-012 evidence gate |
 | 2026-08-21 | In Progress | Pipeline component benchmark and Phase 4 documentation synchronization started | TASK-012 evidence CI PASS; benchmark/docs evidence pending |
-| 2026-08-21 | Completed | JMH smoke/full matrix and documentation synchronization completed; Closure proposal prepared | Java 21 JMH PASS; final Maven/CI checkpoint recorded after commit |
+| 2026-08-21 | Completed | JMH smoke/full matrix and documentation synchronization completed; Closure proposal prepared | Java 21 JMH PASS; `mvn verify` PASS; exact-SHA CI `32459663240` PASS |
 
 ## 18. Completion Checklist
 
