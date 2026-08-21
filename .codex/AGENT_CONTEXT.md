@@ -13,17 +13,17 @@
 | Phase | Phase 3 — MatchingEngine (`Completed / Approved / Baseline Frozen`) |
 | Latest product task | [`TASK-20260820-008`](../tasks/completed/TASK-20260820-008-phase3-matching-engine-implementation.md) — Completed |
 | Latest architecture task | [`TASK-20260820-007`](../tasks/completed/TASK-20260820-007-phase3-matching-engine-adr-decision.md) — Completed |
-| Current planning task | [`TASK-20260821-009`](../tasks/active/TASK-20260821-009-phase-blueprint-governance.md) — Governance only / Completion Review Pending |
-| Governance mode | Phase Blueprint Mode implemented; Human Governance Completion Review pending; no product Phase authorized |
+| Current planning task | [`TASK-20260821-009`](../tasks/active/TASK-20260821-009-phase-blueprint-governance.md) — Governance Completion Approved / Master integration pending |
+| Governance mode | Phase Blueprint Mode approved as the future Phase delivery standard; no product Phase authorized |
 | Product stage | Phase 3 Closed / Baseline Frozen |
-| Product approval | Phase 3 approved and closed; next-phase ADR requires separate authorization |
+| Product approval | Phase 3 approved and closed; the next Phase requires a separately approved Phase Blueprint |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `docs/phase-blueprint-governance` |
 | Engineering baseline commit | `9281124` |
 | Engineering baseline tag | `v0.2.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
 | Remote sync | Governance branch published at `91611d6`; `master` and `v0.2.0-engineering-baseline` remain unchanged |
-| CI | Governance implementation [run 32453171948](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32453171948) PASS; Phase 3 final [run 32450269825](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32450269825) PASS |
+| CI | Governance implementation [run 32453171948](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32453171948) PASS; governance evidence [run 32453266561](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32453266561) PASS; Phase 3 final [run 32450269825](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32450269825) PASS |
 
 ## Project Progress
 
@@ -33,7 +33,7 @@
 | Phase 1 — Domain Model | Completed / Approved | [`PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md) |
 | Phase 2 — Basic OrderBook | Completed / Approved | `v0.1.0-engineering-baseline`, 45 tests, JMH/JFR evidence and passing master CI |
 | Phase 3 — Matching Engine | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-3-matching-engine-closure-authorization.md); `v0.2.0-engineering-baseline` |
-| Governance — Phase Blueprint Mode | Implemented / Completion Review Pending | [`TASK-009`](../tasks/active/TASK-20260821-009-phase-blueprint-governance.md); documentation only; CI PASS |
+| Governance — Phase Blueprint Mode | Approved / Master Integration Pending | [`TASK-009`](../tasks/active/TASK-20260821-009-phase-blueprint-governance.md); documentation only; CI PASS |
 | Phase 4+ — Pipeline, network, recovery and performance evolution | Future Work | Architecture documents and future ADRs/tasks |
 
 ## Current Product Gate
