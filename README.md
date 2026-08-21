@@ -40,9 +40,10 @@ Trade/Execution results and deterministic execution evidence. It does not
 contain WAL, Replay, Snapshot, Recovery, Network or production optimization.
 
 Phase Blueprint Mode is completed, approved and active as the governance
-standard for future multi-task phases. There is no active product task. Phase
-4 has not been designed or authorized; it must begin with a complete Blueprint
-and one Human Blueprint Approval under the new rules.
+standard for future multi-task phases. The complete Phase 4 Event Pipeline
+Blueprint, ADR-0012 and TASK-010 through TASK-013 are now `Proposed` for one
+Human Phase Blueprint Approval. Phase 4 implementation remains unauthorized;
+the proposal does not modify the frozen `v0.2.0-engineering-baseline`.
 
 The repository currently contains:
 
@@ -61,6 +62,12 @@ price-time priority, maker-price fragments, partial/full fills, and residual
 resting. Stage 2 adds synchronous command processing, OrderBook integration
 and deterministic Trade/Execution result generation. Publication, WAL, network
 and performance optimization remain outside the current scope.
+
+The proposed Phase 4 boundary adds a bounded single-producer/single-consumer
+event pipeline in front of the existing synchronous MatchingEngine. WAL,
+Replay, Snapshot, Recovery, Network and production optimization remain
+explicit non-goals. See
+[`PHASE-4-event-pipeline-blueprint.md`](tasks/blueprints/PHASE-4-event-pipeline-blueprint.md).
 
 ## Build
 

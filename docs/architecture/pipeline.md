@@ -2,32 +2,63 @@
 
 ## Status
 
-Planned. The initial pipeline will be single-consumer at the matching core.
+`Proposed` by
+[`ADR-0012`](../adr/ADR-0012-event-pipeline-execution-and-backpressure.md) and
+the [`Phase 4 Blueprint`](../../tasks/blueprints/PHASE-4-event-pipeline-blueprint.md).
+The proposal is awaiting one Human Phase Blueprint Approval. No production
+implementation is authorized.
 
 ## Intended Flow
 
 ```text
-Ingress
-    -> RingBuffer / Disruptor
-    -> Single Matching Consumer
-    -> Event Consumers
+Caller / Future Ingress
+    -> bounded non-blocking tryPublish(command)
+    -> Disruptor ring buffer (single producer)
+    -> one pipeline-owned matching consumer
+    -> frozen synchronous MatchingEngine
+    -> synchronous in-memory EngineResultHandler
 ```
 
 ## Ownership
 
-- Ingress validates framing and basic input shape.
-- The matching consumer owns symbol state mutation.
-- Output consumers publish trades, metrics, and persistence events.
-- No consumer may reorder events for a symbol.
+- The external caller owns command creation and the authoritative Command
+  Sequence. The Disruptor ring sequence is infrastructure-only.
+- The proposed pipeline owns one MatchingEngine and its consumer thread while
+  running; callers must not access that engine directly.
+- MatchingEngine remains the only owner of TradeId and EventSequence.
+- The result handler runs synchronously on the matching consumer and is limited
+  to deterministic in-memory handling. Network and persistence I/O are not
+  part of Phase 4.
+- One accepted command is processed exactly once and ordered result
+  collections remain observable behavior.
+
+## Admission and Failure Semantics
+
+- `tryPublish` is bounded and returns `ACCEPTED` or `FULL`.
+- A full ring buffer does not drop, overwrite, block or hide a retry.
+- Engine or result-handler failure moves the pipeline to terminal `FAILED`;
+  later publication is rejected.
+- Lifecycle is `NEW -> RUNNING -> DRAINING -> STOPPED`, with `FAILED` terminal.
+- Graceful shutdown uses a bounded drain; timeout becomes `FAILED`.
+- Event-slot command references are cleared after handling, including failure
+  paths, to avoid retention across ring reuse.
 
 ## Experiments
 
-The pipeline will compare:
+The approved implementation, if the Blueprint is accepted, will establish a
+single-producer/single-consumer correctness baseline. Its component benchmark
+plan compares:
 
-- Single producer and multi-producer ingress
-- RingBuffer and Disruptor configurations
-- Throughput and tail latency
-- Backpressure behavior
-- Allocation and contention
+- direct synchronous MatchingEngine processing;
+- producer-side bounded admission;
+- batch publication plus verified completion;
+- capacities `1024` and `65536`;
+- `BLOCKING`, `YIELDING` and `BUSY_SPIN` wait modes as explicit experimental
+  variables.
+
+`BLOCKING` is the proposed default. Other wait modes cannot become defaults or
+production recommendations without evidence and an approved decision update.
+Multi-producer ingress, asynchronous output rings, WAL, Replay, Network and
+production tuning are deferred.
 
 No lock-free or wait-free claim is valid without comparative measurements.
