@@ -37,8 +37,8 @@ and TASK-008 are approved. Stage 1 Domain/API Foundation is completed and
 approved; it adds EventSequence plus immutable command/result types only.
 Stage 2 implements the synchronous MatchingEngine core: sequenced limit submit
 and cancellation, frozen OrderBook delegation and immutable Trade/Execution
-results. The implementation is pending Human Stage 2 review; Stage 3
-verification remains separately gated.
+results. Stage 2 is completed and approved; Stage 3 verification remains
+separately gated and unauthorized.
 
 The repository currently contains:
 

@@ -97,6 +97,7 @@ implements a synchronous MatchingEngine Core. It validates exact-next command
 sequence, constructs NEW limit orders, delegates to the frozen OrderBook,
 translates ordered MatchFragments and returns immutable Trade/Execution
 results with engine-owned TradeId/EventSequence allocation. It has no
-engine-owned thread, executor, lock or queue. Determinism Verification remains
-separately gated and unauthorized. OrderBook is an external frozen dependency
-and no OrderBook file or API may change.
+engine-owned thread, executor, lock or queue. Stage 2 was accepted on
+2026-08-21. Determinism Verification remains separately gated and unauthorized.
+OrderBook is an external frozen dependency and no OrderBook file or API may
+change.
