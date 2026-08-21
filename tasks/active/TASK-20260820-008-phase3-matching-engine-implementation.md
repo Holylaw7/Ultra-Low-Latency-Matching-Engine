@@ -20,7 +20,7 @@
 | Parent Branch / HEAD | `docs/phase3-matching-engine-adr` at `96fe50b` |
 | Engineering Baseline | `v0.1.0-engineering-baseline` at `cbfa957` |
 | Remote | `origin` |
-| CI | Stage 3 authorization proposal `62f59aa`: [run 32446230919](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32446230919) PASS |
+| CI | Stage 3 verification evidence `1f268e9`: [run 32447036906](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32447036906) PASS |
 
 ## 2. Background
 
@@ -699,7 +699,7 @@ Review; Phase 3 closure does not start automatically.
 | 2026-08-21 | Stage 2 Approved | Human accepted the implementation, verification, ADR alignment and frozen OrderBook boundary | `0ad45fa`; GitHub Actions run `32387974864` PASS; Stage 3 remains unauthorized |
 | 2026-08-21 | Stage 3 Authorization Proposed | Froze value equality, public-API state probes, reachable failure atomicity and explicit unreachable-failure limitations | `62f59aa`; GitHub Actions run `32446230919` PASS; execution remains unauthorized pending Human review |
 | 2026-08-21 | Stage 3 Authorized | Human approved verification-only execution and made collection order part of observable determinism | Only `MatchingEngineDeterminismTest.java` may be added; Phase 3 closure remains unauthorized |
-| 2026-08-21 | Stage 3 Completed | Added fixed dual-engine determinism, public-API probes and reachable failure-atomicity evidence | `6eb31ea`, `e7d26f0`; focused 5 tests, core 61 tests, `mvn verify` PASS and Checkstyle 0; pending Human completion review |
+| 2026-08-21 | Stage 3 Completed | Added fixed dual-engine determinism, public-API probes and reachable failure-atomicity evidence | `6eb31ea`, `e7d26f0`, `1f268e9`; focused 5 tests, core 61 tests, `mvn verify` PASS, Checkstyle 0 and GitHub Actions run `32447036906` PASS; pending Human completion review |
 
 ## 20. Completion Checklist
 

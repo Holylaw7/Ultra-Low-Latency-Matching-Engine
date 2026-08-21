@@ -12,7 +12,7 @@
 | Core tests | `mvn -pl core -am test` — 61 passed |
 | Full build | `mvn verify` — PASS; reactor 3/3; Checkstyle 0 violations |
 | Benchmark / Profile | Not applicable — correctness-only verification |
-| CI | Pending push of Stage 3 evidence head |
+| CI | [Run 32447036906](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32447036906) — PASS for `1f268e9` |
 | Branch | `feature/phase3-matching-engine` |
 | Base | `4880220` (Stage 3 authorization approval) |
 | Test commits | `6eb31ea`, `e7d26f0` |
