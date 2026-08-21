@@ -11,9 +11,9 @@
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
 | Phase | Phase 5 — Command WAL and Deterministic Replay Foundation (`Implementation Authorized`) |
-| Latest product task | [`TASK-20260821-016`](../tasks/active/TASK-20260821-016-phase5-deterministic-replay.md) — Approved / Next |
+| Latest product task | [`TASK-20260821-017`](../tasks/active/TASK-20260821-017-phase5-corruption-recovery-verification.md) — Approved / Next |
 | Latest architecture decision | [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md) — Approved |
-| Current planning task | TASK-014/015 completed with evidence; TASK-016 next; TASK-017/018 dependency-gated |
+| Current planning task | TASK-014/015/016 completed with evidence; TASK-017 next; TASK-018 dependency-gated |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 4 Closed / Baseline Frozen; Phase 5 implementation in progress |
 | Product approval | Phase 5 Blueprint approved; implementation authorized in dependency order; Closure, merge/tag and Product Release not authorized |
@@ -22,8 +22,8 @@
 | Engineering baseline commit | `d28abbe` |
 | Engineering baseline tag | `v0.3.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/master` at `fbcbe53`; implementation branch at `7da0069`; annotated `v0.3.0-engineering-baseline` remains at `d28abbe` |
-| CI | TASK-015 [32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050) PASS; TASK-014 [32464648365](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32464648365) PASS; approval [32462992039](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462992039) PASS; proposal [32462826593](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462826593) PASS; master [32460526614](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460526614) PASS; tag [32460979962](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460979962) PASS |
+| Remote sync | `origin/master` at `fbcbe53`; implementation branch at `f434431`; annotated `v0.3.0-engineering-baseline` remains at `d28abbe` |
+| CI | TASK-016 [32466659845](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466659845) PASS; TASK-015 [32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050) PASS; TASK-014 [32464648365](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32464648365) PASS; approval [32462992039](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462992039) PASS; proposal [32462826593](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462826593) PASS; master [32460526614](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460526614) PASS; tag [32460979962](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460979962) PASS |
 
 ## Project Progress
 
@@ -74,8 +74,9 @@ ADR-0011 Final Approved
     -> Human Phase 5 Blueprint Approval [Approved]
     -> TASK-014 [Completed / exact-SHA CI PASS]
     -> TASK-015 [Completed / exact-SHA CI PASS]
-    -> TASK-016 [Authorized / Next]
-    -> TASK-017 through TASK-018 [Authorized conditionally by dependency]
+    -> TASK-016 [Completed / exact-SHA CI PASS]
+    -> TASK-017 [Authorized / Next]
+    -> TASK-018 [Authorized conditionally by dependency]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
@@ -233,7 +234,7 @@ Client
        -> PriceLevel / OrderQueue
        -> active OrderId index
   -> Trade / Execution results        [Engine generation implemented]
-  -> Command WAL / Offline Replay     [Phase 5 authorized; TASK-016 next]
+  -> Command WAL / Offline Replay     [Phase 5 authorized; TASK-017 next]
   -> Snapshot / Online Recovery       [Future Work]
   -> Output / Metrics                 [Future Work]
 ```

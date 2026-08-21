@@ -5,14 +5,14 @@
 | Field | Value |
 | --- | --- |
 | Phase | Phase 5 — Command WAL and Deterministic Replay Foundation |
-| Current Task | TASK-20260821-016 — Deterministic Command Replay |
-| Completed Task | TASK-20260821-015 — Segmented Command WAL Storage |
-| Result | `TASK-015 Completed / Evidence Gate Passed` |
+| Current Task | TASK-20260821-017 — Corruption and Recovery-Boundary Verification |
+| Completed Task | TASK-20260821-016 — Deterministic Command Replay |
+| Result | `TASK-016 Completed / Evidence Gate Passed` |
 | Baseline | `v0.3.0-engineering-baseline` remains frozen |
 | Full Verification | `mvn verify` PASS; 92 tests, 0 failures; Maven reactor 3/3 SUCCESS |
 | Checkstyle | 0 violations |
-| Latest Commit | `7da0069a82d821cecd95815cfeae37fe50268830` |
-| Latest CI | [run 32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050) PASS |
+| Latest Commit | `f4344314fed8bd2893d57d35e803a0631e00d8e2` |
+| Latest CI | [run 32466659845](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466659845) PASS |
 | Branch | `feature/phase5-command-wal-replay` |
 | Next Gate | TASK-015 Implementation / Evidence Gate |
 
@@ -125,10 +125,41 @@ Commit `7da0069a82d821cecd95815cfeae37fe50268830` passed exact-SHA GitHub
 Actions CI run
 [32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050).
 
+## TASK-016 Deterministic Command Replay (Completed)
+
+TASK-016 adds the offline `recovery` package without changing the matching
+engine or pipeline:
+
+- `CommandWalReplayer` reads a strictly closed WAL, creates a genesis
+  `MatchingEngine`, applies every command once in order and stops at the exact
+  rejected command sequence;
+- `ReplayTranscript` is immutable and contains ordered public `EngineResult`
+  values plus a canonical lowercase SHA-256 digest;
+- `ReplayTranscriptDigest` uses explicit big-endian primitive framing, stable
+  outcome codes and order-significant result/match/execution fields, with no
+  `toString`, object identity, locale, clock or platform-default charset;
+- `ReplayProbeResult` applies a fixed public command suffix after replay so
+  direct and replayed prefixes can be compared without exposing private state;
+- no Snapshot, online Recovery, WAL mutation, Pipeline integration or internal
+  state hash is claimed.
+
+## TASK-016 Evidence Gate
+
+The focused replay suite passed 5 tests. It covers a fixed 1,024-command
+multi-segment stream, direct-vs-replay ordered equality, two independent replay
+digests, a fixed future public probe suffix, digest order sensitivity and a
+poison command rejected at its exact sequence.
+
+Full `mvn verify` passed with 107 tests, 0 failures, Checkstyle 0 violations
+and Maven reactor 3/3 SUCCESS. `git diff --check` and frozen-path audit passed.
+Commit `f4344314fed8bd2893d57d35e803a0631e00d8e2` passed exact-SHA GitHub
+Actions CI run
+[32466659845](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466659845).
+
 ## Next State
 
-TASK-014 and TASK-015 are completed under the approved dependency order.
-TASK-016 is the next authorized task and may begin without another routine
+TASK-014 through TASK-016 are completed under the approved dependency order.
+TASK-017 is the next authorized task and may begin without another routine
 Human approval as long as its Evidence Gate passes and no Exception Gate is
 triggered. Phase Closure, merge and baseline-tag actions remain separate Human
 decisions.

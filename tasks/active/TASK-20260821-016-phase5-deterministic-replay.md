@@ -5,14 +5,14 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-016` / Phase 5 Deterministic Command Replay |
-| Status | `Approved` |
+| Status | `Completed` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 5 / ADR-0013 / `PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
 | Depends On | TASK-015 exact-SHA evidence PASS |
-| Current Stage / Next Gate | Implementation authorized / TASK-016 Evidence Gate |
-| Branch / CI | `feature/phase5-command-wal-replay` / Pending for implementation commit |
+| Current Stage / Next Gate | Completed / Evidence Gate Passed / TASK-017 Evidence Gate |
+| Branch / CI | `feature/phase5-command-wal-replay` / [run 32466659845](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466659845) PASS |
 
 ## 2. Background and Goal
 
@@ -31,17 +31,17 @@ fixed future public-command probe stream.
 
 ## 4. Requirements and Acceptance Criteria
 
-- [ ] replay requires a closed, strictly valid WAL starting at Sequence 1;
-- [ ] every record is applied exactly once in physical/logical order;
-- [ ] result collections and nested maker/taker order remain significant;
-- [ ] at least 1,024 commands equal direct execution results;
-- [ ] two independent replays produce equal ordered transcripts and digest;
-- [ ] fixed future public commands behave equally after direct/replayed prefix;
-- [ ] digest has canonical field framing and no `toString`, object identity,
+- [x] replay requires a closed, strictly valid WAL starting at Sequence 1;
+- [x] every record is applied exactly once in physical/logical order;
+- [x] result collections and nested maker/taker order remain significant;
+- [x] at least 1,024 commands equal direct execution results;
+- [x] two independent replays produce equal ordered transcripts and digest;
+- [x] fixed future public commands behave equally after direct/replayed prefix;
+- [x] digest has canonical field framing and no `toString`, object identity,
   locale, clock or platform-default charset dependency;
-- [ ] engine rejection identifies command Sequence and stops replay;
-- [ ] no full Recovery or state-hash claim is made;
-- [ ] frozen production-path diff remains zero and full build passes.
+- [x] engine rejection identifies command Sequence and stops replay;
+- [x] no full Recovery or state-hash claim is made;
+- [x] frozen production-path diff remains zero and full build passes.
 
 ## 5. Current Implementation and Scope
 
@@ -128,18 +128,19 @@ Push and require exact-SHA CI PASS before TASK-017.
 | Stage | Report | Status | Next Gate |
 | --- | --- | --- | --- |
 | Proposal | Phase 5 proposal report | Approved | TASK-015 evidence |
-| Implementation / Verification | cumulative Phase 5 report | Not started | exact-SHA evidence |
-| Completion | cumulative Phase 5 report | Not started | TASK-017 / Exception Gate |
+| Implementation / Verification | cumulative Phase 5 report | Completed | exact-SHA evidence passed |
+| Completion | cumulative Phase 5 report | Completed | TASK-017 / Exception Gate |
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-21 | Approved | Human Blueprint Approval inherited; execution waits for TASK-015 evidence | dependency-gated |
 | 2026-08-21 | Authorized | TASK-015 Evidence Gate passed with exact-SHA CI `32466198050`; TASK-016 may begin | TASK-016 Evidence Gate |
+| 2026-08-21 | Completed | Genesis replay, canonical digest, direct comparison, two-run equality and probe suffix implemented | 5 focused tests; `mvn verify` 107 tests; exact-SHA CI `32466659845` PASS; next TASK-017 |
 
 ## 15. Completion Checklist
 
-- [ ] inherited approval and TASK-015 dependency recorded
-- [ ] ordered replay/digest/probe criteria satisfied
-- [ ] tests/full build/Checkstyle/frozen diff pass
-- [ ] evidence/commit/push/exact-SHA CI recorded
-- [ ] no unresolved Exception Gate
+- [x] inherited approval and TASK-015 dependency recorded
+- [x] ordered replay/digest/probe criteria satisfied
+- [x] tests/full build/Checkstyle/frozen diff pass
+- [x] evidence/commit/push/exact-SHA CI recorded
+- [x] no unresolved Exception Gate

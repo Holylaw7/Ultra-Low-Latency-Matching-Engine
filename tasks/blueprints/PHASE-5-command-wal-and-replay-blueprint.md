@@ -536,6 +536,7 @@ Approval must explicitly confirm:
 | 2026-08-21 | Human Blueprint Approval | Approved / CI PASS | approval sync commit `341dc5e`; exact-SHA CI [32462992039](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462992039) PASS | TASK-014 Implementation / Evidence Gate |
 | 2026-08-21 | TASK-014 Evidence Gate | Completed / CI PASS | codec commit `e5e4c96`; exact-SHA CI [32464648365](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32464648365) PASS; 92 full tests | TASK-015 Implementation / Evidence Gate |
 | 2026-08-21 | TASK-015 Evidence Gate | Completed / CI PASS | storage commit `7da0069`; exact-SHA CI [32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050) PASS; 102 full tests | TASK-016 Implementation / Evidence Gate |
+| 2026-08-21 | TASK-016 Evidence Gate | Completed / CI PASS | replay commit `f434431`; exact-SHA CI [32466659845](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466659845) PASS; 107 full tests | TASK-017 Implementation / Evidence Gate |
 
 ## 20. Phase Closure Checklist
 
