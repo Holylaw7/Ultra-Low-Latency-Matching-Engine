@@ -10,20 +10,20 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 4 — Event Pipeline (`Closure Approved / Baseline Freeze In Progress`) |
-| Latest product task | [`TASK-20260821-013`](../tasks/active/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) — Completed / Closure approved |
-| Latest architecture task | [`TASK-20260820-007`](../tasks/completed/TASK-20260820-007-phase3-matching-engine-adr-decision.md) — Completed |
-| Current planning task | [`TASK-20260821-013`](../tasks/active/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) under the approved Phase 4 Blueprint |
+| Phase | Phase 4 — Event Pipeline (`Completed / Approved / Baseline Frozen`) |
+| Latest product task | [`TASK-20260821-013`](../tasks/completed/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) — Completed / Archived |
+| Latest architecture decision | [`ADR-0012`](../docs/adr/ADR-0012-event-pipeline-execution-and-backpressure.md) — Approved / Implemented |
+| Current planning task | None — Phase 5 not authorized |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
-| Product stage | Phase 3 Closed / Baseline Frozen; Phase 4 Closure approved; baseline freeze in progress |
-| Product approval | Phase 4 Closure approved; normal merge, master CI and engineering-baseline tag authorized |
+| Product stage | Phase 4 Closed / Baseline Frozen |
+| Product approval | Phase 4 completed and frozen; Phase 5 and Product Release not authorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
-| Branch | `feature/phase4-event-pipeline` |
-| Engineering baseline commit | `9281124` |
-| Engineering baseline tag | `v0.2.0-engineering-baseline` |
+| Branch | `master` |
+| Engineering baseline commit | `d28abbe` |
+| Engineering baseline tag | `v0.3.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/feature/phase4-event-pipeline`; TASK-013 closure evidence `524f3e1`; `v0.2.0-engineering-baseline` remains frozen at `9281124` |
-| CI | TASK-013 closure [run 32459760130](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459760130) PASS for exact SHA `524f3e1` |
+| Remote sync | `origin/master` at `d28abbe`; annotated `v0.3.0-engineering-baseline` published at the same commit |
+| CI | master [32460526614](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460526614) PASS; tag [32460979962](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460979962) PASS |
 
 ## Project Progress
 
@@ -34,7 +34,7 @@
 | Phase 2 — Basic OrderBook | Completed / Approved | `v0.1.0-engineering-baseline`, 45 tests, JMH/JFR evidence and passing master CI |
 | Phase 3 — Matching Engine | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-3-matching-engine-closure-authorization.md); `v0.2.0-engineering-baseline` |
 | Governance — Phase Blueprint Mode | Completed / Approved / Active | [`TASK-009`](../tasks/completed/TASK-20260821-009-phase-blueprint-governance.md); master CI PASS |
-| Phase 4 — Event Pipeline | Closure Approved / Baseline Freeze In Progress | [`Closure Approval`](../tasks/reports/PHASE-4-event-pipeline-closure.md); TASK-010 through TASK-013 complete |
+| Phase 4 — Event Pipeline | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-4-event-pipeline-closure.md); `v0.3.0-engineering-baseline` |
 | Phase 5+ — Network, recovery and performance evolution | Future Work | Future Blueprints, ADRs and Tasks |
 
 ## Current Product Gate
@@ -66,7 +66,10 @@ ADR-0011 Final Approved
     -> TASK-012 verification [Completed / evidence PASS]
     -> TASK-013 benchmark/docs [Completed / evidence PASS]
     -> Phase 4 Closure [Human approval recorded]
-    -> normal merge / master CI / baseline tag [Authorized / in progress]
+    -> normal merge / master CI / baseline tag [Completed / PASS]
+    -> TASK-010 through TASK-013 [Archived]
+    -> Phase 4 [Baseline Frozen]
+    -> Phase 5 [Not Authorized]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
@@ -83,17 +86,17 @@ the Human Blueprint Approval. The bounded single-producer/single-consumer
 pipeline, deterministic result handling, backpressure, lifecycle, verification
 and component evidence are implemented. Automated evidence gates and Exception
 Gates remain mandatory. Existing Domain, OrderBook and MatchingEngine
-production files remain frozen. Phase 4 Closure is approved; merge, master CI
-and the engineering-baseline tag workflow are authorized.
+production files remain frozen. Phase 4 is completed and CI-verified at
+`v0.3.0-engineering-baseline`. Phase 5 remains unauthorized.
 
-Current proposal:
+Completed Blueprint:
 [`PHASE-4-event-pipeline-blueprint.md`](../tasks/blueprints/PHASE-4-event-pipeline-blueprint.md).
 
-Current proposal report:
+Blueprint proposal report:
 [`PHASE-4-event-pipeline-blueprint-proposal.md`](../tasks/reports/PHASE-4-event-pipeline-blueprint-proposal.md).
 
 Latest completed plan:
-[`TASK-20260820-008-phase3-matching-engine-implementation.md`](../tasks/completed/TASK-20260820-008-phase3-matching-engine-implementation.md).
+[`TASK-20260821-013-phase4-pipeline-benchmark-docs.md`](../tasks/completed/TASK-20260821-013-phase4-pipeline-benchmark-docs.md).
 
 Latest completed governance task:
 [`TASK-20260821-009-phase-blueprint-governance.md`](../tasks/completed/TASK-20260821-009-phase-blueprint-governance.md).
@@ -164,8 +167,7 @@ TradeId/EventSequence allocation, and Trade/Execution result mapping.
 
 Market-order execution, Netty protocol, WAL, snapshot and recovery are not
 implemented. The approved Disruptor pipeline is implemented as a bounded
-component boundary; Phase 4 Closure is approved and baseline tagging is in
-progress.
+component boundary and frozen at `v0.3.0-engineering-baseline`.
 
 ## Performance Evidence
 
@@ -195,7 +197,7 @@ These remain targets or hypotheses, never measured project claims.
 Client
   -> Netty / Protocol                 [Future Work]
   -> Decoder / Validation             [Future Work]
-  -> Ingress + RingBuffer/Disruptor   [Phase 4 Closure approved / freeze pending]
+  -> Ingress + RingBuffer/Disruptor   [Phase 4 baseline frozen]
   -> MatchingEngine                   [Phase 3 baseline frozen]
   -> OrderBook                        [Phase 2 baseline implemented]
        -> BidBook / AskBook

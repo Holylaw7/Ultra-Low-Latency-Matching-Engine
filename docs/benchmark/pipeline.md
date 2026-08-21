@@ -2,7 +2,7 @@
 
 ## Status
 
-`Evidence accepted — Phase 4 Closure approved`
+`Evidence accepted — frozen in v0.3.0-engineering-baseline`
 
 This document records component-level JMH evidence for the Phase 4 event
 pipeline. It is not a product performance claim and does not replace the
@@ -103,5 +103,6 @@ thread affinity and production wait-strategy selection remain outside Phase 4.
 
 The benchmark module compiled, the smoke and full matrix completed under Java
 21, and the result/lifecycle assertions passed. Human Phase 4 Closure Approval
-accepted this component evidence and authorized the normal merge/master-CI/
-engineering-baseline-tag workflow. Product Release remains unauthorized.
+accepted this component evidence. The normal merge/master-CI/tag workflow
+completed and froze it in `v0.3.0-engineering-baseline`. Product Release
+remains unauthorized.

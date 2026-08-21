@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260821-011` |
 | Title | Implement Bounded Single-Consumer Matching Pipeline |
-| Status | `Completed` |
+| Status | `Completed / Archived` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Related Phase | Phase 4 — Event Pipeline |
@@ -14,7 +14,7 @@
 | Phase Blueprint | [`PHASE-4 Blueprint`](../blueprints/PHASE-4-event-pipeline-blueprint.md) — Approved |
 | Authorization Mode | `Blueprint inherited Human approval` |
 | Current Stage | `Implementation (dependency-gated)` |
-| Next Gate | `TASK-012 Implementation` |
+| Next Gate | `None — Phase 4 frozen at v0.3.0-engineering-baseline` |
 | Branch | planned `feature/phase4-event-pipeline` |
 | Baseline HEAD | TASK-010 evidence commit `565f649` |
 | Remote / CI | `origin/feature/phase4-event-pipeline`; exact-SHA CI [32457723272](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32457723272) PASS |

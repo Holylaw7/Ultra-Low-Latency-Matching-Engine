@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260821-013` |
 | Title | Benchmark and Document Phase 4 Event Pipeline |
-| Status | `Completed — Closure approved` |
+| Status | `Completed / Archived` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Related Phase | Phase 4 — Event Pipeline |
@@ -14,7 +14,7 @@
 | Phase Blueprint | [`PHASE-4 Blueprint`](../blueprints/PHASE-4-event-pipeline-blueprint.md) — Approved |
 | Authorization Mode | `Blueprint inherited Human approval` |
 | Current Stage | `Benchmark / Documentation / Closure Preparation` |
-| Next Gate | `Approved merge / master CI / baseline tag execution` |
+| Next Gate | `None — Phase 4 frozen at v0.3.0-engineering-baseline` |
 | Branch | `feature/phase4-event-pipeline` |
 | Baseline HEAD | TASK-012 evidence commit `1636a56` |
 | Remote / CI | `origin/feature/phase4-event-pipeline`; benchmark `e546051` / CI `32459574518` PASS; closure `524f3e1` / CI `32459760130` PASS |

@@ -2,7 +2,7 @@
 
 ## Status
 
-Approved — implementation, component evidence and Phase 4 Closure accepted
+Approved / Implemented — frozen at `v0.3.0-engineering-baseline`
 
 ## Decision Record
 

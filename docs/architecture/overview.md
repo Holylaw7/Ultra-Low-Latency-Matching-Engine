@@ -6,9 +6,9 @@ Phase 0 bootstrap, Phase 1 domain model, Phase 2 OrderBook and Phase 3
 MatchingEngine are complete. Phase 3 is frozen at
 `v0.2.0-engineering-baseline`. The complete Phase 4 Event Pipeline Blueprint
 has Human approval. Its dependency-gated implementation, verification and
-component benchmark evidence and Closure are approved. Baseline-freeze
-execution is authorized. Network, WAL, snapshot and recovery remain Future
-Work.
+component benchmark evidence and Closure are approved and frozen at
+`v0.3.0-engineering-baseline`. Network, WAL, snapshot and recovery remain
+Future Work.
 
 ## Scope
 
@@ -63,8 +63,8 @@ See [`order-book.md`](order-book.md) and
    `v0.1.0-engineering-baseline`**.
 3. MatchingEngine orchestration — **Completed and frozen at
    `v0.2.0-engineering-baseline`**.
-4. Event pipeline — **Implemented and verified; component evidence and Closure
-   approved; baseline freeze in progress**.
+4. Event pipeline — **Completed and frozen at
+   `v0.3.0-engineering-baseline`**.
 5. Network adapter and protocol — **Future Work**.
 6. WAL, snapshot and recovery — **Future Work**.
 7. Deterministic replay and system verification — **Future Work**.

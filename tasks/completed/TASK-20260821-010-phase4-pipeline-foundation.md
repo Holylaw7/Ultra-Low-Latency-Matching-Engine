@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260821-010` |
 | Title | Add Phase 4 Event Pipeline Foundation |
-| Status | `Completed` |
+| Status | `Completed / Archived` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created / Updated | `2026-08-21` |
@@ -15,7 +15,7 @@
 | Phase Blueprint | [`PHASE-4 Blueprint`](../blueprints/PHASE-4-event-pipeline-blueprint.md) — Approved |
 | Authorization Mode | `Blueprint inherited Human approval` |
 | Current Stage | `Implementation` |
-| Next Gate | `Automated Evidence Gate` |
+| Next Gate | `None — Phase 4 frozen at v0.3.0-engineering-baseline` |
 | Branch | `feature/phase4-event-pipeline` |
 | Baseline HEAD | approved blueprint commit `4c92278` |
 | Remote / CI | `origin/feature/phase4-event-pipeline`; exact-SHA CI [32456991709](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32456991709) PASS |

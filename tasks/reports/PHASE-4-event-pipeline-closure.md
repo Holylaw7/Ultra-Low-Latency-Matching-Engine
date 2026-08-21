@@ -2,12 +2,12 @@
 
 ## Status
 
-`Approved — Baseline freeze execution authorized`
+`Completed / Approved / Baseline Frozen`
 
-Human Phase 4 Closure Approval is recorded below. It authorizes the normal
+Human Phase 4 Closure Approval is recorded below. The authorized normal
 `--no-ff` merge, master verification/CI and annotated
-`v0.3.0-engineering-baseline` tag workflow. It does not authorize a product
-Release or Phase 5.
+`v0.3.0-engineering-baseline` tag workflow completed successfully. Product
+Release and Phase 5 remain unauthorized.
 
 ## Scope completed
 
@@ -38,6 +38,10 @@ Phase 4 Event Pipeline delivered the Blueprint-approved bounded component:
 | Static checks | Checkstyle 0 violations; diff/scope audit PASS |
 | CI | Benchmark [32459574518](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459574518) and closure [32459760130](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459760130) exact-SHA PASS |
 | Frozen paths | Domain, OrderBook and existing MatchingEngine production paths unchanged |
+| Merge | `d28abbe23dc02c556e3bc79e7a3114522616ddab` (`--no-ff`) |
+| Master CI | [32460526614](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460526614) PASS |
+| Baseline tag | `v0.3.0-engineering-baseline` -> `d28abbe` |
+| Tag CI | [32460979962](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460979962) PASS |
 
 Detailed benchmark method and limitations are recorded in
 [`docs/benchmark/pipeline.md`](../../docs/benchmark/pipeline.md). Raw JMH JSON
@@ -57,9 +61,9 @@ The `v0.2.0-engineering-baseline` remains immutable. Phase 4 does not include:
 `BLOCKING` remains the default. Benchmark observations cannot change that
 default without a new evidence review and approved decision update.
 
-## Candidate baseline
+## Engineering baseline
 
-The authorized follow-up sequence is:
+The approved freeze sequence completed:
 
 ```text
 verify final branch
@@ -69,8 +73,8 @@ verify final branch
     -> tag CI PASS
 ```
 
-The candidate tag is `v0.3.0-engineering-baseline`; it remains uncreated until
-the approved merge and master evidence gates pass.
+The annotated `v0.3.0-engineering-baseline` tag is published and CI-verified at
+merge commit `d28abbe`. It is an engineering baseline, not a product Release.
 
 ## Approval record
 
@@ -85,6 +89,8 @@ TASK-010 through TASK-013
         -> evidence complete
         -> Closure proposal prepared
         -> Human Phase Closure Approval recorded
-        -> normal merge / master verification / CI
-        -> annotated baseline tag / tag CI
+        -> normal merge / master verification / CI [Completed]
+        -> annotated baseline tag / tag CI [Completed]
+        -> TASK-010 through TASK-013 archived
+        -> Phase 4 Baseline Frozen
 ```

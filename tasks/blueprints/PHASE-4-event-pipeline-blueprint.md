@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Phase | `Phase 4 — Event Pipeline` |
-| Blueprint Status | `Approved` |
+| Blueprint Status | `Completed / Closed / Baseline Frozen` |
 | Owner | Human Developer |
 | Architect | Codex |
 | Created | `2026-08-21` |
@@ -14,11 +14,11 @@
 | Planning Baseline | `bbf909c` |
 | Blueprint Branch | `docs/phase4-event-pipeline-blueprint` |
 | Planned Tasks | `TASK-20260821-010` through `TASK-20260821-013` |
-| Next Gate | `Approved merge / master CI / baseline tag execution` |
+| Next Gate | `None — Phase 5 not authorized` |
 
 ```text
-Blueprint: Approved
-Implementation: Authorized in dependency order
+Blueprint: Completed / Closed
+Implementation: Completed
 Phase 3 baseline: Frozen
 ```
 
@@ -177,10 +177,10 @@ application, output, durability or recovery acknowledgement.
 
 | Order | Task | Goal | Depends On | Authorized Scope after Blueprint approval | Report |
 | ---: | --- | --- | --- | --- | --- |
-| 1 | [`TASK-010`](../active/TASK-20260821-010-phase4-pipeline-foundation.md) | dependency and project-owned API/configuration foundation | ADR-0012 approval | POM plus new pipeline boundary types/tests | `tasks/reports/PHASE-4-event-pipeline.md` |
-| 2 | [`TASK-011`](../active/TASK-20260821-011-phase4-pipeline-core.md) | bounded Disruptor adapter, lifecycle and engine consumer | TASK-010 | new pipeline implementation/tests only | same cumulative report |
-| 3 | [`TASK-012`](../active/TASK-20260821-012-phase4-pipeline-verification.md) | determinism, ordering, saturation, lifecycle and fail-stop evidence | TASK-011 | pipeline tests/fixtures only | same cumulative report |
-| 4 | [`TASK-013`](../active/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) | benchmark baseline, documentation and closure preparation | TASK-012 | benchmark/docs/evidence only | same cumulative report plus Closure Report |
+| 1 | [`TASK-010`](../completed/TASK-20260821-010-phase4-pipeline-foundation.md) | dependency and project-owned API/configuration foundation | ADR-0012 approval | POM plus new pipeline boundary types/tests | `tasks/reports/PHASE-4-event-pipeline.md` |
+| 2 | [`TASK-011`](../completed/TASK-20260821-011-phase4-pipeline-core.md) | bounded Disruptor adapter, lifecycle and engine consumer | TASK-010 | new pipeline implementation/tests only | same cumulative report |
+| 3 | [`TASK-012`](../completed/TASK-20260821-012-phase4-pipeline-verification.md) | determinism, ordering, saturation, lifecycle and fail-stop evidence | TASK-011 | pipeline tests/fixtures only | same cumulative report |
+| 4 | [`TASK-013`](../completed/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) | benchmark baseline, documentation and closure preparation | TASK-012 | benchmark/docs/evidence only | same cumulative report plus Closure Report |
 
 The four Tasks inherit approval from the recorded Human Blueprint Approval and
 remain dependency-gated in the order listed below.
@@ -445,7 +445,7 @@ Approval checklist:
 ```text
 Blueprint Status: Approved
 Implementation: Authorized in dependency order
-Next Gate: Approved merge / master CI / baseline tag execution
+Next Gate: None — Phase 5 not authorized
 ```
 
 ## 19. Execution Checkpoints
@@ -459,6 +459,7 @@ Next Gate: Approved merge / master CI / baseline tag execution
 | 2026-08-21 | TASK-012 Verification | Completed | commit `4df2e33`; exact-SHA CI [32458220212](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32458220212) PASS | TASK-013 Benchmark / Docs |
 | 2026-08-21 | TASK-013 Benchmark / Docs | Completed | JDK 21 smoke/full JMH matrix; benchmark `e546051` / CI [32459574518](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459574518); closure `524f3e1` / CI [32459760130](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459760130) — both PASS | Human Phase 4 Closure Approval |
 | 2026-08-21 | Phase 4 Closure | Approved | TASK-010 through TASK-013 evidence accepted; normal `--no-ff` merge, master CI and `v0.3.0-engineering-baseline` tag authorized | Merge / master CI / tag CI |
+| 2026-08-21 | Baseline Freeze | Completed | merge `d28abbe`; master CI [32460526614](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460526614) PASS; tag `v0.3.0-engineering-baseline`; tag CI [32460979962](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460979962) PASS | Phase 4 frozen; Phase 5 unauthorized |
 
 ## 20. Phase Closure Checklist
 
@@ -473,6 +474,6 @@ Next Gate: Approved merge / master CI / baseline tag execution
 - [x] architecture and documentation synchronized
 - [x] Phase Closure Report prepared
 - [x] Human Phase Closure Approval recorded
-- [ ] authorized merge/tag/baseline actions verified
-- [ ] active Tasks moved to completed
-- [ ] Phase 5 remains explicitly unauthorized
+- [x] authorized merge/tag/baseline actions verified
+- [x] active Tasks moved to completed
+- [x] Phase 5 remains explicitly unauthorized
