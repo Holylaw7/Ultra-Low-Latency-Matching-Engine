@@ -132,8 +132,10 @@ Not implemented:
 
 TASK-022 may begin under the approved Blueprint. It must verify deterministic
 loopback response streams, every-frame fragmentation, coalesced-frame
-one-in-flight rejection, FULL identity preservation and bounded failure
-semantics without adding production hooks or broadening the gateway scope.
+one-in-flight rejection and bounded failure semantics without adding production
+hooks or broadening the gateway scope. FULL identity preservation and the
+Gateway write/pipeline terminal paths are recorded as implementation-path
+evidence; dynamic Gateway fault injection for those paths is not performed.
 
 ## TASK-022 — Network Determinism and Failure Verification
 
@@ -188,7 +190,7 @@ Implemented:
 | Frozen Domain/OrderBook/Engine/WAL/Recovery paths | 0 diff |
 | Benchmark commit | `0c924dd` |
 | Benchmark exact-SHA CI | [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) PASS |
-| Documentation synchronization | `0b95826`; exact-SHA CI [32493107003](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493107003) PASS |
+| Documentation synchronization | final evidence checkpoint `3ca54ad`; exact-SHA CI [32493384924](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493384924) PASS |
 | Full-matrix loopback | `0.017 ops/us`; P50 `50.048 us`; P99 `169.108 us`; P999 `260.719 us` |
 | Full-matrix codec throughput | decode `7.004`–`7.869 ops/us`; encode `4.691`–`5.333 ops/us` |
 
@@ -199,10 +201,30 @@ environment and limitations are recorded in
 loopback observations only, not durable acknowledgements, client-receipt
 proof, concurrent-client capacity or Product Release evidence.
 
+## Accepted Gateway Fault-Injection Limitation
+
+The following behaviors are verified by implementation-path review and the
+available lower-level/public-contract tests, but were not dynamically
+fault-injected through a live Gateway integration test:
+
+- `FULL` preserves the request ID and Command Sequence by advancing neither
+  identity counter;
+- outbound response-write failure transitions the Gateway to terminal state;
+- pipeline failure is scheduled onto the Netty EventLoop and transitions the
+  Gateway to terminal state.
+
+No production-only test seam was introduced to manufacture these failures. The
+absence of dynamic Gateway fault injection is an accepted Phase 6 baseline
+limitation, not evidence of production failure safety or durable acknowledgement.
+
 ## Closure Preparation
 
 The Closure Proposal is prepared at
 [`PHASE-6-network-protocol-closure.md`](PHASE-6-network-protocol-closure.md).
+The limited Closure Remediation was documentation-only and is synchronized at
+final evidence checkpoint `3ca54ad` with exact-SHA CI `32493384924` PASS. Phase 6
+remains stopped at Final Human Closure Review; merge, tag and Phase 7 remain
+unauthorized.
 TASK-019 through TASK-023 have completed their dependency-ordered evidence
 gates. Phase 6 is now stopped at Human Phase 6 Closure Review; merge to master,
 `v0.5.0-engineering-baseline`, Phase 7 and Product Release remain unauthorized.

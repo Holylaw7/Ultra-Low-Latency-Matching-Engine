@@ -23,7 +23,7 @@
 | Engineering baseline tag | `v0.4.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
 | Remote sync | `origin/master` at `2cf34b5`; Phase 6 feature branch contains TASK-023 evidence; annotated `v0.4.0-engineering-baseline` remains fixed at `f1e453a` |
-| CI | TASK-023 benchmark [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) PASS; final evidence [32493107003](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493107003) PASS; TASK-022 [32490942307](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490942307) PASS; TASK-021 [32490394814](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490394814) PASS; TASK-020 [32488893108](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32488893108) PASS; TASK-019 [32488339314](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32488339314) PASS; Blueprint approval [32487610108](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32487610108) PASS |
+| CI | TASK-023 benchmark [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) PASS; final evidence checkpoint `3ca54ad` / [32493384924](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493384924) PASS; TASK-022 [32490942307](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490942307) PASS; TASK-021 [32490394814](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490394814) PASS; TASK-020 [32488893108](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32488893108) PASS; TASK-019 [32488339314](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32488339314) PASS; Blueprint approval [32487610108](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32487610108) PASS |
 
 ## Project Progress
 
@@ -89,10 +89,11 @@ ADR-0011 Final Approved
     -> TASK-019 [Completed / exact-SHA CI PASS]
     -> TASK-020 [Completed / exact-SHA CI PASS]
     -> TASK-021 [Completed / exact-SHA CI PASS]
-    -> TASK-022 [Completed / exact-SHA CI PASS]
-    -> TASK-023 [Completed / exact-SHA CI PASS]
-    -> Phase 6 Closure Proposal [Prepared]
-    -> Human Phase 6 Closure Review [Pending]
+  -> TASK-022 [Completed / exact-SHA CI PASS]
+  -> TASK-023 [Completed / exact-SHA CI PASS]
+  -> Phase 6 Closure Proposal [Prepared]
+  -> Limited Closure Remediation (docs-only) [Completed / exact-SHA CI PASS]
+  -> Human Phase 6 Closure Review [Pending]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
@@ -126,9 +127,15 @@ CI `32483612937` passed, and Phase 5 is frozen at
 protocol and single-session Netty gateway in dependency order. TASK-019 through
 TASK-023 have completed their evidence gates, including deterministic network
 verification and Java 21 component/loopback JMH evidence. The Closure Proposal
-is prepared and the phase is stopped at Human Phase 6 Closure Review. Product
-Release, live WAL integration, Snapshot and online Recovery remain separately
-governed.
+is prepared and the phase is stopped at Human Phase 6 Closure Review. The final
+evidence checkpoint is `3ca54ad` with exact-SHA CI `32493384924` PASS. Gateway
+FULL identity preservation, gateway outbound-write failure terminal handling
+and pipeline-failure-to-gateway terminal propagation are verified by
+implementation-path review and lower-level tests; dynamic gateway fault
+injection for those three paths was not performed and is an explicitly
+accepted baseline limitation. No production-only test seam was introduced.
+Product Release, live WAL integration, Snapshot and online Recovery remain
+separately governed.
 
 Current Blueprint Proposal:
 [`PHASE-6-network-protocol-blueprint.md`](../tasks/blueprints/PHASE-6-network-protocol-blueprint.md).

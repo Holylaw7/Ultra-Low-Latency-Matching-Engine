@@ -186,7 +186,9 @@ CI passes and no Exception Gate is triggered.
 - [x] `COMMAND_RESULT` is followed by exactly the declared ordered match frames.
 - [x] one active session and one in-flight request are enforced.
 - [x] a second connection is rejected without reaching the pipeline.
-- [x] `FULL` is retryable and consumes neither request ID nor Command Sequence.
+- [x] `FULL` is retryable and consumes neither request ID nor Command Sequence;
+  implementation-path evidence is accepted, while dynamic Gateway fault
+  injection for this identity-preservation path was not performed.
 
 ### Determinism / Ordering
 
@@ -204,11 +206,30 @@ CI passes and no Exception Gate is triggered.
 
 - [x] malformed/overlong/unsupported frames fail closed before publication.
 - [x] disconnect, write failure and pipeline failure become terminal and
-  observable without continuing uncertain processing.
+  observable without continuing uncertain processing by implementation-path
+  review and lower-level tests; dynamic Gateway write/pipeline fault injection
+  was not performed.
 - [x] the pipeline failure observer fires at most once and preserves first cause.
 - [x] no test relies on sleep, reflection or production-only test hooks.
 - [x] reconnect, idempotency, live WAL and online recovery remain explicitly
   unverified and unclaimed.
+
+### Accepted Dynamic-Fault-Injection Limitation
+
+The following Phase 6 behaviors are verified through production-path review and
+the available lower-level/public-contract tests, but were not dynamically
+fault-injected through a live Gateway integration test:
+
+- Gateway `FULL` identity preservation (request ID and Command Sequence do not
+  advance);
+- Gateway outbound-write failure transitions to terminal state;
+- Pipeline failure is scheduled back to the Netty EventLoop and transitions the
+  Gateway to terminal state.
+
+No production-only test seam was introduced to manufacture these failures. The
+limitation is explicitly accepted for this engineering baseline and must not be
+described as dynamic integration coverage or as a production failure-safety
+guarantee.
 
 ### Compatibility / Boundary
 
@@ -235,7 +256,7 @@ CI passes and no Exception Gate is triggered.
 | Pipeline compatibility | old constructors plus failure observer | existing + focused tests | no Phase 4 regression; callback once |
 | TCP integration | real loopback server/client Submit/Cancel/result | bounded timeout/latches, ephemeral port | ordered values/bytes equal |
 | Determinism | two genesis runs and every fragmentation of a valid frame | fixed request vectors + response digest | byte/order equality; no pipelining implied |
-| Failure | malformed input, second client, FULL, disconnect, handler failure | deterministic integration fixtures | bounded fail-stop behavior |
+| Failure | malformed input, second client, FULL, disconnect, handler failure | deterministic fixtures plus implementation-path review; Gateway FULL/write/pipeline fault injection not performed | bounded fail-stop behavior with accepted dynamic-injection limitation |
 | Static / Build | all modules and Checkstyle | `mvn verify` | success / zero violations |
 | Boundary | tag-to-HEAD path audit | `git diff --name-only v0.4.0...HEAD -- <frozen>` | zero output |
 | CI | exact pushed commit | GitHub Actions | completed / success |
@@ -418,7 +439,7 @@ scope, evidence/Exception Gates and separate Phase Closure.
 | 2026-08-21 | TASK-020 | Completed / Evidence PASS | `1c5b0fb`; 121 tests; Checkstyle 0; frozen diff 0; exact-SHA CI [32488893108](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32488893108) PASS | TASK-021 Authorized / Next |
 | 2026-08-21 | TASK-021 | Completed / Evidence PASS | `7f0d5ad`; 125 tests; Checkstyle 0; frozen diff 0; exact-SHA CI [32490394814](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490394814) PASS | TASK-022 Authorized / Next |
 | 2026-08-21 | TASK-022 | Completed / Evidence PASS | `c7d9399`; 129 tests; Checkstyle 0; frozen diff 0; exact-SHA CI [32490942307](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490942307) PASS | TASK-023 Authorized / Next |
-| 2026-08-21 | TASK-023 | Completed / Evidence PASS | `0c924dd`; Java 21 full JMH matrix; 129 tests; Checkstyle 0; frozen diff 0; exact-SHA CI [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) PASS; final evidence `0b95826` / CI [32493107003](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493107003) PASS; Closure Proposal prepared | Human Phase 6 Closure Review |
+| 2026-08-21 | TASK-023 | Completed / Evidence PASS | `0c924dd`; Java 21 full JMH matrix; 129 tests; Checkstyle 0; frozen diff 0; exact-SHA CI [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) PASS; final evidence checkpoint `3ca54ad` / CI [32493384924](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493384924) PASS; accepted dynamic Gateway fault-injection limitation recorded; Closure Proposal prepared | Human Phase 6 Closure Review |
 
 ## 20. Phase Closure Checklist
 

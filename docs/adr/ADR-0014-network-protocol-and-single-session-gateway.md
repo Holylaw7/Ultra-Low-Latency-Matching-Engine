@@ -366,7 +366,7 @@ Trade-offs:
 | Admission | gateway-assigned Sequence, one producer, FULL retry identity |
 | Ordering | command results and match frames preserve exact order |
 | Lifecycle | bind, single session, manual read, drain, close, terminal failure |
-| Failure | malformed frame, second client, disconnect, pipeline and write failure |
+| Failure | malformed frame, second client and disconnect are exercised; gateway FULL identity, outbound write failure and pipeline-failure-to-gateway propagation are implementation-path verified, but dynamic gateway fault injection is not performed |
 | Regression | existing 114 tests and public pipeline constructor behavior |
 | Boundary | zero diff in Domain/OrderBook/Engine/WAL/Recovery production paths |
 | Build | focused tests, `mvn verify`, Checkstyle, diff review and exact-SHA CI |

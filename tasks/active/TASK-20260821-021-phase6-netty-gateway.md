@@ -39,10 +39,14 @@ assigned Sequence and ordered result frames.
 - [ ] one active channel and one manual-read request in flight;
 - [ ] exact-next client request ID begins at 1;
 - [ ] candidate Command Sequence advances only on pipeline `ACCEPTED`;
-- [ ] `FULL` writes retryable error and advances neither identity;
+- [x] `FULL` writes a retryable error and advances neither identity by
+  implementation-path review; dynamic Gateway fault injection for this path was
+  not performed and is an accepted limitation;
 - [ ] result header and match frames write in exact list order;
-- [ ] second client, protocol, disconnect, pipeline and write failures follow
-  ADR-0014 fail-stop semantics;
+- [x] second client and protocol/disconnect behavior are exercised; pipeline and
+  outbound-write terminal behavior is implementation-path verified, while
+  dynamic Gateway fault injection was not performed and is an accepted
+  limitation;
 - [ ] all resources close within caller-supplied bounded timeout.
 
 ## 6. Current Implementation and Scope
@@ -104,7 +108,9 @@ record. Only successful complete write clears it and requests another frame.
 - Unit: configuration and lifecycle invalid transitions.
 - Integration: real loopback Submit/Cancel/no-match/multi-match.
 - Failure: second connection, invalid request ID, FULL fixture, disconnect,
-  pipeline callback, outbound failure and bounded shutdown.
+  pipeline callback, outbound failure and bounded shutdown. The FULL identity,
+  outbound-write and pipeline-to-Gateway terminal paths are not dynamically
+  fault-injected through a live Gateway test; no production-only seam is used.
 - Determinism: equal request streams yield equal ordered response values.
 - No sleep, external port, reflection or production-only hook.
 
@@ -165,7 +171,8 @@ TASK-022.
 
 ## 18. Completion Checklist
 
-- [x] lifecycle/admission/result/failure evidence complete
+- [x] lifecycle/admission/result evidence complete; Gateway FULL/write/pipeline
+  dynamic fault-injection limitation recorded
 - [x] full build/static/diff/frozen audit pass
 - [x] exact-SHA CI/report synchronized
 - [x] no Exception Gate

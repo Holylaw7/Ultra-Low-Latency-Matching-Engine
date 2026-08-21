@@ -12,7 +12,7 @@
 | Authorization Mode | Blueprint |
 | Current Stage / Next Gate | Completed / Human Phase 6 Closure Review |
 | Branch / Baseline | `feature/phase6-network-protocol` after approval / approved proposal commit |
-| Remote / CI | `origin` / benchmark CI [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) PASS; final evidence checkpoint [32493107003](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493107003) PASS |
+| Remote / CI | `origin` / benchmark CI [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) PASS; final evidence checkpoint `3ca54ad` / [32493384924](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493384924) PASS |
 
 ## 2. Background
 
@@ -40,6 +40,9 @@ synchronize all Phase 6 documents and prepare the Closure Report.
 - [x] record throughput and SampleTime P50/P99/P999 where meaningful;
 - [x] keep raw output local/ignored and record path/command/summary/limitations;
 - [x] distinguish codec, loopback, pipeline and durability boundaries;
+- [x] distinguish implementation-path evidence from dynamic Gateway fault
+  injection; record accepted limitations for FULL identity, outbound-write and
+  pipeline-to-Gateway terminal paths;
 - [x] synchronize README, architecture, ADR, Blueprint, Tasks, reports and
   AGENT_CONTEXT;
 - [x] prepare Closure Proposal and stop for Human review.
@@ -162,7 +165,7 @@ Push checkpoints and record exact-SHA CI. Stop after Closure Proposal.
 | --- | --- | --- | --- |
 | 2026-08-21 | Proposed | evidence/closure plan | baseline PASS |
 | 2026-08-21 | Implemented | `NetworkBenchmark` codec and sequential loopback evidence | `0c924dd`; exact-SHA CI [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) PASS |
-| 2026-08-21 | Synchronized | benchmark, architecture, cumulative report and Closure Proposal | `0b95826`; exact-SHA CI [32493107003](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493107003) PASS |
+| 2026-08-21 | Synchronized | benchmark, architecture, cumulative report and Closure Proposal, including accepted Gateway dynamic-fault-injection limitations | final evidence checkpoint `3ca54ad`; exact-SHA CI [32493384924](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493384924) PASS |
 
 ## 18. Completion Checklist
 

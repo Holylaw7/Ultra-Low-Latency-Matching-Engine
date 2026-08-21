@@ -5,6 +5,7 @@
 ```text
 Phase 6 implementation: Completed
 TASK-019 through TASK-023: Completed / Evidence PASS
+Limited Closure Remediation: Completed / Docs-only / Evidence synchronized
 Closure Proposal: Prepared
 Human Phase 6 Closure Review: Pending
 Merge to master: Not Authorized
@@ -51,7 +52,7 @@ Client Request ID
 | TASK-021 single-session gateway | `7f0d5ad` | [32490394814](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490394814) | PASS |
 | TASK-022 network verification | `c7d9399` | [32490942307](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490942307) | PASS |
 | TASK-023 benchmark implementation | `0c924dd` | [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) | PASS |
-| TASK-023 documentation synchronization | `0b95826` | [32493107003](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493107003) | PASS |
+| TASK-023 documentation synchronization / final evidence checkpoint | `3ca54ad` | [32493384924](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493384924) | PASS |
 
 ## Verification summary
 
@@ -64,7 +65,7 @@ Client Request ID
 | Benchmark package | PASS |
 | Java 21 smoke and full JMH matrix | PASS |
 | `git diff --check` | PASS at final synchronization |
-| Exact-SHA documentation CI | [32493107003](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493107003) PASS |
+| Exact-SHA final evidence CI | [32493384924](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493384924) PASS (`3ca54ad`) |
 
 ## Benchmark evidence and claim boundary
 
@@ -87,6 +88,24 @@ These are component/local-host observations only. They do not establish:
 - concurrent-client capacity, request pipelining, reconnect or deduplication;
 - Internet/TLS/security behavior or Product Release readiness;
 - a production exchange throughput or latency target.
+
+## Accepted Gateway Fault-Injection Limitation
+
+The final evidence distinguishes implementation-path verification from dynamic
+Gateway fault injection. The following paths were reviewed and covered by the
+available lower-level/public-contract tests, but were not dynamically
+fault-injected through a live Gateway integration test:
+
+| Behavior | Evidence classification |
+| --- | --- |
+| Gateway `FULL` preserves request ID and Command Sequence | Implementation path verified; dynamic integration fault injection not verified |
+| Gateway outbound response-write failure becomes terminal | Implementation path verified; dynamic integration fault injection not verified |
+| Pipeline failure is scheduled to the EventLoop and makes the Gateway terminal | Implementation path verified; dynamic integration fault injection not verified |
+
+No production-only test seam was introduced to manufacture these failures. This
+is an explicitly accepted Phase 6 engineering-baseline limitation. It must not
+be described as dynamic integration coverage, exhaustive fault injection or a
+production failure-safety guarantee.
 
 ## Frozen boundary and limitations
 

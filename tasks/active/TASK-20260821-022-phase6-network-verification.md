@@ -39,9 +39,13 @@ Snapshot, Recovery or production fault-injection seam.
   Gateway rejects the second decoded request if the first is still in flight
   and never publishes it;
 - [ ] multi-match indices/counts and list ordering are exact;
-- [ ] FULL retry preserves request/command identities;
+- [x] FULL retry preserves request/command identities by implementation-path
+  review and pipeline-level evidence; dynamic Gateway fault injection was not
+  performed and is an accepted limitation;
 - [ ] malformed frame never mutates pipeline/engine state;
-- [ ] second client, disconnect, write/pipeline failures are bounded/terminal;
+- [x] second client and disconnect are exercised; write/pipeline terminal
+  behavior is implementation-path verified, while dynamic Gateway fault
+  injection was not performed and is an accepted limitation;
 - [ ] resources are released and tests repeat without flakes;
 - [ ] frozen path audit remains zero.
 
@@ -159,7 +163,8 @@ exact-SHA CI before TASK-023.
 
 ## 18. Completion Checklist
 
-- [x] full deterministic/failure matrix passes repeatedly
+- [x] deterministic/failure matrix passes repeatedly; the Gateway
+  FULL/write/pipeline dynamic fault-injection limitation is explicitly recorded
 - [x] build/static/diff/frozen audit pass
 - [x] evidence commit/CI/report recorded
 - [x] no Exception Gate

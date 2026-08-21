@@ -65,4 +65,9 @@ The current evidence covers strict byte contracts, fragmented/coalesced input,
 single-session loopback behavior, ordered result delivery, failure handling and
 component-level codec/loopback JMH measurements. It does not establish a
 durable network service, Internet security posture, concurrent-client scaling,
-or production latency/throughput target.
+or production latency/throughput target. Gateway FULL identity preservation,
+gateway outbound-write failure terminal handling and pipeline-failure-to-gateway
+terminal propagation are verified by implementation-path review and lower-level
+tests; dynamic gateway fault injection for these three paths was not performed.
+This limitation is accepted for the Phase 6 engineering baseline, and no
+production-only test seam was introduced.
