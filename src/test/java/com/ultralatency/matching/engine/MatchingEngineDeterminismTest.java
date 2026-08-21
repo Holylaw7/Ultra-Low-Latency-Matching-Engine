@@ -2,6 +2,7 @@ package com.ultralatency.matching.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.ultralatency.matching.domain.EventSequence;
 import com.ultralatency.matching.domain.OrderId;
@@ -77,6 +78,60 @@ class MatchingEngineDeterminismTest {
         assertEquals(1, firstProbeResults.get(3).matches().size());
     }
 
+    @Test
+    void preservesFutureBehaviorAfterRejectedNullAndInitialSequenceGap() {
+        final MatchingEngine subject = new MatchingEngine();
+        final MatchingEngine control = new MatchingEngine();
+
+        assertThrows(NullPointerException.class, () -> subject.process(null));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> subject.process(submit(2, 1, Side.SELL, 100, 1)));
+
+        final List<EngineCommand> suffix = List.of(
+                submit(1, 1, Side.SELL, 100, 1),
+                submit(2, 2, Side.BUY, 100, 1));
+
+        assertEquals(apply(control, suffix), apply(subject, suffix));
+    }
+
+    @Test
+    void preservesFutureBehaviorAfterRejectedDuplicateGapAndOutOfOrderSequences() {
+        assertSequenceRejectionLeavesFutureBehaviorUnchanged(cancel(1, 10));
+        assertSequenceRejectionLeavesFutureBehaviorUnchanged(submit(3, 11, Side.BUY, 100, 1));
+
+        final MatchingEngine subject = new MatchingEngine();
+        final MatchingEngine control = new MatchingEngine();
+        final List<EngineCommand> prefix = List.of(
+                submit(1, 20, Side.SELL, 101, 1),
+                submit(2, 21, Side.SELL, 100, 1));
+
+        apply(subject, prefix);
+        apply(control, prefix);
+
+        assertThrows(IllegalArgumentException.class, () -> subject.process(cancel(1, 20)));
+
+        final List<EngineCommand> suffix = List.of(submit(3, 22, Side.BUY, 101, 2));
+        assertEquals(apply(control, suffix), apply(subject, suffix));
+    }
+
+    @Test
+    void preservesFutureBehaviorAfterRejectedActiveOrderId() {
+        final MatchingEngine subject = new MatchingEngine();
+        final MatchingEngine control = new MatchingEngine();
+        final List<EngineCommand> prefix = List.of(submit(1, 30, Side.SELL, 100, 1));
+
+        apply(subject, prefix);
+        apply(control, prefix);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> subject.process(submit(2, 30, Side.BUY, 100, 1)));
+
+        final List<EngineCommand> suffix = List.of(submit(2, 31, Side.BUY, 100, 1));
+        assertEquals(apply(control, suffix), apply(subject, suffix));
+    }
+
     private static List<EngineCommand> extendedCommandStream() {
         final List<EngineCommand> commands = new ArrayList<>(CYCLE_COUNT * COMMANDS_PER_CYCLE);
         long sequence = 1;
@@ -97,6 +152,21 @@ class MatchingEngineDeterminismTest {
             commands.add(cancel(sequence++, cancellationTarget(cycle, restingBuy)));
         }
         return List.copyOf(commands);
+    }
+
+    private static void assertSequenceRejectionLeavesFutureBehaviorUnchanged(
+            final EngineCommand rejectedCommand) {
+        final MatchingEngine subject = new MatchingEngine();
+        final MatchingEngine control = new MatchingEngine();
+        final List<EngineCommand> prefix = List.of(submit(1, 10, Side.SELL, 100, 1));
+
+        apply(subject, prefix);
+        apply(control, prefix);
+
+        assertThrows(IllegalArgumentException.class, () -> subject.process(rejectedCommand));
+
+        final List<EngineCommand> suffix = List.of(submit(2, 11, Side.BUY, 100, 1));
+        assertEquals(apply(control, suffix), apply(subject, suffix));
     }
 
     private static long cancellationTarget(final int cycle, final long restingBuy) {
