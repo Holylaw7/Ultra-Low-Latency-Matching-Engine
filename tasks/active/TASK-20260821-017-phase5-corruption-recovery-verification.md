@@ -5,14 +5,14 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-017` / Phase 5 Corruption and Recovery-Boundary Verification |
-| Status | `Approved` |
+| Status | `Completed` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 5 / ADR-0013 / `PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
 | Depends On | TASK-016 exact-SHA evidence PASS |
-| Current Stage / Next Gate | Implementation authorized / TASK-017 Evidence Gate |
-| Branch / CI | `feature/phase5-command-wal-replay` / Pending for implementation commit |
+| Current Stage / Next Gate | Completed / Evidence Gate Passed / TASK-018 Evidence Gate |
+| Branch / CI | `feature/phase5-command-wal-replay` / [run 32467018067](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467018067) PASS |
 
 ## 2. Background and Goal
 
@@ -31,19 +31,19 @@ Phase 5 packages when tests expose implementation defects.
 
 ## 4. Requirements and Acceptance Criteria
 
-- [ ] truncate a valid WAL at every byte offset of the final record and classify
+- [x] truncate a valid WAL at every byte offset of the final record and classify
   each outcome deterministically;
-- [ ] strict scan never mutates a torn tail;
-- [ ] explicit reopen preserves the valid prefix and truncates only eligible
+- [x] strict scan never mutates a torn tail;
+- [x] explicit reopen preserves the valid prefix and truncates only eligible
   final-tail bytes;
-- [ ] bit flips in header/body/checksum fail with segment/offset evidence;
-- [ ] complete invalid final record is hard corruption, not a torn tail;
-- [ ] missing/duplicate/misnamed segments and sequence gaps fail closed;
-- [ ] repeated repaired reopen is stable and does not lose valid records;
-- [ ] replay after eligible repair equals the valid direct prefix;
-- [ ] poison engine command stops replay at exact Sequence;
-- [ ] test matrix repeats without sleeps, reflection or production hooks;
-- [ ] full regression, frozen diff and exact-SHA CI pass.
+- [x] bit flips in header/body/checksum fail with segment/offset evidence;
+- [x] complete invalid final record is hard corruption, not a torn tail;
+- [x] missing/duplicate/misnamed segments and sequence gaps fail closed;
+- [x] repeated repaired reopen is stable and does not lose valid records;
+- [x] replay after eligible repair equals the valid direct prefix;
+- [x] poison engine command stops replay at exact Sequence;
+- [x] test matrix repeats without sleeps, reflection or production hooks;
+- [x] full regression, frozen diff and exact-SHA CI pass.
 
 ## 5. Current Implementation and Scope
 
@@ -131,18 +131,19 @@ Push and require exact-SHA CI PASS before TASK-018.
 | Stage | Report | Status | Next Gate |
 | --- | --- | --- | --- |
 | Proposal | Phase 5 proposal report | Approved | TASK-016 evidence |
-| Verification | cumulative Phase 5 report | Not started | exact-SHA evidence |
-| Completion | cumulative Phase 5 report | Not started | TASK-018 / Exception Gate |
+| Verification | cumulative Phase 5 report | Completed | exact-SHA evidence passed |
+| Completion | cumulative Phase 5 report | Completed | TASK-018 / Exception Gate |
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-21 | Approved | Human Blueprint Approval inherited; execution waits for TASK-016 evidence | dependency-gated |
 | 2026-08-21 | Authorized | TASK-016 Evidence Gate passed with exact-SHA CI `32466659845`; TASK-017 may begin | TASK-017 Evidence Gate |
+| 2026-08-21 | Completed | Exhaustive torn-tail/corruption/segment/replay boundary matrix implemented and repeated | 6 focused tests x3; `mvn verify` 113 tests; exact-SHA CI `32467018067` PASS; next TASK-018 |
 
 ## 15. Completion Checklist
 
-- [ ] inherited approval and TASK-016 dependency recorded
-- [ ] exhaustive failure matrix passes repeatedly
-- [ ] full build/Checkstyle/frozen diff pass
-- [ ] evidence/commit/push/exact-SHA CI recorded
-- [ ] no unresolved Exception Gate
+- [x] inherited approval and TASK-016 dependency recorded
+- [x] exhaustive failure matrix passes repeatedly
+- [x] full build/Checkstyle/frozen diff pass
+- [x] evidence/commit/push/exact-SHA CI recorded
+- [x] no unresolved Exception Gate

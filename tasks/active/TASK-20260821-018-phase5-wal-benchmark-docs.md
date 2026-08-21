@@ -11,8 +11,8 @@
 | Phase / ADR / Blueprint | Phase 5 / ADR-0013 / `PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
 | Depends On | TASK-017 exact-SHA evidence PASS |
-| Current Stage / Next Gate | Waiting for TASK-017 evidence / TASK-017 Evidence Gate |
-| Branch / CI | `feature/phase5-command-wal-replay` / Pending for dependency evidence |
+| Current Stage / Next Gate | Implementation authorized / TASK-018 Evidence Gate |
+| Branch / CI | `feature/phase5-command-wal-replay` / Pending for implementation commit |
 
 ## 2. Background and Goal
 
@@ -148,6 +148,7 @@ Push each checkpoint and record exact-SHA CI. Merge/tag wait for Human Closure.
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-21 | Approved | Human Blueprint Approval inherited; execution waits for TASK-017 evidence | dependency-gated; Closure remains Human gate |
+| 2026-08-21 | Authorized | TASK-017 Evidence Gate passed with exact-SHA CI `32467018067`; TASK-018 may begin | TASK-018 Evidence Gate; stop at Closure proposal |
 
 ## 15. Completion Checklist
 

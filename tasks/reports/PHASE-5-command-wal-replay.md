@@ -5,14 +5,14 @@
 | Field | Value |
 | --- | --- |
 | Phase | Phase 5 — Command WAL and Deterministic Replay Foundation |
-| Current Task | TASK-20260821-017 — Corruption and Recovery-Boundary Verification |
-| Completed Task | TASK-20260821-016 — Deterministic Command Replay |
-| Result | `TASK-016 Completed / Evidence Gate Passed` |
+| Current Task | TASK-20260821-018 — WAL Benchmark, Documentation and Closure Preparation |
+| Completed Task | TASK-20260821-017 — Corruption and Recovery-Boundary Verification |
+| Result | `TASK-017 Completed / Evidence Gate Passed` |
 | Baseline | `v0.3.0-engineering-baseline` remains frozen |
 | Full Verification | `mvn verify` PASS; 92 tests, 0 failures; Maven reactor 3/3 SUCCESS |
 | Checkstyle | 0 violations |
-| Latest Commit | `f4344314fed8bd2893d57d35e803a0631e00d8e2` |
-| Latest CI | [run 32466659845](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466659845) PASS |
+| Latest Commit | `16dc9578923e2165291741389d092eef863d790d` |
+| Latest CI | [run 32467018067](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467018067) PASS |
 | Branch | `feature/phase5-command-wal-replay` |
 | Next Gate | TASK-015 Implementation / Evidence Gate |
 
@@ -156,10 +156,31 @@ Commit `f4344314fed8bd2893d57d35e803a0631e00d8e2` passed exact-SHA GitHub
 Actions CI run
 [32466659845](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466659845).
 
+## TASK-017 Corruption and Recovery-Boundary Verification (Completed)
+
+TASK-017 adds deterministic public-boundary failure evidence without changing
+the approved WAL/recovery semantics:
+
+- truncation of every incomplete byte offset in the final record is classified
+  as an eligible torn tail, while exact record boundaries remain valid prefixes;
+- strict scans never mutate damaged files, and explicit reopen preserves the
+  valid prefix while truncating only the final incomplete record;
+- header, body, checksum, complete-record, segment-gap and misnamed-segment
+  corruption fail closed with segment/offset diagnostics;
+- repeated reopen is stable, and repaired-prefix replay equals direct prefix
+  execution; no reflection, sleep, production hook or salvage path is used.
+
+The focused failure matrix passed 6 tests in three consecutive runs. Full
+`mvn verify` passed with 113 tests, 0 failures, Checkstyle 0 violations and
+Maven reactor 3/3 SUCCESS. `git diff --check` and frozen-path audit passed.
+Commit `16dc9578923e2165291741389d092eef863d790d` passed exact-SHA GitHub
+Actions CI run
+[32467018067](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467018067).
+
 ## Next State
 
-TASK-014 through TASK-016 are completed under the approved dependency order.
-TASK-017 is the next authorized task and may begin without another routine
+TASK-014 through TASK-017 are completed under the approved dependency order.
+TASK-018 is the next authorized task and may begin without another routine
 Human approval as long as its Evidence Gate passes and no Exception Gate is
 triggered. Phase Closure, merge and baseline-tag actions remain separate Human
 decisions.
