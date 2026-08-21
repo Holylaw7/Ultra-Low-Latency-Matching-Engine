@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260821-012` |
 | Title | Verify Event Pipeline Determinism and Failure Boundaries |
-| Status | `Approved` |
+| Status | `In Progress` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Related Phase | Phase 4 — Event Pipeline |
@@ -14,10 +14,10 @@
 | Phase Blueprint | [`PHASE-4 Blueprint`](../blueprints/PHASE-4-event-pipeline-blueprint.md) — Approved |
 | Authorization Mode | `Blueprint inherited Human approval` |
 | Current Stage | `Implementation (dependency-gated)` |
-| Next Gate | `TASK-011 evidence gate` |
+| Next Gate | `Automated Evidence Gate` |
 | Branch | planned `feature/phase4-event-pipeline` |
-| Baseline HEAD | TASK-011 verified commit |
-| Remote / CI | `origin` / `Pending` |
+| Baseline HEAD | TASK-011 evidence commit `99dd7a3` |
+| Remote / CI | `origin/feature/phase4-event-pipeline` / pending |
 
 ## 2. Background
 
@@ -202,6 +202,7 @@ TASK-013.
 | --- | --- | --- | --- |
 | 2026-08-21 | Proposed | Determinism/failure evidence scope prepared | Awaiting Blueprint Approval |
 | 2026-08-21 | Approved | Blueprint approval recorded; TASK-012 is dependency-gated | TASK-011 evidence gate |
+| 2026-08-21 | In Progress | Deterministic direct/pipeline comparison and public failure-boundary tests started | TASK-011 evidence CI PASS; focused TASK-012 verification pending |
 
 ## 18. Completion Checklist
 
