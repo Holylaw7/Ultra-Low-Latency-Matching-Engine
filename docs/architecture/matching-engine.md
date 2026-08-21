@@ -14,10 +14,10 @@ Input Event
 
 ## Supported Semantics
 
-The planned baseline supports:
+The long-term planned system supports:
 
 - Limit orders
-- Market orders
+- Market orders (future policy; not part of the current Phase 3 proposal)
 - Price-time priority
 - Partial fills
 - Full fills
@@ -62,5 +62,48 @@ and approved as evidence collection on `2026-08-19`. ADR-0010 was approved on
 `2026-08-19`; measurement isolation, evidence review and Phase 2 Final Closure
 have completed. Optimization is governed by
 [`ADR-0010-optimization-decision-after-profiling.md`](../adr/ADR-0010-optimization-decision-after-profiling.md);
-production optimization and the future MatchingEngine stage remain
-unauthorized.
+production optimization remains unauthorized.
+
+## Phase 3 Orchestration Gate
+
+Phase 2 is closed and frozen at `v0.1.0-engineering-baseline`. The first Phase
+3 architecture proposal is
+[`ADR-0011-matching-engine-orchestration-model.md`](../adr/ADR-0011-matching-engine-orchestration-model.md).
+Its current status is `Approved`. D1-D7 are finalized. The D3 condition was
+satisfied by the approved sequence semantic revision in
+[`ADR-0005-domain-model-and-correctness-baseline.md`](../adr/ADR-0005-domain-model-and-correctness-baseline.md).
+
+The proposal recommends a synchronous, single-owner MatchingEngine boundary:
+
+```text
+Sequenced Command
+    -> MatchingEngine
+    -> OrderBook
+    -> ordered MatchFragments
+    -> immutable Trade/Execution result
+```
+
+It separates input command sequence, TradeId and output event sequence
+ownership, and treats a future command WAL as the canonical replay input.
+Disruptor/Actor scheduling, market-order policy, publication, networking,
+WAL implementation, snapshot, recovery and optimization remain deferred.
+
+`Sequence` is reserved for commands. `Trade.sequence` has been migrated to
+`Trade.eventSequence`; the value type validates and orders output sequence
+values while allocation remains reserved for the future MatchingEngine.
+[`TASK-20260820-008-phase3-matching-engine-implementation.md`](../../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md)
+has completed its approved Stage 1 Domain/API Foundation. Stage 2 now
+implements a synchronous MatchingEngine Core. It validates exact-next command
+sequence, constructs NEW limit orders, delegates to the frozen OrderBook,
+translates ordered MatchFragments and returns immutable Trade/Execution
+results with engine-owned TradeId/EventSequence allocation. It has no
+engine-owned thread, executor, lock or queue. Stage 2 was accepted on
+2026-08-21. Verification-only Stage 3 execution and Human completion review
+were completed and approved on 2026-08-21. The verification uses equal command
+re-execution, order-significant result comparison and public-API probes without
+adding WAL/replay infrastructure, state exposure or production test hooks.
+The Phase 3 Closure Authorization proposal records the completed evidence,
+frozen boundary and known limitations. Human closure approval authorizes the
+controlled master merge, verification, engineering-baseline tag and TASK
+closure. Release and further phases remain unauthorized. OrderBook is an
+external frozen dependency and no OrderBook file or API may change.

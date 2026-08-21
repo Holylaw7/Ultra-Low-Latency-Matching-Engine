@@ -1,6 +1,6 @@
 # AGENT_CONTEXT — Matching Engine Current State
 
-> Last Updated: 2026-08-20
+> Last Updated: 2026-08-21
 > Purpose: compact current-state index; detailed history lives in Tasks, Stage
 > Reports, ADRs and Git.
 
@@ -10,17 +10,19 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 2 — Basic OrderBook (`Completed`) |
+| Phase | Phase 3 — MatchingEngine (`Closure execution authorized`) |
 | Latest product task | [`TASK-20260819-004`](../tasks/completed/TASK-20260819-004-basic-orderbook.md) — Completed |
-| Product stage | Engineering baseline frozen |
-| Product approval | Phase 2 Final Approval recorded; baseline frozen |
+| Latest architecture task | [`TASK-20260820-007`](../tasks/completed/TASK-20260820-007-phase3-matching-engine-adr-decision.md) — Completed |
+| Current planning task | [`TASK-20260820-008`](../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md) — Approved |
+| Product stage | Phase 3 Closure Execution |
+| Product approval | Approved; merge, master verification, baseline tag and TASK closure authorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
-| Branch | `master` |
+| Branch | `feature/phase3-matching-engine` |
 | Engineering baseline commit | `cbfa957` |
 | Engineering baseline tag | `v0.1.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
 | Remote sync | `master` and engineering baseline tag published |
-| CI | Master PASS for `cbfa957` — [GitHub Actions run 32373388465](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32373388465) |
+| CI | Phase 3 closure proposal `5ea0cdb`: [run 32447826712](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32447826712) PASS; latest implementation `mvn verify` PASS (61 tests) |
 
 ## Project Progress
 
@@ -29,30 +31,60 @@
 | Phase 0 — Bootstrap | Completed | Maven reactor, Java 21, JUnit 5, JMH, Checkstyle and CI workflow |
 | Phase 1 — Domain Model | Completed / Approved | [`PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md) |
 | Phase 2 — Basic OrderBook | Completed / Approved | `v0.1.0-engineering-baseline`, 45 tests, JMH/JFR evidence and passing master CI |
-| Phase 3 — Matching Engine | Pending / Not Authorized | Requires completion and approval of the current Phase 2 gate |
+| Phase 3 — Matching Engine | Closure Approved / Execution Pending | [`Closure Authorization`](../tasks/reports/PHASE-3-matching-engine-closure-authorization.md); verified merge and baseline freeze authorized |
 | Phase 4+ — Pipeline, network, recovery and performance evolution | Future Work | Architecture documents and future ADRs/tasks |
 
 ## Current Product Gate
 
-Phase 2 is closed and frozen at `v0.1.0-engineering-baseline`. The next possible
-product action is:
+Phase 2 is closed and frozen at `v0.1.0-engineering-baseline`. ADR-0005 R1-R6
+and ADR-0011 D1-D7 are finally approved. The current gate is:
 
 ```text
-Phase 3 ADR-0011 proposal
-    -> Human architecture review
-    -> Human ADR approval
-    -> new Task Plan and Human approval
-    -> implementation only after both approvals
+ADR-0011 Final Approved
+    -> TASK-20260820-008 Approved
+    -> Stage 1 Domain/API Foundation
+    -> Human Stage 1 completion approval [Completed]
+    -> Stage 2 authorization [Approved]
+    -> Stage 2.1-2.3 implementation [Completed]
+    -> Human Stage 2 completion approval [Completed]
+    -> Stage 3 authorization [Approved]
+    -> Stage 3 verification execution [Completed]
+    -> Human Stage 3 completion review [Completed]
+    -> Phase 3 Closure proposal [Prepared]
+    -> Human Phase 3 Closure approval [Approved]
+    -> merge / master verification / engineering baseline tag [Authorized]
 ```
 
-Phase 3 ADR creation, Phase 3 implementation, Release, production optimization
-and history rewrite remain unauthorized until separately approved.
+Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
+approved. Stage 3 verification-only execution and Human completion review are
+complete with ordered result comparison, public-API state probes and no
+production test hooks. The Phase 3 Closure Authorization proposal consolidates
+the accepted evidence and limitations. Human closure approval authorizes the
+normal merge, master verification, annotated baseline tag and TASK closure.
+Release, next-phase work, production optimization and history rewrite remain
+unauthorized. OrderBook is an external frozen dependency.
 
 Completed plan:
 [`TASK-20260819-004-basic-orderbook.md`](../tasks/completed/TASK-20260819-004-basic-orderbook.md).
 
 Current evidence:
 
+- [`PHASE-3-matching-engine-implementation-planning.md`](../tasks/reports/PHASE-3-matching-engine-implementation-planning.md)
+  — TASK-008 plan approved; Stage 1 completed and approved.
+- [`PHASE-3-matching-engine-domain-api-foundation.md`](../tasks/reports/PHASE-3-matching-engine-domain-api-foundation.md)
+  — Stage 1 approved evidence; no MatchingEngine or OrderBook integration.
+- [`PHASE-3-matching-engine-core-authorization.md`](../tasks/reports/PHASE-3-matching-engine-core-authorization.md)
+  — Stage 2 authorization approval and frozen scope.
+- [`PHASE-3-matching-engine-core-implementation.md`](../tasks/reports/PHASE-3-matching-engine-core-implementation.md)
+  — Stage 2 completed and approved; CI evidence recorded.
+- [`PHASE-3-matching-engine-determinism-authorization.md`](../tasks/reports/PHASE-3-matching-engine-determinism-authorization.md)
+  — Stage 3 verification-only scope approved; execution authorized.
+- [`PHASE-3-matching-engine-determinism-verification.md`](../tasks/reports/PHASE-3-matching-engine-determinism-verification.md)
+  — Stage 3 completed and approved evidence: 256 commands and 61 core tests.
+- [`PHASE-3-matching-engine-closure-authorization.md`](../tasks/reports/PHASE-3-matching-engine-closure-authorization.md)
+  — closure prerequisites, frozen boundary, limitations and approved baseline sequence; execution pending.
+- [`PHASE-3-matching-engine-adr-decision.md`](../tasks/reports/PHASE-3-matching-engine-adr-decision.md)
+  — completed; ADR-0011 final approval recorded and architecture frozen.
 - [`PHASE-2-measurement-isolation.md`](../tasks/reports/PHASE-2-measurement-isolation.md)
   — completed and accepted as Phase 2 closure evidence.
 - [`PHASE-2-repository-remote-ci-setup.md`](../tasks/reports/PHASE-2-repository-remote-ci-setup.md)
@@ -70,29 +102,36 @@ Current evidence:
 
 | Decision | Status | Source |
 | --- | --- | --- |
-| Domain model and correctness baseline | Accepted with constraints | [`ADR-0005`](../docs/adr/ADR-0005-domain-model-and-correctness-baseline.md) |
+| Domain model and correctness baseline | Accepted with constraints; Phase 3 sequence revision approved | [`ADR-0005`](../docs/adr/ADR-0005-domain-model-and-correctness-baseline.md) |
 | ADR-first governance | Accepted | [`ADR-0006`](../docs/adr/ADR-0006-adr-first-decision-governance.md) |
 | TreeMap side books, intrusive FIFO and active OrderId index | Accepted with constraints | [`ADR-0007`](../docs/adr/ADR-0007-basic-orderbook-structure-and-boundaries.md) |
 | Structural limit matching and `MatchFragment` boundary | Approved | [`ADR-0008`](../docs/adr/ADR-0008-structural-limit-matching.md) |
 | JFR-first profiling evidence | Approved | [`ADR-0009`](../docs/adr/ADR-0009-performance-profiling-evidence.md) |
 | Defer production optimization until measurement isolation | Approved | [`ADR-0010`](../docs/adr/ADR-0010-optimization-decision-after-profiling.md) |
+| MatchingEngine orchestration model | Approved | [`ADR-0011`](../docs/adr/ADR-0011-matching-engine-orchestration-model.md) |
 
 If a Task and linked ADR disagree, stop and synchronize them before work.
 
 ## Verified Current Implementation
 
-- Positive `long`-backed domain identifiers, price, quantity and sequence.
+- Positive `long`-backed domain identifiers, price, quantity, input Sequence
+  and output EventSequence.
 - Controlled limit/market order lifecycle plus deterministic Trade and
-  Execution value objects.
+  Execution value objects; Trade uses EventSequence rather than input Sequence.
+- Immutable engine command/result boundary types: submit-limit, cancel,
+  outcome, match aggregate and defensive EngineResult collection.
 - `TreeMap` bid/ask price indexes with intrusive FIFO levels.
 - Active `OrderId -> OrderNode` cancellation index.
 - Deterministic structural limit matching with price-time priority, maker
   price, partial/full fills and one-time residual resting.
 - OrderBook-focused correctness, invariant and determinism tests.
 
-`MatchingEngine` orchestration, market-order execution, event publication,
-Disruptor pipeline, Netty protocol, WAL, snapshot and recovery are not
-implemented.
+Synchronous MatchingEngine orchestration is implemented: exact-next command
+validation, immutable outcomes, frozen OrderBook delegation, engine-owned
+TradeId/EventSequence allocation, and Trade/Execution result mapping.
+
+Market-order execution, event publication, Disruptor pipeline, Netty protocol,
+WAL, snapshot and recovery are not implemented.
 
 ## Performance Evidence
 
@@ -120,12 +159,12 @@ Client
   -> Netty / Protocol                 [Future Work]
   -> Decoder / Validation             [Future Work]
   -> Ingress + RingBuffer/Disruptor   [Future Work]
-  -> MatchingEngine                   [Phase 3]
+  -> MatchingEngine                   [Stage 3 complete; Phase 3 closure pending]
   -> OrderBook                        [Phase 2 baseline implemented]
        -> BidBook / AskBook
        -> PriceLevel / OrderQueue
        -> active OrderId index
-  -> Trade / Execution events         [Domain types implemented; orchestration future]
+  -> Trade / Execution results        [Engine generation implemented]
        -> WAL / Recovery              [Future Work]
        -> Output / Metrics            [Future Work]
 ```
@@ -144,6 +183,9 @@ requires an approved ADR and Task.
   work; new infrastructure work uses a dedicated branch.
 - Branch protection, merge policy automation and release evidence remain
   Future Work; they were outside `TASK-20260820-006`.
+- Counter exhaustion and post-mutation fatal handling are not dynamically
+  reachable from the public genesis API without an artificial failure seam;
+  Stage 3 records this limitation rather than changing production.
 
 ## Session Recovery Checklist
 
