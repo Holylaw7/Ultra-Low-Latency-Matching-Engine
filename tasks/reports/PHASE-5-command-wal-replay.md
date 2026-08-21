@@ -6,15 +6,15 @@
 | --- | --- |
 | Phase | Phase 5 — Command WAL and Deterministic Replay Foundation |
 | Current Task | TASK-20260821-018 — WAL Benchmark, Documentation and Closure Preparation |
-| Completed Task | TASK-20260821-017 — Corruption and Recovery-Boundary Verification |
-| Result | `TASK-017 Completed / Evidence Gate Passed` |
+| Completed Task | TASK-20260821-018 — WAL Benchmark, Documentation and Closure Preparation |
+| Result | `TASK-018 Completed / Evidence Gate Passed; Closure Proposal Prepared` |
 | Baseline | `v0.3.0-engineering-baseline` remains frozen |
-| Full Verification | `mvn verify` PASS; 92 tests, 0 failures; Maven reactor 3/3 SUCCESS |
+| Full Verification | `mvn verify` PASS; 113 tests, 0 failures; Maven reactor 3/3 SUCCESS |
 | Checkstyle | 0 violations |
-| Latest Commit | `16dc9578923e2165291741389d092eef863d790d` |
-| Latest CI | [run 32467018067](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467018067) PASS |
+| Latest Commit | `cd6997c8f456b88e658183483d057aceffe1e1a5` |
+| Latest CI | [run 32467692149](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467692149) PASS |
 | Branch | `feature/phase5-command-wal-replay` |
-| Next Gate | TASK-015 Implementation / Evidence Gate |
+| Next Gate | Human Phase 5 Closure Approval |
 
 ## Human Blueprint Authorization
 
@@ -177,13 +177,59 @@ Commit `16dc9578923e2165291741389d092eef863d790d` passed exact-SHA GitHub
 Actions CI run
 [32467018067](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467018067).
 
+## TASK-018 WAL Benchmark, Documentation and Closure Preparation (Completed)
+
+TASK-018 adds `WalBenchmark` in the benchmark module and keeps the measured
+boundaries separate:
+
+- `walAppend` measures one append with `SYNC_EACH_APPEND` and `BUFFERED`
+  reported independently;
+- `walScan` measures strict closed-WAL validation/decode without engine replay;
+- `walReplay` measures strict scan followed by genesis engine replay.
+
+Each benchmark state creates and cleans its own temporary fixture outside the
+measured operation. The full JMH matrix used JMH 1.37, OpenJDK 21.0.12, one
+fork, one thread, one 1-second warmup and one 1-second measurement across
+4,128/65,536-byte segments and 256/1,024-command datasets. Raw output remains
+local and ignored at `benchmark-results/wal-full.json`.
+
+Representative full-matrix observations (throughput `ops/us`, sample mean
+`us/op`) are recorded in [`docs/benchmark/recovery.md`](../../docs/benchmark/recovery.md):
+
+```text
+append SYNC  4128: 0.003542858 ops/us, 283.741 us/op
+append SYNC 65536: 0.004224853 ops/us, 246.111 us/op
+append BUFFERED 4128: 0.120667710 ops/us, 4.796 us/op
+append BUFFERED 65536: 0.335894622 ops/us, 4.510 us/op
+scan  256/4128: 276.955 us/op; 1024/4128: 783.633 us/op
+scan  256/65536: 129.520 us/op; 1024/65536: 154.410 us/op
+replay 256/4128: 348.866 us/op; 1024/4128: 1,013.116 us/op
+replay 256/65536: 205.167 us/op; 1024/65536: 397.084 us/op
+```
+
+The numbers are component observations only. `BUFFERED` is not durable
+throughput; append latency is not client acknowledgement or trade latency;
+scan/replay are not online recovery time. No format, default durability or
+production claim was changed.
+
+Evidence gate:
+
+- benchmark smoke and full matrix completed successfully;
+- `mvn verify` passed with 113 tests, 0 failures, Checkstyle 0 violations and
+  Maven reactor 3/3 SUCCESS;
+- `git diff --check` passed and frozen Domain/OrderBook/Engine/Pipeline
+  production diff relative to `v0.3.0-engineering-baseline` is zero;
+- benchmark commit `cd6997c` passed exact-SHA CI [run 32467692149](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467692149);
+- architecture, README, ADR, Blueprint, Task and context documents are
+  synchronized; Closure Proposal is prepared.
+
 ## Next State
 
-TASK-014 through TASK-017 are completed under the approved dependency order.
-TASK-018 is the next authorized task and may begin without another routine
-Human approval as long as its Evidence Gate passes and no Exception Gate is
-triggered. Phase Closure, merge and baseline-tag actions remain separate Human
-decisions.
+TASK-014 through TASK-018 are completed under the approved dependency order.
+Phase 5 Closure is **not** approved: merge to `master`,
+`v0.4.0-engineering-baseline`, live pipeline/WAL integration, Snapshot, online
+Recovery, Network and Product Release remain unauthorized. Stop now for Human
+Phase 5 Closure Approval.
 
 ## Known Scope Boundary
 

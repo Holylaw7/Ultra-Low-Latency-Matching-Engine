@@ -5,14 +5,14 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-018` / Phase 5 WAL Benchmark, Documentation and Closure Preparation |
-| Status | `Approved` |
+| Status | `Completed / Evidence Gate Passed; Closure Proposal Prepared` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 5 / ADR-0013 / `PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
 | Depends On | TASK-017 exact-SHA evidence PASS |
-| Current Stage / Next Gate | Implementation authorized / TASK-018 Evidence Gate |
-| Branch / CI | `feature/phase5-command-wal-replay` / Pending for implementation commit |
+| Current Stage / Next Gate | Completed / Human Phase 5 Closure Approval |
+| Branch / CI | `feature/phase5-command-wal-replay` / [run 32467692149](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467692149) PASS for `cd6997c` |
 
 ## 2. Background and Goal
 
@@ -30,21 +30,21 @@ and prepare (but do not approve) the Phase 5 Closure Report.
 
 ## 4. Requirements and Acceptance Criteria
 
-- [ ] JMH separates append, strict scan and engine replay boundaries;
-- [ ] `SYNC_EACH_APPEND` and `BUFFERED` are reported separately;
-- [ ] dataset, segments, bytes, environment, warmup/measurement/forks/threads,
+- [x] JMH separates append, strict scan and engine replay boundaries;
+- [x] `SYNC_EACH_APPEND` and `BUFFERED` are reported separately;
+- [x] dataset, segments, bytes, environment, warmup/measurement/forks/threads,
   JVM/GC and storage limitations are recorded;
-- [ ] raw evidence remains ignored with path/command/summary documented;
-- [ ] no result changes `SYNC_EACH_APPEND` default automatically;
-- [ ] architecture/recovery/benchmark/README/context/ADR/Blueprint/Tasks agree;
-- [ ] cumulative Task report and Phase Closure proposal contain exact evidence;
-- [ ] frozen production diff remains zero;
-- [ ] full `mvn verify`, diff checks and exact-SHA CI pass;
-- [ ] stop at separate Human Phase 5 Closure Approval.
+- [x] raw evidence remains ignored with path/command/summary documented;
+- [x] no result changes `SYNC_EACH_APPEND` default automatically;
+- [x] architecture/recovery/benchmark/README/context/ADR/Blueprint/Tasks agree;
+- [x] cumulative Task report and Phase Closure proposal contain exact evidence;
+- [x] frozen production diff remains zero;
+- [x] full `mvn verify`, diff checks and exact-SHA CI pass;
+- [x] stop at separate Human Phase 5 Closure Approval.
 
 ## 5. Current Implementation and Scope
 
-TASK-014..017 will provide the verified WAL/replay component. This Task may add
+TASK-014..017 provided the verified WAL/replay component. This Task adds
 only benchmark code and documentation, except an implementation defect triggers
 return to the owning Task or an Exception Gate.
 
@@ -142,19 +142,20 @@ Push each checkpoint and record exact-SHA CI. Merge/tag wait for Human Closure.
 | Stage | Report | Status | Next Gate |
 | --- | --- | --- | --- |
 | Proposal | Phase 5 proposal report | Approved | TASK-017 evidence |
-| Benchmark / Docs | cumulative Phase 5 report | Not started | exact-SHA evidence |
-| Closure Preparation | Phase 5 Closure Report | Not started | Human Phase 5 Closure Approval |
+| Benchmark / Docs | cumulative Phase 5 report | Completed / Evidence PASS | Human Phase 5 Closure Approval |
+| Closure Preparation | Phase 5 Closure Report | Prepared | Human Phase 5 Closure Approval |
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-21 | Approved | Human Blueprint Approval inherited; execution waits for TASK-017 evidence | dependency-gated; Closure remains Human gate |
 | 2026-08-21 | Authorized | TASK-017 Evidence Gate passed with exact-SHA CI `32467018067`; TASK-018 may begin | TASK-018 Evidence Gate; stop at Closure proposal |
+| 2026-08-21 | Completed | JMH append/scan/replay matrix, documentation synchronization and Closure Proposal prepared; `mvn verify` passed with 113 tests and frozen-path diff is zero | Human Phase 5 Closure Approval; merge/tag remain unauthorized |
 
 ## 15. Completion Checklist
 
-- [ ] inherited approval and TASK-017 dependency recorded
-- [ ] reproducible component evidence recorded honestly
-- [ ] all documents/evidence synchronized
-- [ ] full build/Checkstyle/diff/frozen audit pass
-- [ ] commits/push/exact-SHA CI recorded
-- [ ] Closure proposal prepared and execution stopped for Human approval
+- [x] inherited approval and TASK-017 dependency recorded
+- [x] reproducible component evidence recorded honestly
+- [x] all documents/evidence synchronized
+- [x] full build/Checkstyle/diff/frozen audit pass
+- [x] commits/push/exact-SHA CI recorded
+- [x] Closure proposal prepared and execution stopped for Human approval

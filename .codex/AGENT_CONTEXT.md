@@ -10,20 +10,20 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 5 — Command WAL and Deterministic Replay Foundation (`Implementation Authorized`) |
-| Latest product task | [`TASK-20260821-018`](../tasks/active/TASK-20260821-018-phase5-wal-benchmark-docs.md) — Approved / Next |
+| Phase | Phase 5 — Command WAL and Deterministic Replay Foundation (`Closure Pending`) |
+| Latest product task | [`TASK-20260821-018`](../tasks/active/TASK-20260821-018-phase5-wal-benchmark-docs.md) — Completed / Closure Proposal Prepared |
 | Latest architecture decision | [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md) — Approved |
-| Current planning task | TASK-014/015/016/017 completed with evidence; TASK-018 next; then Closure Review |
+| Current planning task | TASK-014 through TASK-018 completed with evidence; Human Phase 5 Closure Approval next |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
-| Product stage | Phase 4 Closed / Baseline Frozen; Phase 5 implementation in progress |
-| Product approval | Phase 5 Blueprint approved; implementation authorized in dependency order; Closure, merge/tag and Product Release not authorized |
+| Product stage | Phase 4 Closed / Baseline Frozen; Phase 5 implementation completed |
+| Product approval | Phase 5 Blueprint approved; TASK-014..018 evidence passed; Closure, merge/tag and Product Release not authorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `feature/phase5-command-wal-replay` |
 | Engineering baseline commit | `d28abbe` |
 | Engineering baseline tag | `v0.3.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/master` at `fbcbe53`; implementation branch at `16dc957`; annotated `v0.3.0-engineering-baseline` remains at `d28abbe` |
-| CI | TASK-017 [32467018067](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467018067) PASS; TASK-016 [32466659845](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466659845) PASS; TASK-015 [32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050) PASS; TASK-014 [32464648365](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32464648365) PASS; approval [32462992039](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462992039) PASS; proposal [32462826593](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462826593) PASS; master [32460526614](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460526614) PASS; tag [32460979962](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460979962) PASS |
+| Remote sync | `origin/master` at `fbcbe53`; implementation branch at `cd6997c`; annotated `v0.3.0-engineering-baseline` remains at `d28abbe` |
+| CI | TASK-018 [32467692149](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467692149) PASS; TASK-017 [32467018067](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467018067) PASS; TASK-016 [32466659845](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466659845) PASS; TASK-015 [32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050) PASS; TASK-014 [32464648365](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32464648365) PASS; approval [32462992039](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462992039) PASS; proposal [32462826593](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462826593) PASS; master [32460526614](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460526614) PASS; tag [32460979962](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460979962) PASS |
 
 ## Project Progress
 
@@ -35,7 +35,7 @@
 | Phase 3 — Matching Engine | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-3-matching-engine-closure-authorization.md); `v0.2.0-engineering-baseline` |
 | Governance — Phase Blueprint Mode | Completed / Approved / Active | [`TASK-009`](../tasks/completed/TASK-20260821-009-phase-blueprint-governance.md); master CI PASS |
 | Phase 4 — Event Pipeline | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-4-event-pipeline-closure.md); `v0.3.0-engineering-baseline` |
-| Phase 5 — Command WAL and Deterministic Replay Foundation | Approved / Implementation Authorized | [`Blueprint`](../tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md); [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md) |
+| Phase 5 — Command WAL and Deterministic Replay Foundation | Implementation completed / Closure Pending | [`Blueprint`](../tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md); [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md); [`Closure`](../tasks/reports/PHASE-5-command-wal-replay-closure.md) |
 | Phase 6+ — Network, Snapshot/recovery integration and performance evolution | Future Work | separately approved future Blueprints |
 
 ## Current Product Gate
@@ -76,7 +76,8 @@ ADR-0011 Final Approved
     -> TASK-015 [Completed / exact-SHA CI PASS]
     -> TASK-016 [Completed / exact-SHA CI PASS]
     -> TASK-017 [Completed / exact-SHA CI PASS]
-    -> TASK-018 [Authorized / Next; stop at Closure proposal]
+    -> TASK-018 [Completed / evidence PASS; Closure Proposal prepared]
+    -> Human Phase 5 Closure Approval [Next; merge/tag not authorized]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
@@ -96,9 +97,10 @@ Gates remain mandatory. Existing Domain, OrderBook and MatchingEngine
 production files remain frozen. Phase 4 is completed and CI-verified at
 `v0.3.0-engineering-baseline`. Phase 5 Discovery selected a versioned command
 WAL and strict offline deterministic replay foundation before Network. ADR-0013,
-the complete Blueprint and TASK-014 through TASK-018 are approved for strict
-dependency-ordered execution. Phase Closure, merge, tag and Product Release
-remain unauthorized.
+the complete Blueprint and TASK-014 through TASK-018 were approved for strict
+dependency-ordered execution. All five Tasks now have exact-SHA CI evidence,
+and the Closure Proposal is prepared. Phase Closure, merge, tag and Product
+Release remain unauthorized.
 
 Current approved Blueprint:
 [`PHASE-5-command-wal-and-replay-blueprint.md`](../tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md).
@@ -108,6 +110,9 @@ Current proposal report:
 
 Current cumulative implementation report:
 [`PHASE-5-command-wal-replay.md`](../tasks/reports/PHASE-5-command-wal-replay.md).
+
+Current Closure Proposal:
+[`PHASE-5-command-wal-replay-closure.md`](../tasks/reports/PHASE-5-command-wal-replay-closure.md).
 
 Latest completed Blueprint:
 [`PHASE-4-event-pipeline-blueprint.md`](../tasks/blueprints/PHASE-4-event-pipeline-blueprint.md).
@@ -195,9 +200,11 @@ Synchronous MatchingEngine orchestration is implemented: exact-next command
 validation, immutable outcomes, frozen OrderBook delegation, engine-owned
 TradeId/EventSequence allocation, and Trade/Execution result mapping.
 
-Market-order execution, Netty protocol, WAL, snapshot and recovery are not
-implemented. The approved Disruptor pipeline is implemented as a bounded
-component boundary and frozen at `v0.3.0-engineering-baseline`.
+Market-order execution and Netty protocol remain future work. The approved
+Disruptor pipeline is implemented as a bounded component boundary and frozen
+at `v0.3.0-engineering-baseline`. Phase 5 now provides a versioned command WAL,
+strict segmented scanning, offline genesis replay and corruption/torn-tail
+evidence; it does not provide live durability, Snapshot or online Recovery.
 
 ## Performance Evidence
 
@@ -208,6 +215,9 @@ Verified fact:
 - Phase 4 component JMH evidence compares direct processing, producer
   admission and verified batch completion across two capacities and three wait
   modes; see [`pipeline.md`](../docs/benchmark/pipeline.md).
+- Phase 5 component JMH evidence separates WAL append, strict scan and offline
+  replay across durability modes, segment sizes and command counts; see
+  [`recovery.md`](../docs/benchmark/recovery.md).
 - Raw JSON and JFR artifacts are local and ignored; reports record their paths,
   generation commands, summaries and limitations.
 
@@ -234,7 +244,7 @@ Client
        -> PriceLevel / OrderQueue
        -> active OrderId index
   -> Trade / Execution results        [Engine generation implemented]
-  -> Command WAL / Offline Replay     [Phase 5 authorized; TASK-018 next; then Closure Review]
+  -> Command WAL / Offline Replay     [Phase 5 implemented; Closure Review pending]
   -> Snapshot / Online Recovery       [Future Work]
   -> Output / Metrics                 [Future Work]
 ```

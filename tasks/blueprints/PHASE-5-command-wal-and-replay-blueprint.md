@@ -14,7 +14,7 @@
 | Proposal Base HEAD | `fbcbe53` |
 | Blueprint Branch | `docs/phase5-command-wal-replay-blueprint` |
 | Planned Tasks | `TASK-20260821-014` through `TASK-20260821-018` |
-| Next Gate | `TASK-014 Implementation / Evidence Gate` |
+| Next Gate | `Human Phase 5 Closure Approval` |
 
 ## 2. Discovery and Phase Goal
 
@@ -294,13 +294,13 @@ approval is required between approved Tasks unless an Exception Gate fires.
 
 ### Completion Evidence
 
-- [ ] TASK-014 through TASK-018 completed in dependency order;
-- [ ] focused, integration, replay and corruption suites pass repeatedly;
-- [ ] full `mvn verify` and Checkstyle pass;
-- [ ] exact-SHA remote CI passes at each Task checkpoint;
-- [ ] benchmark method/results/limitations are committed;
-- [ ] frozen-path diff audit equals zero;
-- [ ] documentation and `AGENT_CONTEXT` are synchronized;
+- [x] TASK-014 through TASK-018 completed in dependency order;
+- [x] focused, integration, replay and corruption suites pass repeatedly;
+- [x] full `mvn verify` and Checkstyle pass;
+- [x] exact-SHA remote CI passes at each Task checkpoint;
+- [x] benchmark method/results/limitations are committed;
+- [x] frozen-path diff audit equals zero;
+- [x] documentation and `AGENT_CONTEXT` are synchronized;
 - [ ] Phase Closure Report receives separate Human approval.
 
 ## 10. Verification Strategy
@@ -513,8 +513,8 @@ Required execution/closure artifacts after approval:
 
 ```text
 Blueprint Status: Approved
-Implementation: Authorized in dependency order
-Next Gate: TASK-014 Implementation / Evidence Gate
+Implementation: TASK-014 through TASK-018 completed
+Next Gate: Human Phase 5 Closure Approval
 ```
 
 Approval must explicitly confirm:
@@ -538,20 +538,21 @@ Approval must explicitly confirm:
 | 2026-08-21 | TASK-015 Evidence Gate | Completed / CI PASS | storage commit `7da0069`; exact-SHA CI [32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050) PASS; 102 full tests | TASK-016 Implementation / Evidence Gate |
 | 2026-08-21 | TASK-016 Evidence Gate | Completed / CI PASS | replay commit `f434431`; exact-SHA CI [32466659845](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466659845) PASS; 107 full tests | TASK-017 Implementation / Evidence Gate |
 | 2026-08-21 | TASK-017 Evidence Gate | Completed / CI PASS | failure matrix commit `16dc957`; exact-SHA CI [32467018067](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467018067) PASS; 113 full tests | TASK-018 Implementation / Evidence Gate; then STOP |
+| 2026-08-21 | TASK-018 Evidence Gate | Completed / CI PASS | benchmark/docs commit `cd6997c`; exact-SHA CI [32467692149](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467692149) PASS; 113 full tests; full JMH matrix recorded | Phase 5 Closure Proposal; STOP for Human approval |
 
 ## 20. Phase Closure Checklist
 
 - [ ] Blueprint approval recorded and synchronized into ADR-0013/Tasks
-- [ ] TASK-014 format/codec completed
-- [ ] TASK-015 segmented storage completed
-- [ ] TASK-016 deterministic replay completed
-- [ ] TASK-017 corruption/recovery verification completed
-- [ ] TASK-018 benchmark/documentation completed
-- [ ] all automated evidence gates and exact-SHA CI pass
-- [ ] frozen production-path diff is zero
-- [ ] no unresolved Exception Gate
-- [ ] architecture and documentation synchronized
-- [ ] Phase Closure Report prepared
+- [x] TASK-014 format/codec completed
+- [x] TASK-015 segmented storage completed
+- [x] TASK-016 deterministic replay completed
+- [x] TASK-017 corruption/recovery verification completed
+- [x] TASK-018 benchmark/documentation completed
+- [x] all automated evidence gates and exact-SHA CI pass
+- [x] frozen production-path diff is zero
+- [x] no unresolved Exception Gate
+- [x] architecture and documentation synchronized
+- [x] Phase Closure Report prepared
 - [ ] Human Phase Closure Approval recorded
 - [ ] authorized merge/tag/baseline actions verified
 - [ ] active Tasks moved to completed
