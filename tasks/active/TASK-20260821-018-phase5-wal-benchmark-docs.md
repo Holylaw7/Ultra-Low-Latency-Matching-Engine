@@ -1,0 +1,158 @@
+# Task Plan — TASK-20260821-018
+
+## 1. Metadata
+
+| Field | Value |
+| --- | --- |
+| Task ID / Title | `TASK-20260821-018` / Phase 5 WAL Benchmark, Documentation and Closure Preparation |
+| Status | `Proposed` |
+| Owner / Implementer | Human Developer / Codex |
+| Created / Updated | `2026-08-21` |
+| Phase / ADR / Blueprint | Phase 5 / ADR-0013 / `PHASE-5-command-wal-and-replay-blueprint.md` |
+| Authorization Mode | `Blueprint` |
+| Depends On | TASK-017 exact-SHA evidence PASS |
+| Current Stage / Next Gate | Proposal / Human Phase 5 Blueprint Approval |
+| Branch / CI | `feature/phase5-command-wal-replay` / Pending |
+
+## 2. Background and Goal
+
+Measure the completed component without changing it, interpret evidence within
+the approved claim boundary, synchronize architecture/current-state documents
+and prepare (but do not approve) the Phase 5 Closure Report.
+
+## 3. Non-Goals
+
+- optimization, format/default changes or production tuning;
+- live pipeline, Network, Snapshot or online Recovery benchmarks;
+- end-to-end trade/client durability claims;
+- raw benchmark/JFR artifacts in Git;
+- merge, tag, Release or Phase 6 authorization.
+
+## 4. Requirements and Acceptance Criteria
+
+- [ ] JMH separates append, strict scan and engine replay boundaries;
+- [ ] `SYNC_EACH_APPEND` and `BUFFERED` are reported separately;
+- [ ] dataset, segments, bytes, environment, warmup/measurement/forks/threads,
+  JVM/GC and storage limitations are recorded;
+- [ ] raw evidence remains ignored with path/command/summary documented;
+- [ ] no result changes `SYNC_EACH_APPEND` default automatically;
+- [ ] architecture/recovery/benchmark/README/context/ADR/Blueprint/Tasks agree;
+- [ ] cumulative Task report and Phase Closure proposal contain exact evidence;
+- [ ] frozen production diff remains zero;
+- [ ] full `mvn verify`, diff checks and exact-SHA CI pass;
+- [ ] stop at separate Human Phase 5 Closure Approval.
+
+## 5. Current Implementation and Scope
+
+TASK-014..017 will provide the verified WAL/replay component. This Task may add
+only benchmark code and documentation, except an implementation defect triggers
+return to the owning Task or an Exception Gate.
+
+## 6. Design and ADR Linkage
+
+Use separate JMH states/directories per fork/trial, consume outputs to prevent
+dead-code elimination, clean only benchmark-owned temporary paths and never
+reuse stale WAL data across measurements.
+
+| Field | Value |
+| --- | --- |
+| ADR | ADR-0013 (`Proposed`) |
+| Decision Summary | D6, D8-D10 define evidence variables and claim limits |
+| Scope Boundary | benchmark/docs/closure proposal only; no optimization or default change |
+| Blueprint Status | `Proposed`; no implementation authority yet |
+| Exception Gates | benchmark exposes architecture defect, format/default change, product claim |
+
+Alternatives considered: a single mixed end-to-end number or ad-hoc timing.
+Separate JMH append/scan/replay boundaries are selected so admission,
+durability and replay costs cannot be conflated.
+
+## 7. Planned File Changes
+
+| File or Directory | Change |
+| --- | --- |
+| `benchmark/src/main/java/.../WalBenchmark.java` | append/scan/replay component JMH |
+| `docs/benchmark/recovery.md` | reproducible method/results/limitations |
+| `docs/architecture/recovery.md`, `overview.md` | implemented vs deferred boundary |
+| `README.md`, `.codex/AGENT_CONTEXT.md` | concise Phase status/evidence |
+| ADR/Blueprint/TASK plans | approved implementation status/evidence sync |
+| `tasks/reports/PHASE-5-command-wal-replay.md` | cumulative execution evidence |
+| `tasks/reports/PHASE-5-command-wal-replay-closure.md` | Human Closure proposal |
+
+## 8. Test and Evidence Plan
+
+- JMH smoke validates benchmark wiring only.
+- Full component matrix records append/scan/replay separately.
+- Full regression and Checkstyle run before benchmark commit and closure prep.
+- Documentation link/scope audit and frozen-path audit run before commit.
+- No benchmark value is fabricated, cherry-picked or presented without method.
+
+## 9. Benchmark and Profile Plan
+
+- Benchmark: required; see Blueprint Section 11.
+- Profile: not planned; requires Exception/optimization approval if needed.
+- Metrics: throughput, sample-time percentiles where meaningful, bytes,
+  commands, segments, allocation/GC when reproducible.
+- Baseline: new Phase 5 component baseline; no production target.
+
+## 10. Risks and Mitigations
+
+| Risk | Mitigation |
+| --- | --- |
+| filesystem cache distorts results | document lifecycle/cache limits; separate modes |
+| buffered result mistaken for durable | prominent mode-specific claims |
+| force result over-generalized | record host/storage/JDK and narrow semantics |
+| benchmark contaminates product | no benchmark-only production paths |
+| closure hides missing recovery | explicit Snapshot/online Recovery limitations |
+
+## 11. Rollback Plan
+
+Revert benchmark and documentation only. Raw artifacts remain local and may be
+discarded only from the explicitly benchmark-owned directory. No product data
+or baseline tag is changed.
+
+## 12. Verification Commands
+
+```text
+mvn verify
+java -jar benchmark/target/matching-engine-benchmark-0.1.0-SNAPSHOT.jar WalBenchmark <smoke options>
+java -jar benchmark/target/matching-engine-benchmark-0.1.0-SNAPSHOT.jar WalBenchmark <approved full options>
+git diff --check
+<frozen-path diff audit from Blueprint>
+```
+
+## 13. Git Plan
+
+Commits:
+
+```text
+perf(wal): add append and replay component baseline
+docs(phase5): synchronize wal replay evidence
+docs(phase5): prepare command wal replay closure
+```
+
+Push each checkpoint and record exact-SHA CI. Merge/tag wait for Human Closure.
+
+## 14. Approval, Reports and Implementation Log
+
+| Date | Reviewer | Stage | Decision | Notes |
+| --- | --- | --- | --- | --- |
+| 2026-08-21 | Human Developer | Proposal creation | `Authorized` | Plan only; implementation awaits Blueprint approval |
+
+| Stage | Report | Status | Next Gate |
+| --- | --- | --- | --- |
+| Proposal | Phase 5 proposal report | Proposed | Human Blueprint Approval |
+| Benchmark / Docs | cumulative Phase 5 report | Not started | exact-SHA evidence |
+| Closure Preparation | Phase 5 Closure Report | Not started | Human Phase 5 Closure Approval |
+
+| Date | Status | Summary | Verification |
+| --- | --- | --- | --- |
+| 2026-08-21 | Proposed | Benchmark/docs/closure plan created | documentation review pending |
+
+## 15. Completion Checklist
+
+- [ ] inherited approval and TASK-017 dependency recorded
+- [ ] reproducible component evidence recorded honestly
+- [ ] all documents/evidence synchronized
+- [ ] full build/Checkstyle/diff/frozen audit pass
+- [ ] commits/push/exact-SHA CI recorded
+- [ ] Closure proposal prepared and execution stopped for Human approval

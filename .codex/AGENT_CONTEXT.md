@@ -10,20 +10,20 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 4 — Event Pipeline (`Completed / Approved / Baseline Frozen`) |
-| Latest product task | [`TASK-20260821-013`](../tasks/completed/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) — Completed / Archived |
-| Latest architecture decision | [`ADR-0012`](../docs/adr/ADR-0012-event-pipeline-execution-and-backpressure.md) — Approved / Implemented |
-| Current planning task | None — Phase 5 not authorized |
+| Phase | Phase 5 — Command WAL and Deterministic Replay Foundation (`Blueprint Proposed`) |
+| Latest product task | [`TASK-20260821-018`](../tasks/active/TASK-20260821-018-phase5-wal-benchmark-docs.md) — Proposed |
+| Latest architecture decision | [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md) — Proposed |
+| Current planning task | [`TASK-014`](../tasks/active/TASK-20260821-014-phase5-wal-format-codec.md) through [`TASK-018`](../tasks/active/TASK-20260821-018-phase5-wal-benchmark-docs.md) — Proposed / not authorized |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
-| Product stage | Phase 4 Closed / Baseline Frozen |
-| Product approval | Phase 4 completed and frozen; Phase 5 and Product Release not authorized |
+| Product stage | Phase 4 Closed / Baseline Frozen; Phase 5 Blueprint Review |
+| Product approval | Phase 5 proposal creation authorized; implementation, Closure and Product Release not authorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
-| Branch | `master` |
+| Branch | `docs/phase5-command-wal-replay-blueprint` |
 | Engineering baseline commit | `d28abbe` |
 | Engineering baseline tag | `v0.3.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/master` at `d28abbe`; annotated `v0.3.0-engineering-baseline` published at the same commit |
-| CI | master [32460526614](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460526614) PASS; tag [32460979962](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460979962) PASS |
+| Remote sync | `origin/master` at `fbcbe53`; annotated `v0.3.0-engineering-baseline` remains at `d28abbe` |
+| CI | master [32460526614](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460526614) PASS; tag [32460979962](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460979962) PASS; Phase 4 final closure [32461298486](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32461298486) PASS |
 
 ## Project Progress
 
@@ -35,7 +35,8 @@
 | Phase 3 — Matching Engine | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-3-matching-engine-closure-authorization.md); `v0.2.0-engineering-baseline` |
 | Governance — Phase Blueprint Mode | Completed / Approved / Active | [`TASK-009`](../tasks/completed/TASK-20260821-009-phase-blueprint-governance.md); master CI PASS |
 | Phase 4 — Event Pipeline | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-4-event-pipeline-closure.md); `v0.3.0-engineering-baseline` |
-| Phase 5+ — Network, recovery and performance evolution | Future Work | Future Blueprints, ADRs and Tasks |
+| Phase 5 — Command WAL and Deterministic Replay Foundation | Blueprint Proposed / Pending Human Approval | [`Blueprint`](../tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md); [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md) |
+| Phase 6+ — Network, Snapshot/recovery integration and performance evolution | Future Work | separately approved future Blueprints |
 
 ## Current Product Gate
 
@@ -69,7 +70,9 @@ ADR-0011 Final Approved
     -> normal merge / master CI / baseline tag [Completed / PASS]
     -> TASK-010 through TASK-013 [Archived]
     -> Phase 4 [Baseline Frozen]
-    -> Phase 5 [Not Authorized]
+    -> Phase 5 Discovery / ADR / Complete Blueprint [Prepared]
+    -> Human Phase 5 Blueprint Approval [Pending]
+    -> TASK-014 through TASK-018 Implementation [Not Authorized]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
@@ -87,9 +90,18 @@ pipeline, deterministic result handling, backpressure, lifecycle, verification
 and component evidence are implemented. Automated evidence gates and Exception
 Gates remain mandatory. Existing Domain, OrderBook and MatchingEngine
 production files remain frozen. Phase 4 is completed and CI-verified at
-`v0.3.0-engineering-baseline`. Phase 5 remains unauthorized.
+`v0.3.0-engineering-baseline`. Phase 5 Discovery selected a versioned command
+WAL and strict offline deterministic replay foundation before Network. ADR-0013,
+the complete Blueprint and TASK-014 through TASK-018 are Proposed. No Phase 5
+implementation, Closure, merge, tag or Product Release is authorized.
 
-Completed Blueprint:
+Current proposed Blueprint:
+[`PHASE-5-command-wal-and-replay-blueprint.md`](../tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md).
+
+Current proposal report:
+[`PHASE-5-command-wal-replay-blueprint-proposal.md`](../tasks/reports/PHASE-5-command-wal-replay-blueprint-proposal.md).
+
+Latest completed Blueprint:
 [`PHASE-4-event-pipeline-blueprint.md`](../tasks/blueprints/PHASE-4-event-pipeline-blueprint.md).
 
 Blueprint proposal report:
@@ -146,6 +158,16 @@ Current evidence:
 | Event pipeline execution and backpressure | Approved with Blueprint conditions | [`ADR-0012`](../docs/adr/ADR-0012-event-pipeline-execution-and-backpressure.md) |
 
 If a Task and linked ADR disagree, stop and synchronize them before work.
+
+## Pending Architecture Proposal
+
+| Decision | Status | Source |
+| --- | --- | --- |
+| Versioned command WAL and strict offline deterministic replay | Proposed / Pending Human Phase 5 Blueprint Approval | [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md) |
+
+ADR-0013 proposes persistence/replay before Network while keeping all existing
+Domain, OrderBook, Engine and Pipeline production files frozen. It does not
+authorize live durability integration, Snapshot or online Recovery.
 
 ## Verified Current Implementation
 
@@ -204,8 +226,9 @@ Client
        -> PriceLevel / OrderQueue
        -> active OrderId index
   -> Trade / Execution results        [Engine generation implemented]
-       -> WAL / Recovery              [Future Work]
-       -> Output / Metrics            [Future Work]
+  -> Command WAL / Offline Replay     [Phase 5 proposed; not authorized]
+  -> Snapshot / Online Recovery       [Future Work]
+  -> Output / Metrics                 [Future Work]
 ```
 
 The Phase 4 pipeline gives one consumer thread exclusive ownership of one

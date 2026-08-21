@@ -44,8 +44,10 @@ standard for future multi-task phases. The complete Phase 4 Event Pipeline
 Blueprint, ADR-0012 and TASK-010 through TASK-013 have received Human Blueprint
 Approval. Phase 4 implementation, verification, component benchmark evidence
 and Closure are complete and frozen at `v0.3.0-engineering-baseline`. The
-earlier `v0.2.0-engineering-baseline` remains immutable. Phase 5 and Product
-Release are not authorized.
+earlier `v0.2.0-engineering-baseline` remains immutable. A complete Phase 5
+Command WAL and Deterministic Replay Blueprint Proposal now awaits Human
+Blueprint Approval. Phase 5 implementation and Product Release are not
+authorized.
 
 The repository currently contains:
 
@@ -70,6 +72,11 @@ event pipeline in front of the existing synchronous MatchingEngine. WAL,
 Replay, Snapshot, Recovery, Network and production optimization remain
 explicit non-goals. See
 [`PHASE-4-event-pipeline-blueprint.md`](tasks/blueprints/PHASE-4-event-pipeline-blueprint.md).
+
+The proposed Phase 5 boundary is a versioned segmented command WAL plus strict
+offline deterministic replay. It deliberately excludes live pipeline
+durability integration, Snapshot, online Recovery and Network. See
+[`PHASE-5-command-wal-and-replay-blueprint.md`](tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md).
 
 ## Build
 

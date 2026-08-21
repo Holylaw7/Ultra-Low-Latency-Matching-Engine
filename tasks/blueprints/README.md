@@ -12,3 +12,11 @@ Blueprint-authorized sub-stages continue after automated evidence gates pass.
 Stop for an explicit manual gate, an Exception Gate or Phase Closure.
 
 Historical Phases completed before Phase Blueprint Mode are not retrofitted.
+
+## Current Blueprints
+
+- [`PHASE-4-event-pipeline-blueprint.md`](PHASE-4-event-pipeline-blueprint.md)
+  — Completed / Approved / frozen at `v0.3.0-engineering-baseline`.
+- [`PHASE-5-command-wal-and-replay-blueprint.md`](PHASE-5-command-wal-and-replay-blueprint.md)
+  — Proposed; implementation is not authorized pending Human Blueprint
+  Approval.
