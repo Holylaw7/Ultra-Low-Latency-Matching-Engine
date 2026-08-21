@@ -22,7 +22,7 @@
 | Engineering baseline tag | `v0.2.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
 | Remote sync | `master` and `v0.2.0-engineering-baseline` published |
-| CI | Master [run 32449941033](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32449941033) PASS; tag [run 32449993233](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32449993233) PASS; local `mvn verify` PASS (61 tests) |
+| CI | Master baseline [run 32449941033](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32449941033) PASS; tag [run 32449993233](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32449993233) PASS; final closure [run 32450198615](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32450198615) PASS; local `mvn verify` PASS (61 tests) |
 
 ## Project Progress
 
