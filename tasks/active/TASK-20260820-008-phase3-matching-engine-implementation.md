@@ -6,15 +6,15 @@
 | --- | --- |
 | Task ID | `TASK-20260820-008` |
 | Title | Implement Phase 3 MatchingEngine Orchestration Baseline |
-| Status | `In Progress — Stage 3 authorized / not started` |
+| Status | `In Progress — Stage 3 completed pending Human approval` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created | `2026-08-20` |
 | Updated | `2026-08-21` |
 | Related Phase | Phase 3 — MatchingEngine |
 | Related ADR | ADR-0005 sequence revision and ADR-0011 (`Approved`) |
-| Current Stage | `Stage 3 Determinism Verification authorized / not started` |
-| Next Approval Gate | `Human Stage 3 Completion Review after verification` |
+| Current Stage | `Stage 3 Determinism Verification completed pending Human approval` |
+| Next Approval Gate | `Human Stage 3 Completion Review` |
 | Branch | `feature/phase3-matching-engine` |
 | Approved Implementation Branch | `feature/phase3-matching-engine` |
 | Parent Branch / HEAD | `docs/phase3-matching-engine-adr` at `96fe50b` |
@@ -38,8 +38,8 @@ ADR-0005 revision R1-R6 reserves `Sequence` for input commands and introduces
 an explicit MatchingEngine-owned `EventSequence` for output match aggregates.
 This Task converts those accepted decisions into a reviewable implementation
 plan. The Human Developer approved the plan on `2026-08-20`. Stage 1 and Stage
-2 are completed and approved. Stage 3 verification was authorized on
-`2026-08-21` within the verification-only boundary below.
+2 are completed and approved. Stage 3 verification was authorized and
+implemented on `2026-08-21`; completion remains gated by Human review.
 
 ## 3. Goal
 
@@ -679,7 +679,7 @@ Review; Phase 3 closure does not start automatically.
 | Task Approval | Same planning report | Completed | Domain/API Foundation | Approved 2026-08-20 |
 | Domain/API Foundation | `tasks/reports/PHASE-3-matching-engine-domain-api-foundation.md` | Completed / Approved | Stage 2 Authorization | Approved 2026-08-20 |
 | MatchingEngine Implementation | `tasks/reports/PHASE-3-matching-engine-core-implementation.md` | Completed / Approved | Stage 3 Authorization | Approved 2026-08-21 |
-| Correctness / Determinism Verification | `tasks/reports/PHASE-3-matching-engine-determinism-authorization.md` | Authorized / Not Started | Human Stage 3 Completion Review | Approved 2026-08-21 |
+| Correctness / Determinism Verification | `tasks/reports/PHASE-3-matching-engine-determinism-verification.md` | Completed / Pending Human Approval | Human Stage 3 Completion Review | Pending |
 | Benchmark / Profile | Not applicable | Not applicable | Documentation Sync | Not applicable |
 | Documentation and Synchronization | Not created | Not Authorized | Completion Review | Not Authorized |
 | Completion | Not created | Not Authorized | Human Completion Approval | Not Authorized |
@@ -699,6 +699,7 @@ Review; Phase 3 closure does not start automatically.
 | 2026-08-21 | Stage 2 Approved | Human accepted the implementation, verification, ADR alignment and frozen OrderBook boundary | `0ad45fa`; GitHub Actions run `32387974864` PASS; Stage 3 remains unauthorized |
 | 2026-08-21 | Stage 3 Authorization Proposed | Froze value equality, public-API state probes, reachable failure atomicity and explicit unreachable-failure limitations | `62f59aa`; GitHub Actions run `32446230919` PASS; execution remains unauthorized pending Human review |
 | 2026-08-21 | Stage 3 Authorized | Human approved verification-only execution and made collection order part of observable determinism | Only `MatchingEngineDeterminismTest.java` may be added; Phase 3 closure remains unauthorized |
+| 2026-08-21 | Stage 3 Completed | Added fixed dual-engine determinism, public-API probes and reachable failure-atomicity evidence | `6eb31ea`, `e7d26f0`; focused 5 tests, core 61 tests, `mvn verify` PASS and Checkstyle 0; pending Human completion review |
 
 ## 20. Completion Checklist
 
@@ -724,4 +725,6 @@ Review; Phase 3 closure does not start automatically.
 - [x] Stage 2 branch push and exact-SHA CI evidence recorded
 - [x] Stage 3 authorization scope documented without production/test changes
 - [x] Human Stage 3 Authorization Review completed
-- [ ] Stage 3 determinism verification executed
+- [x] Stage 3 determinism verification executed
+- [x] Stage 3 report and documentation synchronization completed
+- [ ] Human Stage 3 Completion Review completed

@@ -38,8 +38,8 @@ approved; it adds EventSequence plus immutable command/result types only.
 Stage 2 implements the synchronous MatchingEngine core: sequenced limit submit
 and cancellation, frozen OrderBook delegation and immutable Trade/Execution
 results. Stage 2 is completed and approved; Stage 3 verification remains
-separately gated. Its verification-only scope is approved and execution is
-authorized; Phase 3 closure still requires a later Human review.
+separately gated. Its verification-only execution is complete and pending
+Human review; Phase 3 closure remains unauthorized.
 
 The repository currently contains:
 
