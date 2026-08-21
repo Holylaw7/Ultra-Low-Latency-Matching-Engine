@@ -5,15 +5,15 @@
 | Field | Value |
 | --- | --- |
 | Phase | Phase 4 — Event Pipeline |
-| Task | TASK-20260821-011 — Pipeline Core |
+| Task | TASK-20260821-012 — Verification |
 | Stage | Implementation / Verification |
-| Result | `TASK-011 Completed — evidence gate passed` |
-| Tests | Full run: 77 tests, 0 failures |
+| Result | `TASK-012 Completed — evidence gate passed` |
+| Tests | Full run: 83 tests, 0 failures; focused verification repeated 3 times |
 | Build | `mvn verify` PASS; Maven reactor 3/3 SUCCESS |
 | Checkstyle | 0 violations in focused run |
-| Commit | `a3986dff8975014ee6eecab2dd6896f01d5fd290` |
-| Remote / CI | `origin/feature/phase4-event-pipeline`; [run 32457723272](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32457723272) PASS |
-| Next Gate | TASK-012 Implementation |
+| Commit | `4df2e337b486d1bda9e010971b3b6e96c2edc403` |
+| Remote / CI | `origin/feature/phase4-event-pipeline`; [run 32458096228](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32458096228) PASS |
+| Next Gate | TASK-013 Implementation |
 
 ## TASK-010 Foundation (Completed)
 
@@ -71,6 +71,21 @@ The existing `domain/**`, `engine/**` and `orderbook/**` production paths remain
 unchanged. TASK-010 does not authorize a runtime pipeline and does not alter
 the frozen `v0.2.0-engineering-baseline`.
 
+## TASK-012 Verification (Completed)
+
+The verification suite uses a fixed 1,024-command stream containing multiple
+price-time matches, residual orders and cancellations. It compares direct
+synchronous results with pipeline results using public structured values and
+order-significant collections. Failure tests cover deterministic saturation and
+retry, lifecycle rejection, foreign producer ownership, invalid command
+sequence, result-handler fail-stop and bounded timeout behavior.
+
+The focused suite passed three consecutive invocations. Full `mvn verify`
+passed with 83 tests, 0 failures, Checkstyle 0 violations and Maven reactor
+3/3 SUCCESS. TASK-012 commit
+`4df2e337b486d1bda9e010971b3b6e96c2edc403` passed exact-SHA CI run
+`32458096228`.
+
 ## ADR / Blueprint Alignment
 
 ADR-0012 D1, D4 and D7 are implemented only at the dependency/configuration
@@ -79,9 +94,9 @@ for explicit future experiments and carry no production recommendation.
 
 ## Next State
 
-TASK-010 and TASK-011 are `Completed`; continue to TASK-012 under the approved
-dependency order. Any need to
+TASK-010, TASK-011 and TASK-012 are `Completed`; continue to TASK-013 under
+the approved dependency order. Any need to
 modify existing Engine/Domain/OrderBook contracts or change the dependency is
 an Exception Gate.
 
-**Blueprint Authorized — TASK-011 evidence gate passed; TASK-012 may continue.**
+**Blueprint Authorized — TASK-012 evidence gate passed; TASK-013 may continue.**
