@@ -289,9 +289,10 @@ or replaces an approval gate. When these models are available, prefer:
 | Work | Recommended model / effort |
 | --- | --- |
 | Architecture, ADR set and complete Phase Blueprint | Sol / high |
-| Complex implementation | Terra / high |
-| Routine tests and verification expansion | Terra / medium |
-| Documentation synchronization and routine Git evidence | Luna / low or Terra / low |
+| Approved implementation writer | Luna / max |
+| Read-only correctness and evidence audit | Luna / max |
+| Read-only benchmark methodology review | Luna / max |
+| Documentation synchronization and evidence audit | Luna / medium |
 | Phase Closure Review | Sol / medium or high |
 | Performance architecture and evidence interpretation | Sol / high |
 
@@ -300,6 +301,53 @@ reasoning and coding, Terra balances intelligence and cost, and Luna targets
 cost-sensitive high-volume work. Model availability can change; use the
 closest available capability without changing the Blueprint scope or gates.
 Reference: https://developers.openai.com/api/docs/models
+
+---
+
+## 5.5 Native Subagent Policy
+
+Codex native subagents are available for bounded, independent work. The
+repository configuration is in `.codex/config.toml` and `.codex/agents/`.
+Subagents are execution helpers, not additional approval authorities.
+
+Default topology:
+
+```text
+Main Agent
+  = orchestrator and sole production-code writer
+        |
+        +-- read-only verifier
+        +-- read-only benchmark reviewer when performance evidence changes
+        +-- read-only docs auditor before Closure
+        +-- read-only architect only for Blueprint, Closure or Exception Gate
+```
+
+Rules:
+
+1. Keep at most one production-code writer for overlapping scope.
+2. Prefer parallel read-heavy work: exploration, correctness audits, test-gap
+   analysis, benchmark review and documentation consistency checks.
+3. A subagent must read the governing ADR, Phase Blueprint, Task plan and
+   `AGENT_CONTEXT` before making a review or implementation recommendation.
+4. Read-only auditors must not modify files, add test seams or redesign an
+   approved architecture.
+5. The implementer may write only explicitly authorized scope and must run the
+   required evidence gates before reporting completion.
+6. If any subagent finds an ADR conflict, frozen-file/API change, persistence
+   format change, new critical dependency, scope expansion, weakened criterion
+   or other Exception Gate, the main agent must stop all further implementation
+   and report the conflict for Human review.
+7. The main agent must wait for requested parallel auditors, deduplicate their
+   findings, classify BLOCKER/NON-BLOCKER/PASS, and make the final scoped
+   decision.
+8. Subagent workflows do not authorize merge, tag, release, destructive Git
+   actions or Phase Closure. Those remain governed by the existing approval
+   gates.
+
+Use explicit prompts such as `spawn three read-only auditors in parallel` for
+important Task checkpoints and Closure reviews. Do not spawn agents for every
+small edit; use them when independent review materially improves evidence
+quality.
 
 ---
 
