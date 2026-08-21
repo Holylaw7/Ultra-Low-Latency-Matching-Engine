@@ -39,10 +39,10 @@ Phase 2 OrderBook, synchronous MatchingEngine orchestration, immutable
 Trade/Execution results and deterministic execution evidence. It does not
 contain WAL, Replay, Snapshot, Recovery, Network or production optimization.
 
-The current active work is governance-only: adopting Phase Blueprint Mode for
-future multi-task phases. Phase 4 has not been designed or authorized. A future
-product phase must begin with a complete Blueprint and one Human Blueprint
-Approval under the new rules.
+Phase Blueprint Mode is completed, approved and active as the governance
+standard for future multi-task phases. There is no active product task. Phase
+4 has not been designed or authorized; it must begin with a complete Blueprint
+and one Human Blueprint Approval under the new rules.
 
 The repository currently contains:
 
@@ -54,7 +54,7 @@ The repository currently contains:
 - Java version enforcement
 - GitHub Actions CI
 - Architecture, ADR, benchmark, and performance documentation skeleton
-- Task workspace with ADR-first decisions and phase approval gates
+- Task workspace with ADR-first Phase Blueprints, evidence gates and Exception Gates
 
 Implemented Phase 2 behavior includes deterministic limit-order matching,
 price-time priority, maker-price fragments, partial/full fills, and residual

@@ -6,15 +6,15 @@
 | --- | --- |
 | Phase | Cross-phase governance |
 | Task | `TASK-20260821-009` |
-| Stage | Governance Closure Integration |
-| Result | Approved — Master Integration Authorized |
-| Tests | Not applicable — no executable code changed |
-| Build | Not run — documentation-only change |
-| CI | Runs [`32453171948`](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32453171948) and [`32453266561`](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32453266561) — PASS |
-| Commit | `91611d6` implementation; `a681c16` evidence |
-| Branch | `docs/phase-blueprint-governance` |
+| Stage | Completion |
+| Result | Completed / Approved / Active |
+| Tests | 61 passed; 0 failures |
+| Build | `mvn verify` PASS; Maven reactor 3/3 SUCCESS; 0 Checkstyle violations |
+| CI | Approval [run `32453579746`](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32453579746) and master [run `32453698788`](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32453698788) — PASS |
+| Commit | `91611d6` implementation; `a681c16` evidence; `c675414` approval; `4ad1319` merge |
+| Branch | `master` |
 | Baseline | `7ec4e29` — Phase 3 final closure evidence |
-| Next Gate | Master merge and exact-SHA CI verification |
+| Next Gate | None — Phase 4 not authorized |
 
 ## Outcome
 
@@ -125,7 +125,7 @@ Reference: https://developers.openai.com/api/docs/models
 - `tasks/PHASE_BLUEPRINT_TEMPLATE.md`
 - `tasks/blueprints/README.md`
 - `README.md`
-- `tasks/active/TASK-20260821-009-phase-blueprint-governance.md`
+- `tasks/completed/TASK-20260821-009-phase-blueprint-governance.md`
 - this report
 
 ### Explicitly Unchanged
@@ -146,18 +146,22 @@ Reference: https://developers.openai.com/api/docs/models
 | Whitespace | `git diff --check` | PASS |
 | Local links | Resolve local Markdown targets in all changed files | PASS |
 | Templates | Blueprint/Task link and required-section inspection | PASS |
-| Tests / build | Not applicable | No executable files changed |
+| Tests / build | `mvn verify` on merged master | PASS — 61 tests, reactor 3/3 SUCCESS, 0 Checkstyle violations |
 | Remote CI | GitHub Actions for exact commit `91611d6` | PASS — run `32453171948` |
 | Evidence CI | GitHub Actions for exact commit `a681c16` | PASS — run `32453266561` |
+| Approval CI | GitHub Actions for exact commit `c675414` | PASS — run `32453579746` |
+| Master CI | GitHub Actions for exact merge commit `4ad1319` | PASS — run `32453698788` |
 
 ## Git Evidence
 
 ```text
-Branch: docs/phase-blueprint-governance
+Source branch: docs/phase-blueprint-governance
 Implementation commit: 91611d6
 Evidence commit: a681c16
-Remote: origin/docs/phase-blueprint-governance
-CI runs: 32453171948, 32453266561
+Approval commit: c675414
+Master merge commit: 4ad1319
+Remote: origin/master
+CI runs: 32453171948, 32453266561, 32453579746, 32453698788
 CI conclusions: success
 ```
 
@@ -183,8 +187,8 @@ highest leverage instead of repeating the same context at each sub-stage.
 ## Gate Status
 
 ```text
-Current Stage: Governance completion approved
-Master integration: Authorized
+Current Stage: Governance completed and active
+Master integration: Completed / PASS
 Product Phase 4: Not Authorized
 Release / production optimization: Not Authorized
 ```
