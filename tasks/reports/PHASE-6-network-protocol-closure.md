@@ -51,7 +51,7 @@ Client Request ID
 | TASK-021 single-session gateway | `7f0d5ad` | [32490394814](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490394814) | PASS |
 | TASK-022 network verification | `c7d9399` | [32490942307](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32490942307) | PASS |
 | TASK-023 benchmark implementation | `0c924dd` | [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) | PASS |
-| TASK-023 documentation synchronization | pending final docs commit | pending | to be verified before Closure Review |
+| TASK-023 documentation synchronization | `d628ffb` | [32492948441](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32492948441) | PASS |
 
 ## Verification summary
 
@@ -64,7 +64,7 @@ Client Request ID
 | Benchmark package | PASS |
 | Java 21 smoke and full JMH matrix | PASS |
 | `git diff --check` | PASS at final synchronization |
-| Exact-SHA documentation CI | pending final docs commit |
+| Exact-SHA documentation CI | [32492948441](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32492948441) PASS |
 
 ## Benchmark evidence and claim boundary
 
