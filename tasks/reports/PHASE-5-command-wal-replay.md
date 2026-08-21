@@ -11,8 +11,8 @@
 | Baseline | `v0.3.0-engineering-baseline` remains frozen |
 | Full Verification | `mvn verify` PASS; 114 tests, 0 failures; Maven reactor 3/3 SUCCESS |
 | Checkstyle | 0 violations |
-| Latest Commit | `bd3738283f191ae30bcef747b7957ca207674f8d` (R2; final docs commit pending) |
-| Latest CI | [run 32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533) PASS |
+| Latest Commit | `0e6ac954a2525fbea19b4c9e818f7c6c90098d97` (R3 documentation synchronization) |
+| Latest CI | [run 32482054086](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482054086) PASS |
 | Branch | `feature/phase5-command-wal-replay` |
 | Next Gate | Final Human Phase 5 Closure Review after R3 exact-SHA CI |
 
@@ -226,9 +226,9 @@ Evidence gate:
   production diff relative to `v0.3.0-engineering-baseline` is zero;
 - R1 rotation-failure test commit `83e5544` passed exact-SHA CI [run 32481266960](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481266960);
 - R2 mixed-command benchmark commit `bd37382` passed exact-SHA CI [run 32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533);
-- architecture, README, ADR, Blueprint, Task and context documents are
-  being synchronized by R3; Closure Proposal remains pending final exact-SHA
-  CI.
+- architecture, README, ADR, Blueprint, Task and context documents were
+  synchronized by R3 commit `0e6ac95`; its exact-SHA CI `32482054086` passed.
+  Final Closure Review remains pending.
 
 ## Next State
 

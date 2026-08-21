@@ -543,6 +543,7 @@ Approval must explicitly confirm:
 | 2026-08-21 | TASK-018 Evidence Gate (original) | Superseded by remediation | benchmark/docs commit `cd6997c`; exact-SHA CI [32467692149](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467692149) PASS; original matrix retained as history only | Limited Closure Remediation R2 |
 | 2026-08-21 | Limited Closure Remediation R1 | Completed / CI PASS | rotation-collision test commit `83e5544`; exact-SHA CI [32481266960](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481266960) PASS; 7 focused writer tests | R2 benchmark remediation |
 | 2026-08-21 | Limited Closure Remediation R2 | Completed / CI PASS | mixed Submit/Cancel benchmark commit `bd37382`; exact-SHA CI [32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533) PASS; full JMH raw output and P50/P99 metadata recorded | R3 documentation synchronization |
+| 2026-08-21 | Limited Closure Remediation R3 | Completed / CI PASS | evidence synchronization commit `0e6ac95`; exact-SHA CI [32482054086](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482054086) PASS; final evidence HEAD recorded | Final Human Phase 5 Closure Review |
 
 ## 20. Phase Closure Checklist
 

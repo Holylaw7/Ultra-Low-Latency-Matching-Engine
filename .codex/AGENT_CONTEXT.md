@@ -22,8 +22,8 @@
 | Engineering baseline commit | `d28abbe` |
 | Engineering baseline tag | `v0.3.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/master` at `fbcbe53`; implementation branch at `bd37382` before final docs sync; annotated `v0.3.0-engineering-baseline` remains at `d28abbe` |
-| CI | R2 [32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533) PASS; R1 [32481266960](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481266960) PASS; original TASK-018 [32467692149](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467692149) PASS; TASK-017 [32467018067](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467018067) PASS; TASK-016 [32466659845](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466659845) PASS; TASK-015 [32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050) PASS; TASK-014 [32464648365](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32464648365) PASS |
+| Remote sync | `origin/master` at `fbcbe53`; implementation branch at `0e6ac95` (R3 evidence sync); annotated `v0.3.0-engineering-baseline` remains at `d28abbe` |
+| CI | R3 [32482054086](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482054086) PASS; R2 [32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533) PASS; R1 [32481266960](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481266960) PASS; TASK-017 [32467018067](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467018067) PASS; TASK-016 [32466659845](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466659845) PASS; TASK-015 [32466198050](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32466198050) PASS; TASK-014 [32464648365](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32464648365) PASS |
 
 ## Project Progress
 
@@ -77,7 +77,7 @@ ADR-0011 Final Approved
     -> TASK-016 [Completed / exact-SHA CI PASS]
     -> TASK-017 [Completed / exact-SHA CI PASS]
     -> TASK-018 [Completed / remediation R2 evidence PASS]
-    -> Limited Closure Remediation R1-R3 [Completed; final exact-SHA CI pending]
+    -> Limited Closure Remediation R1-R3 [Completed; exact-SHA CI PASS]
     -> Final Human Phase 5 Closure Review [Next; merge/tag not authorized]
 ```
 
@@ -102,8 +102,9 @@ the complete Blueprint and TASK-014 through TASK-018 were approved for strict
 dependency-ordered execution. All five Tasks now have exact-SHA CI evidence.
 Limited Closure Remediation added deterministic rotation-failure evidence and a
 complete mixed-command benchmark with environment/workload/P50/P99 metadata.
-R3 documentation synchronization is the final automated gate; Phase Closure,
-merge, tag and Product Release remain unauthorized.
+R3 documentation synchronization is complete at `0e6ac95` with exact-SHA CI
+`32482054086` PASS. Phase Closure, merge, tag and Product Release remain
+unauthorized.
 
 Current approved Blueprint:
 [`PHASE-5-command-wal-and-replay-blueprint.md`](../tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md).

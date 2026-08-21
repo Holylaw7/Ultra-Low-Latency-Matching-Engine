@@ -36,8 +36,9 @@ EngineCommand
 | TASK-018 benchmark/docs (original) | `cd6997c` | [32467692149](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32467692149) | superseded by remediation evidence |
 | R1 TASK-015 rotation failure | `83e5544` | [32481266960](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481266960) | PASS; deterministic rotation collision; 7 focused tests |
 | R2 TASK-018 mixed benchmark | `bd37382` | [32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533) | PASS; mixed Submit/Cancel JMH source |
+| R3 evidence synchronization | `0e6ac95` | [32482054086](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482054086) | PASS; cumulative/closure/Blueprint/Task/context/README/ADR sync |
 
-Final local evidence before R3 documentation synchronization was `bd37382`:
+Final local evidence before the final evidence-record commit was `0e6ac95`:
 
 - `mvn verify`: 114 tests passed, 0 failures, Maven reactor 3/3 SUCCESS;
 - Checkstyle: 0 violations;
@@ -109,7 +110,7 @@ Remain unauthorized until separately approved:
 v0.3.0-engineering-baseline: Frozen
 ADR-0013: Approved
 TASK-014..018: Completed / remediation evidence synchronized
-R1/R2: exact-SHA CI PASS; R3 documentation commit/CI pending
+R1/R2/R3: exact-SHA CI PASS; final evidence HEAD `0e6ac95`
 Phase 5 Closure: Changes remediated / Final Human Closure Review pending
 Merge / v0.4.0 tag: Not Authorized
 Next Phase: Not Authorized

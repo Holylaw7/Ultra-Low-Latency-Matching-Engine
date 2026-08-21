@@ -12,7 +12,7 @@
 | Authorization Mode | `Blueprint` |
 | Depends On | TASK-017 exact-SHA evidence PASS |
 | Current Stage / Next Gate | Remediation completed / Final Human Phase 5 Closure Review |
-| Branch / CI | `feature/phase5-command-wal-replay` / R2 [run 32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533) PASS for `bd37382` |
+| Branch / CI | `feature/phase5-command-wal-replay` / R3 [run 32482054086](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482054086) PASS for `0e6ac95` |
 
 ## 2. Background and Goal
 
@@ -159,7 +159,7 @@ Push each checkpoint and record exact-SHA CI. Merge/tag wait for Human Closure.
 | 2026-08-21 | Approved | Human Blueprint Approval inherited; execution waits for TASK-017 evidence | dependency-gated; Closure remains Human gate |
 | 2026-08-21 | Authorized | TASK-017 Evidence Gate passed with exact-SHA CI `32467018067`; TASK-018 may begin | TASK-018 Evidence Gate; stop at Closure proposal |
 | 2026-08-21 | Completed | JMH append/scan/replay matrix, documentation synchronization and Closure Proposal prepared; `mvn verify` passed with 113 tests and frozen-path diff is zero | Human Phase 5 Closure Approval; merge/tag remain unauthorized |
-| 2026-08-21 | Remediated | Deterministic Submit/Cancel mix benchmark rerun; environment/workload metadata and SampleTime P50/P99 synchronized; raw output `benchmark-results/wal-remediation-full.json` | Full JMH matrix PASS; local `mvn verify` 114 tests; commit `bd37382`; exact-SHA CI `32481451533` PASS; final docs evidence gate pending |
+| 2026-08-21 | Remediated | Deterministic Submit/Cancel mix benchmark rerun; environment/workload metadata and SampleTime P50/P99 synchronized; raw output `benchmark-results/wal-remediation-full.json` | Full JMH matrix PASS; local `mvn verify` 114 tests; R2 `bd37382` / CI `32481451533`; R3 `0e6ac95` / CI `32482054086` PASS |
 
 ## 15. Completion Checklist
 

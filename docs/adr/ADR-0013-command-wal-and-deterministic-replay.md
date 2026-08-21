@@ -320,10 +320,12 @@ implemented without changes to the frozen Domain, OrderBook, MatchingEngine or
 Pipeline production paths. Limited Closure Remediation added deterministic
 rotation-failure evidence and a deterministic SubmitLimit/CancelOrder benchmark
 mix with environment/workload/P50/P99 metadata. R3 final documentation
-synchronization remains before the final Closure Review. The remediation
-checkpoints are [R1 CI 32481266960](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481266960)
-and [R2 CI 32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533),
-both PASS.
+synchronization is recorded at `0e6ac95` with exact-SHA CI
+`32482054086` PASS before the final Closure Review. The remediation
+checkpoints are [R1 CI 32481266960](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481266960),
+[R2 CI 32481451533](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32481451533)
+and [R3 CI 32482054086](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482054086),
+all PASS.
 
 This evidence does not change the approved scope or durability claims. Phase 5
 remains a persistence/replay engineering baseline: live pipeline integration,
