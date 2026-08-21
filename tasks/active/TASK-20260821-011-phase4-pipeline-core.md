@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260821-011` |
 | Title | Implement Bounded Single-Consumer Matching Pipeline |
-| Status | `Approved` |
+| Status | `In Progress` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Related Phase | Phase 4 — Event Pipeline |
@@ -14,10 +14,10 @@
 | Phase Blueprint | [`PHASE-4 Blueprint`](../blueprints/PHASE-4-event-pipeline-blueprint.md) — Approved |
 | Authorization Mode | `Blueprint inherited Human approval` |
 | Current Stage | `Implementation (dependency-gated)` |
-| Next Gate | `TASK-010 evidence gate` |
+| Next Gate | `Automated Evidence Gate` |
 | Branch | planned `feature/phase4-event-pipeline` |
-| Baseline HEAD | TASK-010 verified commit |
-| Remote / CI | `origin` / `Pending` |
+| Baseline HEAD | TASK-010 evidence commit `565f649` |
+| Remote / CI | `origin/feature/phase4-event-pipeline` / pending |
 
 ## 2. Background
 
@@ -202,6 +202,7 @@ TASK-012.
 | --- | --- | --- | --- |
 | 2026-08-21 | Proposed | Bounded pipeline implementation scope prepared | Awaiting Blueprint Approval |
 | 2026-08-21 | Approved | Blueprint approval recorded; TASK-011 is dependency-gated | TASK-010 evidence gate |
+| 2026-08-21 | In Progress | Bounded Disruptor adapter, lifecycle and failure-boundary implementation started | TASK-010 evidence CI PASS; focused TASK-011 verification pending |
 
 ## 18. Completion Checklist
 
