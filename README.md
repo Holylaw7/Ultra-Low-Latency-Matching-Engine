@@ -14,35 +14,35 @@ Correctness
     -> Re-benchmark
 ```
 
+New multi-task phases use Phase Blueprint Mode:
+
+```text
+Sol architecture / complete Phase Blueprint
+    -> one Human Blueprint Approval
+    -> Terra implementation with test, diff and CI checkpoints
+    -> Exception Gate only when scope or architecture changes
+    -> Sol final Closure Review
+    -> one Human Phase Closure Approval
+```
+
+The Blueprint must enumerate ADRs, Tasks, stages, boundaries and evidence.
+Approval never extends to unlisted work. Reducing repeated Human reviews does
+not reduce tests, static checks, Git review, documentation or CI requirements.
+Model roles are recommendations rather than authority; the current official
+OpenAI model-selection guidance is linked from `.codex/MASTER_PROMPT.md`.
+
 ## Current Stage
 
-Phase 2 - Basic OrderBook：Structural Limit Matching、Verification、OrderBook
-baseline Benchmark 和 Documentation Synchronization 已完成并经 Human
-Developer 于 `2026-08-19` 批准。ADR-0009 Profiling ADR / Decision 已于
-`2026-08-19` 批准，Profiling Execution 已于 `2026-08-19` 通过 Human
-Approval。ADR-0010 Optimization ADR / Decision 已于 `2026-08-19` 批准，
-并授权 Measurement-Isolation Execution。Isolation 与 Repository/CI Setup
-均已完成并于 `2026-08-20` 通过 Human Review。Phase 2 已通过 Final Closure
-Review，并冻结为 `v0.1.0-engineering-baseline`。
+Phase 3 — MatchingEngine is completed, approved and frozen at
+`v0.2.0-engineering-baseline`. The baseline contains the Domain Model, frozen
+Phase 2 OrderBook, synchronous MatchingEngine orchestration, immutable
+Trade/Execution results and deterministic execution evidence. It does not
+contain WAL, Replay, Snapshot, Recovery, Network or production optimization.
 
-Phase 1 Domain Model and Correctness Baseline has been completed and approved.
-ADR-0007 and ADR-0008 have been approved, and the Phase 2 OrderBook structure
-and Structural Limit Matching are implemented within their recorded scope.
-The approved benchmark is component-level experimental baseline evidence, not a
-production throughput or latency claim. Profiling execution evidence is
-recorded and approved as evidence collection. Measurement-isolation evidence
-is recorded separately and does not replace B0 or authorize production
-optimization. Phase 2 is closed at the engineering baseline tag. Phase 3 ADR
-and TASK-008 are approved. Stage 1 Domain/API Foundation is completed and
-approved; it adds EventSequence plus immutable command/result types only.
-Stage 2 implements the synchronous MatchingEngine core: sequenced limit submit
-and cancellation, frozen OrderBook delegation and immutable Trade/Execution
-results. Stage 2 is completed and approved. Stage 3 verification-only
-execution and Human completion review are also complete and approved. Phase 3
-closure prerequisites are consolidated in a Closure Authorization proposal.
-The controlled master merge, full verification and annotated
-`v0.2.0-engineering-baseline` freeze are complete. Phase 3 is closed; Release
-and further phases remain unauthorized.
+The current active work is governance-only: adopting Phase Blueprint Mode for
+future multi-task phases. Phase 4 has not been designed or authorized. A future
+product phase must begin with a complete Blueprint and one Human Blueprint
+Approval under the new rules.
 
 The repository currently contains:
 

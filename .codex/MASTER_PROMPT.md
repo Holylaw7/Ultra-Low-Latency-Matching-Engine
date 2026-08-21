@@ -129,9 +129,10 @@ At the beginning of EVERY Codex session:
 2. Read `.codex/DEVELOPMENT_RULES.md`
 3. Read `.codex/AGENT_CONTEXT.md`
 4. Read `tasks/README.md`
-5. Read current `tasks/active/*`
-6. Read linked ADRs
-7. Inspect repository state
+5. Read the current `tasks/blueprints/*` when a Phase Blueprint exists
+6. Read current `tasks/active/*`
+7. Read linked ADRs
+8. Inspect repository state
 
 Run:
 
@@ -150,6 +151,7 @@ Determine:
 - remote tracking state
 - current Phase
 - current Task
+- current Blueprint and authorization scope
 - Task status
 - current Stage
 - ADR status
@@ -168,43 +170,86 @@ Report the inconsistency before implementation.
 
 # 5. Software Engineering Lifecycle
 
-Every engineering change MUST follow:
+## 5.1 Phase Blueprint Mode
 
-Requirement
+Phase Blueprint Mode is the default for a new Phase that contains multiple
+related Tasks or implementation stages. Do not create routine approval loops
+for every Blueprint-authorized sub-stage.
+
+The Phase lifecycle is:
+
+Requirement / Discovery
 ↓
-Discovery
+Draft all required ADRs
 ↓
-Scope
+Create one complete Phase Blueprint
 ↓
-ADR / Design Decision
+Create the Task plans enumerated by that Blueprint
 ↓
-Human Approval
+One Human Phase Blueprint Approval
 ↓
-Task Plan
+Execute authorized Tasks and sub-stages
 ↓
-Human Approval
+Focused tests / regression / static checks / diff review
 ↓
-Implementation
+Logical commits / remote push / CI evidence
 ↓
-Focused Verification
+Concise implementation checkpoints
 ↓
-Regression Verification
+Phase Closure Report
 ↓
-Review
+One Human Phase Closure Approval
 ↓
-Documentation Synchronization
-↓
-Stage Report
-↓
-Human Approval
-↓
-Git Commit
-↓
-Remote Push
-↓
-CI Verification
-↓
-Stage Closure
+Authorized merge / baseline tag / Task closure
+
+The Phase Blueprint MUST freeze in one reviewable package:
+
+1. Phase goal and non-goals
+2. required ADRs and explicit decision matrix
+3. architecture and responsibility boundaries
+4. Task decomposition and dependency order
+5. sub-stages and authorized file/module scope
+6. acceptance criteria and invariants
+7. test, determinism, recovery and performance strategy as applicable
+8. commit, branch, remote and CI strategy
+9. rollback and compatibility plan
+10. documentation and evidence plan
+11. known risks, limitations and exception triggers
+12. closure and baseline/tag plan
+
+Human Blueprint Approval grants execution authority only to the explicitly
+listed ADR decisions, Tasks, stages and boundaries. After approval, Codex may
+execute them without additional routine architecture approval.
+
+## 5.2 Exception Gate
+
+Blueprint-authorized execution MUST stop and return to Human review when any
+of the following is required or discovered:
+
+- conflict with an approved ADR or Blueprint invariant
+- scope expansion or an unlisted Task/stage
+- public API compatibility break not explicitly authorized
+- matching, ordering, concurrency or ownership semantic change
+- protocol, WAL, Snapshot, persistence or recovery format change
+- new critical dependency or materially different implementation strategy
+- verification failure that exposes an architecture problem
+- inability to satisfy an acceptance criterion without weakening it
+- destructive Git operation, release publication or other separately governed action
+
+The exception must be documented with impact and alternatives. Update the ADR
+and Blueprint when applicable, obtain Human approval, then resume only the
+newly authorized scope.
+
+## 5.3 Strict Gate Mode
+
+Use per-stage Human approval only when:
+
+- the Phase Blueprint explicitly declares a high-risk manual gate;
+- the work is a standalone change not covered by an approved Blueprint; or
+- an Exception Gate has been triggered.
+
+Strict Gate Mode remains available, but is not the default mechanism for every
+sub-stage of a mature, fully planned Phase.
 
 Performance work extends this lifecycle:
 
@@ -220,7 +265,7 @@ Hypothesis
 ↓
 Optimization ADR
 ↓
-Human Approval
+Human Approval (Blueprint or Exception Gate)
 ↓
 Optimize
 ↓
@@ -231,6 +276,30 @@ Compare
 Keep / Revert
 
 No step may be skipped because the change appears simple.
+
+Automated implementation gates are evidence gates, not optional steps. Phase
+Blueprint Mode reduces repeated Human approvals; it does not reduce testing,
+review, Git, documentation or CI requirements.
+
+## 5.4 Model Role Guidance
+
+Model selection optimizes cost and reasoning depth; it never grants authority
+or replaces an approval gate. When these models are available, prefer:
+
+| Work | Recommended model / effort |
+| --- | --- |
+| Architecture, ADR set and complete Phase Blueprint | Sol / high |
+| Complex implementation | Terra / high |
+| Routine tests and verification expansion | Terra / medium |
+| Documentation synchronization and routine Git evidence | Luna / low or Terra / low |
+| Phase Closure Review | Sol / medium or high |
+| Performance architecture and evidence interpretation | Sol / high |
+
+This routing follows the current OpenAI model guidance: Sol targets complex
+reasoning and coding, Terra balances intelligence and cost, and Luna targets
+cost-sensitive high-volume work. Model availability can change; use the
+closest available capability without changing the Blueprint scope or gates.
+Reference: https://developers.openai.com/api/docs/models
 
 ---
 
@@ -269,6 +338,7 @@ Task Plan MUST contain:
 - Design
 - Alternatives
 - ADR Linkage
+- Phase Blueprint linkage or explicit standalone mode
 - Planned File Changes
 - Test Plan
 - Benchmark/Profile Plan
@@ -283,16 +353,22 @@ Task Plan MUST contain:
 Task lifecycle:
 
 Proposed
-↓ Human Approval
+↓ Human Approval (direct or inherited from an approved Blueprint)
 Approved
 ↓ Work begins
 In Progress
 ↓ All DoD satisfied
 Completed
 
-Codex MUST NOT convert Proposed → Approved.
+Codex MUST NOT convert Proposed → Approved without Human authority.
 
-Only Human approval can do so.
+For a Blueprint-listed Task, the recorded Human Phase Blueprint Approval is
+that authority. Codex may synchronize the Task from Proposed to Approved and
+execute its listed stages without a separate Task approval. The Task MUST link
+the approved Blueprint and record the inherited approval scope.
+
+A Task not explicitly listed in the approved Blueprint requires separate Human
+approval and MUST NOT be inferred from a related goal.
 
 ---
 
@@ -320,7 +396,13 @@ Human Review
 ↓
 Accepted / Accepted with Constraints / Rejected / Superseded
 
-Implementation MUST NOT begin while the required ADR is Proposed.
+All required ADR drafts MUST exist before Phase Blueprint review. Human Phase
+Blueprint Approval may simultaneously accept the ADRs explicitly enumerated in
+its decision matrix. That decision must be synchronized into each ADR before
+implementation begins.
+
+Implementation MUST NOT begin while a required ADR remains Proposed or is not
+covered by the recorded Blueprint approval.
 
 Task Plan and ADR MUST agree.
 
@@ -415,7 +497,7 @@ Baseline
 → Profile
 → Identify Bottleneck
 → Form Hypothesis
-→ Human Approval
+→ Human Approval (Blueprint or Exception Gate)
 → Optimize
 → Re-benchmark
 → Compare
@@ -523,7 +605,7 @@ unless explicitly intended and documented.
 
 A completed logical stage SHOULD be pushed to the configured remote when:
 
-- Human approval for that stage has been recorded
+- direct Human approval or inherited Blueprint authorization is recorded
 - local quality gates pass
 - commit history is coherent
 - working tree is clean
@@ -569,7 +651,7 @@ A local BUILD SUCCESS is not equivalent to remote CI success.
 
 Merge only after:
 
-- stage approval
+- direct stage approval or inherited Blueprint authorization
 - local gates pass
 - remote CI passes when configured
 - diff reviewed
@@ -630,30 +712,47 @@ Documentation Synchronization
 ↓
 Completion
 
-At the end of EVERY stage:
+At the end of every implementation stage:
 
-1. stop implementation
-2. run required gates
-3. inspect Git diff
-4. synchronize relevant documentation
-5. write Stage Report
-6. update AGENT_CONTEXT
-7. mark next gate Pending Human Approval
-8. stop
+1. run the Blueprint-defined focused and regression gates
+2. inspect the Git diff and scope boundary
+3. synchronize the Task log and relevant documentation
+4. create the required logical commit
+5. push and record CI when the Blueprint requires remote evidence
+6. record a concise checkpoint or cumulative Task report
+7. evaluate every Exception Gate condition
 
-Codex MUST NOT cross an approval gate automatically.
+In Phase Blueprint Mode, continue to the next explicitly authorized sub-stage
+when all evidence gates pass and no exception condition exists. Do not ask for
+routine Human approval between those sub-stages.
+
+Stop for Human review when:
+
+- the Blueprint declares a manual gate;
+- an Exception Gate condition exists;
+- a Task or Phase reaches its Blueprint-defined closure boundary; or
+- the next action is not explicitly authorized.
+
+In Strict Gate Mode, mark the next gate Pending Human Approval and stop as the
+Task or Blueprint requires.
 
 ---
 
 # 14. Stage Report Standard
 
-Every completed stage MUST create a readable report under:
+Every completed Task and every Blueprint-declared evidence checkpoint MUST
+create or update a readable report under:
 
 tasks/reports/
 
 Recommended filename:
 
 PHASE-<N>-<stage>-<topic>.md
+
+The Phase Blueprint defines report granularity. Multiple authorized
+sub-stages may use one cumulative Task report; do not repeat the full Phase
+background in separate approval reports when a link and delta summary are
+sufficient.
 
 The report MUST start with a human-readable dashboard.
 
@@ -673,7 +772,7 @@ Example:
 | Build     | PASS                 |
 | CI        | Pending              |
 | Commit    | abc1234              |
-| Next Gate | Human Approval       |
+| Next Gate | Blueprint checkpoint / Human Approval |
 
 ## Progress
 
@@ -761,18 +860,13 @@ State exactly:
 - what is NOT authorized
 - approval required
 
-## Approval Request
+## Gate Status
 
-End with an explicit gate:
+End with one explicit state:
 
-Current Stage:
-Completed
-
-Human Approval:
-Pending
-
-Next Stage:
-Not Authorized
+- `Blueprint Authorized — continue to <next listed stage>`;
+- `Exception Gate — Human Approval Pending`; or
+- `Phase Closure — Human Approval Pending`.
 
 The report MUST be understandable without reading Git diff.
 
@@ -808,7 +902,7 @@ Remote Sync: Up to date
 CI: Passing
 
 Next Gate:
-Verification Human Approval
+Next Blueprint checkpoint / Exception Gate / Phase Closure
 
 Do not duplicate entire historical reports inside AGENT_CONTEXT.
 
@@ -829,7 +923,7 @@ Before a Task becomes Completed, synchronize as applicable:
 - Performance documentation
 - Recovery documentation
 - Task Plan
-- Stage Report
+- Blueprint-required Task/checkpoint report
 - AGENT_CONTEXT
 
 Documentation must distinguish:
@@ -857,8 +951,8 @@ A Task is Completed only when:
 - Git diff reviewed
 - ADR synchronized
 - documentation synchronized
-- Stage Reports exist
-- Human approvals recorded
+- Blueprint-required Task/checkpoint reports exist
+- Human Blueprint, Exception and Closure approvals are recorded as applicable
 - logical commits created
 - repository synchronized according to Git policy
 - CI status recorded when available
@@ -978,11 +1072,12 @@ Working Tree:
 
 ...
 
-If the stage is complete:
+If a Blueprint-authorized checkpoint is complete and all gates pass, continue
+to the next listed stage without requesting routine Human approval.
 
-STOP after reporting the approval request.
-
-Do not begin the next stage.
+STOP after reporting an Exception Gate, a Blueprint-declared manual gate or a
+Phase Closure approval request. Do not begin work outside the approved
+Blueprint.
 
 ---
 
@@ -1002,7 +1097,7 @@ Never:
 - commit secrets
 - rewrite shared Git history without authorization
 - silently change architecture
-- cross an unapproved stage gate
+- cross an unapproved Blueprint boundary, Exception Gate or Closure gate
 
 Always:
 
@@ -1024,4 +1119,4 @@ Completion
 
 Human Approval
 before
-Next Stage
+Blueprint Execution and Phase Closure

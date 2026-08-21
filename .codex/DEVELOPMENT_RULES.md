@@ -449,7 +449,7 @@ final
 
 ## 20. Architecture Change
 
-以下变化必须暂停并报告：
+以下未被已批准 ADR / Phase Blueprint 明确覆盖的变化必须暂停并报告：
 
 - 改变 Matching Model
 - 改变 OrderBook 核心结构
@@ -549,8 +549,8 @@ Requirement
 
 1. 识别出需要长期保留的技术决策后，必须先创建或更新 ADR 草案，并将状态设为 `Proposed`。
 2. ADR 草案必须先记录 Context、Problem、Options、Proposed Decision、Scope Boundary、Consequences 和验证计划，再进行技术决策或审批。
-3. Human Review 和技术决策只能发生在 ADR 草案存在之后；决策结果必须回写 ADR 状态。
-4. ADR 状态与审批结果一致后，任务方案才能获批并进入实现。
+3. Human Review 和技术决策只能发生在 ADR 草案存在之后；Phase Blueprint Approval 可以一次批准其决策矩阵中明确列出的 ADR，决策结果必须回写 ADR 状态。
+4. ADR 状态与直接审批或 Blueprint 继承审批一致后，任务方案才能获批并进入实现。
 5. 任务方案必须链接具体 ADR，不能只写“ADR required”。
 6. ADR 与任务方案的决策内容必须一致；若不一致，先暂停实现并同步两者。
 7. 不需要 ADR 时，必须写 `ADR: Not required`，并说明这是局部实现、不改变架构、协议、数据格式或运行时语义。
@@ -606,7 +606,7 @@ Requirement
 - 测试是否证明关键行为
 - 文档是否与实现一致
 
-### 22.6 阶段报告与逐步审批
+### 22.6 Phase Blueprint、执行检查点与审批
 
 一个任务必须按风险和交付边界划分为若干开发阶段。至少应区分：
 
@@ -620,7 +620,10 @@ ADR / Decision
     -> Completion
 ```
 
-阶段可以包含多个原子开发动作，但不得跨越未审批的阶段边界。
+新的多任务 Phase 默认先建立完整 `Phase Blueprint`，一次冻结 ADR、Task、
+阶段、验收、测试、Git、回滚和文档计划。Human Blueprint Approval 对其中
+明确列出的范围授予执行权限；阶段可以包含多个原子开发动作，但不得跨越
+未批准的 Blueprint 边界。
 
 每个阶段完成后，Codex 必须：
 
@@ -630,12 +633,24 @@ ADR / Decision
    - 测试、构建、Benchmark 或其他证据
    - 与已批准方案的偏差
    - 新增风险、限制和未验证内容
-   - 下一阶段目标和所需审批事项
-2. 每个完成阶段必须在 `tasks/reports/` 创建可独立阅读的阶段报告，并在任务方案的 `Phase Reports and Approval Gates` 中记录报告位置、阶段状态和下一审批门禁。报告必须以 Phase、Task、Stage、Result、Tests、Build、CI、Commit 和 Next Gate 状态面板开始。
-3. 将下一门禁标记为 `Pending Human Approval`，停止进入下一阶段。
-4. 等待 Human 明确批准，并把日期、审批人、决定、约束和备注写入任务方案的 `Approval Record` 或阶段报告。
+   - 下一阶段是否仍在 Blueprint 授权范围内
+2. 在 `tasks/reports/` 创建或更新 Blueprint 指定的 Task / evidence checkpoint 报告，并在任务方案中记录位置和状态。多个已授权子阶段可以共享累计报告，避免重复 Phase 背景。
+3. 运行测试、构建、静态检查、Diff、Commit、Push 和 CI 等 Blueprint 证据门禁。
+4. 检查是否触发 Exception Gate。
 
-只有审批记录完成后，才能开始下一阶段。审批被拒绝、附加新约束或发现范围变化时，必须先更新任务方案；如果影响技术决策，必须先创建或更新 ADR，再重新申请审批。
+所有证据门禁通过且下一阶段已被 Blueprint 明确授权时，可以直接继续，
+无需例行 Human 审批。以下情况必须停止并等待 Human：
+
+- Blueprint 明确声明的人工门禁；
+- ADR 冲突、范围扩张、公共 API 破坏或格式/语义变化；
+- 新关键依赖或实质性实现策略变化；
+- 验证失败暴露架构问题，或需要弱化验收标准；
+- Phase Closure、Release 或破坏性 Git 操作；
+- 下一动作未被 Blueprint 明确列出。
+
+发生 Exception Gate 时，必须记录日期、影响、候选方案和所需决定；涉及
+技术决策时先更新 ADR 与 Blueprint，再获得 Human 批准。未使用 Blueprint
+的独立任务继续采用逐阶段 Human Approval。
 
 任务完成阶段必须额外执行文档同步：
 
@@ -959,7 +974,8 @@ Architecture、ADR、复现命令和小型确定性 fixture。通常忽略 `targ
 - 任务方案的决策摘要与 ADR 的决策内容一致。
 - ADR 已列入 Git Diff 审查范围。
 - 如果不需要 ADR，任务方案中已记录明确理由。
-- 每个已完成阶段都有阶段报告和 Human 审批记录。
+- Blueprint 要求的 Task / evidence checkpoint 报告完整。
+- Human Blueprint、Exception 和 Closure 审批按实际触发情况记录完整。
 - 文档与 `AGENT_CONTEXT.md` 已完成同步。
 
 重大设计、性能或恢复结论必须记录：
@@ -986,7 +1002,8 @@ Architecture、ADR、复现命令和小型确定性 fixture。通常忽略 `targ
 - 静态或格式检查通过
 - 相关 Benchmark 通过（如果涉及性能）
 - Git Diff 已审查
-- 每个开发阶段均有阶段报告，且下一阶段开始前已有 Human 审批
+- Blueprint 要求的 Task / evidence checkpoint 报告完整
+- Human Blueprint、Exception 和 Closure 审批按实际触发情况完整
 - 文档已同步
 - `AGENT_CONTEXT.md` 已同步
 - 仓库已按 Git policy 同步，或已明确记录 remote/CI 不可用
@@ -1018,12 +1035,20 @@ Architecture、ADR、复现命令和小型确定性 fixture。通常忽略 `targ
 tasks/TEMPLATE.md
 ```
 
+多任务 Phase 的 Blueprint 模板位于：
+
+```text
+tasks/PHASE_BLUEPRINT_TEMPLATE.md
+```
+
 工作区结构：
 
 ```text
 tasks/
 ├── README.md
 ├── TEMPLATE.md
+├── PHASE_BLUEPRINT_TEMPLATE.md
+├── blueprints/
 ├── active/
 ├── completed/
 └── archive/
@@ -1045,6 +1070,7 @@ tasks/
 - 风险、兼容性和回滚方案
 - 验证命令和 Git 提交计划
 - 当前开发阶段、下一审批门禁和阶段报告记录方式
+- Phase Blueprint 路径、继承授权范围和 Exception Gate（适用时）
 
 方案不完整时，任务不得进入实现阶段。
 
@@ -1068,17 +1094,17 @@ Proposed / Approved / In Progress
 
 状态含义：
 
-- `Proposed`：方案已创建，等待 Human 审批。
-- `Approved`：方案已审批，允许开始实现。
+- `Proposed`：方案已创建，等待直接 Human 审批或 Phase Blueprint Approval。
+- `Approved`：方案已通过直接审批或可追溯 Blueprint 继承审批，允许开始实现。
 - `In Progress`：已开始实现、测试或 Benchmark。
 - `Completed`：验收标准已满足，变更已提交并完成状态确认。
 - `Cancelled`：任务被明确取消，且取消原因已记录。
 
-任务处于 `In Progress` 时，仍必须维护当前阶段和下一审批门禁。阶段完成后，任务可以保持 `In Progress`，但下一门禁必须是 `Pending Human Approval`，在审批前不得继续执行后续阶段。
+任务处于 `In Progress` 时，仍必须维护当前阶段和下一门禁。Blueprint 模式下，下一门禁可以是已授权检查点、Exception Gate 或 Phase Closure；不得把每个子阶段自动改成 `Pending Human Approval`。严格门禁模式或触发异常时，下一门禁必须标记为 `Pending Human Approval`。
 
 ### 28.4 审批门禁
 
-`Proposed` 状态未获 Human 明确确认前：
+`Proposed` 状态未获直接 Human 确认或明确 Blueprint 继承审批前：
 
 - 可以阅读代码和文档。
 - 可以执行只读命令、构建基线和补充方案。
@@ -1086,6 +1112,8 @@ Proposed / Approved / In Progress
 - 不得创建用于绕过审批的临时实现。
 
 只有方案进入 `Approved` 后，才能将状态改为 `In Progress` 并开始开发。
+Human Phase Blueprint Approval 是其中明确列出 Task 的有效审批来源；Task
+必须链接 Blueprint 并记录继承范围。未列出的 Task 仍需独立 Human 审批。
 
 以下变更必须在方案中明确标记并等待 Human 决策：
 
@@ -1098,7 +1126,9 @@ Proposed / Approved / In Progress
 - 引入或替换关键第三方依赖
 - 扩大原定任务范围
 
-进入任何需要技术决策的阶段前，必须确认相关 ADR 草案已经存在并完成相应审批；不得先做决定、先写实现，再补 ADR。
+进入任何需要技术决策的阶段前，必须确认相关 ADR 草案已经存在，并通过
+直接 Human Review 或 Blueprint 决策矩阵完成审批；不得先做决定、先写
+实现，再补 ADR。
 
 ### 28.5 实现期间管理
 
@@ -1109,8 +1139,9 @@ Proposed / Approved / In Progress
 - 新增文件、测试、Benchmark 和文档必须与方案的文件变更计划一致。
 - 发现新的风险、限制或性能回归时必须记录。
 - 不得将未验证的目标写成已达成的结论。
-- 每个阶段完成时输出阶段报告，更新 `Phase Reports and Approval Gates`，将下一门禁设为 `Pending Human Approval` 并停止。
-- 只有 Human 审批记录完成后，才能将当前阶段推进到下一阶段。
+- 每个阶段完成时更新 Blueprint 指定的累计报告、Task 日志和证据状态。
+- 证据门禁通过、无 Exception Gate 且下一阶段已在 Blueprint 中授权时，直接推进。
+- Blueprint 人工门禁、Exception Gate 或 Phase Closure 到达时，设为 `Pending Human Approval` 并停止。
 
 ### 28.6 完成、归档和恢复
 
@@ -1121,7 +1152,8 @@ Proposed / Approved / In Progress
 - 审查 Git Diff 和暂存区 Diff。
 - 更新相关文档和 `AGENT_CONTEXT.md`。
 - 确认 ADR、任务方案、阶段报告、规范和 `AGENT_CONTEXT.md` 的内容已同步。
-- 确认每个阶段都有报告，且进入下一阶段前都有 Human 审批记录。
+- 确认 Blueprint 要求的 Task / evidence checkpoint 报告齐全。
+- 确认 Blueprint、Exception 和 Closure 的 Human 审批记录按实际触发情况齐全。
 - 完成一个逻辑完整的 Conventional Commit。
 - 执行提交后 Git 状态确认。
 

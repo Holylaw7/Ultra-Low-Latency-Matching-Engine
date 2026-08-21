@@ -13,8 +13,10 @@
 | Updated | `YYYY-MM-DD` |
 | Related Phase |  |
 | Related ADR | `None` |
+| Phase Blueprint | `tasks/blueprints/PHASE-*-blueprint.md` / `Standalone` |
+| Authorization Mode | `Blueprint` / `Strict Gate` |
 | Current Stage | `ADR / Decision` |
-| Next Approval Gate | `Pending Human Approval` |
+| Next Gate | `Human Blueprint Approval` / `Pending Human Approval` / authorized checkpoint |
 | Branch |  |
 | Baseline HEAD |  |
 | Remote | `Not configured` / remote name |
@@ -84,8 +86,20 @@
 | Scope Boundary | 允许和禁止的实现范围 |
 
 如果需要 ADR，必须在开始实现前创建或更新，并将具体路径写入本任务方案的 `Related ADR` 和本节。
-需要 ADR 的技术决策必须先创建或更新状态为 `Proposed` 的 ADR 草案，再进行 Human Review、技术决策和任务审批；不能先做决定或先实现，再补 ADR。
+需要 ADR 的技术决策必须先创建或更新状态为 `Proposed` 的 ADR 草案，再进行直接 Human Review 或 Phase Blueprint Review；不能先做决定或先实现，再补 ADR。
 如果不需要 ADR，必须说明不改变架构、协议、数据格式或运行时语义的理由。
+
+### Phase Blueprint Linkage
+
+| Field | Value |
+| --- | --- |
+| Blueprint | `tasks/blueprints/PHASE-*-blueprint.md` / `Standalone` |
+| Blueprint Status | `Proposed` / `Approved` / `Not applicable` |
+| Authorized Task / Stages | 精确列出继承授权的 Task 与阶段 |
+| Exception Gates | 列出本任务必须停止并返回 Human Review 的条件 |
+
+Blueprint 模式下，Human Phase Blueprint Approval 即为其明确列出 Task 的
+Task Approval；必须记录审批日期和范围。未列出的工作不得继承权限。
 
 ### Architecture Impact
 
@@ -167,9 +181,16 @@ Remote、Push 和 CI 计划：
 | --- | --- | --- | --- | --- |
 |  |  |  | Pending |  |
 
+Blueprint 继承审批示例：
+
+| Date | Reviewer | Stage | Decision | Constraints / Notes |
+| --- | --- | --- | --- | --- |
+| YYYY-MM-DD | Human Developer | Phase Blueprint Approval | `Approved (Inherited)` | 仅限 Blueprint 中列出的 Task、阶段和文件边界 |
+
 ## 16. Phase Reports and Approval Gates
 
-至少将任务拆分为以下阶段，并在每个阶段完成后填写报告，等待 Human 审批：
+至少将任务拆分为以下阶段。Blueprint 模式下，已列出的子阶段通过证据门禁
+后可以连续执行；严格门禁、Exception Gate 和 Phase Closure 才等待 Human：
 
 ```text
 ADR / Decision
@@ -181,17 +202,22 @@ ADR / Decision
     -> Completion
 ```
 
-| Stage | Report Location | Status | Next Approval Gate | Human Approval |
+| Stage | Report Location | Status | Next Gate | Authorization |
 | --- | --- | --- | --- | --- |
-| ADR / Decision |  | Pending | `Pending Human Approval` |  |
-| Task Approval |  | Pending | `Pending Human Approval` |  |
-| Implementation |  | Pending | `Pending Human Approval` |  |
-| Verification |  | Pending | `Pending Human Approval` |  |
-| Benchmark / Profile |  | `Not applicable` / Pending | `Pending Human Approval` |  |
-| Documentation and Synchronization |  | Pending | `Pending Human Approval` |  |
-| Completion |  | Pending | `Pending Human Approval` |  |
+| ADR / Decision |  | Pending | Blueprint Approval | Direct / Inherited / Pending |
+| Task Approval |  | Pending | First authorized stage | Direct / Inherited / Pending |
+| Implementation |  | Pending | Verification / Exception Gate | Blueprint / Strict |
+| Verification |  | Pending | Next Task / Phase Closure | Blueprint / Strict |
+| Benchmark / Profile |  | `Not applicable` / Pending | Next Task / Phase Closure | Blueprint / Strict |
+| Documentation and Synchronization |  | Pending | Phase Closure | Blueprint / Strict |
+| Completion |  | Pending | Phase Closure / Completed | Human Closure / Blueprint |
 
-每个完成阶段必须在 `tasks/reports/` 建立独立报告。报告开头使用状态面板记录 Phase、Task、Stage、Result、Tests、Build、CI、Commit 和 Next Gate；正文至少记录目标、实际完成内容、修改范围、验证证据、性能证据（适用时）、ADR 对齐、Git 证据、方案偏差、风险/限制、项目影响、未验证内容、下一阶段提案和显式审批请求。阶段完成后不得直接进入下一阶段，必须先记录 Human 审批。
+每个完成 Task 和 Blueprint 指定的 evidence checkpoint 必须在
+`tasks/reports/` 建立或更新报告。报告开头使用状态面板记录 Phase、Task、
+Stage、Result、Tests、Build、CI、Commit 和 Next Gate；正文至少记录目标、
+实际完成内容、修改范围、验证证据、性能证据（适用时）、ADR 对齐、Git
+证据、方案偏差、风险/限制、项目影响和未验证内容。Blueprint 已授权的
+下一阶段在证据门禁通过且无 Exception Gate 时可以直接继续。
 
 ## 17. Implementation Log
 
@@ -209,8 +235,8 @@ ADR / Decision
 - [ ] Documentation updated
 - [ ] Decision and ADR linkage verified
 - [ ] ADR existed before the technical decision and task approval
-- [ ] Every completed stage has a phase report
-- [ ] Human approval is recorded before each next stage
+- [ ] Blueprint-required Task / checkpoint reports exist
+- [ ] Human Blueprint, Exception and Closure approvals are recorded as applicable
 - [ ] ADR, task plan, rules, project documents, and `AGENT_CONTEXT.md` are synchronized
 - [ ] `AGENT_CONTEXT.md` updated
 - [ ] Diff reviewed
