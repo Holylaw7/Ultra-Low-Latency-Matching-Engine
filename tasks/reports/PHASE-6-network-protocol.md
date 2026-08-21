@@ -10,9 +10,12 @@ TASK-019:
 Completed / Evidence PASS
 
 TASK-020:
+Completed / Evidence PASS
+
+TASK-021:
 Authorized / Next
 
-TASK-021..023:
+TASK-022..023:
 Conditionally Authorized
 
 Phase 6 Closure:
@@ -58,8 +61,76 @@ Recovery production file was changed. Coalesced frames are decoded in wire
 order at the framing layer; one-in-flight rejection remains a TASK-021 gateway
 responsibility.
 
-## Next Gate
+## TASK-019 Checkpoint Next Gate
 
 TASK-020 may begin under the approved Blueprint. Its additive failure observer
 must preserve all existing pipeline constructors and semantics. Any API,
 threading, format or scope change triggers the Exception Gate.
+
+## TASK-020 — Pipeline Terminal Failure Observer
+
+Implemented:
+
+- project-owned non-blocking `PipelineFailureHandler` contract;
+- additive three-argument `MatchingEnginePipeline` constructor;
+- existing two-argument constructor delegates to a no-op observer;
+- first terminal failure is preserved and observed at most once;
+- observer exceptions cannot replace the original failure or restart the pipeline;
+- result-handler failure evidence covers asynchronous callback delivery.
+
+Not implemented:
+
+- no pipeline threading, state-machine or backpressure redesign;
+- no network gateway or live WAL integration.
+
+## TASK-020 Evidence
+
+| Evidence | Result |
+| --- | --- |
+| Focused `MatchingEnginePipelineFailureTest` | 6 passed |
+| Full `mvn verify` | 121 tests passed; 0 failures |
+| Checkstyle | 0 violations |
+| Frozen Domain/OrderBook/Engine/WAL/Recovery paths | 0 diff |
+| Commit | `1c5b0fb` |
+| Exact-SHA CI | [32488893108](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32488893108) PASS |
+
+## TASK-020 Checkpoint Next Gate
+
+TASK-021 may begin under the approved Blueprint. It must keep one active
+session, one request in flight and one Netty event-loop pipeline producer.
+
+## TASK-021 — Single-Session Netty Gateway
+
+Implementation scope:
+
+- loopback-default Netty NIO server with explicit pooled allocator;
+- `NEW/RUNNING/DRAINING/STOPPED/FAILED` lifecycle and bounded shutdown;
+- one active TCP session and manual-read one-request-in-flight admission;
+- gateway-owned request/command identity advancement only after pipeline
+  `ACCEPTED`, with retryable `FULL` responses consuming neither identity;
+- ordered command/match/error response writes scheduled back to the Netty
+  event loop; no durable-ack or client-receipt claim;
+- pipeline terminal failure closes the session through the approved observer.
+
+Not implemented:
+
+- no multi-client admission, request pipelining, reconnect or deduplication;
+- no live WAL integration, Snapshot, online Recovery, TLS or benchmark work.
+
+## TASK-021 Evidence
+
+| Evidence | Result |
+| --- | --- |
+| Gateway-focused tests | Pending implementation |
+| Full `mvn verify` | Pending implementation |
+| Checkstyle | Pending implementation |
+| Frozen Domain/OrderBook/Engine/WAL/Recovery paths | Required: 0 diff |
+| Commit | Pending implementation |
+| Exact-SHA CI | Pending implementation |
+
+## Next Gate
+
+After TASK-021 focused and full evidence passes, TASK-022 may begin under the
+approved Blueprint. The gateway must preserve one active session, one request
+in flight, identity-domain separation and the ambiguous-result boundary on
+disconnect/write failure.

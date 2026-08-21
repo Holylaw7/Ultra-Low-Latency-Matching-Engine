@@ -5,14 +5,14 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-021` / Phase 6 Single-Session Netty Gateway |
-| Status | `Conditionally Authorized` |
+| Status | `Authorized / Next` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 6 / ADR-0014 / [`PHASE-6`](../blueprints/PHASE-6-network-protocol-blueprint.md) |
 | Authorization Mode | Blueprint |
-| Current Stage / Next Gate | Awaiting TASK-020 evidence / TASK-021 evidence gate |
+| Current Stage / Next Gate | Implementation |
 | Branch / Baseline | `feature/phase6-network-protocol` after approval / approved proposal commit |
-| Remote / CI | `origin` / Pending |
+| Remote / CI | `origin/feature/phase6-network-protocol` / pending TASK-021 evidence |
 
 ## 2. Background
 

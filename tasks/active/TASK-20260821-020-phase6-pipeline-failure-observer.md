@@ -5,14 +5,14 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-020` / Phase 6 Pipeline Terminal Failure Observer |
-| Status | `Authorized / Next` |
+| Status | `Completed / Evidence PASS` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 6 / ADR-0014 / [`PHASE-6`](../blueprints/PHASE-6-network-protocol-blueprint.md) |
 | Authorization Mode | Blueprint |
-| Current Stage / Next Gate | Implementation |
+| Current Stage / Next Gate | Completed / TASK-021 Evidence Gate |
 | Branch / Baseline | `feature/phase6-network-protocol` after approval / approved proposal commit |
-| Remote / CI | `origin/feature/phase6-network-protocol` / pending TASK-020 evidence |
+| Remote / CI | `origin/feature/phase6-network-protocol` / exact-SHA CI [32488893108](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32488893108) PASS |
 
 ## 2. Background
 
@@ -140,19 +140,20 @@ CI before TASK-021.
 | Stage | Report | Status | Next Gate | Authorization |
 | --- | --- | --- | --- | --- |
 | Decision/Approval | Phase 6 proposal | Pending | Blueprint Approval | Pending |
-| Implementation/Verification | cumulative report | Pending | exact-SHA CI | Blueprint |
+| Implementation/Verification | [`PHASE-6-network-protocol.md`](../reports/PHASE-6-network-protocol.md) | Completed / PASS | TASK-021 | Blueprint |
 | Benchmark | Not applicable | N/A | completion | Blueprint |
-| Completion | cumulative report | Pending | TASK-021 / Exception Gate | Blueprint |
+| Completion | cumulative report | Completed / PASS | TASK-021 | Blueprint |
 
 ## 17. Implementation Log
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-21 | Proposed | additive observer plan | baseline PASS |
+| 2026-08-21 | Completed / Evidence PASS | additive observer implemented with constructor compatibility and one-shot notification | 121 tests PASS; Checkstyle 0; frozen diff 0; exact-SHA CI 32488893108 PASS |
 
 ## 18. Completion Checklist
 
-- [ ] compatibility and failure evidence pass
-- [ ] full build/static/diff/frozen audit pass
-- [ ] docs/report/CI synchronized
-- [ ] no Exception Gate
+- [x] compatibility and failure evidence pass
+- [x] full build/static/diff/frozen audit pass
+- [x] docs/report/CI synchronized
+- [x] no Exception Gate
