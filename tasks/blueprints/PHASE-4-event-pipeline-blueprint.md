@@ -14,7 +14,7 @@
 | Planning Baseline | `bbf909c` |
 | Blueprint Branch | `docs/phase4-event-pipeline-blueprint` |
 | Planned Tasks | `TASK-20260821-010` through `TASK-20260821-013` |
-| Next Gate | `TASK-010 Implementation / Automated Evidence Gate` |
+| Next Gate | `Human Phase 4 Closure Approval` |
 
 ```text
 Blueprint: Approved
@@ -445,7 +445,7 @@ Approval checklist:
 ```text
 Blueprint Status: Approved
 Implementation: Authorized in dependency order
-Next Gate: TASK-010 Implementation / Automated Evidence Gate
+Next Gate: Human Phase 4 Closure Approval
 ```
 
 ## 19. Execution Checkpoints
@@ -454,19 +454,23 @@ Next Gate: TASK-010 Implementation / Automated Evidence Gate
 | --- | --- | --- | --- | --- |
 | 2026-08-21 | Blueprint Proposal | Prepared / pushed | baseline `mvn verify`: 61 tests, 0 failures, 0 Checkstyle violations; content commit `f0f18ff`; exact-SHA CI [32455576290](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32455576290) PASS | Human Blueprint Approval |
 | 2026-08-21 | Blueprint Approval | Approved | D1-D8 and TASK-010 through TASK-013 accepted; evidence commit `b25122a`; exact-SHA CI [32455686581](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32455686581) PASS | TASK-010 Implementation |
+| 2026-08-21 | TASK-010 Foundation | Completed | commit `c9a797e`; exact-SHA CI [32456991709](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32456991709) PASS | TASK-011 Core |
+| 2026-08-21 | TASK-011 Core | Completed | commit `a3986df`; exact-SHA CI [32457723272](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32457723272) PASS | TASK-012 Verification |
+| 2026-08-21 | TASK-012 Verification | Completed | commit `4df2e33`; exact-SHA CI [32458220212](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32458220212) PASS | TASK-013 Benchmark / Docs |
+| 2026-08-21 | TASK-013 Benchmark / Docs | Benchmark checkpoint completed | JDK 21 smoke/full JMH matrix; commit `e546051`; exact-SHA CI [32459574518](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459574518) PASS | Documentation checkpoint / Human Phase 4 Closure Approval |
 
 ## 20. Phase Closure Checklist
 
 - [ ] Blueprint approval recorded and synchronized into ADR-0012/Tasks
-- [ ] TASK-010 foundation completed
-- [ ] TASK-011 pipeline core completed
-- [ ] TASK-012 determinism/failure verification completed
-- [ ] TASK-013 benchmark/documentation completed
-- [ ] all automated evidence gates pass
-- [ ] no unresolved Exception Gate
-- [ ] Phase 2/3 frozen production paths have zero diff
-- [ ] architecture and documentation synchronized
-- [ ] Phase Closure Report prepared
+- [x] TASK-010 foundation completed
+- [x] TASK-011 pipeline core completed
+- [x] TASK-012 determinism/failure verification completed
+- [x] TASK-013 benchmark/documentation completed
+- [x] all automated evidence gates pass
+- [x] no unresolved Exception Gate
+- [x] Phase 2/3 frozen production paths have zero diff
+- [x] architecture and documentation synchronized
+- [x] Phase Closure Report prepared
 - [ ] Human Phase Closure Approval recorded
 - [ ] authorized merge/tag/baseline actions verified
 - [ ] active Tasks moved to completed

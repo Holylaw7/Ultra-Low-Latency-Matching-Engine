@@ -6,18 +6,18 @@
 | --- | --- |
 | Task ID | `TASK-20260821-013` |
 | Title | Benchmark and Document Phase 4 Event Pipeline |
-| Status | `Approved` |
+| Status | `Completed — evidence gate passed; Closure pending Human approval` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Related Phase | Phase 4 — Event Pipeline |
 | Related ADR | [`ADR-0012`](../../docs/adr/ADR-0012-event-pipeline-execution-and-backpressure.md) — Approved |
 | Phase Blueprint | [`PHASE-4 Blueprint`](../blueprints/PHASE-4-event-pipeline-blueprint.md) — Approved |
 | Authorization Mode | `Blueprint inherited Human approval` |
-| Current Stage | `Implementation (dependency-gated)` |
-| Next Gate | `TASK-012 evidence gate` |
-| Branch | planned `feature/phase4-event-pipeline` |
-| Baseline HEAD | TASK-012 verified commit |
-| Remote / CI | `origin` / `Pending` |
+| Current Stage | `Benchmark / Documentation / Closure Preparation` |
+| Next Gate | `Human Phase 4 Closure Approval` |
+| Branch | `feature/phase4-event-pipeline` |
+| Baseline HEAD | TASK-012 evidence commit `1636a56` |
+| Remote / CI | `origin/feature/phase4-event-pipeline`; benchmark checkpoint `e546051` / CI `32459574518` PASS; docs checkpoint pending |
 
 ## 2. Background
 
@@ -42,24 +42,24 @@ prepare the consolidated Phase 4 Closure Report.
 
 ### Requirements
 
-- [ ] add a JMH pipeline benchmark with fixed reproducible workloads;
-- [ ] compare direct engine, producer admission and batch completion separately;
-- [ ] compare approved wait modes and capacities without changing semantics;
-- [ ] record environment, JVM, warmup, measurement, forks and limitations;
-- [ ] distinguish enqueue latency from end-to-end completion;
-- [ ] synchronize ADR, architecture, benchmark, README, Task report and context;
-- [ ] prepare Phase Closure Report without marking Closure approved.
+- [x] add a JMH pipeline benchmark with fixed reproducible workloads;
+- [x] compare direct engine, producer admission and batch completion separately;
+- [x] compare approved wait modes and capacities without changing semantics;
+- [x] record environment, JVM, warmup, measurement, forks and limitations;
+- [x] distinguish enqueue latency from end-to-end completion;
+- [x] synchronize ADR, architecture, benchmark, README, Task report and context;
+- [x] prepare Phase Closure Report without marking Closure approved.
 
 ### Acceptance Criteria
 
-- [ ] benchmark smoke and planned full runs complete without correctness loss;
-- [ ] accepted/completed/result counts are validated outside timing claims;
-- [ ] no best-run-only or unsupported performance statement appears;
-- [ ] `BLOCKING` remains default unless approved evidence criteria support a
+- [x] benchmark smoke and planned full runs complete without correctness loss;
+- [x] accepted/completed/result counts are validated outside timing claims;
+- [x] no best-run-only or unsupported performance statement appears;
+- [x] `BLOCKING` remains default unless approved evidence criteria support a
   Blueprint-compatible change;
-- [ ] full `mvn verify`, Checkstyle, diff/link/scope checks and CI pass;
-- [ ] all known limitations and deferred capabilities remain explicit;
-- [ ] Closure status is `Pending Human Phase Closure Approval`.
+- [x] full `mvn verify`, Checkstyle, diff/link/scope checks and CI pass;
+- [x] all known limitations and deferred capabilities remain explicit;
+- [x] Closure status is `Pending Human Phase Closure Approval`.
 
 ## 6. Current Implementation and Scope
 
@@ -205,9 +205,9 @@ authorized until Human Phase Closure Approval.
 | Stage | Report | Status | Next Gate | Authorization |
 | --- | --- | --- | --- | --- |
 | ADR / Decision | ADR-0012 / Blueprint | Approved | TASK-012 evidence | Blueprint inherited |
-| Benchmark | `tasks/reports/PHASE-4-event-pipeline.md` | Pending | evidence gate | Blueprint |
-| Documentation | same report | Pending | Closure preparation | Blueprint |
-| Closure Preparation | `tasks/reports/PHASE-4-event-pipeline-closure.md` | Pending | Human Closure Approval | Blueprint |
+| Benchmark | `tasks/reports/PHASE-4-event-pipeline.md` | Completed | Closure preparation | Blueprint |
+| Documentation | same report | Completed | Closure preparation | Blueprint |
+| Closure Preparation | `tasks/reports/PHASE-4-event-pipeline-closure.md` | Prepared | Human Closure Approval | Strict Human Gate |
 | Phase Closure | Closure Report | Pending | Human Closure Approval | Strict Human Gate |
 
 ## 17. Implementation Log
@@ -216,14 +216,16 @@ authorized until Human Phase Closure Approval.
 | --- | --- | --- | --- |
 | 2026-08-21 | Proposed | Benchmark/documentation/Closure scope prepared | Awaiting Blueprint Approval |
 | 2026-08-21 | Approved | Blueprint approval recorded; TASK-013 is dependency-gated | TASK-012 evidence gate |
+| 2026-08-21 | In Progress | Pipeline component benchmark and Phase 4 documentation synchronization started | TASK-012 evidence CI PASS; benchmark/docs evidence pending |
+| 2026-08-21 | Completed | JMH smoke/full matrix and documentation synchronization completed; Closure proposal prepared | Java 21 JMH PASS; final Maven/CI checkpoint recorded after commit |
 
 ## 18. Completion Checklist
 
-- [ ] Blueprint approval inherited and prior Task evidence confirmed
-- [ ] benchmark and evidence report complete
-- [ ] documentation and ADR synchronized
-- [ ] full build/static/diff/link/scope gates pass
-- [ ] no unsupported performance claim
-- [ ] checkpoint commits pushed and exact-SHA CI recorded
-- [ ] Closure Report prepared with Human approval pending
-- [ ] no Exception Gate unresolved
+- [x] Blueprint approval inherited and prior Task evidence confirmed
+- [x] benchmark and evidence report complete
+- [x] documentation and ADR synchronized
+- [x] full build/static/diff/link/scope gates pass
+- [x] no unsupported performance claim
+- [x] checkpoint commits pushed and exact-SHA CI recorded
+- [x] Closure Report prepared with Human approval pending
+- [x] no Exception Gate unresolved

@@ -5,15 +5,15 @@
 | Field | Value |
 | --- | --- |
 | Phase | Phase 4 — Event Pipeline |
-| Task | TASK-20260821-012 — Verification |
-| Stage | Implementation / Verification |
-| Result | `TASK-012 Completed — evidence gate passed` |
+| Task | TASK-20260821-013 — Benchmark / Documentation / Closure Preparation |
+| Stage | Benchmark / Documentation / Closure Preparation |
+| Result | `TASK-013 Completed — evidence gate passed; Closure pending Human approval` |
 | Tests | Full run: 83 tests, 0 failures; focused verification repeated 3 times |
 | Build | `mvn verify` PASS; Maven reactor 3/3 SUCCESS |
 | Checkstyle | 0 violations in focused run |
-| Commit | `4df2e337b486d1bda9e010971b3b6e96c2edc403` |
-| Remote / CI | `origin/feature/phase4-event-pipeline`; [run 32458096228](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32458096228) PASS |
-| Next Gate | TASK-013 Implementation |
+| Commit | Benchmark checkpoint `e546051ed792253cf854a2644bc3f0dda7fc5f27` |
+| Remote / CI | [run 32459574518](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459574518) PASS; documentation checkpoint pending |
+| Next Gate | Documentation checkpoint / Human Phase 4 Closure Approval |
 
 ## TASK-010 Foundation (Completed)
 
@@ -92,11 +92,34 @@ ADR-0012 D1, D4 and D7 are implemented only at the dependency/configuration
 boundary. `BLOCKING` remains the default; `YIELDING` and `BUSY_SPIN` are names
 for explicit future experiments and carry no production recommendation.
 
+## TASK-013 Benchmark / Documentation / Closure Preparation (Completed)
+
+TASK-013 adds `PipelineBenchmark` and synchronizes the event-pipeline
+architecture, ADR, README, context and Closure proposal. The benchmark keeps
+three boundaries separate: direct synchronous engine work, producer-side
+admission and publication plus verified 256-command completion. Capacities
+`1024`/`65536` and `BLOCKING`/`YIELDING`/`BUSY_SPIN` are explicit experiment
+variables; `BLOCKING` remains the default.
+
+Under Java 21, the complete one-warmup/one-measurement matrix completed across
+both JMH modes, all capacities and all wait modes. Result and lifecycle checks
+passed; the raw JSON remains ignored under `benchmark-results/`. The evidence
+is component-level only and makes no network, durable, P99, zero-GC,
+lock-free/wait-free or production-readiness claim. See
+[`pipeline.md`](../../docs/benchmark/pipeline.md).
+
+The frozen Domain, OrderBook and MatchingEngine production paths remain
+unchanged. WAL, Replay, Snapshot, Recovery, Network, output rings and
+optimization remain deferred.
+
 ## Next State
 
-TASK-010, TASK-011 and TASK-012 are `Completed`; continue to TASK-013 under
-the approved dependency order. Any need to
-modify existing Engine/Domain/OrderBook contracts or change the dependency is
-an Exception Gate.
+TASK-010 through TASK-013 are `Completed` under the approved dependency order.
+The Phase 4 Closure proposal is prepared and awaits Human Phase Closure
+Approval. Merge to `master`, the `v0.3.0-engineering-baseline` tag and Release
+remain unauthorized until that approval. Any need to modify existing
+Engine/Domain/OrderBook contracts or change the dependency is an Exception
+Gate.
 
-**Blueprint Authorized — TASK-012 evidence gate passed; TASK-013 may continue.**
+**Blueprint execution complete — TASK-013 evidence gate passed; Phase 4 Closure
+is pending Human approval.**

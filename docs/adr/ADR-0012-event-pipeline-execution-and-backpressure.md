@@ -2,7 +2,8 @@
 
 ## Status
 
-Approved — Human Phase 4 Blueprint Approval recorded
+Approved — implementation and component evidence recorded; Phase 4 Closure
+pending Human approval
 
 ## Decision Record
 
@@ -343,3 +344,20 @@ batch end-to-end completion and may not claim network or durable latency.
 | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | `Proposal Authorized` | Create a complete Phase 4 Blueprint Proposal only. Implementation remains unauthorized pending Human Blueprint Approval. |
 | 2026-08-21 | Human Developer | `Approved` | D1-D8 and TASK-010 through TASK-013 approved through the Phase Blueprint. v0.2.0 baseline, OrderBook and MatchingEngine production files remain immutable; `BLOCKING` remains default and cannot change automatically from benchmark results; Phase Closure requires separate Human approval. |
+
+## Implementation Evidence
+
+The approved decision is implemented behind the project-owned `pipeline`
+boundary. TASK-010 added the Disruptor dependency and immutable contracts;
+TASK-011 added the bounded single-producer lifecycle facade;
+TASK-012 verified deterministic results, backpressure, failure and lifecycle
+behavior; TASK-013 added the component-level JMH evidence and synchronized the
+architecture documentation. Existing Domain, OrderBook and MatchingEngine
+production paths remain unchanged.
+
+The benchmark is recorded in
+[`pipeline.md`](../benchmark/pipeline.md). It separates direct synchronous
+processing, producer admission and batch completion, and treats capacities and
+wait modes as evidence variables only. `BLOCKING` remains the default; no
+production wait-strategy recommendation or end-to-end performance claim
+follows from the run.

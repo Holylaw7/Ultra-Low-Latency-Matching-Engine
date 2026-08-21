@@ -10,20 +10,20 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 3 — MatchingEngine (`Completed / Approved / Baseline Frozen`) |
-| Latest product task | [`TASK-20260820-008`](../tasks/completed/TASK-20260820-008-phase3-matching-engine-implementation.md) — Completed |
+| Phase | Phase 4 — Event Pipeline (`Implementation / Evidence Complete; Closure Pending`) |
+| Latest product task | [`TASK-20260821-013`](../tasks/active/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) — Evidence complete; Closure pending |
 | Latest architecture task | [`TASK-20260820-007`](../tasks/completed/TASK-20260820-007-phase3-matching-engine-adr-decision.md) — Completed |
-| Current planning task | [`Phase 4 Event Pipeline Blueprint`](../tasks/blueprints/PHASE-4-event-pipeline-blueprint.md) with TASK-010 through TASK-013 — Approved |
+| Current planning task | [`TASK-20260821-013`](../tasks/active/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) under the approved Phase 4 Blueprint |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
-| Product stage | Phase 3 Closed / Baseline Frozen; Phase 4 implementation authorized |
-| Product approval | Phase 4 Blueprint approved; execution proceeds in dependency order with automated evidence gates |
+| Product stage | Phase 3 Closed / Baseline Frozen; Phase 4 implementation and evidence complete; Closure pending |
+| Product approval | Phase 4 Blueprint approved; TASK-010 through TASK-013 evidence gates passed |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
-| Branch | `docs/phase4-event-pipeline-blueprint` |
+| Branch | `feature/phase4-event-pipeline` |
 | Engineering baseline commit | `9281124` |
 | Engineering baseline tag | `v0.2.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | Blueprint approval records pushed at `b25122a`; branch tracks `origin/docs/phase4-event-pipeline-blueprint`; `v0.2.0-engineering-baseline` remains frozen at `9281124` |
-| CI | Blueprint evidence [run 32455686581](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32455686581) PASS for exact SHA `b25122a`; local baseline `mvn verify` PASS (61 tests, 0 Checkstyle violations) |
+| Remote sync | `origin/feature/phase4-event-pipeline`; benchmark checkpoint `e546051`; `v0.2.0-engineering-baseline` remains frozen at `9281124` |
+| CI | TASK-013 benchmark [run 32459574518](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459574518) PASS for exact SHA `e546051`; documentation checkpoint pending |
 
 ## Project Progress
 
@@ -34,7 +34,7 @@
 | Phase 2 — Basic OrderBook | Completed / Approved | `v0.1.0-engineering-baseline`, 45 tests, JMH/JFR evidence and passing master CI |
 | Phase 3 — Matching Engine | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-3-matching-engine-closure-authorization.md); `v0.2.0-engineering-baseline` |
 | Governance — Phase Blueprint Mode | Completed / Approved / Active | [`TASK-009`](../tasks/completed/TASK-20260821-009-phase-blueprint-governance.md); master CI PASS |
-| Phase 4 — Event Pipeline | Blueprint Approved / Implementation Authorized | [`Blueprint Proposal`](../tasks/reports/PHASE-4-event-pipeline-blueprint-proposal.md); TASK-010 is next |
+| Phase 4 — Event Pipeline | Implementation / Verification / Component Evidence Complete; Closure Pending | [`Closure Proposal`](../tasks/reports/PHASE-4-event-pipeline-closure.md); TASK-010 through TASK-013 complete |
 | Phase 5+ — Network, recovery and performance evolution | Future Work | Future Blueprints, ADRs and Tasks |
 
 ## Current Product Gate
@@ -61,10 +61,10 @@ ADR-0011 Final Approved
     -> TASK-20260820-008 [Completed]
     -> Phase 4 complete Blueprint proposal [Prepared]
     -> Human Phase 4 Blueprint approval [Approved]
-    -> TASK-010 foundation [Authorized / next]
-    -> TASK-011 core [Authorized after TASK-010 evidence]
-    -> TASK-012 verification [Authorized after TASK-011 evidence]
-    -> TASK-013 benchmark/docs [Authorized after TASK-012 evidence]
+    -> TASK-010 foundation [Completed / evidence PASS]
+    -> TASK-011 core [Completed / evidence PASS]
+    -> TASK-012 verification [Completed / evidence PASS]
+    -> TASK-013 benchmark/docs [Benchmark checkpoint PASS; docs checkpoint pending]
     -> Phase 4 Closure [Human approval required]
 ```
 
@@ -77,12 +77,12 @@ production optimization and history rewrite remain unauthorized. OrderBook
 remains the frozen Phase 2 dependency.
 
 Phase Blueprint Mode is the active governance standard. ADR-0012, the complete
-Phase 4 Event Pipeline Blueprint and TASK-010 through TASK-013 are approved by
-the Human Blueprint Approval. Execution is authorized in dependency order for
-a bounded single-producer/single-consumer event pipeline, deterministic result
-handling, backpressure, lifecycle, verification and component evidence.
-Automated evidence gates and Exception Gates remain mandatory. Existing
-Domain, OrderBook and MatchingEngine production files remain frozen.
+Phase 4 Event Pipeline Blueprint and TASK-010 through TASK-013 were approved by
+the Human Blueprint Approval. The bounded single-producer/single-consumer
+pipeline, deterministic result handling, backpressure, lifecycle, verification
+and component evidence are implemented. Automated evidence gates and Exception
+Gates remain mandatory. Existing Domain, OrderBook and MatchingEngine
+production files remain frozen. Phase 4 Closure remains pending Human approval.
 
 Current proposal:
 [`PHASE-4-event-pipeline-blueprint.md`](../tasks/blueprints/PHASE-4-event-pipeline-blueprint.md).
@@ -160,9 +160,9 @@ Synchronous MatchingEngine orchestration is implemented: exact-next command
 validation, immutable outcomes, frozen OrderBook delegation, engine-owned
 TradeId/EventSequence allocation, and Trade/Execution result mapping.
 
-Market-order execution, event publication, Disruptor pipeline, Netty protocol,
-WAL, snapshot and recovery are not implemented. Phase 4 proposes the Disruptor
-pipeline but has not received implementation authorization.
+Market-order execution, Netty protocol, WAL, snapshot and recovery are not
+implemented. The approved Disruptor pipeline is implemented as a bounded
+component boundary; Phase 4 Closure and baseline tagging remain pending.
 
 ## Performance Evidence
 
@@ -170,6 +170,9 @@ Verified fact:
 
 - A component-level JMH OrderBook baseline and JFR/measurement-isolation
   evidence exist under the linked Phase 2 reports.
+- Phase 4 component JMH evidence compares direct processing, producer
+  admission and verified batch completion across two capacities and three wait
+  modes; see [`pipeline.md`](../docs/benchmark/pipeline.md).
 - Raw JSON and JFR artifacts are local and ignored; reports record their paths,
   generation commands, summaries and limitations.
 
@@ -189,7 +192,7 @@ These remain targets or hypotheses, never measured project claims.
 Client
   -> Netty / Protocol                 [Future Work]
   -> Decoder / Validation             [Future Work]
-  -> Ingress + RingBuffer/Disruptor   [Phase 4 Blueprint Approved / TASK-010 next]
+  -> Ingress + RingBuffer/Disruptor   [Phase 4 implemented / Closure pending]
   -> MatchingEngine                   [Phase 3 baseline frozen]
   -> OrderBook                        [Phase 2 baseline implemented]
        -> BidBook / AskBook
@@ -200,12 +203,10 @@ Client
        -> Output / Metrics            [Future Work]
 ```
 
-The proposed Phase 4 pipeline gives one consumer thread exclusive ownership of
-one MatchingEngine and its symbol OrderBook while running. Until the Blueprint
-is approved and implemented, Phase 3 remains purely synchronous and
-caller-owned. Any change to matching semantics, core structure, concurrency,
-event ordering, protocol, persistence or recovery requires an approved ADR and
-enumerated Blueprint Task.
+The Phase 4 pipeline gives one consumer thread exclusive ownership of one
+MatchingEngine and its symbol OrderBook while running. Any change to matching
+semantics, core structure, concurrency, event ordering, protocol, persistence
+or recovery requires an approved ADR and enumerated Blueprint Task.
 
 ## Known Risks
 

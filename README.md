@@ -42,9 +42,9 @@ contain WAL, Replay, Snapshot, Recovery, Network or production optimization.
 Phase Blueprint Mode is completed, approved and active as the governance
 standard for future multi-task phases. The complete Phase 4 Event Pipeline
 Blueprint, ADR-0012 and TASK-010 through TASK-013 have received Human Blueprint
-Approval. Phase 4 implementation is authorized in dependency order with
-automated evidence gates; the frozen `v0.2.0-engineering-baseline` remains
-unchanged.
+Approval. Phase 4 implementation, verification and component benchmark
+evidence are complete; Phase 4 Closure remains pending Human approval. The
+frozen `v0.2.0-engineering-baseline` remains unchanged.
 
 The repository currently contains:
 
@@ -64,7 +64,7 @@ resting. Stage 2 adds synchronous command processing, OrderBook integration
 and deterministic Trade/Execution result generation. Publication, WAL, network
 and performance optimization remain outside the current scope.
 
-The proposed Phase 4 boundary adds a bounded single-producer/single-consumer
+The implemented Phase 4 boundary adds a bounded single-producer/single-consumer
 event pipeline in front of the existing synchronous MatchingEngine. WAL,
 Replay, Snapshot, Recovery, Network and production optimization remain
 explicit non-goals. See

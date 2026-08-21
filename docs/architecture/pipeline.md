@@ -5,17 +5,16 @@
 `Approved` by
 [`ADR-0012`](../adr/ADR-0012-event-pipeline-execution-and-backpressure.md) and
 the [`Phase 4 Blueprint`](../../tasks/blueprints/PHASE-4-event-pipeline-blueprint.md).
-Human Phase Blueprint Approval is recorded. Implementation is authorized in
-dependency order, with automated evidence and Exception Gates. Phase Closure
-is not yet approved.
+Human Phase Blueprint Approval is recorded. The dependency-gated implementation
+and component evidence are complete; Phase Closure is not yet approved.
 
-## Intended Flow
+## Implemented Flow
 
 ```text
 Caller / Future Ingress
     -> bounded non-blocking tryPublish(command)
     -> Disruptor ring buffer (single producer)
-    -> one pipeline-owned matching consumer
+    -> one pipeline-owned matching consumer thread
     -> frozen synchronous MatchingEngine
     -> synchronous in-memory EngineResultHandler
 ```
@@ -24,8 +23,8 @@ Caller / Future Ingress
 
 - The external caller owns command creation and the authoritative Command
   Sequence. The Disruptor ring sequence is infrastructure-only.
-- The proposed pipeline owns one MatchingEngine and its consumer thread while
-  running; callers must not access that engine directly.
+- The implemented pipeline owns one MatchingEngine and its consumer thread
+  while running; callers must not access that engine directly.
 - MatchingEngine remains the only owner of TradeId and EventSequence.
 - The result handler runs synchronously on the matching consumer and is limited
   to deterministic in-memory handling. Network and persistence I/O are not
@@ -44,11 +43,10 @@ Caller / Future Ingress
 - Event-slot command references are cleared after handling, including failure
   paths, to avoid retention across ring reuse.
 
-## Experiments
+## Component Evidence
 
-The approved implementation, if the Blueprint is accepted, will establish a
-single-producer/single-consumer correctness baseline. Its component benchmark
-plan compares:
+The implemented single-producer/single-consumer boundary has a reproducible
+component benchmark. [`pipeline.md`](../benchmark/pipeline.md) compares:
 
 - direct synchronous MatchingEngine processing;
 - producer-side bounded admission;
@@ -57,9 +55,11 @@ plan compares:
 - `BLOCKING`, `YIELDING` and `BUSY_SPIN` wait modes as explicit experimental
   variables.
 
-`BLOCKING` is the proposed default. Other wait modes cannot become defaults or
-production recommendations without evidence and an approved decision update.
+`BLOCKING` remains the correctness and portable default. Other wait modes
+cannot become defaults or production recommendations without evidence and an
+approved decision update.
 Multi-producer ingress, asynchronous output rings, WAL, Replay, Network and
 production tuning are deferred.
 
-No lock-free or wait-free claim is valid without comparative measurements.
+No lock-free or wait-free claim is made. The benchmark does not establish
+network, durable or production throughput/latency.

@@ -53,10 +53,10 @@ The durable decision record is
 
 | Task | Purpose | Status |
 | --- | --- | --- |
-| [`TASK-010`](../active/TASK-20260821-010-phase4-pipeline-foundation.md) | dependency, configuration and public pipeline contracts | Approved / next |
-| [`TASK-011`](../active/TASK-20260821-011-phase4-pipeline-core.md) | bounded runtime, lifecycle, matching and result handling | Approved / after TASK-010 evidence |
-| [`TASK-012`](../active/TASK-20260821-012-phase4-pipeline-verification.md) | determinism, ordering, backpressure and failure evidence | Approved / after TASK-011 evidence |
-| [`TASK-013`](../active/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) | component benchmark, documentation and Closure preparation | Approved / after TASK-012 evidence |
+| [`TASK-010`](../active/TASK-20260821-010-phase4-pipeline-foundation.md) | dependency, configuration and public pipeline contracts | Completed / evidence PASS |
+| [`TASK-011`](../active/TASK-20260821-011-phase4-pipeline-core.md) | bounded runtime, lifecycle, matching and result handling | Completed / evidence PASS |
+| [`TASK-012`](../active/TASK-20260821-012-phase4-pipeline-verification.md) | determinism, ordering, backpressure and failure evidence | Completed / evidence PASS |
+| [`TASK-013`](../active/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) | component benchmark, documentation and Closure preparation | Completed / Closure pending |
 
 The complete scope, file boundaries, acceptance criteria, evidence plan,
 risks, rollback, Git strategy and Closure plan are in the
@@ -91,13 +91,14 @@ change, scope expansion, weakened acceptance criteria or destructive Git /
 Release action. A full ring buffer must never cause silent loss or overwrite.
 Consumer failure must never be hidden as successful continued operation.
 
-## Human Decision Requested
+## Human Decision Record
 
-One Human Phase Blueprint Approval is requested for ADR-0012 D1-D8 and the
-enumerated TASK-010 through TASK-013 only. Approval would permit continuous
-execution through automated evidence checkpoints, subject to the Blueprint's
-Exception Gates. It would not approve Phase Closure, merge to `master`, the
-candidate `v0.3.0-engineering-baseline` tag, or any non-goal.
+Human Phase Blueprint Approval was recorded for ADR-0012 D1-D8 and the
+enumerated TASK-010 through TASK-013 only. It permitted continuous execution
+through automated evidence checkpoints, subject to the Blueprint's Exception
+Gates. It did not approve Phase Closure, merge to `master`, the candidate
+`v0.3.0-engineering-baseline` tag, or any non-goal.
 
-**Phase Blueprint — Pending Human Approval. Phase 4 implementation remains
-locked.**
+**Phase Blueprint — Approved. TASK-010 through TASK-013 evidence is complete;
+Phase 4 Closure remains pending Human approval.** See the
+[`Closure Proposal`](PHASE-4-event-pipeline-closure.md).
