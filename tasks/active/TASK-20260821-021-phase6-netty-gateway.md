@@ -5,12 +5,12 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-021` / Phase 6 Single-Session Netty Gateway |
-| Status | `Proposed` |
+| Status | `Conditionally Authorized` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 6 / ADR-0014 / [`PHASE-6`](../blueprints/PHASE-6-network-protocol-blueprint.md) |
 | Authorization Mode | Blueprint |
-| Current Stage / Next Gate | ADR / Decision / Human Phase 6 Blueprint Approval |
+| Current Stage / Next Gate | Awaiting TASK-020 evidence / TASK-021 evidence gate |
 | Branch / Baseline | `feature/phase6-network-protocol` after approval / approved proposal commit |
 | Remote / CI | `origin` / Pending |
 
@@ -82,9 +82,9 @@ record. Only successful complete write clears it and requests another frame.
 
 | Field | Value |
 | --- | --- |
-| ADR Status | ADR-0014 Proposed |
+| ADR Status | ADR-0014 Approved |
 | Decision | D1, D2, D5-D9 |
-| Blueprint | Proposed; TASK-021 after TASK-020 exact-SHA CI |
+| Blueprint | Approved; TASK-021 after TASK-020 exact-SHA CI |
 | Exception Gates | reconnect/multiple clients/live WAL/API/format changes |
 
 ### Architecture Impact
@@ -145,7 +145,7 @@ TASK-022.
 | Date | Reviewer | Stage | Decision | Notes |
 | --- | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | Proposal | Proposal only | no implementation |
-|  | Human Developer | Blueprint | Pending | one session/one in-flight only |
+| 2026-08-21 | Human Developer | Blueprint | Approved / Conditional | one session/one in-flight only; start after TASK-020 exact-SHA CI |
 
 ## 16. Phase Reports and Approval Gates
 

@@ -5,12 +5,12 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-020` / Phase 6 Pipeline Terminal Failure Observer |
-| Status | `Proposed` |
+| Status | `Conditionally Authorized` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 6 / ADR-0014 / [`PHASE-6`](../blueprints/PHASE-6-network-protocol-blueprint.md) |
 | Authorization Mode | Blueprint |
-| Current Stage / Next Gate | ADR / Decision / Human Phase 6 Blueprint Approval |
+| Current Stage / Next Gate | Awaiting TASK-019 evidence / TASK-020 evidence gate |
 | Branch / Baseline | `feature/phase6-network-protocol` after approval / approved proposal commit |
 | Remote / CI | `origin` / Pending |
 
@@ -74,9 +74,9 @@ the callback.
 
 | Field | Value |
 | --- | --- |
-| ADR Status | ADR-0014 Proposed |
+| ADR Status | ADR-0014 Approved |
 | Decision | D8 additive failure observer only |
-| Blueprint | Phase 6 Proposed; TASK-020 after TASK-019 CI |
+| Blueprint | Phase 6 Approved; TASK-020 after TASK-019 CI |
 | Exception Gates | behavior break, new failure state/thread, broader API change |
 
 ### Architecture Impact
@@ -133,7 +133,7 @@ CI before TASK-021.
 | Date | Reviewer | Stage | Decision | Notes |
 | --- | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | Proposal | Proposal only | no implementation |
-|  | Human Developer | Blueprint | Pending | additive observer only |
+| 2026-08-21 | Human Developer | Blueprint | Approved / Conditional | additive observer only; start after TASK-019 exact-SHA CI |
 
 ## 16. Phase Reports and Approval Gates
 

@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed — pending Human Phase 6 Blueprint Approval
+Approved — Human Phase 6 Blueprint Approval recorded
 
 ## Context
 
@@ -380,28 +380,31 @@ readiness.
 
 | ID | Proposed decision | Current state |
 | --- | --- | --- |
-| D1 | Network/Protocol baseline; transport is not persistence authority | Pending |
-| D2 | Netty 4.2.17.Final BOM/modules, Java NIO and pooled allocator | Pending |
-| D3 | exact big-endian 16-byte header and bounded v1 framing | Pending |
-| D4 | exact Submit/Cancel layouts; gateway owns Command Sequence | Pending |
-| D5 | one active session, one in-flight request and one producer | Pending |
-| D6 | bounded ordered Command/Match/Error response frames | Pending |
-| D7 | local write completion is not durable/client receipt acknowledgement | Pending |
-| D8 | fail-stop lifecycle plus additive pipeline failure observer | Pending |
-| D9 | loopback default and strict validation; security features deferred | Pending |
-| D10 | component/loopback evidence only; advanced capabilities deferred | Pending |
+| D1 | Network/Protocol baseline; transport is not persistence authority | Approved |
+| D2 | Netty 4.2.17.Final BOM/modules, Java NIO and pooled allocator | Approved |
+| D3 | exact big-endian 16-byte header and bounded v1 framing | Approved |
+| D4 | exact Submit/Cancel layouts; gateway owns Command Sequence | Approved |
+| D5 | one active session, one in-flight request and one producer | Approved |
+| D6 | bounded ordered Command/Match/Error response frames | Approved |
+| D7 | local write completion is not durable/client receipt acknowledgement | Approved |
+| D8 | fail-stop lifecycle plus additive pipeline failure observer | Approved |
+| D9 | loopback default and strict validation; security features deferred | Approved |
+| D10 | component/loopback evidence only; advanced capabilities deferred | Approved |
 
 ## Approval Record
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | `Proposal Authorized` | Phase 6 Discovery, ADR draft, complete Blueprint and TASK-019 through TASK-023 proposals only. No implementation. |
+| 2026-08-21 | Human Developer | `Approved` | ADR-0014 D1-D10 and the complete Phase 6 Blueprint approved. TASK-019 through TASK-023 authorized in strict dependency order; frozen boundaries, Exception Gate and separate Closure approval remain active. |
 
 ## Next Gate
 
 ```text
-ADR-0014: Proposed
-Phase 6 Blueprint: Proposed
-Implementation: Not Authorized
-Next Gate: Human Phase 6 Blueprint Approval
+ADR-0014: Approved
+Phase 6 Blueprint: Approved
+Implementation: Authorized in dependency order
+Current Task: TASK-019
+Phase Closure: Not Authorized
+Next Gate: TASK-019 Evidence Gate / exact-SHA CI
 ```

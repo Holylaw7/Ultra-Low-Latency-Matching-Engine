@@ -10,8 +10,8 @@ component benchmark evidence and Closure are approved and frozen at
 `v0.3.0-engineering-baseline`. Phase 5 adds a versioned command WAL and strict
 offline deterministic replay as a persistence/replay engineering baseline and
 is completed, approved and frozen at `v0.4.0-engineering-baseline`. Phase 6 has
-a proposed binary Network Protocol and single-session Netty gateway Blueprint;
-implementation remains unauthorized pending Human Blueprint Approval.
+an approved binary Network Protocol and single-session Netty gateway Blueprint;
+implementation is authorized in dependency order, beginning with TASK-019.
 
 ## Scope
 
@@ -21,7 +21,7 @@ The system is a single-node, deterministic matching engine. A symbol's order boo
 
 ```text
 Client                                       [Future Work]
-  -> Netty Network Adapter / Binary Protocol [Phase 6 Blueprint Proposed]
+  -> Netty Network Adapter / Binary Protocol [Phase 6 Blueprint Approved]
   -> Decoder / Validation                    [Future Work]
   -> Ingress                                 [Future Work]
   -> RingBuffer / Disruptor Pipeline         [Phase 4 implemented / evidence recorded]
@@ -71,8 +71,8 @@ See [`order-book.md`](order-book.md) and
    `v0.3.0-engineering-baseline`**.
 5. Versioned command WAL and strict offline deterministic replay — **Completed
    and frozen at `v0.4.0-engineering-baseline`**.
-6. Network adapter and protocol — **Complete Blueprint Proposed; implementation
-   not authorized**.
+6. Network adapter and protocol — **Blueprint Approved; TASK-019 implementation
+   authorized**.
 7. Snapshot and online Recovery — **Future Work**.
 8. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.

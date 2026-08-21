@@ -5,12 +5,12 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-022` / Phase 6 Network Determinism and Failure Verification |
-| Status | `Proposed` |
+| Status | `Conditionally Authorized` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 6 / ADR-0014 / [`PHASE-6`](../blueprints/PHASE-6-network-protocol-blueprint.md) |
 | Authorization Mode | Blueprint |
-| Current Stage / Next Gate | Verification planning / Human Phase 6 Blueprint Approval |
+| Current Stage / Next Gate | Awaiting TASK-021 evidence / TASK-022 evidence gate |
 | Branch / Baseline | `feature/phase6-network-protocol` after approval / approved proposal commit |
 | Remote / CI | `origin` / Pending |
 
@@ -79,9 +79,9 @@ sleep. Compare canonical response bytes plus decoded project-owned values.
 
 | Field | Value |
 | --- | --- |
-| ADR Status | ADR-0014 Proposed |
+| ADR Status | ADR-0014 Approved |
 | Decision | verification of D3-D9 |
-| Blueprint | Proposed; TASK-022 after TASK-021 exact-SHA CI |
+| Blueprint | Approved; TASK-022 after TASK-021 exact-SHA CI |
 | Exception Gates | weakened equality, hooks, architecture/format change |
 
 ### Architecture Impact
@@ -139,7 +139,7 @@ exact-SHA CI before TASK-023.
 | Date | Reviewer | Stage | Decision | Notes |
 | --- | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | Proposal | Proposal only | no implementation |
-|  | Human Developer | Blueprint | Pending | verification-only scope |
+| 2026-08-21 | Human Developer | Blueprint | Approved / Conditional | verification-only scope; start after TASK-021 exact-SHA CI |
 
 ## 16. Phase Reports and Approval Gates
 

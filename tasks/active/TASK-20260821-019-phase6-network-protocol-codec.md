@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260821-019` |
 | Title | Phase 6 Network Dependency, Protocol Contracts and Codec |
-| Status | `Proposed` |
+| Status | `Authorized / Next` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created / Updated | `2026-08-21` |
@@ -14,11 +14,11 @@
 | Related ADR | [`ADR-0014`](../../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md) |
 | Phase Blueprint | [`PHASE-6`](../blueprints/PHASE-6-network-protocol-blueprint.md) |
 | Authorization Mode | Blueprint |
-| Current Stage | ADR / Decision |
-| Next Gate | Human Phase 6 Blueprint Approval |
+| Current Stage | Implementation |
+| Next Gate | TASK-019 Evidence Gate / exact-SHA CI |
 | Branch | `feature/phase6-network-protocol` after approval |
 | Baseline HEAD | approved Phase 6 proposal commit based on `2cf34b5` |
-| Remote / CI | `origin` / Pending |
+| Remote / CI | `origin` / pending TASK-019 evidence |
 
 ## 2. Background
 
@@ -79,7 +79,7 @@ produce a project-owned request. Encode bounded response frames independently.
 | Field | Value |
 | --- | --- |
 | ADR | ADR-0014 |
-| Status | Proposed |
+| Status | Approved / Authorized |
 | Decision Summary | D2-D4 and D6 exact dependency/protocol/codec rules |
 | Scope Boundary | codec only; no server or runtime integration |
 
@@ -88,8 +88,8 @@ produce a project-owned request. Encode bounded response frames independently.
 | Field | Value |
 | --- | --- |
 | Blueprint | PHASE-6 network protocol Blueprint |
-| Blueprint Status | Proposed |
-| Authorized Task / Stages | TASK-019 only after Human approval |
+| Blueprint Status | Approved |
+| Authorized Task / Stages | TASK-019 implementation; later Tasks after predecessor evidence |
 | Exception Gates | any byte/layout/code/version/dependency change |
 
 ### Architecture Impact
@@ -153,13 +153,13 @@ Push each logical commit after gates; exact-SHA CI must pass before TASK-020.
 | Date | Reviewer | Stage | Decision | Constraints / Notes |
 | --- | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | Proposal authorization | Proposal only | no implementation |
-|  | Human Developer | Phase Blueprint Approval | Pending | D1-D10/TASK-019..023 |
+| 2026-08-21 | Human Developer | Phase Blueprint Approval | Approved | D1-D10 and TASK-019..023 authorized in dependency order; TASK-019 current |
 
 ## 16. Phase Reports and Approval Gates
 
 | Stage | Report | Status | Next Gate | Authorization |
 | --- | --- | --- | --- | --- |
-| ADR / Task Approval | Phase 6 proposal report | Pending | Human Blueprint Approval | Pending |
+| ADR / Task Approval | Phase 6 proposal report | Approved | TASK-019 implementation | Blueprint |
 | Implementation | cumulative Phase 6 report | Pending | verification | Blueprint |
 | Verification | cumulative report | Pending | exact-SHA CI | Blueprint |
 | Benchmark / Profile | Not applicable | N/A | documentation | Blueprint |
@@ -169,7 +169,7 @@ Push each logical commit after gates; exact-SHA CI must pass before TASK-020.
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
-| 2026-08-21 | Proposed | protocol/codec plan prepared | baseline 114 tests PASS |
+| 2026-08-21 | Authorized | protocol/codec implementation authorized after Blueprint Approval | baseline 114 tests PASS; next evidence gate TASK-019 |
 
 ## 18. Completion Checklist
 

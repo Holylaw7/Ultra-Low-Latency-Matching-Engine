@@ -5,12 +5,12 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260821-023` / Phase 6 Network Benchmark, Documentation and Closure Preparation |
-| Status | `Proposed` |
+| Status | `Conditionally Authorized` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 6 / ADR-0014 / [`PHASE-6`](../blueprints/PHASE-6-network-protocol-blueprint.md) |
 | Authorization Mode | Blueprint |
-| Current Stage / Next Gate | Evidence planning / Human Phase 6 Blueprint Approval |
+| Current Stage / Next Gate | Awaiting TASK-022 evidence / TASK-023 evidence gate then Closure Review |
 | Branch / Baseline | `feature/phase6-network-protocol` after approval / approved proposal commit |
 | Remote / CI | `origin` / Pending |
 
@@ -77,9 +77,9 @@ approved one-request-in-flight topology and verifies each correlation/result.
 
 | Field | Value |
 | --- | --- |
-| ADR Status | ADR-0014 Proposed |
+| ADR Status | ADR-0014 Approved |
 | Decision | D10 evidence and claim boundary |
-| Blueprint | Proposed; TASK-023 after TASK-022 exact-SHA CI |
+| Blueprint | Approved; TASK-023 after TASK-022 exact-SHA CI |
 | Exception Gates | performance-driven semantic/default/code redesign |
 
 ### Architecture Impact
@@ -146,7 +146,7 @@ Push checkpoints and record exact-SHA CI. Stop after Closure Proposal.
 | Date | Reviewer | Stage | Decision | Notes |
 | --- | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | Proposal | Proposal only | no implementation |
-|  | Human Developer | Blueprint | Pending | benchmark/claims frozen by D10 |
+| 2026-08-21 | Human Developer | Blueprint | Approved / Conditional | benchmark/claims frozen by D10; start after TASK-022 exact-SHA CI |
 
 ## 16. Phase Reports and Approval Gates
 

@@ -47,11 +47,12 @@ and Closure are complete and frozen at `v0.3.0-engineering-baseline`. The
 earlier `v0.2.0-engineering-baseline` remains immutable. Phase 5 Command WAL
 and Deterministic Offline Replay is completed, approved and frozen at
 `v0.4.0-engineering-baseline`. TASK-014 through TASK-018 are archived.
-Product Release and Phase 6 remain separate Human gates.
+Product Release remains a separate Human gate; Phase 6 implementation proceeds
+under its approved Blueprint.
 
-Phase 6 Discovery is now represented by a proposed complete Blueprint for a
-versioned binary TCP protocol and single-session Netty gateway. The proposal
-does not authorize implementation and keeps live WAL/pipeline integration,
+Phase 6 is authorized through its approved complete Blueprint for a versioned
+binary TCP protocol and single-session Netty gateway. Implementation proceeds
+in dependency order from TASK-019 and keeps live WAL/pipeline integration,
 multi-client ingress, Snapshot, online Recovery and Product Release excluded.
 See the [Phase 6 Blueprint](tasks/blueprints/PHASE-6-network-protocol-blueprint.md)
 and [ADR-0014](docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md).
