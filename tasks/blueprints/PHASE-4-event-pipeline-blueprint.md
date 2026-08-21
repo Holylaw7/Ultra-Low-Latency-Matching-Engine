@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Phase | `Phase 4 — Event Pipeline` |
-| Blueprint Status | `Proposed` |
+| Blueprint Status | `Approved` |
 | Owner | Human Developer |
 | Architect | Codex |
 | Created | `2026-08-21` |
@@ -14,11 +14,11 @@
 | Planning Baseline | `bbf909c` |
 | Blueprint Branch | `docs/phase4-event-pipeline-blueprint` |
 | Planned Tasks | `TASK-20260821-010` through `TASK-20260821-013` |
-| Next Gate | `Human Phase Blueprint Approval` |
+| Next Gate | `TASK-010 Implementation / Automated Evidence Gate` |
 
 ```text
-Blueprint: Proposed
-Implementation: Not Authorized
+Blueprint: Approved
+Implementation: Authorized in dependency order
 Phase 3 baseline: Frozen
 ```
 
@@ -107,14 +107,14 @@ implementation-level refinement.
 
 | Decision ID | ADR | Proposed Decision | Scope / Constraint | Approval Result |
 | --- | --- | --- | --- | --- |
-| D1 | ADR-0012 | LMAX Disruptor 4.0.0 behind project types | dependency limited to pipeline internals | Pending |
-| D2 | ADR-0012 | single external producer, single matching consumer | no multi-producer ingress | Pending |
-| D3 | ADR-0012 | preserve command Sequence; ring sequence is infrastructure-only | no sequence rewriting/sorting | Pending |
-| D4 | ADR-0012 | bounded non-blocking `tryPublish` | explicit `ACCEPTED`/`FULL`; no drop/block/overwrite | Pending |
-| D5 | ADR-0012 | synchronous in-memory result handler | no I/O; handler failure is terminal | Pending |
-| D6 | ADR-0012 | single-use lifecycle, graceful drain and fail-stop | no restart/recovery in this Phase | Pending |
-| D7 | ADR-0012 | Blocking default; Yielding/BusySpin benchmark variables | no production recommendation without evidence | Pending |
-| D8 | ADR-0012 | defer Network, WAL/Replay, output ring and optimization | Phase 4 scope lock | Pending |
+| D1 | ADR-0012 | LMAX Disruptor 4.0.0 behind project types | dependency limited to pipeline internals | Approved |
+| D2 | ADR-0012 | single external producer, single matching consumer | no multi-producer ingress | Approved |
+| D3 | ADR-0012 | preserve command Sequence; ring sequence is infrastructure-only | no sequence rewriting/sorting | Approved |
+| D4 | ADR-0012 | bounded non-blocking `tryPublish` | explicit `ACCEPTED`/`FULL`; no drop/block/overwrite | Approved |
+| D5 | ADR-0012 | synchronous in-memory result handler | no I/O; handler failure is terminal | Approved |
+| D6 | ADR-0012 | single-use lifecycle, graceful drain and fail-stop | no restart/recovery in this Phase | Approved |
+| D7 | ADR-0012 | Blocking default; Yielding/BusySpin benchmark variables | no production recommendation without evidence; default change requires new evidence review | Approved with condition |
+| D8 | ADR-0012 | defer Network, WAL/Replay, output ring and optimization | Phase 4 scope lock | Approved |
 
 Human Blueprint Approval accepts only D1-D8 and the Tasks/stages listed below.
 Before implementation, approval must be synchronized into ADR-0012 and every
@@ -182,8 +182,8 @@ application, output, durability or recovery acknowledgement.
 | 3 | [`TASK-012`](../active/TASK-20260821-012-phase4-pipeline-verification.md) | determinism, ordering, saturation, lifecycle and fail-stop evidence | TASK-011 | pipeline tests/fixtures only | same cumulative report |
 | 4 | [`TASK-013`](../active/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) | benchmark baseline, documentation and closure preparation | TASK-012 | benchmark/docs/evidence only | same cumulative report plus Closure Report |
 
-The four Tasks inherit approval only if Human Blueprint Approval explicitly
-lists them. They remain `Proposed` until that approval is recorded.
+The four Tasks inherit approval from the recorded Human Blueprint Approval and
+remain dependency-gated in the order listed below.
 
 ## 8. Stage Authorization Matrix
 
@@ -430,22 +430,22 @@ Each Task updates the cumulative report with only its delta and evidence.
 
 | Date | Reviewer | Decision | Approved ADRs / Tasks / Stages | Constraints |
 | --- | --- | --- | --- | --- |
-|  | Human Developer | `Pending` | ADR-0012 D1-D8; TASK-010 through TASK-013 | Implementation remains unauthorized until explicit approval |
+| 2026-08-21 | Human Developer | `Approved` | ADR-0012 D1-D8; TASK-010 through TASK-013 | v0.2.0, OrderBook and MatchingEngine remain immutable; dependency order and automated evidence gates apply; `BLOCKING` default cannot change automatically; Phase Closure remains a Human gate |
 
 Approval checklist:
 
-- [ ] accept ADR-0012 D1-D8;
-- [ ] authorize TASK-010 through TASK-013 in dependency order;
-- [ ] authorize new pipeline package and Disruptor 4.0.0 dependency;
-- [ ] preserve all frozen production paths and explicit non-goals;
-- [ ] permit automatic progression through listed non-manual stages when
+- [x] accept ADR-0012 D1-D8;
+- [x] authorize TASK-010 through TASK-013 in dependency order;
+- [x] authorize new pipeline package and Disruptor 4.0.0 dependency;
+- [x] preserve all frozen production paths and explicit non-goals;
+- [x] permit automatic progression through listed non-manual stages when
   evidence passes and no Exception Gate exists;
-- [ ] retain Human Phase Closure Approval before merge/tag/freeze.
+- [x] retain Human Phase Closure Approval before merge/tag/freeze.
 
 ```text
-Blueprint Status: Proposed
-Implementation: Not Authorized
-Next Gate: Human Phase Blueprint Approval
+Blueprint Status: Approved
+Implementation: Authorized in dependency order
+Next Gate: TASK-010 Implementation / Automated Evidence Gate
 ```
 
 ## 19. Execution Checkpoints
@@ -453,6 +453,7 @@ Next Gate: Human Phase Blueprint Approval
 | Date | Task / Stage | Result | Evidence | Next State |
 | --- | --- | --- | --- | --- |
 | 2026-08-21 | Blueprint Proposal | Prepared / pushed | baseline `mvn verify`: 61 tests, 0 failures, 0 Checkstyle violations; content commit `f0f18ff`; exact-SHA CI [32455576290](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32455576290) PASS | Human Blueprint Approval |
+| 2026-08-21 | Blueprint Approval | Approved | D1-D8 and TASK-010 through TASK-013 accepted; evidence commit `b25122a`; exact-SHA CI [32455686581](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32455686581) PASS | TASK-010 Implementation |
 
 ## 20. Phase Closure Checklist
 

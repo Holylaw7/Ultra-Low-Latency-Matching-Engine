@@ -2,11 +2,12 @@
 
 ## Status
 
-`Proposed` by
+`Approved` by
 [`ADR-0012`](../adr/ADR-0012-event-pipeline-execution-and-backpressure.md) and
 the [`Phase 4 Blueprint`](../../tasks/blueprints/PHASE-4-event-pipeline-blueprint.md).
-The proposal is awaiting one Human Phase Blueprint Approval. No production
-implementation is authorized.
+Human Phase Blueprint Approval is recorded. Implementation is authorized in
+dependency order, with automated evidence and Exception Gates. Phase Closure
+is not yet approved.
 
 ## Intended Flow
 

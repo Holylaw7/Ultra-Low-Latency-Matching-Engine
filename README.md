@@ -41,9 +41,10 @@ contain WAL, Replay, Snapshot, Recovery, Network or production optimization.
 
 Phase Blueprint Mode is completed, approved and active as the governance
 standard for future multi-task phases. The complete Phase 4 Event Pipeline
-Blueprint, ADR-0012 and TASK-010 through TASK-013 are now `Proposed` for one
-Human Phase Blueprint Approval. Phase 4 implementation remains unauthorized;
-the proposal does not modify the frozen `v0.2.0-engineering-baseline`.
+Blueprint, ADR-0012 and TASK-010 through TASK-013 have received Human Blueprint
+Approval. Phase 4 implementation is authorized in dependency order with
+automated evidence gates; the frozen `v0.2.0-engineering-baseline` remains
+unchanged.
 
 The repository currently contains:
 

@@ -6,7 +6,7 @@
 | --- | --- |
 | Phase | Phase 4 — Event Pipeline |
 | Stage | Complete Blueprint Proposal |
-| Result | `Proposed — Pending Human Phase Blueprint Approval` |
+| Result | `Approved — Implementation Authorized in Dependency Order` |
 | Production Changes | None |
 | Tests | Baseline `mvn verify` PASS — 61 tests |
 | Build | Maven reactor 3/3 SUCCESS; Checkstyle 0 violations |
@@ -53,10 +53,10 @@ The durable decision record is
 
 | Task | Purpose | Status |
 | --- | --- | --- |
-| [`TASK-010`](../active/TASK-20260821-010-phase4-pipeline-foundation.md) | dependency, configuration and public pipeline contracts | Proposed |
-| [`TASK-011`](../active/TASK-20260821-011-phase4-pipeline-core.md) | bounded runtime, lifecycle, matching and result handling | Proposed |
-| [`TASK-012`](../active/TASK-20260821-012-phase4-pipeline-verification.md) | determinism, ordering, backpressure and failure evidence | Proposed |
-| [`TASK-013`](../active/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) | component benchmark, documentation and Closure preparation | Proposed |
+| [`TASK-010`](../active/TASK-20260821-010-phase4-pipeline-foundation.md) | dependency, configuration and public pipeline contracts | Approved / next |
+| [`TASK-011`](../active/TASK-20260821-011-phase4-pipeline-core.md) | bounded runtime, lifecycle, matching and result handling | Approved / after TASK-010 evidence |
+| [`TASK-012`](../active/TASK-20260821-012-phase4-pipeline-verification.md) | determinism, ordering, backpressure and failure evidence | Approved / after TASK-011 evidence |
+| [`TASK-013`](../active/TASK-20260821-013-phase4-pipeline-benchmark-docs.md) | component benchmark, documentation and Closure preparation | Approved / after TASK-012 evidence |
 
 The complete scope, file boundaries, acceptance criteria, evidence plan,
 risks, rollback, Git strategy and Closure plan are in the

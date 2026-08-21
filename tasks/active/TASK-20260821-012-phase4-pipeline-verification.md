@@ -6,15 +6,15 @@
 | --- | --- |
 | Task ID | `TASK-20260821-012` |
 | Title | Verify Event Pipeline Determinism and Failure Boundaries |
-| Status | `Proposed` |
+| Status | `Approved` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Related Phase | Phase 4 — Event Pipeline |
-| Related ADR | [`ADR-0012`](../../docs/adr/ADR-0012-event-pipeline-execution-and-backpressure.md) — Proposed |
-| Phase Blueprint | [`PHASE-4 Blueprint`](../blueprints/PHASE-4-event-pipeline-blueprint.md) — Proposed |
-| Authorization Mode | `Blueprint` |
-| Current Stage | `ADR / Decision` |
-| Next Gate | `Human Phase Blueprint Approval` |
+| Related ADR | [`ADR-0012`](../../docs/adr/ADR-0012-event-pipeline-execution-and-backpressure.md) — Approved |
+| Phase Blueprint | [`PHASE-4 Blueprint`](../blueprints/PHASE-4-event-pipeline-blueprint.md) — Approved |
+| Authorization Mode | `Blueprint inherited Human approval` |
+| Current Stage | `Implementation (dependency-gated)` |
+| Next Gate | `TASK-011 evidence gate` |
 | Branch | planned `feature/phase4-event-pipeline` |
 | Baseline HEAD | TASK-011 verified commit |
 | Remote / CI | `origin` / `Pending` |
@@ -97,10 +97,10 @@ one result only.
 
 | Field | Value |
 | --- | --- |
-| ADR | ADR-0012 invariants/verification plan — `Proposed` |
+| ADR | ADR-0012 invariants/verification plan — `Approved` |
 | Decision Summary | verify observable ordering, equivalence, backpressure and fail-stop |
 | Scope Boundary | tests/evidence only; production design frozen |
-| Blueprint | `tasks/blueprints/PHASE-4-event-pipeline-blueprint.md` — `Proposed` |
+| Blueprint | `tasks/blueprints/PHASE-4-event-pipeline-blueprint.md` — `Approved` |
 | Authorized Stage | TASK-012 only after TASK-011 evidence |
 | Exception Gates | production/API change, flaky timing dependency, weakened assertion |
 
@@ -184,13 +184,13 @@ TASK-013.
 
 | Date | Reviewer | Stage | Decision | Constraints / Notes |
 | --- | --- | --- | --- | --- |
-|  | Human Developer | Phase Blueprint Approval | `Pending` | No execution before approval |
+| 2026-08-21 | Human Developer | Phase Blueprint Approval | `Approved` | TASK-012 authorized after TASK-011 evidence; verification remains public-contract only |
 
 ## 16. Phase Reports and Approval Gates
 
 | Stage | Report | Status | Next Gate | Authorization |
 | --- | --- | --- | --- | --- |
-| ADR / Decision | ADR-0012 / Blueprint | Proposed | Blueprint Approval | Pending |
+| ADR / Decision | ADR-0012 / Blueprint | Approved | TASK-011 evidence | Blueprint inherited |
 | Verification | `tasks/reports/PHASE-4-event-pipeline.md` | Pending | evidence gate | Blueprint |
 | Regression | same report | Pending | TASK-013 | Blueprint |
 | Benchmark | same report | Not applicable | TASK-013 | Blueprint |
@@ -200,7 +200,8 @@ TASK-013.
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
-| 2026-08-21 | Proposed | Determinism/failure evidence scope prepared | Implementation not authorized |
+| 2026-08-21 | Proposed | Determinism/failure evidence scope prepared | Awaiting Blueprint Approval |
+| 2026-08-21 | Approved | Blueprint approval recorded; TASK-012 is dependency-gated | TASK-011 evidence gate |
 
 ## 18. Completion Checklist
 

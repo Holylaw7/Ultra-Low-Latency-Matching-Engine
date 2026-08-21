@@ -6,15 +6,15 @@
 | --- | --- |
 | Task ID | `TASK-20260821-011` |
 | Title | Implement Bounded Single-Consumer Matching Pipeline |
-| Status | `Proposed` |
+| Status | `Approved` |
 | Owner / Implementer | Human Developer / Codex |
 | Created / Updated | `2026-08-21` |
 | Related Phase | Phase 4 — Event Pipeline |
-| Related ADR | [`ADR-0012`](../../docs/adr/ADR-0012-event-pipeline-execution-and-backpressure.md) — Proposed |
-| Phase Blueprint | [`PHASE-4 Blueprint`](../blueprints/PHASE-4-event-pipeline-blueprint.md) — Proposed |
-| Authorization Mode | `Blueprint` |
-| Current Stage | `ADR / Decision` |
-| Next Gate | `Human Phase Blueprint Approval` |
+| Related ADR | [`ADR-0012`](../../docs/adr/ADR-0012-event-pipeline-execution-and-backpressure.md) — Approved |
+| Phase Blueprint | [`PHASE-4 Blueprint`](../blueprints/PHASE-4-event-pipeline-blueprint.md) — Approved |
+| Authorization Mode | `Blueprint inherited Human approval` |
+| Current Stage | `Implementation (dependency-gated)` |
+| Next Gate | `TASK-010 evidence gate` |
 | Branch | planned `feature/phase4-event-pipeline` |
 | Baseline HEAD | TASK-010 verified commit |
 | Remote / CI | `origin` / `Pending` |
@@ -102,10 +102,10 @@ terminal because engine state has already changed.
 
 | Field | Value |
 | --- | --- |
-| ADR | ADR-0012 D2-D7 — `Proposed` |
+| ADR | ADR-0012 D2-D7 — `Approved` |
 | Decision Summary | bounded SPSC Disruptor adapter with explicit lifecycle and fail-stop |
 | Scope Boundary | new pipeline package; frozen core is dependency only |
-| Blueprint | `tasks/blueprints/PHASE-4-event-pipeline-blueprint.md` — `Proposed` |
+| Blueprint | `tasks/blueprints/PHASE-4-event-pipeline-blueprint.md` — `Approved` |
 | Authorized Stage | TASK-011 only after TASK-010 evidence |
 | Exception Gates | need for output ring, multi-producer, core API change or recovery |
 
@@ -184,13 +184,13 @@ TASK-012.
 
 | Date | Reviewer | Stage | Decision | Constraints / Notes |
 | --- | --- | --- | --- | --- |
-|  | Human Developer | Phase Blueprint Approval | `Pending` | No implementation before approval |
+| 2026-08-21 | Human Developer | Phase Blueprint Approval | `Approved` | TASK-011 authorized after TASK-010 evidence; frozen engine and OrderBook remain unchanged |
 
 ## 16. Phase Reports and Approval Gates
 
 | Stage | Report | Status | Next Gate | Authorization |
 | --- | --- | --- | --- | --- |
-| ADR / Decision | ADR-0012 / Blueprint | Proposed | Blueprint Approval | Pending |
+| ADR / Decision | ADR-0012 / Blueprint | Approved | TASK-010 evidence | Blueprint inherited |
 | Core Implementation | `tasks/reports/PHASE-4-event-pipeline.md` | Pending | integration evidence | Blueprint |
 | Verification | same report | Pending | TASK-012 | Blueprint |
 | Benchmark | same report | Not applicable | TASK-012 | Blueprint |
@@ -200,7 +200,8 @@ TASK-012.
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
-| 2026-08-21 | Proposed | Bounded pipeline implementation scope prepared | Implementation not authorized |
+| 2026-08-21 | Proposed | Bounded pipeline implementation scope prepared | Awaiting Blueprint Approval |
+| 2026-08-21 | Approved | Blueprint approval recorded; TASK-011 is dependency-gated | TASK-010 evidence gate |
 
 ## 18. Completion Checklist
 

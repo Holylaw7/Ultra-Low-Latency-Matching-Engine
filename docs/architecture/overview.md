@@ -4,10 +4,10 @@
 
 Phase 0 bootstrap, Phase 1 domain model, Phase 2 OrderBook and Phase 3
 MatchingEngine are complete. Phase 3 is frozen at
-`v0.2.0-engineering-baseline`. A complete Phase 4 Event Pipeline Blueprint is
-`Proposed` and awaiting one Human Phase Blueprint Approval. No Phase 4
-implementation is authorized. Network, WAL, snapshot and recovery remain
-Future Work.
+`v0.2.0-engineering-baseline`. The complete Phase 4 Event Pipeline Blueprint
+has Human approval. Implementation is authorized in dependency order, subject
+to automated evidence and Exception Gates. Network, WAL, snapshot and recovery
+remain Future Work.
 
 ## Scope
 
@@ -20,7 +20,7 @@ Client                                       [Future Work]
   -> Netty Network Adapter / Binary Protocol [Future Work]
   -> Decoder / Validation                    [Future Work]
   -> Ingress                                 [Future Work]
-  -> RingBuffer / Disruptor Pipeline         [Phase 4 Proposed / Locked]
+  -> RingBuffer / Disruptor Pipeline         [Phase 4 approved / executing]
   -> MatchingEngine                          [Phase 3 baseline frozen]
        -> sequence / orchestration
        -> OrderBook                          [Phase 2 baseline implemented]
@@ -62,8 +62,8 @@ See [`order-book.md`](order-book.md) and
    `v0.1.0-engineering-baseline`**.
 3. MatchingEngine orchestration — **Completed and frozen at
    `v0.2.0-engineering-baseline`**.
-4. Event pipeline — **Complete Blueprint Proposed / Human Approval Pending;
-   implementation not authorized**.
+4. Event pipeline — **Blueprint approved; implementation authorized in
+   dependency order; Phase Closure remains pending**.
 5. Network adapter and protocol — **Future Work**.
 6. WAL, snapshot and recovery — **Future Work**.
 7. Deterministic replay and system verification — **Future Work**.

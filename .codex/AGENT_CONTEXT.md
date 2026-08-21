@@ -13,17 +13,17 @@
 | Phase | Phase 3 — MatchingEngine (`Completed / Approved / Baseline Frozen`) |
 | Latest product task | [`TASK-20260820-008`](../tasks/completed/TASK-20260820-008-phase3-matching-engine-implementation.md) — Completed |
 | Latest architecture task | [`TASK-20260820-007`](../tasks/completed/TASK-20260820-007-phase3-matching-engine-adr-decision.md) — Completed |
-| Current planning task | [`Phase 4 Event Pipeline Blueprint`](../tasks/blueprints/PHASE-4-event-pipeline-blueprint.md) with TASK-010 through TASK-013 — Proposed |
+| Current planning task | [`Phase 4 Event Pipeline Blueprint`](../tasks/blueprints/PHASE-4-event-pipeline-blueprint.md) with TASK-010 through TASK-013 — Approved |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
-| Product stage | Phase 3 Closed / Baseline Frozen; Phase 4 Blueprint Proposed |
-| Product approval | Phase 4 implementation is locked pending one Human Phase Blueprint Approval |
+| Product stage | Phase 3 Closed / Baseline Frozen; Phase 4 implementation authorized |
+| Product approval | Phase 4 Blueprint approved; execution proceeds in dependency order with automated evidence gates |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `docs/phase4-event-pipeline-blueprint` |
 | Engineering baseline commit | `9281124` |
 | Engineering baseline tag | `v0.2.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | Phase 4 proposal content pushed at `f0f18ff`; branch tracks `origin/docs/phase4-event-pipeline-blueprint`; `v0.2.0-engineering-baseline` remains frozen at `9281124` |
-| CI | Phase 4 proposal content [run 32455576290](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32455576290) PASS for exact SHA `f0f18ff`; local baseline `mvn verify` PASS (61 tests, 0 Checkstyle violations) |
+| Remote sync | Blueprint approval records pushed at `b25122a`; branch tracks `origin/docs/phase4-event-pipeline-blueprint`; `v0.2.0-engineering-baseline` remains frozen at `9281124` |
+| CI | Blueprint evidence [run 32455686581](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32455686581) PASS for exact SHA `b25122a`; local baseline `mvn verify` PASS (61 tests, 0 Checkstyle violations) |
 
 ## Project Progress
 
@@ -34,7 +34,7 @@
 | Phase 2 — Basic OrderBook | Completed / Approved | `v0.1.0-engineering-baseline`, 45 tests, JMH/JFR evidence and passing master CI |
 | Phase 3 — Matching Engine | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-3-matching-engine-closure-authorization.md); `v0.2.0-engineering-baseline` |
 | Governance — Phase Blueprint Mode | Completed / Approved / Active | [`TASK-009`](../tasks/completed/TASK-20260821-009-phase-blueprint-governance.md); master CI PASS |
-| Phase 4 — Event Pipeline | Complete Blueprint Proposed / Human Approval Pending | [`Blueprint Proposal`](../tasks/reports/PHASE-4-event-pipeline-blueprint-proposal.md); implementation locked |
+| Phase 4 — Event Pipeline | Blueprint Approved / Implementation Authorized | [`Blueprint Proposal`](../tasks/reports/PHASE-4-event-pipeline-blueprint-proposal.md); TASK-010 is next |
 | Phase 5+ — Network, recovery and performance evolution | Future Work | Future Blueprints, ADRs and Tasks |
 
 ## Current Product Gate
@@ -60,8 +60,12 @@ ADR-0011 Final Approved
     -> v0.2.0-engineering-baseline / tag CI [Completed / PASS]
     -> TASK-20260820-008 [Completed]
     -> Phase 4 complete Blueprint proposal [Prepared]
-    -> Human Phase 4 Blueprint approval [Pending]
-    -> Phase 4 implementation [Not Authorized]
+    -> Human Phase 4 Blueprint approval [Approved]
+    -> TASK-010 foundation [Authorized / next]
+    -> TASK-011 core [Authorized after TASK-010 evidence]
+    -> TASK-012 verification [Authorized after TASK-011 evidence]
+    -> TASK-013 benchmark/docs [Authorized after TASK-012 evidence]
+    -> Phase 4 Closure [Human approval required]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
@@ -73,12 +77,12 @@ production optimization and history rewrite remain unauthorized. OrderBook
 remains the frozen Phase 2 dependency.
 
 Phase Blueprint Mode is the active governance standard. ADR-0012, the complete
-Phase 4 Event Pipeline Blueprint and TASK-010 through TASK-013 are `Proposed`.
-They request one Human Blueprint Approval for a bounded single-producer /
-single-consumer event pipeline, deterministic result handling, backpressure,
-lifecycle, verification and component evidence. Proposal preparation does not
-authorize implementation. Existing Domain, OrderBook and MatchingEngine
-production files remain frozen.
+Phase 4 Event Pipeline Blueprint and TASK-010 through TASK-013 are approved by
+the Human Blueprint Approval. Execution is authorized in dependency order for
+a bounded single-producer/single-consumer event pipeline, deterministic result
+handling, backpressure, lifecycle, verification and component evidence.
+Automated evidence gates and Exception Gates remain mandatory. Existing
+Domain, OrderBook and MatchingEngine production files remain frozen.
 
 Current proposal:
 [`PHASE-4-event-pipeline-blueprint.md`](../tasks/blueprints/PHASE-4-event-pipeline-blueprint.md).
@@ -134,7 +138,7 @@ Current evidence:
 | JFR-first profiling evidence | Approved | [`ADR-0009`](../docs/adr/ADR-0009-performance-profiling-evidence.md) |
 | Defer production optimization until measurement isolation | Approved | [`ADR-0010`](../docs/adr/ADR-0010-optimization-decision-after-profiling.md) |
 | MatchingEngine orchestration model | Approved | [`ADR-0011`](../docs/adr/ADR-0011-matching-engine-orchestration-model.md) |
-| Event pipeline execution and backpressure | Proposed / Human Blueprint Approval Pending | [`ADR-0012`](../docs/adr/ADR-0012-event-pipeline-execution-and-backpressure.md) |
+| Event pipeline execution and backpressure | Approved with Blueprint conditions | [`ADR-0012`](../docs/adr/ADR-0012-event-pipeline-execution-and-backpressure.md) |
 
 If a Task and linked ADR disagree, stop and synchronize them before work.
 
@@ -185,7 +189,7 @@ These remain targets or hypotheses, never measured project claims.
 Client
   -> Netty / Protocol                 [Future Work]
   -> Decoder / Validation             [Future Work]
-  -> Ingress + RingBuffer/Disruptor   [Phase 4 Blueprint Proposed / Locked]
+  -> Ingress + RingBuffer/Disruptor   [Phase 4 Blueprint Approved / TASK-010 next]
   -> MatchingEngine                   [Phase 3 baseline frozen]
   -> OrderBook                        [Phase 2 baseline implemented]
        -> BidBook / AskBook

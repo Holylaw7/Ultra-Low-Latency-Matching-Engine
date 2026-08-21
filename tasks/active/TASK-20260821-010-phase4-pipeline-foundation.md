@@ -6,16 +6,16 @@
 | --- | --- |
 | Task ID | `TASK-20260821-010` |
 | Title | Add Phase 4 Event Pipeline Foundation |
-| Status | `Proposed` |
+| Status | `Approved` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created / Updated | `2026-08-21` |
 | Related Phase | Phase 4 — Event Pipeline |
-| Related ADR | [`ADR-0012`](../../docs/adr/ADR-0012-event-pipeline-execution-and-backpressure.md) — Proposed |
-| Phase Blueprint | [`PHASE-4 Blueprint`](../blueprints/PHASE-4-event-pipeline-blueprint.md) — Proposed |
-| Authorization Mode | `Blueprint` |
-| Current Stage | `ADR / Decision` |
-| Next Gate | `Human Phase Blueprint Approval` |
+| Related ADR | [`ADR-0012`](../../docs/adr/ADR-0012-event-pipeline-execution-and-backpressure.md) — Approved |
+| Phase Blueprint | [`PHASE-4 Blueprint`](../blueprints/PHASE-4-event-pipeline-blueprint.md) — Approved |
+| Authorization Mode | `Blueprint inherited Human approval` |
+| Current Stage | `Implementation` |
+| Next Gate | `Automated Evidence Gate` |
 | Branch | planned `feature/phase4-event-pipeline` |
 | Baseline HEAD | approved planning commit based on `bbf909c` |
 | Remote / CI | `origin` / `Pending` |
@@ -90,10 +90,10 @@ without leaking an LMAX `WaitStrategy`.
 
 | Field | Value |
 | --- | --- |
-| ADR | ADR-0012 D1, D4, D7 — `Proposed` |
+| ADR | ADR-0012 D1, D4, D7 — `Approved` |
 | Decision Summary | Disruptor 4.0.0 behind validated project-owned contracts |
 | Scope Boundary | dependency/API foundation only; no runtime consumer |
-| Blueprint | `tasks/blueprints/PHASE-4-event-pipeline-blueprint.md` — `Proposed` |
+| Blueprint | `tasks/blueprints/PHASE-4-event-pipeline-blueprint.md` — `Approved` |
 | Authorized Stage | TASK-010 only after Blueprint approval |
 | Exception Gates | dependency/version change, API expansion, existing production-file change |
 
@@ -158,13 +158,13 @@ CI success before TASK-011.
 
 | Date | Reviewer | Stage | Decision | Constraints / Notes |
 | --- | --- | --- | --- | --- |
-|  | Human Developer | Phase Blueprint Approval | `Pending` | No implementation before approval |
+| 2026-08-21 | Human Developer | Phase Blueprint Approval | `Approved` | TASK-010 authorized; dependency/API foundation only; automated evidence gate required |
 
 ## 16. Phase Reports and Approval Gates
 
 | Stage | Report | Status | Next Gate | Authorization |
 | --- | --- | --- | --- | --- |
-| ADR / Decision | ADR-0012 / Blueprint | Proposed | Blueprint Approval | Pending |
+| ADR / Decision | ADR-0012 / Blueprint | Approved | Implementation | Blueprint inherited |
 | Foundation | `tasks/reports/PHASE-4-event-pipeline.md` | Pending | evidence gate | Blueprint |
 | Verification | same report | Pending | TASK-011 | Blueprint |
 | Benchmark | same report | Not applicable | TASK-011 | Blueprint |
@@ -174,7 +174,8 @@ CI success before TASK-011.
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
-| 2026-08-21 | Proposed | Foundation scope prepared | Implementation not authorized |
+| 2026-08-21 | Proposed | Foundation scope prepared | Awaiting Blueprint Approval |
+| 2026-08-21 | Approved | Blueprint approval recorded; TASK-010 may begin | Automated evidence gate |
 
 ## 18. Completion Checklist
 

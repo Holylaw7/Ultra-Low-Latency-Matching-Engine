@@ -2,13 +2,13 @@
 
 ## Status
 
-Proposed — pending Human Phase 4 Blueprint Approval
+Approved — Human Phase 4 Blueprint Approval recorded
 
 ## Decision Record
 
 - Proposal date: `2026-08-21`
 - Reviewer: `Human Developer`
-- Decision: `Pending`
+- Decision: `Approved`
 - Phase Blueprint:
   [`PHASE-4-event-pipeline-blueprint.md`](../../tasks/blueprints/PHASE-4-event-pipeline-blueprint.md)
 - Related decisions:
@@ -17,9 +17,9 @@ Proposed — pending Human Phase 4 Blueprint Approval
   - [`ADR-0005-domain-model-and-correctness-baseline.md`](ADR-0005-domain-model-and-correctness-baseline.md)
   - [`ADR-0011-matching-engine-orchestration-model.md`](ADR-0011-matching-engine-orchestration-model.md)
 
-Human Phase 4 Blueprint Approval may accept the decision items in this ADR.
-Until then, no dependency, production code, test, benchmark or runtime change
-described here is authorized.
+Human Phase 4 Blueprint Approval accepted D1-D8 and the enumerated Phase 4
+Tasks. Implementation remains subject to the dependency order, automated
+evidence gates and the Exception Gate below.
 
 ## Context
 
@@ -328,17 +328,18 @@ batch end-to-end completion and may not claim network or durable latency.
 
 | ID | Proposed decision | Current state |
 | --- | --- | --- |
-| D1 | LMAX Disruptor 4.0.0 behind a project-owned pipeline boundary | Pending |
-| D2 | Single external producer and one pipeline-owned matching consumer | Pending |
-| D3 | Preserve command Sequence; ring sequence remains infrastructure-only | Pending |
-| D4 | Bounded non-blocking `tryPublish` with explicit `ACCEPTED` / `FULL` | Pending |
-| D5 | Synchronous deterministic in-memory result handler on consumer thread | Pending |
-| D6 | Explicit single-use lifecycle, graceful drain and fail-stop errors | Pending |
-| D7 | Blocking default; Yielding/BusySpin only explicit benchmark variables | Pending |
-| D8 | Network, WAL/Replay, output ring and production optimization deferred | Pending |
+| D1 | LMAX Disruptor 4.0.0 behind a project-owned pipeline boundary | Approved |
+| D2 | Single external producer and one pipeline-owned matching consumer | Approved |
+| D3 | Preserve command Sequence; ring sequence remains infrastructure-only | Approved |
+| D4 | Bounded non-blocking `tryPublish` with explicit `ACCEPTED` / `FULL` | Approved |
+| D5 | Synchronous deterministic in-memory result handler on consumer thread | Approved |
+| D6 | Explicit single-use lifecycle, graceful drain and fail-stop errors | Approved |
+| D7 | Blocking default; Yielding/BusySpin only explicit benchmark variables | Approved with condition |
+| D8 | Network, WAL/Replay, output ring and production optimization deferred | Approved |
 
 ## Approval Record
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | `Proposal Authorized` | Create a complete Phase 4 Blueprint Proposal only. Implementation remains unauthorized pending Human Blueprint Approval. |
+| 2026-08-21 | Human Developer | `Approved` | D1-D8 and TASK-010 through TASK-013 approved through the Phase Blueprint. v0.2.0 baseline, OrderBook and MatchingEngine production files remain immutable; `BLOCKING` remains default and cannot change automatically from benchmark results; Phase Closure requires separate Human approval. |
