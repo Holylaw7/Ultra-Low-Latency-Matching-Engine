@@ -6,21 +6,21 @@
 | --- | --- |
 | Task ID | `TASK-20260820-008` |
 | Title | Implement Phase 3 MatchingEngine Orchestration Baseline |
-| Status | `In Progress — Stage 3 completed and approved` |
+| Status | `In Progress — Phase 3 closure proposal prepared` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created | `2026-08-20` |
 | Updated | `2026-08-21` |
 | Related Phase | Phase 3 — MatchingEngine |
 | Related ADR | ADR-0005 sequence revision and ADR-0011 (`Approved`) |
-| Current Stage | `Stage 3 Determinism Verification completed and approved` |
-| Next Approval Gate | `Phase 3 Closure Authorization` |
+| Current Stage | `Phase 3 Closure Preparation / Authorization Proposal` |
+| Next Approval Gate | `Human Phase 3 Closure Approval` |
 | Branch | `feature/phase3-matching-engine` |
 | Approved Implementation Branch | `feature/phase3-matching-engine` |
 | Parent Branch / HEAD | `docs/phase3-matching-engine-adr` at `96fe50b` |
 | Engineering Baseline | `v0.1.0-engineering-baseline` at `cbfa957` |
 | Remote | `origin` |
-| CI | Stage 3 verification evidence `1f268e9`: [run 32447036906](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32447036906) PASS |
+| CI | Stage 3 completion approval `4c46567`: [run 32447560720](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32447560720) PASS |
 
 ## 2. Background
 
@@ -39,7 +39,9 @@ an explicit MatchingEngine-owned `EventSequence` for output match aggregates.
 This Task converts those accepted decisions into a reviewable implementation
 plan. The Human Developer approved the plan on `2026-08-20`. Stage 1 and Stage
 2 are completed and approved. Stage 3 verification was authorized, implemented
-and approved on `2026-08-21`. Phase 3 closure requires separate authorization.
+and approved on `2026-08-21`. Phase 3 meets the documented closure
+prerequisites; a closure authorization proposal is prepared, while merge, tag
+creation and final closure remain subject to separate Human approval.
 
 ## 3. Goal
 
@@ -670,6 +672,7 @@ Review; Phase 3 closure does not start automatically.
 | 2026-08-21 | Codex | Stage 3 Authorization Request | `Proposed` | Verification-only scope proposed for deterministic re-execution, public-API state probes and reachable pre-apply failure atomicity. Production changes, replay infrastructure and artificial failure seams remain unauthorized. |
 | 2026-08-21 | Human Developer | Stage 3 Authorization Review | `Approved` | Dual-engine and extended-stream determinism, ordered result comparison, public-API state probes and reachable failure atomicity authorized. WAL, Replay subsystem, reflection, production test hooks and unreachable-failure injection remain prohibited. |
 | 2026-08-21 | Human Developer | Stage 3 Completion Review | `Approved` | Dual-engine deterministic comparison, extended command stream verification, observable result ordering, public API behavior and failure atomicity accepted. WAL, Replay subsystem and resource exhaustion verification remain outside current scope. Phase 3 Closure requires separate authorization. |
+| 2026-08-21 | Human Developer | Phase 3 Closure Preparation Review | `Approved` | Stage 1-3 evidence accepted as sufficient to prepare a Closure Authorization report. Merge, tag creation, final closure and next-phase work remain subject to separate approval. |
 
 ## 18. Phase Reports and Approval Gates
 
@@ -682,8 +685,8 @@ Review; Phase 3 closure does not start automatically.
 | MatchingEngine Implementation | `tasks/reports/PHASE-3-matching-engine-core-implementation.md` | Completed / Approved | Stage 3 Authorization | Approved 2026-08-21 |
 | Correctness / Determinism Verification | `tasks/reports/PHASE-3-matching-engine-determinism-verification.md` | Completed / Approved | Phase 3 Closure Authorization | Approved 2026-08-21 |
 | Benchmark / Profile | Not applicable | Not applicable | Documentation Sync | Not applicable |
-| Documentation and Synchronization | Not created | Not Authorized | Completion Review | Not Authorized |
-| Completion | Not created | Not Authorized | Human Completion Approval | Not Authorized |
+| Documentation and Synchronization | `tasks/reports/PHASE-3-matching-engine-closure-authorization.md` | Prepared / Pending Human Approval | Human Phase 3 Closure Approval | Pending |
+| Completion | Same closure report | Ready / Not Authorized | Human Phase 3 Closure Approval | Pending |
 
 ## 19. Implementation Log
 
@@ -702,6 +705,7 @@ Review; Phase 3 closure does not start automatically.
 | 2026-08-21 | Stage 3 Authorized | Human approved verification-only execution and made collection order part of observable determinism | Only `MatchingEngineDeterminismTest.java` may be added; Phase 3 closure remains unauthorized |
 | 2026-08-21 | Stage 3 Completed | Added fixed dual-engine determinism, public-API probes and reachable failure-atomicity evidence | `6eb31ea`, `e7d26f0`, `1f268e9`; focused 5 tests, core 61 tests, `mvn verify` PASS, Checkstyle 0 and GitHub Actions run `32447036906` PASS; pending Human completion review |
 | 2026-08-21 | Stage 3 Approved | Human accepted determinism scope, observable ordering, public-API behavior and reachable failure atomicity | Stage 3 closed; Phase 3 Closure is ready for separate authorization and remains unauthorized |
+| 2026-08-21 | Closure Proposal Prepared | Consolidated Stage 1-3 evidence, frozen boundary, limitations and proposed `v0.2.0-engineering-baseline` sequence | Documentation only; Human Phase 3 Closure Approval pending; merge and tag remain unauthorized |
 
 ## 20. Completion Checklist
 
@@ -730,3 +734,8 @@ Review; Phase 3 closure does not start automatically.
 - [x] Stage 3 determinism verification executed
 - [x] Stage 3 report and documentation synchronization completed
 - [x] Human Stage 3 Completion Review completed
+- [x] Phase 3 Closure Authorization report prepared
+- [ ] Human Phase 3 Closure Approval completed
+- [ ] Feature branch merged and verified on master
+- [ ] Annotated Phase 3 engineering baseline tag created and verified
+- [ ] TASK-008 completed and moved to `tasks/completed/`

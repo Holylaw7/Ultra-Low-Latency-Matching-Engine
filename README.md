@@ -39,7 +39,9 @@ Stage 2 implements the synchronous MatchingEngine core: sequenced limit submit
 and cancellation, frozen OrderBook delegation and immutable Trade/Execution
 results. Stage 2 is completed and approved. Stage 3 verification-only
 execution and Human completion review are also complete and approved. Phase 3
-closure is ready for separate authorization and remains unauthorized.
+closure prerequisites are consolidated in a Closure Authorization proposal.
+Human closure approval is pending; merge and engineering-baseline tag creation
+remain unauthorized.
 
 The repository currently contains:
 

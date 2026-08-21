@@ -102,6 +102,7 @@ engine-owned thread, executor, lock or queue. Stage 2 was accepted on
 were completed and approved on 2026-08-21. The verification uses equal command
 re-execution, order-significant result comparison and public-API probes without
 adding WAL/replay infrastructure, state exposure or production test hooks.
-Phase 3 closure is ready for separate authorization and remains unauthorized.
-OrderBook is an external frozen dependency and no OrderBook file or API may
-change.
+The Phase 3 Closure Authorization proposal records the completed evidence,
+frozen boundary and known limitations. Human closure approval is pending;
+merge and engineering-baseline tag creation remain unauthorized. OrderBook is
+an external frozen dependency and no OrderBook file or API may change.
