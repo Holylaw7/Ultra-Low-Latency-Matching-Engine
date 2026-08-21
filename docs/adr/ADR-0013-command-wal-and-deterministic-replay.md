@@ -334,3 +334,7 @@ merge completed at `f1e453a`; master CI `32482831419` and annotated
 `v0.4.0-engineering-baseline` tag CI `32482900227` passed. Live pipeline
 integration, durable client acknowledgement, Snapshot, online Recovery,
 Network, optimization, Product Release and Phase 6 remain unauthorized.
+
+TASK-014 through TASK-018 were archived and final Phase 5 context was
+synchronized by `915c3ac`; exact-SHA CI `32483612937` passed. The annotated
+baseline tag remains fixed at the verified master merge commit `f1e453a`.

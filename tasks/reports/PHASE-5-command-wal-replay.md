@@ -13,6 +13,7 @@
 | Checkstyle | 0 violations |
 | Baseline Commit | `f1e453a0b0d2518fd20b422dd117d0119a479e62` (`--no-ff` master merge) |
 | Master / Tag CI | [master 32482831419](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482831419) PASS / [tag 32482900227](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482900227) PASS |
+| Archive / Docs CI | `915c3ac` / [32483612937](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32483612937) PASS |
 | Branch | `master` |
 | Next Gate | Phase 6 Complete Blueprint; not authorized |
 
@@ -241,6 +242,8 @@ complete and archived. The normal `--no-ff` merge completed at `f1e453a`,
 local master verification passed with 114 tests and frozen-path diff zero,
 master CI `32482831419` passed, and the annotated
 `v0.4.0-engineering-baseline` tag CI `32482900227` passed. Phase 5 is frozen.
+TASK-014 through TASK-018 were archived and the final documentation/context was
+synchronized by `915c3ac`; exact-SHA CI `32483612937` passed.
 Live pipeline/WAL integration, Snapshot, online Recovery, Network, Phase 6
 implementation and Product Release remain unauthorized.
 

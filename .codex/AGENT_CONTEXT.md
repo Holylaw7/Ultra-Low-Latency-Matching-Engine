@@ -22,8 +22,8 @@
 | Engineering baseline commit | `f1e453a` |
 | Engineering baseline tag | `v0.4.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/master` merged at `f1e453a`; annotated `v0.4.0-engineering-baseline` points to `f1e453a` |
-| CI | Master [32482831419](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482831419) PASS; tag [32482900227](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482900227) PASS; closure approval [32482702491](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482702491) PASS; remediation final gate [32482214913](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482214913) PASS |
+| Remote sync | `origin/master` synchronized through Phase 5 archive/docs commit `915c3ac`; annotated `v0.4.0-engineering-baseline` remains fixed at merge commit `f1e453a` |
+| CI | Archive/docs [32483612937](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32483612937) PASS; master merge [32482831419](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482831419) PASS; tag [32482900227](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482900227) PASS; closure approval [32482702491](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482702491) PASS; remediation final gate [32482214913](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482214913) PASS |
 
 ## Project Progress
 
@@ -111,7 +111,8 @@ R3 documentation synchronization is complete at `0e6ac95` with exact-SHA CI
 `32482054086` PASS, and the final gate record `a2176d5` passed CI
 `32482214913`. Human Phase 5 Closure is approved. The normal merge completed at
 `f1e453a`; master CI `32482831419` and annotated baseline tag CI `32482900227`
-passed. TASK-014 through TASK-018 are archived and Phase 5 is frozen at
+passed. TASK-014 through TASK-018 were archived by `915c3ac`, whose exact-SHA
+CI `32483612937` passed, and Phase 5 is frozen at
 `v0.4.0-engineering-baseline`. Product Release and Phase 6 remain unauthorized.
 
 Current approved Blueprint:

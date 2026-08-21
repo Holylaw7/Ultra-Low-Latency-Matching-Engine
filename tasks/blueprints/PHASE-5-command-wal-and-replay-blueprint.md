@@ -548,6 +548,7 @@ Approval must explicitly confirm:
 | 2026-08-21 | Human Phase 5 Closure | Approved / CI PASS | approval commit `ea150f7`; exact-SHA CI [32482702491](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482702491) PASS | authorized merge / master CI / baseline tag |
 | 2026-08-21 | Master baseline merge | Completed / CI PASS | `--no-ff` merge `f1e453a`; 114 tests; frozen-path diff zero; master CI [32482831419](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482831419) PASS | annotated baseline tag |
 | 2026-08-21 | Engineering baseline tag | Completed / CI PASS | `v0.4.0-engineering-baseline` -> `f1e453a`; tag CI [32482900227](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32482900227) PASS | Task archive / final documentation sync |
+| 2026-08-21 | Task archive / final documentation sync | Completed / CI PASS | TASK-014 through TASK-018 archived by `915c3ac`; exact-SHA CI [32483612937](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32483612937) PASS | Phase 5 baseline frozen; Phase 6 not authorized |
 
 ## 20. Phase Closure Checklist
 
