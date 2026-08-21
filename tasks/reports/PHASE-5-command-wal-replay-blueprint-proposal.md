@@ -10,8 +10,8 @@
 | Production Changes | None |
 | Tests | Baseline `mvn verify` PASS — 83 tests / 0 failures |
 | Build | Maven reactor 3/3 SUCCESS; Checkstyle 0 violations |
-| CI | Pending proposal commit/push |
-| Commit | Pending |
+| CI | [run 32462826593](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462826593) PASS |
+| Commit | `a2a7c758109f1dcf0460a99d8eb4e14f26c07787` |
 | Next Gate | Human Phase 5 Blueprint Approval |
 
 ## Discovery Outcome
@@ -96,7 +96,10 @@ re-execution. It does not prove:
 - frozen Domain/OrderBook/Engine/Pipeline working-tree changes: zero;
 - production, test, build and runtime files changed by this proposal: none;
 - `.vscode/` remains unrelated, untracked and untouched;
-- remote CI: pending proposal commit and push.
+- proposal content commit: `a2a7c758109f1dcf0460a99d8eb4e14f26c07787`;
+- exact-SHA GitHub Actions CI: run
+  [32462826593](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462826593)
+  PASS.
 
 ## Exception Gate Summary
 

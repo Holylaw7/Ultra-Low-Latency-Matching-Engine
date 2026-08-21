@@ -22,8 +22,8 @@
 | Engineering baseline commit | `d28abbe` |
 | Engineering baseline tag | `v0.3.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/master` at `fbcbe53`; annotated `v0.3.0-engineering-baseline` remains at `d28abbe` |
-| CI | master [32460526614](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460526614) PASS; tag [32460979962](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460979962) PASS; Phase 4 final closure [32461298486](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32461298486) PASS |
+| Remote sync | `origin/master` at `fbcbe53`; annotated `v0.3.0-engineering-baseline` remains at `d28abbe`; Phase 5 proposal branch published at `a2a7c75` |
+| CI | Phase 5 proposal [32462826593](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462826593) PASS; master [32460526614](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460526614) PASS; tag [32460979962](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460979962) PASS; Phase 4 final closure [32461298486](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32461298486) PASS |
 
 ## Project Progress
 
