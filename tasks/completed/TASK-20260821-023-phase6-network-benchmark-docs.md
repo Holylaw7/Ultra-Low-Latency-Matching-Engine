@@ -10,9 +10,9 @@
 | Created / Updated | `2026-08-21` |
 | Phase / ADR / Blueprint | Phase 6 / ADR-0014 / [`PHASE-6`](../blueprints/PHASE-6-network-protocol-blueprint.md) |
 | Authorization Mode | Blueprint |
-| Current Stage / Next Gate | Completed / Human Phase 6 Closure Review |
-| Branch / Baseline | `feature/phase6-network-protocol` after approval / approved proposal commit |
-| Remote / CI | `origin` / benchmark CI [32491817494](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32491817494) PASS; final evidence checkpoint `3ca54ad` / [32493384924](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493384924) PASS |
+| Current Stage / Next Gate | Archived / Phase 6 baseline frozen; Phase 7 Blueprint only |
+| Branch / Baseline | `master` after `--no-ff` merge `b7cf68e` / `v0.5.0-engineering-baseline` |
+| Remote / CI | `origin/master` / master CI [32495076976](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495076976) PASS; tag CI [32495218654](https://github.com/Holylaw7/Ultra-Latency-Matching-Engine/actions/runs/32495218654) PASS; final evidence checkpoint `3ca54ad` / [32493384924](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493384924) PASS |
 
 ## 2. Background
 

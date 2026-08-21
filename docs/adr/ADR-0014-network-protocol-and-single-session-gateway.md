@@ -2,7 +2,8 @@
 
 ## Status
 
-Approved — Human Phase 6 Blueprint Approval recorded
+Approved — Human Phase 6 Closure recorded; baseline frozen at
+`v0.5.0-engineering-baseline`
 
 ## Context
 
@@ -397,6 +398,7 @@ readiness.
 | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | `Proposal Authorized` | Phase 6 Discovery, ADR draft, complete Blueprint and TASK-019 through TASK-023 proposals only. No implementation. |
 | 2026-08-21 | Human Developer | `Approved` | ADR-0014 D1-D10 and the complete Phase 6 Blueprint approved. TASK-019 through TASK-023 authorized in strict dependency order; all task evidence gates are complete and separate Closure approval remains active. |
+| 2026-08-21 | Human Developer | `Closure Approved` | Limited docs-only remediation accepted. Merge `b7cf68e`, master CI `32495076976`, annotated `v0.5.0-engineering-baseline` tag CI `32495218654`; TASK-019 through TASK-023 archived. Dynamic Gateway FULL/write/pipeline fault injection remains an accepted unverified limitation. |
 
 ## Next Gate
 
@@ -404,7 +406,8 @@ readiness.
 ADR-0014: Approved
 Phase 6 Blueprint: Approved
 Implementation: Authorized in dependency order
-Current Task: TASK-023 Completed
-Phase Closure: Pending Human Review
-Next Gate: Human Phase 6 Closure Review
+Current Task: TASK-019..023 Archived
+Phase Closure: Approved / Baseline Frozen
+Baseline: `v0.5.0-engineering-baseline` at `b7cf68e`
+Next Gate: Phase 7 Blueprint only; implementation not authorized
 ```

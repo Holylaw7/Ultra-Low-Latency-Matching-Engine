@@ -13,7 +13,7 @@
 | CI | [32485900404](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32485900404) PASS |
 | Commit | `ecf0c27` |
 | Branch | `docs/phase6-network-protocol-blueprint` |
-| Next Gate | Human Phase 6 Closure Review |
+| Next Gate | Phase 6 Baseline Frozen; Phase 7 Blueprint required |
 
 ## Discovery Outcome
 
@@ -59,11 +59,11 @@ The durable draft is
 
 | Task | Purpose | Status |
 | --- | --- | --- |
-| [`TASK-019`](../active/TASK-20260821-019-phase6-network-protocol-codec.md) | dependency, protocol contracts and codec | Completed / Evidence PASS |
-| [`TASK-020`](../active/TASK-20260821-020-phase6-pipeline-failure-observer.md) | additive terminal pipeline observer | Completed / Evidence PASS |
-| [`TASK-021`](../active/TASK-20260821-021-phase6-netty-gateway.md) | single-session TCP gateway | Completed / Evidence PASS |
-| [`TASK-022`](../active/TASK-20260821-022-phase6-network-verification.md) | protocol/system/failure evidence | Completed / Evidence PASS |
-| [`TASK-023`](../active/TASK-20260821-023-phase6-network-benchmark-docs.md) | benchmark, documentation and Closure preparation | Completed / Evidence PASS |
+| [`TASK-019`](../completed/TASK-20260821-019-phase6-network-protocol-codec.md) | dependency, protocol contracts and codec | Completed / Evidence PASS |
+| [`TASK-020`](../completed/TASK-20260821-020-phase6-pipeline-failure-observer.md) | additive terminal pipeline observer | Completed / Evidence PASS |
+| [`TASK-021`](../completed/TASK-20260821-021-phase6-netty-gateway.md) | single-session TCP gateway | Completed / Evidence PASS |
+| [`TASK-022`](../completed/TASK-20260821-022-phase6-network-verification.md) | protocol/system/failure evidence | Completed / Evidence PASS |
+| [`TASK-023`](../completed/TASK-20260821-023-phase6-network-benchmark-docs.md) | benchmark, documentation and Closure preparation | Completed / Evidence PASS |
 
 The complete scope, wire layout, acceptance criteria, test/benchmark plan,
 risks, rollback, Git strategy and Closure plan are in the
@@ -139,23 +139,29 @@ dynamic Gateway fault injection: FULL identity preservation, outbound write
 failure terminal handling and pipeline-failure-to-Gateway terminal propagation
 were not dynamically fault-injected through a live Gateway test. No
 production-only test seam was introduced; this is an accepted Phase 6 baseline
-limitation. Phase 6 is stopped at Human Closure Review. Merge, a future
-`v0.5.0-engineering-baseline` tag, Phase 7 and Product Release remain
-unauthorized.
+limitation. Human Phase 6 Closure is approved. The normal merge completed at
+`b7cf68e` with master CI `32495076976` PASS, and
+`v0.5.0-engineering-baseline` was created on that merge commit with tag CI
+`32495218654` PASS. TASK-019 through TASK-023 are archived. Phase 7 and
+Product Release remain unauthorized.
 
 ## Human Decision Record
 
 The Human Developer approved the complete Phase 6 Blueprint and ADR-0014 D1-D10
-for dependency-ordered implementation. TASK-019 through TASK-023 have completed
-their evidence gates. The Exception Gate and separate Phase Closure approval
-remain active.
+for dependency-ordered implementation and subsequently approved Phase 6
+Closure after the limited docs-only remediation. TASK-019 through TASK-023
+completed their evidence gates and are archived. The baseline tag is frozen at
+the verified master merge commit; live WAL/Pipeline integration and future
+phases remain separately governed.
 
 ```text
 Phase 6 Blueprint: Approved
 ADR-0014: Approved
 Implementation: Authorized in dependency order
-Current Task: TASK-023 Completed
-Phase Closure: Pending Human Review
-Merge / v0.5.0 tag: Not Authorized
-Next Gate: Human Phase 6 Closure Review
+Current Task: TASK-019..023 Archived
+Phase Closure: Approved
+Merge: b7cf68e / master CI 32495076976 PASS
+Baseline: v0.5.0-engineering-baseline / tag CI 32495218654 PASS
+Tasks: TASK-019..023 Archived
+Next Gate: Phase 7 Blueprint only; implementation not authorized
 ```

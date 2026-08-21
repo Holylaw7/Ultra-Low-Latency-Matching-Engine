@@ -10,10 +10,10 @@
 | Architect | Codex / Sol high-equivalent architecture pass |
 | Created | `2026-08-21` |
 | Updated | `2026-08-21` |
-| Baseline | `v0.4.0-engineering-baseline` -> `f1e453a`; proposal base `2cf34b5` |
+| Baseline | `v0.4.0-engineering-baseline` -> `f1e453a`; Phase 6 baseline `v0.5.0-engineering-baseline` -> `b7cf68e` |
 | Blueprint Branch | `docs/phase6-network-protocol-blueprint` |
 | Planned Tasks | `TASK-20260821-019` through `TASK-20260821-023` |
-| Next Gate | `Human Phase 6 Closure Review` |
+| Next Gate | `Phase 7 Blueprint only; implementation not authorized` |
 
 ## 2. Phase Goal
 
@@ -155,11 +155,11 @@ back onto the owning event loop, preventing a fast-consumer association race.
 
 | Order | Task | Goal | Depends On | Authorized Scope | Report |
 | ---: | --- | --- | --- | --- | --- |
-| 1 | [`TASK-019`](../active/TASK-20260821-019-phase6-network-protocol-codec.md) | dependency, protocol contracts and exact codecs | Blueprint approval | POM + new protocol/codec packages/tests | cumulative Phase 6 report |
-| 2 | [`TASK-020`](../active/TASK-20260821-020-phase6-pipeline-failure-observer.md) | additive terminal pipeline observer | TASK-019 evidence | one existing pipeline file + new interface/tests | cumulative report |
-| 3 | [`TASK-021`](../active/TASK-20260821-021-phase6-netty-gateway.md) | single-session Netty gateway and ordered egress | TASK-020 evidence | new network gateway package/tests | cumulative report |
-| 4 | [`TASK-022`](../active/TASK-20260821-022-phase6-network-verification.md) | protocol/system/failure evidence | TASK-021 evidence | tests/fixtures and fixes within approved files | cumulative report |
-| 5 | [`TASK-023`](../active/TASK-20260821-023-phase6-network-benchmark-docs.md) | codec/loopback benchmark, docs and Closure proposal | TASK-022 evidence | benchmark/docs/evidence only | cumulative + Closure report |
+| 1 | [`TASK-019`](../completed/TASK-20260821-019-phase6-network-protocol-codec.md) | dependency, protocol contracts and exact codecs | Blueprint approval | POM + new protocol/codec packages/tests | cumulative Phase 6 report |
+| 2 | [`TASK-020`](../completed/TASK-20260821-020-phase6-pipeline-failure-observer.md) | additive terminal pipeline observer | TASK-019 evidence | one existing pipeline file + new interface/tests | cumulative report |
+| 3 | [`TASK-021`](../completed/TASK-20260821-021-phase6-netty-gateway.md) | single-session Netty gateway and ordered egress | TASK-020 evidence | new network gateway package/tests | cumulative report |
+| 4 | [`TASK-022`](../completed/TASK-20260821-022-phase6-network-verification.md) | protocol/system/failure evidence | TASK-021 evidence | tests/fixtures and fixes within approved files | cumulative report |
+| 5 | [`TASK-023`](../completed/TASK-20260821-023-phase6-network-benchmark-docs.md) | codec/loopback benchmark, docs and Closure proposal | TASK-022 evidence | benchmark/docs/evidence only | cumulative + Closure report |
 
 Execution must stop after TASK-023 at Human Phase 6 Closure Review.
 
@@ -391,8 +391,8 @@ Execution artifacts after approval:
 - Closure report: `tasks/reports/PHASE-6-network-protocol-closure.md`.
 - Human Closure requires TASK-019..023 complete, exact-SHA CI PASS, protocol
   vectors/system evidence accepted, frozen-path audit zero and claims in scope.
-- Candidate baseline tag: `v0.5.0-engineering-baseline`.
-- Proposed authorized closure sequence, only after separate approval:
+- Baseline tag: `v0.5.0-engineering-baseline` at verified merge commit `b7cf68e`.
+- Authorized closure sequence completed:
 
 ```text
 --no-ff merge to master
@@ -415,14 +415,16 @@ Execution artifacts after approval:
 | --- | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | `Proposal Authorized` | Discovery, ADR-0014 draft, TASK-019..023 plans and Complete Blueprint Proposal only | No implementation; stop at Human Blueprint Approval |
 | 2026-08-21 | Human Developer | `Approved` | ADR-0014 D1-D10; TASK-019 through TASK-023 in dependency order | Frozen paths; one session/in-flight request; no live WAL, security expansion or Product Release; separate Closure approval |
+| 2026-08-21 | Human Developer | `Closure Approved` | Limited docs-only remediation accepted; merge `b7cf68e`, master CI `32495076976`, tag CI `32495218654`; TASK-019..023 archived | Dynamic Gateway FULL/write/pipeline fault injection remains an accepted unverified limitation; Phase 7/Product Release unauthorized |
 
 ```text
 Blueprint Status: Approved
 Implementation: Authorized in dependency order
-Current Task: TASK-023 Completed
-Phase Closure: Pending Human Review
-Merge / v0.5.0 tag: Not Authorized
-Next Gate: Human Phase 6 Closure Review
+Current Task: TASK-019..023 Archived
+Phase Closure: Approved / Baseline Frozen
+Merge: b7cf68e / master CI 32495076976 PASS
+Baseline: v0.5.0-engineering-baseline / tag CI 32495218654 PASS
+Next Gate: Phase 7 Blueprint only; implementation not authorized
 ```
 
 Approval must explicitly confirm D1-D10, TASK-019..023 dependency order, the
@@ -454,7 +456,7 @@ scope, evidence/Exception Gates and separate Phase Closure.
 - [x] no unresolved Exception Gate
 - [x] architecture and documentation synchronized
 - [x] Phase Closure Report prepared
-- [ ] Human Phase Closure Approval recorded
-- [ ] authorized merge/tag/baseline actions verified
-- [ ] active Tasks moved to completed
-- [ ] Phase 7 remains explicitly unauthorized
+- [x] Human Phase Closure Approval recorded
+- [x] authorized merge/tag/baseline actions verified
+- [x] TASK-019..023 moved to `tasks/completed/`
+- [x] Phase 7 remains explicitly unauthorized

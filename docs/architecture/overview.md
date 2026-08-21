@@ -11,10 +11,10 @@ component benchmark evidence and Closure are approved and frozen at
 offline deterministic replay as a persistence/replay engineering baseline and
 is completed, approved and frozen at `v0.4.0-engineering-baseline`. Phase 6
 implementation of the approved binary Network Protocol and single-session
-Netty gateway is complete on its feature branch: TASK-019 through TASK-023
-passed their evidence gates, including deterministic network verification and
-component/loopback benchmark evidence. Phase 6 is stopped at Human Closure
-Review; merge/tag and Product Release remain unauthorized.
+Netty gateway is complete and frozen at `v0.5.0-engineering-baseline`:
+TASK-019 through TASK-023 are archived after passing their evidence gates,
+including deterministic network verification and component/loopback benchmark
+evidence. Product Release remains separately governed.
 
 ## Scope
 
@@ -24,7 +24,7 @@ The system is a single-node, deterministic matching engine. A symbol's order boo
 
 ```text
 Client
-  -> Netty Network Adapter / Binary Protocol [Phase 6 implementation complete; Closure pending]
+  -> Netty Network Adapter / Binary Protocol [Phase 6 baseline frozen]
   -> Decoder / Validation                    [Phase 6 implemented]
   -> Ingress                                 [Phase 6 single session / one in-flight]
   -> RingBuffer / Disruptor Pipeline         [Phase 4 implemented / evidence recorded]
@@ -76,8 +76,8 @@ explicit non-goals.
    `v0.3.0-engineering-baseline`**.
 5. Versioned command WAL and strict offline deterministic replay — **Completed
    and frozen at `v0.4.0-engineering-baseline`**.
-6. Network adapter and protocol — **Implementation and evidence complete;
-   Human Closure Review pending**.
+6. Network adapter and protocol — **Completed and frozen at
+   `v0.5.0-engineering-baseline`**.
 7. Snapshot and online Recovery — **Future Work**.
 8. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.

@@ -18,8 +18,20 @@ Completed / Evidence PASS
 TASK-023:
 Completed / Evidence PASS
 
+TASK-022:
+Completed / Evidence PASS
+
 Phase 6 Closure:
-Not Authorized
+Approved / Baseline Frozen
+
+Baseline:
+`v0.5.0-engineering-baseline` at merge commit `b7cf68e`
+
+Master CI:
+`32495076976` PASS
+
+Tag CI:
+`32495218654` PASS
 ```
 
 ## TASK-019 — Protocol Foundation
@@ -219,12 +231,14 @@ limitation, not evidence of production failure safety or durable acknowledgement
 
 ## Closure Preparation
 
-The Closure Proposal is prepared at
+The Closure Proposal is recorded at
 [`PHASE-6-network-protocol-closure.md`](PHASE-6-network-protocol-closure.md).
-The limited Closure Remediation was documentation-only and is synchronized at
-final evidence checkpoint `3ca54ad` with exact-SHA CI `32493384924` PASS. Phase 6
-remains stopped at Final Human Closure Review; merge, tag and Phase 7 remain
-unauthorized.
+The limited Closure Remediation was documentation-only and was synchronized at
+final evidence checkpoint `3ca54ad` with exact-SHA CI `32493384924` PASS. Human
+Phase 6 Closure is approved, the merge/tag workflow is complete, and TASK-019
+through TASK-023 are archived. Live WAL/Pipeline integration, Snapshot, online
+Recovery, Phase 7 and Product Release remain unauthorized.
 TASK-019 through TASK-023 have completed their dependency-ordered evidence
-gates. Phase 6 is now stopped at Human Phase 6 Closure Review; merge to master,
-`v0.5.0-engineering-baseline`, Phase 7 and Product Release remain unauthorized.
+gates and are archived. Phase 6 is frozen at
+`v0.5.0-engineering-baseline`; the tag points to the verified master merge
+commit `b7cf68e`.

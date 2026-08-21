@@ -14,11 +14,11 @@
 | Related ADR | [`ADR-0014`](../../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md) |
 | Phase Blueprint | [`PHASE-6`](../blueprints/PHASE-6-network-protocol-blueprint.md) |
 | Authorization Mode | Blueprint |
-| Current Stage | Implementation |
-| Next Gate | TASK-020 Evidence Gate / exact-SHA CI |
-| Branch | `feature/phase6-network-protocol` after approval |
-| Baseline HEAD | approved Phase 6 proposal commit based on `2cf34b5` |
-| Remote / CI | `origin/feature/phase6-network-protocol` / exact-SHA CI [32488339314](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32488339314) PASS |
+| Current Stage | Archived / Phase 6 baseline frozen |
+| Next Gate | Phase 7 Blueprint only; implementation not authorized |
+| Branch | `master` after `--no-ff` merge `b7cf68e` |
+| Baseline HEAD | `v0.5.0-engineering-baseline` |
+| Remote / CI | `origin/master` / master CI [32495076976](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495076976) PASS; tag CI [32495218654](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495218654) PASS |
 
 ## 2. Background
 
