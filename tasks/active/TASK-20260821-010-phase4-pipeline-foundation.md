@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260821-010` |
 | Title | Add Phase 4 Event Pipeline Foundation |
-| Status | `Approved` |
+| Status | `In Progress` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created / Updated | `2026-08-21` |
@@ -16,8 +16,8 @@
 | Authorization Mode | `Blueprint inherited Human approval` |
 | Current Stage | `Implementation` |
 | Next Gate | `Automated Evidence Gate` |
-| Branch | planned `feature/phase4-event-pipeline` |
-| Baseline HEAD | approved planning commit based on `bbf909c` |
+| Branch | `feature/phase4-event-pipeline` |
+| Baseline HEAD | approved blueprint commit `4c92278` |
 | Remote / CI | `origin` / `Pending` |
 
 ## 2. Background
@@ -176,6 +176,7 @@ CI success before TASK-011.
 | --- | --- | --- | --- |
 | 2026-08-21 | Proposed | Foundation scope prepared | Awaiting Blueprint Approval |
 | 2026-08-21 | Approved | Blueprint approval recorded; TASK-010 may begin | Automated evidence gate |
+| 2026-08-21 | In Progress | Disruptor dependency and project-owned pipeline contracts implemented; runtime pipeline intentionally absent | Focused core tests PASS; full verify pending |
 
 ## 18. Completion Checklist
 
