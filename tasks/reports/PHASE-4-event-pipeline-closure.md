@@ -34,7 +34,7 @@ Phase 4 Event Pipeline delivered the Blueprint-approved bounded component:
 | TASK-013 Benchmark / Docs | JDK 21 smoke and full JMH matrix completed; docs synchronized |
 | Build | `mvn verify` PASS; Maven reactor 3/3 SUCCESS; 83 tests, 0 failures |
 | Static checks | Checkstyle 0 violations; diff/scope audit PASS |
-| CI | Benchmark [32459574518](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459574518) and documentation [32459663240](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459663240) exact-SHA PASS |
+| CI | Benchmark [32459574518](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459574518) and closure [32459760130](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459760130) exact-SHA PASS |
 | Frozen paths | Domain, OrderBook and existing MatchingEngine production paths unchanged |
 
 Detailed benchmark method and limitations are recorded in

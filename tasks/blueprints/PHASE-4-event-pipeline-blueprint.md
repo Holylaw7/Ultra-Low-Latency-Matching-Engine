@@ -457,7 +457,7 @@ Next Gate: Human Phase 4 Closure Approval
 | 2026-08-21 | TASK-010 Foundation | Completed | commit `c9a797e`; exact-SHA CI [32456991709](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32456991709) PASS | TASK-011 Core |
 | 2026-08-21 | TASK-011 Core | Completed | commit `a3986df`; exact-SHA CI [32457723272](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32457723272) PASS | TASK-012 Verification |
 | 2026-08-21 | TASK-012 Verification | Completed | commit `4df2e33`; exact-SHA CI [32458220212](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32458220212) PASS | TASK-013 Benchmark / Docs |
-| 2026-08-21 | TASK-013 Benchmark / Docs | Completed | JDK 21 smoke/full JMH matrix; benchmark `e546051` / CI [32459574518](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459574518); docs `bbb30f5` / CI [32459663240](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459663240) — both PASS | Human Phase 4 Closure Approval |
+| 2026-08-21 | TASK-013 Benchmark / Docs | Completed | JDK 21 smoke/full JMH matrix; benchmark `e546051` / CI [32459574518](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459574518); closure `524f3e1` / CI [32459760130](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459760130) — both PASS | Human Phase 4 Closure Approval |
 
 ## 20. Phase Closure Checklist
 

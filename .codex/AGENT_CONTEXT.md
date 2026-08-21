@@ -22,8 +22,8 @@
 | Engineering baseline commit | `9281124` |
 | Engineering baseline tag | `v0.2.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/feature/phase4-event-pipeline`; TASK-013 evidence `bbb30f5`; `v0.2.0-engineering-baseline` remains frozen at `9281124` |
-| CI | TASK-013 documentation [run 32459663240](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459663240) PASS for exact SHA `bbb30f5` |
+| Remote sync | `origin/feature/phase4-event-pipeline`; TASK-013 closure evidence `524f3e1`; `v0.2.0-engineering-baseline` remains frozen at `9281124` |
+| CI | TASK-013 closure [run 32459760130](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32459760130) PASS for exact SHA `524f3e1` |
 
 ## Project Progress
 
