@@ -10,8 +10,8 @@
 | Production Changes | None |
 | Tests | Baseline `mvn verify` PASS — 114 tests / 0 failures |
 | Build | Maven reactor 3/3 SUCCESS; Checkstyle 0 violations |
-| CI | Pending proposal commit/push |
-| Commit | Pending |
+| CI | [32485900404](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32485900404) PASS |
+| Commit | `ecf0c27` |
 | Branch | `docs/phase6-network-protocol-blueprint` |
 | Next Gate | Human Phase 6 Blueprint Approval |
 
@@ -111,7 +111,10 @@ ordering and bounded failure semantics. It cannot prove:
 - `git diff --check`: PASS;
 - frozen production working-tree changes: zero;
 - `.vscode/`: unrelated, untracked and untouched;
-- proposal commit / exact-SHA CI: pending.
+- proposal content commit: `ecf0c27`;
+- proposal content exact-SHA CI:
+  [32485900404](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32485900404)
+  PASS.
 
 ## Exception Gate Summary
 
