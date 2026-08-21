@@ -7,8 +7,9 @@ MatchingEngine are complete. Phase 3 is frozen at
 `v0.2.0-engineering-baseline`. The complete Phase 4 Event Pipeline Blueprint
 has Human approval. Its dependency-gated implementation, verification and
 component benchmark evidence and Closure are approved and frozen at
-`v0.3.0-engineering-baseline`. Network, WAL, snapshot and recovery remain
-Future Work.
+`v0.3.0-engineering-baseline`. Phase 5 adds a versioned command WAL and strict
+offline deterministic replay as a persistence/replay engineering baseline;
+Phase 5 Closure, merge and `v0.4.0-engineering-baseline` remain Human gates.
 
 ## Scope
 
@@ -30,8 +31,9 @@ Client                                       [Future Work]
             -> active OrderId index
             -> structural limit matching
        -> Trade / Execution events           [Phase 3 implemented]
-  -> WAL / Output / Metrics                  [Future Work]
-  -> Snapshot / Replay / State Hash          [Future Work]
+  -> Command WAL / Offline Replay            [Phase 5 implemented baseline]
+  -> Snapshot / Online Recovery              [Future Work]
+  -> Output / Metrics                        [Future Work]
 ```
 
 ## Implemented Boundary
@@ -65,8 +67,9 @@ See [`order-book.md`](order-book.md) and
    `v0.2.0-engineering-baseline`**.
 4. Event pipeline — **Completed and frozen at
    `v0.3.0-engineering-baseline`**.
-5. Network adapter and protocol — **Future Work**.
-6. WAL, snapshot and recovery — **Future Work**.
-7. Deterministic replay and system verification — **Future Work**.
+5. Versioned command WAL and strict offline deterministic replay — **Phase 5
+   implementation completed; Closure Review pending**.
+6. Network adapter and protocol — **Future Work**.
+7. Snapshot and online Recovery — **Future Work**.
 8. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.

@@ -44,8 +44,10 @@ standard for future multi-task phases. The complete Phase 4 Event Pipeline
 Blueprint, ADR-0012 and TASK-010 through TASK-013 have received Human Blueprint
 Approval. Phase 4 implementation, verification, component benchmark evidence
 and Closure are complete and frozen at `v0.3.0-engineering-baseline`. The
-earlier `v0.2.0-engineering-baseline` remains immutable. Phase 5 and Product
-Release are not authorized.
+earlier `v0.2.0-engineering-baseline` remains immutable. The Phase 5 Command
+WAL and Deterministic Replay Blueprint is approved, and TASK-014 through
+TASK-018 have completed in dependency order. Phase Closure, merge/tag and
+Product Release remain separate Human gates.
 
 The repository currently contains:
 
@@ -70,6 +72,18 @@ event pipeline in front of the existing synchronous MatchingEngine. WAL,
 Replay, Snapshot, Recovery, Network and production optimization remain
 explicit non-goals. See
 [`PHASE-4-event-pipeline-blueprint.md`](tasks/blueprints/PHASE-4-event-pipeline-blueprint.md).
+
+The approved Phase 5 boundary is a versioned segmented command WAL plus strict
+offline deterministic replay. TASK-014 through TASK-018 and the authorized
+limited closure remediation are implemented with 114 passing tests,
+corruption/torn-tail evidence, deterministic rotation-failure evidence and
+component-level JMH evidence. Phase 5 Closure, merge,
+`v0.4.0-engineering-baseline` execution is authorized by Human Phase 5 Closure
+Approval; Product Release remains separately governed. The phase deliberately
+excludes live pipeline durability integration, Snapshot, online Recovery and
+Network. See
+[`PHASE-5-command-wal-and-replay-blueprint.md`](tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md)
+and [`recovery.md`](docs/benchmark/recovery.md).
 
 ## Build
 
@@ -109,6 +123,22 @@ or GC claims. JFR profiling evidence is recorded in
 `tasks/reports/PHASE-2-profiling-execution.md`; measurement-isolation evidence
 is recorded in `tasks/reports/PHASE-2-measurement-isolation.md`. The evidence
 set is accepted and frozen in `v0.1.0-engineering-baseline`.
+
+Run the Phase 5 WAL/replay component baseline after `mvn verify`:
+
+```bash
+java -jar benchmark/target/matching-engine-benchmark-0.1.0-SNAPSHOT.jar \
+  WalBenchmark -wi 1 -i 1 -f 1 -w 1s -r 1s -t 1 -foe true \
+  -rf json -rff benchmark-results/wal-remediation-full.json
+```
+
+This measures append (with a deterministic Submit/Cancel mix), strict scan and
+offline replay separately. The raw JSON is intentionally local and ignored;
+the method, environment/workload metadata, SampleTime P50/P99 summary and
+limitations are recorded in
+[`docs/benchmark/recovery.md`](docs/benchmark/recovery.md). These are
+component observations, not durable acknowledgement, recovery-time or
+production throughput claims.
 
 ## Structure
 
