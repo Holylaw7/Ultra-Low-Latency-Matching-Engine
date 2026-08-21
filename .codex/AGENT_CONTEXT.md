@@ -10,12 +10,12 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 3 — MatchingEngine (`Stage 3 completed; Human review pending`) |
+| Phase | Phase 3 — MatchingEngine (`Stage 3 completed / approved`) |
 | Latest product task | [`TASK-20260819-004`](../tasks/completed/TASK-20260819-004-basic-orderbook.md) — Completed |
 | Latest architecture task | [`TASK-20260820-007`](../tasks/completed/TASK-20260820-007-phase3-matching-engine-adr-decision.md) — Completed |
 | Current planning task | [`TASK-20260820-008`](../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md) — Approved |
-| Product stage | Stage 3 Determinism Verification completed / pending Human review |
-| Product approval | Phase 3 closure remains unauthorized pending Stage 3 completion review |
+| Product stage | Stage 3 Determinism Verification completed / approved |
+| Product approval | Phase 3 Closure ready for authorization but not authorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `feature/phase3-matching-engine` |
 | Engineering baseline commit | `cbfa957` |
@@ -31,7 +31,7 @@
 | Phase 0 — Bootstrap | Completed | Maven reactor, Java 21, JUnit 5, JMH, Checkstyle and CI workflow |
 | Phase 1 — Domain Model | Completed / Approved | [`PHASE-1-domain-model.md`](../tasks/reports/PHASE-1-domain-model.md) |
 | Phase 2 — Basic OrderBook | Completed / Approved | `v0.1.0-engineering-baseline`, 45 tests, JMH/JFR evidence and passing master CI |
-| Phase 3 — Matching Engine | Stage 3 Completed / Pending Human Approval | [`TASK-008`](../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md); closure remains gated |
+| Phase 3 — Matching Engine | Stage 3 Completed / Approved | [`TASK-008`](../tasks/active/TASK-20260820-008-phase3-matching-engine-implementation.md); closure authorization is ready but not granted |
 | Phase 4+ — Pipeline, network, recovery and performance evolution | Future Work | Architecture documents and future ADRs/tasks |
 
 ## Current Product Gate
@@ -49,15 +49,16 @@ ADR-0011 Final Approved
     -> Human Stage 2 completion approval [Completed]
     -> Stage 3 authorization [Approved]
     -> Stage 3 verification execution [Completed]
-    -> Human Stage 3 completion review [Pending]
+    -> Human Stage 3 completion review [Completed]
+    -> Phase 3 Closure authorization [Ready / Not Authorized]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
-approved. Stage 3 verification-only execution is complete with ordered result
-comparison, public-API state probes and no production test hooks. Phase 3
-closure, release, production optimization and history rewrite remain
-unauthorized pending Human completion review. OrderBook is an external frozen
-dependency.
+approved. Stage 3 verification-only execution and Human completion review are
+complete with ordered result comparison, public-API state probes and no
+production test hooks. Phase 3 closure is ready for a separate authorization
+but remains unauthorized; release, production optimization and history rewrite
+also remain unauthorized. OrderBook is an external frozen dependency.
 
 Completed plan:
 [`TASK-20260819-004-basic-orderbook.md`](../tasks/completed/TASK-20260819-004-basic-orderbook.md).
@@ -75,7 +76,7 @@ Current evidence:
 - [`PHASE-3-matching-engine-determinism-authorization.md`](../tasks/reports/PHASE-3-matching-engine-determinism-authorization.md)
   — Stage 3 verification-only scope approved; execution authorized.
 - [`PHASE-3-matching-engine-determinism-verification.md`](../tasks/reports/PHASE-3-matching-engine-determinism-verification.md)
-  — Stage 3 completed evidence: 256 commands, 61 core tests and pending Human review.
+  — Stage 3 completed and approved evidence: 256 commands and 61 core tests.
 - [`PHASE-3-matching-engine-adr-decision.md`](../tasks/reports/PHASE-3-matching-engine-adr-decision.md)
   — completed; ADR-0011 final approval recorded and architecture frozen.
 - [`PHASE-2-measurement-isolation.md`](../tasks/reports/PHASE-2-measurement-isolation.md)
@@ -152,7 +153,7 @@ Client
   -> Netty / Protocol                 [Future Work]
   -> Decoder / Validation             [Future Work]
   -> Ingress + RingBuffer/Disruptor   [Future Work]
-  -> MatchingEngine                   [Stage 3 verification complete; review pending]
+  -> MatchingEngine                   [Stage 3 verification complete / approved]
   -> OrderBook                        [Phase 2 baseline implemented]
        -> BidBook / AskBook
        -> PriceLevel / OrderQueue

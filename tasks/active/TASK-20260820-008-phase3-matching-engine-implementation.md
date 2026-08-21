@@ -6,15 +6,15 @@
 | --- | --- |
 | Task ID | `TASK-20260820-008` |
 | Title | Implement Phase 3 MatchingEngine Orchestration Baseline |
-| Status | `In Progress — Stage 3 completed pending Human approval` |
+| Status | `In Progress — Stage 3 completed and approved` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created | `2026-08-20` |
 | Updated | `2026-08-21` |
 | Related Phase | Phase 3 — MatchingEngine |
 | Related ADR | ADR-0005 sequence revision and ADR-0011 (`Approved`) |
-| Current Stage | `Stage 3 Determinism Verification completed pending Human approval` |
-| Next Approval Gate | `Human Stage 3 Completion Review` |
+| Current Stage | `Stage 3 Determinism Verification completed and approved` |
+| Next Approval Gate | `Phase 3 Closure Authorization` |
 | Branch | `feature/phase3-matching-engine` |
 | Approved Implementation Branch | `feature/phase3-matching-engine` |
 | Parent Branch / HEAD | `docs/phase3-matching-engine-adr` at `96fe50b` |
@@ -38,8 +38,8 @@ ADR-0005 revision R1-R6 reserves `Sequence` for input commands and introduces
 an explicit MatchingEngine-owned `EventSequence` for output match aggregates.
 This Task converts those accepted decisions into a reviewable implementation
 plan. The Human Developer approved the plan on `2026-08-20`. Stage 1 and Stage
-2 are completed and approved. Stage 3 verification was authorized and
-implemented on `2026-08-21`; completion remains gated by Human review.
+2 are completed and approved. Stage 3 verification was authorized, implemented
+and approved on `2026-08-21`. Phase 3 closure requires separate authorization.
 
 ## 3. Goal
 
@@ -119,14 +119,14 @@ observable results without embedding infrastructure concerns.
   the command boundary.
 - [x] A minimal equal command stream from empty engines produces equal
   EngineResults, TradeIds and EventSequences.
-- [ ] Comprehensive fixed and extended command streams produce equal results
+- [x] Comprehensive fixed and extended command streams produce equal results
   and equal public-API-observable OrderBook behavior; this is Stage 3 evidence.
 - [x] EngineResult and match collections cannot be mutated by callers.
 - [x] MatchingEngine has no I/O, queue, thread, callback, clock, randomness,
   logging, networking or persistence dependency.
 - [x] `mvn verify` passes with existing and new tests and zero Checkstyle
   violations on Java 21.
-- [ ] Remote CI passes for every implementation-stage commit submitted for
+- [x] Remote CI passes for every implementation-stage commit submitted for
   approval.
 
 ## 6. Current Implementation and Scope
@@ -669,6 +669,7 @@ Review; Phase 3 closure does not start automatically.
 | 2026-08-21 | Human Developer | Stage 2 Completion Review | `Approved` | Synchronous command processing, sequence validation, frozen OrderBook integration, MatchFragment conversion, Trade/Execution generation and EventSequence ownership accepted. Stage 3 requires independent authorization. |
 | 2026-08-21 | Codex | Stage 3 Authorization Request | `Proposed` | Verification-only scope proposed for deterministic re-execution, public-API state probes and reachable pre-apply failure atomicity. Production changes, replay infrastructure and artificial failure seams remain unauthorized. |
 | 2026-08-21 | Human Developer | Stage 3 Authorization Review | `Approved` | Dual-engine and extended-stream determinism, ordered result comparison, public-API state probes and reachable failure atomicity authorized. WAL, Replay subsystem, reflection, production test hooks and unreachable-failure injection remain prohibited. |
+| 2026-08-21 | Human Developer | Stage 3 Completion Review | `Approved` | Dual-engine deterministic comparison, extended command stream verification, observable result ordering, public API behavior and failure atomicity accepted. WAL, Replay subsystem and resource exhaustion verification remain outside current scope. Phase 3 Closure requires separate authorization. |
 
 ## 18. Phase Reports and Approval Gates
 
@@ -679,7 +680,7 @@ Review; Phase 3 closure does not start automatically.
 | Task Approval | Same planning report | Completed | Domain/API Foundation | Approved 2026-08-20 |
 | Domain/API Foundation | `tasks/reports/PHASE-3-matching-engine-domain-api-foundation.md` | Completed / Approved | Stage 2 Authorization | Approved 2026-08-20 |
 | MatchingEngine Implementation | `tasks/reports/PHASE-3-matching-engine-core-implementation.md` | Completed / Approved | Stage 3 Authorization | Approved 2026-08-21 |
-| Correctness / Determinism Verification | `tasks/reports/PHASE-3-matching-engine-determinism-verification.md` | Completed / Pending Human Approval | Human Stage 3 Completion Review | Pending |
+| Correctness / Determinism Verification | `tasks/reports/PHASE-3-matching-engine-determinism-verification.md` | Completed / Approved | Phase 3 Closure Authorization | Approved 2026-08-21 |
 | Benchmark / Profile | Not applicable | Not applicable | Documentation Sync | Not applicable |
 | Documentation and Synchronization | Not created | Not Authorized | Completion Review | Not Authorized |
 | Completion | Not created | Not Authorized | Human Completion Approval | Not Authorized |
@@ -700,6 +701,7 @@ Review; Phase 3 closure does not start automatically.
 | 2026-08-21 | Stage 3 Authorization Proposed | Froze value equality, public-API state probes, reachable failure atomicity and explicit unreachable-failure limitations | `62f59aa`; GitHub Actions run `32446230919` PASS; execution remains unauthorized pending Human review |
 | 2026-08-21 | Stage 3 Authorized | Human approved verification-only execution and made collection order part of observable determinism | Only `MatchingEngineDeterminismTest.java` may be added; Phase 3 closure remains unauthorized |
 | 2026-08-21 | Stage 3 Completed | Added fixed dual-engine determinism, public-API probes and reachable failure-atomicity evidence | `6eb31ea`, `e7d26f0`, `1f268e9`; focused 5 tests, core 61 tests, `mvn verify` PASS, Checkstyle 0 and GitHub Actions run `32447036906` PASS; pending Human completion review |
+| 2026-08-21 | Stage 3 Approved | Human accepted determinism scope, observable ordering, public-API behavior and reachable failure atomicity | Stage 3 closed; Phase 3 Closure is ready for separate authorization and remains unauthorized |
 
 ## 20. Completion Checklist
 
@@ -727,4 +729,4 @@ Review; Phase 3 closure does not start automatically.
 - [x] Human Stage 3 Authorization Review completed
 - [x] Stage 3 determinism verification executed
 - [x] Stage 3 report and documentation synchronization completed
-- [ ] Human Stage 3 Completion Review completed
+- [x] Human Stage 3 Completion Review completed
