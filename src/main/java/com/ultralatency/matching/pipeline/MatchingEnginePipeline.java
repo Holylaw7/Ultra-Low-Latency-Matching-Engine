@@ -33,8 +33,10 @@ public final class MatchingEnginePipeline {
     private final PipelineConfiguration configuration;
     private final MatchingEngine matchingEngine;
     private final EngineResultHandler resultHandler;
+    private final PipelineFailureHandler failureHandler;
     private volatile PipelineState state = PipelineState.NEW;
     private volatile Throwable failureCause;
+    private boolean failureNotified;
     private Thread producerThread;
     private Disruptor<CommandEvent> disruptor;
     private RingBuffer<CommandEvent> ringBuffer;
@@ -48,8 +50,23 @@ public final class MatchingEnginePipeline {
     public MatchingEnginePipeline(
             final PipelineConfiguration configuration,
             final EngineResultHandler resultHandler) {
+        this(configuration, resultHandler, failure -> { });
+    }
+
+    /**
+     * Creates a pipeline facade with an additive terminal-failure observer.
+     *
+     * @param configuration validated pipeline configuration
+     * @param resultHandler synchronous in-memory result handler
+     * @param failureHandler non-blocking observer for the first terminal failure
+     */
+    public MatchingEnginePipeline(
+            final PipelineConfiguration configuration,
+            final EngineResultHandler resultHandler,
+            final PipelineFailureHandler failureHandler) {
         this.configuration = Objects.requireNonNull(configuration, "configuration");
         this.resultHandler = Objects.requireNonNull(resultHandler, "resultHandler");
+        this.failureHandler = Objects.requireNonNull(failureHandler, "failureHandler");
         matchingEngine = new MatchingEngine();
     }
 
@@ -199,6 +216,7 @@ public final class MatchingEnginePipeline {
 
     private void failTerminal(final Throwable failure) {
         Objects.requireNonNull(failure, "failure");
+        boolean notifyFailure = false;
         synchronized (lifecycleMonitor) {
             if (state == PipelineState.FAILED || state == PipelineState.STOPPED) {
                 return;
@@ -207,6 +225,17 @@ public final class MatchingEnginePipeline {
             state = PipelineState.FAILED;
             if (disruptor != null) {
                 disruptor.halt();
+            }
+            if (!failureNotified) {
+                failureNotified = true;
+                notifyFailure = true;
+            }
+        }
+        if (notifyFailure) {
+            try {
+                failureHandler.onFailure(failure);
+            } catch (final Throwable ignored) {
+                // The observer cannot replace the first pipeline cause or restart the pipeline.
             }
         }
     }
