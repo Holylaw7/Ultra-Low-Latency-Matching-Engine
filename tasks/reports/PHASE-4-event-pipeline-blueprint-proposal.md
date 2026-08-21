@@ -10,8 +10,8 @@
 | Production Changes | None |
 | Tests | Baseline `mvn verify` PASS — 61 tests |
 | Build | Maven reactor 3/3 SUCCESS; Checkstyle 0 violations |
-| CI | Pending proposal commit and exact-SHA CI |
-| Commit | Pending |
+| CI | [run 32455576290](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32455576290) PASS for proposal content SHA |
+| Commit | `f0f18ffac683318c07df739e4eeabd74be7c2ddb` |
 | Next Gate | One Human Phase Blueprint Approval |
 
 ## Proposal Boundary
@@ -70,6 +70,8 @@ risks, rollback, Git strategy and Closure plan are in the
 - Maven reactor: 3/3 SUCCESS;
 - Phase 3 tag verified at `928112414a9bde581b2ac75e2606373d61be77b8`;
 - proposal branch: `docs/phase4-event-pipeline-blueprint`;
+- proposal content commit: `f0f18ffac683318c07df739e4eeabd74be7c2ddb`;
+- exact-SHA GitHub Actions CI: run `32455576290` PASS;
 - production, test, build and runtime files changed by this proposal: none.
 
 ## Non-Goals

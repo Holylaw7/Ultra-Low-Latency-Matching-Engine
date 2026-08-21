@@ -22,8 +22,8 @@
 | Engineering baseline commit | `9281124` |
 | Engineering baseline tag | `v0.2.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | Phase 4 proposal branch pending first push; `v0.2.0-engineering-baseline` remains frozen at `9281124` |
-| CI | Phase 4 proposal CI pending; local baseline `mvn verify` PASS (61 tests, 0 Checkstyle violations); governance master [run 32453698788](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32453698788) PASS |
+| Remote sync | Phase 4 proposal content pushed at `f0f18ff`; branch tracks `origin/docs/phase4-event-pipeline-blueprint`; `v0.2.0-engineering-baseline` remains frozen at `9281124` |
+| CI | Phase 4 proposal content [run 32455576290](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32455576290) PASS for exact SHA `f0f18ff`; local baseline `mvn verify` PASS (61 tests, 0 Checkstyle violations) |
 
 ## Project Progress
 
