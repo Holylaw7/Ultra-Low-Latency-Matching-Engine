@@ -103,6 +103,7 @@ were completed and approved on 2026-08-21. The verification uses equal command
 re-execution, order-significant result comparison and public-API probes without
 adding WAL/replay infrastructure, state exposure or production test hooks.
 The Phase 3 Closure Authorization proposal records the completed evidence,
-frozen boundary and known limitations. Human closure approval is pending;
-merge and engineering-baseline tag creation remain unauthorized. OrderBook is
-an external frozen dependency and no OrderBook file or API may change.
+frozen boundary and known limitations. Human closure approval authorizes the
+controlled master merge, verification, engineering-baseline tag and TASK
+closure. Release and further phases remain unauthorized. OrderBook is an
+external frozen dependency and no OrderBook file or API may change.

@@ -7,7 +7,7 @@
 | Phase | Phase 3 — MatchingEngine |
 | Task | `TASK-20260820-008` |
 | Stage | Closure Preparation / Authorization |
-| Result | Proposed — Pending Human Closure Approval |
+| Result | Approved — Closure Execution Authorized |
 | Tests | 61 passed / 0 failed |
 | Build | `mvn verify` — PASS; reactor 3/3 |
 | Static analysis | Checkstyle — 0 violations |
@@ -16,12 +16,12 @@
 | Preparation base | `4c46567` |
 | Proposal commit | `5ea0cdb` — `docs(phase3): prepare closure authorization` |
 | Proposed baseline tag | `v0.2.0-engineering-baseline` — not created |
-| Next Gate | Human Phase 3 Closure Approval |
+| Next Gate | Verified master integration |
 
 Phase 3 satisfies the documented closure prerequisites, but is not yet closed.
-This report requests authorization for the controlled merge, master verification
-and engineering-baseline freeze described below. It does not itself authorize
-or execute any of those actions.
+Human approval authorizes the controlled merge, master verification and
+engineering-baseline freeze described below. Those actions remain pending
+until their execution and evidence are recorded.
 
 ## Progress
 
@@ -32,8 +32,8 @@ or execute any of those actions.
 | Stage 3 — Determinism Verification | 100% | Approved Stage 3 report and CI |
 | ADR alignment | 100% | ADR-0005 R1-R6 and ADR-0011 D1-D7 approved |
 | Documentation synchronization | 100% prepared | TASK-008, architecture, README and context synchronized |
-| Human Phase 3 Closure Approval | Pending | This authorization report |
-| Merge / master verification / tag | Not Authorized | Requires Human closure approval |
+| Human Phase 3 Closure Approval | Approved | Approved on 2026-08-21 |
+| Merge / master verification / tag | Authorized / Pending Execution | Must follow the approved sequence |
 
 ## Delivered Phase 3 Capability
 
@@ -140,7 +140,7 @@ readiness or a measured performance claim.
   it is not an end-to-end or MatchingEngine performance measurement.
 - WAL, Replay, Snapshot and Recovery correctness remain unverified future work.
 
-## Proposed Engineering Baseline
+## Approved Engineering Baseline Candidate
 
 Candidate annotated tag:
 
@@ -166,10 +166,10 @@ Not included:
 ```
 
 This name deliberately identifies an engineering baseline rather than a
-product release. The tag does not exist and must not be created before Human
-closure approval and verified master integration.
+product release. Human closure approval is recorded, but the tag does not yet
+exist and must be created only after verified master integration.
 
-## Proposed Closure Sequence
+## Approved Closure Sequence
 
 ```text
 Human Phase 3 Closure Approval
@@ -207,21 +207,20 @@ apply limit-order/cancel behavior and produce stable ordered trade results.
 Infrastructure, recovery and production-performance capabilities remain
 separate future architecture decisions.
 
-## Approval Request
+## Phase 3 Closure Approval
 
 ```text
-Current Stage: Phase 3 Closure Preparation completed
-Human Phase 3 Closure Approval: Pending
+Current Stage: Phase 3 Closure Execution authorized
+Human Phase 3 Closure Approval: Approved 2026-08-21
 
-Requested authorization:
+Authorized actions:
 - normal --no-ff merge into master
 - verify merged master locally and in GitHub Actions
 - create and push annotated v0.2.0-engineering-baseline
 - verify tag CI
 - close TASK-20260820-008 and synchronize final evidence
 
-Not authorized before approval:
-- merge or tag creation
+Still not authorized:
 - release publication
 - next-phase implementation
 - production optimization
@@ -233,3 +232,4 @@ Not authorized before approval:
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
 | 2026-08-21 | Human Developer | `Closure Preparation Authorized` | Stage 1-3 evidence is accepted as sufficient to prepare the Phase 3 Closure Authorization report. Creation of a baseline tag, merge, Phase 3 final closure and the next ADR remain subject to separate approval. |
+| 2026-08-21 | Human Developer | `Approved` | Phase 3 MatchingEngine closure accepted. Stage 1 Domain/API Foundation, Stage 2 MatchingEngine Core and Stage 3 Determinism Verification are completed and verified. Authorized actions: merge feature branch, verify master CI, create `v0.2.0-engineering-baseline` tag and close TASK-008. Production release and further phases require separate authorization. |

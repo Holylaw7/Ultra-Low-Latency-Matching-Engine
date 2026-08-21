@@ -40,8 +40,9 @@ and cancellation, frozen OrderBook delegation and immutable Trade/Execution
 results. Stage 2 is completed and approved. Stage 3 verification-only
 execution and Human completion review are also complete and approved. Phase 3
 closure prerequisites are consolidated in a Closure Authorization proposal.
-Human closure approval is pending; merge and engineering-baseline tag creation
-remain unauthorized.
+Human closure approval authorizes the controlled master merge, verification,
+engineering-baseline tag and TASK closure. Release and further phases remain
+unauthorized.
 
 The repository currently contains:
 
