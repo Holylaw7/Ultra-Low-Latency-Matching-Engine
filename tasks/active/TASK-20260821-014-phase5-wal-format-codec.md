@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260821-014` |
 | Title | Phase 5 WAL Format and Command Codec Foundation |
-| Status | `Approved` |
+| Status | `Completed` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created / Updated | `2026-08-21` |
@@ -14,11 +14,11 @@
 | Related ADR | `docs/adr/ADR-0013-command-wal-and-deterministic-replay.md` |
 | Phase Blueprint | `tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md` |
 | Authorization Mode | `Blueprint` |
-| Current Stage | `Implementation` |
-| Next Gate | `TASK-014 Evidence Gate` |
+| Current Stage | `Completed / Evidence Gate Passed` |
+| Next Gate | `TASK-015 Implementation / Evidence Gate` |
 | Branch | `feature/phase5-command-wal-replay` after approval |
 | Baseline | `v0.3.0-engineering-baseline` / approved proposal commit |
-| CI | `Pending for implementation commit` |
+| CI | [run 32464648365](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32464648365) PASS for `e5e4c967` |
 
 ## 2. Background and Goal
 
@@ -36,16 +36,16 @@ and strict encode/decode validation without performing file I/O.
 
 ## 4. Requirements and Acceptance Criteria
 
-- [ ] exact 32-byte segment header codec and validation;
-- [ ] exact 52-byte submit-limit and 28-byte cancel record encoding;
-- [ ] explicit big-endian order, version/type/side codes and zero reserved bytes;
-- [ ] CRC32C coverage exactly matches ADR-0013;
-- [ ] maximum length checked before buffer allocation;
-- [ ] round-trip preserves immutable command equality;
-- [ ] golden-byte fixtures detect accidental format changes;
-- [ ] configuration validates directory, segment bound and non-null durability;
-- [ ] frozen production-path diff remains zero;
-- [ ] focused tests and full `mvn verify` pass.
+- [x] exact 32-byte segment header codec and validation;
+- [x] exact 52-byte submit-limit and 28-byte cancel record encoding;
+- [x] explicit big-endian order, version/type/side codes and zero reserved bytes;
+- [x] CRC32C coverage exactly matches ADR-0013;
+- [x] maximum length checked before buffer allocation;
+- [x] round-trip preserves immutable command equality;
+- [x] golden-byte fixtures detect accidental format changes;
+- [x] configuration validates directory, segment bound and non-null durability;
+- [x] frozen production-path diff remains zero;
+- [x] focused tests and full `mvn verify` pass.
 
 ## 5. Current Implementation and Scope
 
@@ -136,8 +136,9 @@ git diff --name-only v0.3.0-engineering-baseline...HEAD -- src/main/java/com/ult
 
 ## 13. Git Plan
 
-Commit: `feat(wal): add versioned command codec`.
-Push after local gates; record exact-SHA CI before TASK-015.
+Commit: `feat(wal): add versioned command codec`
+(`e5e4c9677ca926c5f774930472d092e42f50008e`). The commit was pushed to
+`feature/phase5-command-wal-replay` and passed exact-SHA CI run `32464648365`.
 
 ## 14. Approval, Reports and Implementation Log
 
@@ -149,19 +150,20 @@ Push after local gates; record exact-SHA CI before TASK-015.
 | Stage | Report | Status | Next Gate |
 | --- | --- | --- | --- |
 | ADR / Blueprint | Phase 5 proposal report | Approved | TASK-014 Evidence Gate |
-| Implementation | cumulative Phase 5 report | Not started | evidence gate |
-| Completion | cumulative Phase 5 report | Not started | TASK-015 / Exception Gate |
+| Implementation | cumulative Phase 5 report | Completed | evidence gate passed |
+| Completion | cumulative Phase 5 report | Completed | TASK-015 / Exception Gate |
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-21 | Approved | Human Blueprint Approval inherited; format/codec implementation authorized | D1-D10 approved; TASK-014 is next |
+| 2026-08-21 | Completed | Versioned header/record codec, configuration and golden/invalid tests implemented | 9 focused tests; `mvn verify` 92 tests; exact-SHA CI `32464648365` PASS; next TASK-015 |
 
 ## 15. Completion Checklist
 
-- [ ] Human Blueprint approval inherited and recorded
-- [ ] Exact scope/acceptance criteria satisfied
-- [ ] Tests and full build pass
-- [ ] Frozen diff zero
-- [ ] ADR/Task/Blueprint/report/context synchronized
-- [ ] Commit, push and exact-SHA CI recorded
-- [ ] No Exception Gate unresolved
+- [x] Human Blueprint approval inherited and recorded
+- [x] Exact scope/acceptance criteria satisfied
+- [x] Tests and full build pass
+- [x] Frozen diff zero
+- [x] ADR/Task/Blueprint/report/context synchronized
+- [x] Commit, push and exact-SHA CI recorded
+- [x] No Exception Gate unresolved

@@ -11,19 +11,19 @@
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
 | Phase | Phase 5 — Command WAL and Deterministic Replay Foundation (`Implementation Authorized`) |
-| Latest product task | [`TASK-20260821-014`](../tasks/active/TASK-20260821-014-phase5-wal-format-codec.md) — Approved / Next |
+| Latest product task | [`TASK-20260821-015`](../tasks/active/TASK-20260821-015-phase5-segmented-wal-storage.md) — Approved / Next |
 | Latest architecture decision | [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md) — Approved |
-| Current planning task | TASK-014 next; TASK-015 through TASK-018 approved and dependency-gated |
+| Current planning task | TASK-014 completed with evidence; TASK-015 next; TASK-016 through TASK-018 dependency-gated |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 4 Closed / Baseline Frozen; Phase 5 implementation in progress |
 | Product approval | Phase 5 Blueprint approved; implementation authorized in dependency order; Closure, merge/tag and Product Release not authorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
-| Branch | `docs/phase5-command-wal-replay-blueprint` (approval sync; implementation branch next) |
+| Branch | `feature/phase5-command-wal-replay` |
 | Engineering baseline commit | `d28abbe` |
 | Engineering baseline tag | `v0.3.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/master` at `fbcbe53`; approval branch at `341dc5e`; annotated `v0.3.0-engineering-baseline` remains at `d28abbe` |
-| CI | approval [32462992039](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462992039) PASS; proposal [32462826593](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462826593) PASS; master [32460526614](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460526614) PASS; tag [32460979962](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460979962) PASS |
+| Remote sync | `origin/master` at `fbcbe53`; implementation branch at `e5e4c96`; annotated `v0.3.0-engineering-baseline` remains at `d28abbe` |
+| CI | TASK-014 [32464648365](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32464648365) PASS; approval [32462992039](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462992039) PASS; proposal [32462826593](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32462826593) PASS; master [32460526614](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460526614) PASS; tag [32460979962](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32460979962) PASS |
 
 ## Project Progress
 
@@ -72,8 +72,9 @@ ADR-0011 Final Approved
     -> Phase 4 [Baseline Frozen]
     -> Phase 5 Discovery / ADR / Complete Blueprint [Prepared]
     -> Human Phase 5 Blueprint Approval [Approved]
-    -> TASK-014 [Authorized / Next]
-    -> TASK-015 through TASK-018 [Authorized conditionally by dependency]
+    -> TASK-014 [Completed / exact-SHA CI PASS]
+    -> TASK-015 [Authorized / Next]
+    -> TASK-016 through TASK-018 [Authorized conditionally by dependency]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
@@ -97,11 +98,14 @@ the complete Blueprint and TASK-014 through TASK-018 are approved for strict
 dependency-ordered execution. Phase Closure, merge, tag and Product Release
 remain unauthorized.
 
-Current proposed Blueprint:
+Current approved Blueprint:
 [`PHASE-5-command-wal-and-replay-blueprint.md`](../tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md).
 
 Current proposal report:
 [`PHASE-5-command-wal-replay-blueprint-proposal.md`](../tasks/reports/PHASE-5-command-wal-replay-blueprint-proposal.md).
+
+Current cumulative implementation report:
+[`PHASE-5-command-wal-replay.md`](../tasks/reports/PHASE-5-command-wal-replay.md).
 
 Latest completed Blueprint:
 [`PHASE-4-event-pipeline-blueprint.md`](../tasks/blueprints/PHASE-4-event-pipeline-blueprint.md).
