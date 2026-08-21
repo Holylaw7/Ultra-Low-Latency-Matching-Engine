@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260821-010` |
 | Title | Add Phase 4 Event Pipeline Foundation |
-| Status | `In Progress` |
+| Status | `Completed` |
 | Owner | Human Developer |
 | Implementer | Codex |
 | Created / Updated | `2026-08-21` |
@@ -18,7 +18,7 @@
 | Next Gate | `Automated Evidence Gate` |
 | Branch | `feature/phase4-event-pipeline` |
 | Baseline HEAD | approved blueprint commit `4c92278` |
-| Remote / CI | `origin` / `Pending` |
+| Remote / CI | `origin/feature/phase4-event-pipeline`; exact-SHA CI [32456991709](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32456991709) PASS |
 
 ## 2. Background
 
@@ -177,13 +177,14 @@ CI success before TASK-011.
 | 2026-08-21 | Proposed | Foundation scope prepared | Awaiting Blueprint Approval |
 | 2026-08-21 | Approved | Blueprint approval recorded; TASK-010 may begin | Automated evidence gate |
 | 2026-08-21 | In Progress | Disruptor dependency and project-owned pipeline contracts implemented; runtime pipeline intentionally absent | Focused core tests PASS; full verify pending |
+| 2026-08-21 | Completed | Foundation implementation and verification accepted; runtime pipeline remains deferred to TASK-011 | commit `c9a797e`; exact-SHA CI `32456991709` PASS |
 
 ## 18. Completion Checklist
 
-- [ ] Blueprint approval inherited and recorded
-- [ ] dependency/API scope implemented
-- [ ] focused and full tests plus Checkstyle pass
-- [ ] frozen production boundaries unchanged
-- [ ] report/context synchronized
-- [ ] logical commit pushed and exact-SHA CI recorded
-- [ ] no Exception Gate unresolved
+- [x] Blueprint approval inherited and recorded
+- [x] dependency/API scope implemented
+- [x] focused and full tests plus Checkstyle pass
+- [x] frozen production boundaries unchanged
+- [x] report/context synchronized
+- [x] logical commit pushed and exact-SHA CI recorded
+- [x] no Exception Gate unresolved
