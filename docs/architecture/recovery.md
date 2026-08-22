@@ -10,7 +10,9 @@ are complete with exact-SHA Evidence Gates, including TASK-026 durable Netty
 composition at `a978fe7` / CI `32565087793`. The Human-approved TASK-027 Round 2
 terminal remediation is complete at `7b9106f` / CI `32571940187` after baseline
 and prior remediation runs `32565591806`, `32566165212` and `32570890919`; its
-read-only Evidence Gate review is pending and TASK-028 is paused.
+read-only Evidence Gate review is pending and TASK-028 is paused. Final evidence
+synchronization is `62ae68f` / CI `32572441090`; status-only reconciliation
+`b24db93` / CI `32572561973` also passed without production changes.
 Online
 crash recovery and Snapshot restore remain future work.
 
