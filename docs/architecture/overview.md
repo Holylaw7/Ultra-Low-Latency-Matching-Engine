@@ -16,9 +16,10 @@ TASK-019 through TASK-023 are archived after passing their evidence gates,
 including deterministic network verification and component/loopback benchmark
 evidence. Phase 7 now has an approved ADR and Complete Blueprint for Live
 Durable Command Pipeline Integration; TASK-024 contracts and its Evidence Gate
-are complete, TASK-025 has passed its Evidence Gate, and TASK-026 is the next
-dependency-ordered Task. Later Tasks depend on their preceding Evidence Gates.
-Product Release remains separately governed.
+are complete, TASK-025 has passed its Evidence Gate, and TASK-026 durable Netty
+composition is implemented locally with its Evidence Gate pending. Later Tasks
+depend on their preceding Evidence Gates. Product Release remains separately
+governed.
 
 ## Scope
 
@@ -86,8 +87,8 @@ explicit non-goals.
    `v0.5.0-engineering-baseline`**.
 7. Live durable Command WAL/Pipeline integration — **Blueprint Approved /
    Execution Active**. TASK-024 contracts and TASK-025 coordinator are
-   complete with exact-SHA CI evidence; TASK-026 is the next dependency-gated
-   runtime composition task.
+   complete with exact-SHA CI evidence; TASK-026 durable Netty composition is
+   implemented locally and awaits its Evidence Gate.
 8. Snapshot and online Recovery — **Future Work; separate Blueprint required**.
 9. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.

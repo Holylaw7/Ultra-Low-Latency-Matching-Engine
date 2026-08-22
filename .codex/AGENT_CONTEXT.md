@@ -13,7 +13,7 @@
 | Phase | Phase 7 — Live Durable Command Pipeline Integration (`Blueprint Approved / Execution Active`) |
 | Latest product task | [`TASK-20260822-025`](../tasks/active/TASK-20260822-025-phase7-wal-before-pipeline-coordinator.md) — Completed / Evidence PASS |
 | Latest architecture decision | [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md) — Approved |
-| Current planning task | [`TASK-20260822-026`](../tasks/active/TASK-20260822-026-phase7-durable-netty-composition.md) — Authorized / Next |
+| Current planning task | [`TASK-20260822-026`](../tasks/active/TASK-20260822-026-phase7-durable-netty-composition.md) — Implementation Complete / Evidence Gate pending |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 6 Baseline Frozen; Phase 7 execution active; Product Release separately governed |
 | Product approval | Phase 7 Blueprint Approved; `v0.5.0-engineering-baseline` remains frozen; Phase Closure and Product Release not authorized |
@@ -103,7 +103,8 @@ ADR-0011 Final Approved
   -> Human Phase 7 Blueprint Approval [Approved]
   -> TASK-024 [Completed / exact-SHA CI PASS]
   -> TASK-025 [Completed / exact-SHA CI PASS]
-  -> TASK-026 through TASK-028 [Authorized conditionally on Evidence Gates]
+  -> TASK-026 [Implementation Complete / Evidence Gate pending]
+  -> TASK-027 through TASK-028 [Authorized conditionally on Evidence Gates]
   -> Phase 7 implementation [Authorized in dependency order]
 ```
 
@@ -150,8 +151,10 @@ Product Release, Snapshot and online Recovery remain separately governed. Phase
 7 now has an approved ADR and complete Blueprint for Live Durable Command
 Pipeline Integration. TASK-024 contracts/configuration and TASK-025
 WAL-before-pipeline coordinator implementation are complete with exact-SHA CI
-PASS (`2342897`, run `32564005988`). TASK-026 through TASK-028 remain
-conditionally authorized after their preceding Evidence Gates.
+PASS (`2342897`, run `32564005988`). TASK-026 durable Netty composition is
+implemented locally with focused/regression evidence; its commit/push/exact-SHA
+CI Evidence Gate remains pending. TASK-027 and TASK-028 remain conditionally
+authorized after their preceding Evidence Gates.
 Phase Closure, merge and `v0.6.0-engineering-baseline` remain unauthorized.
 
 Current Blueprint Proposal:
@@ -162,8 +165,9 @@ Current Phase 7 ADR:
 
 Phase 7 Tasks:
 `TASK-024` through `TASK-028` under `tasks/active/`; TASK-024 and TASK-025 are
-completed with exact-SHA CI PASS, TASK-026 is next, and later Tasks inherit
-authorization only after their preceding Evidence Gates.
+completed with exact-SHA CI PASS, TASK-026 is implemented locally with its
+Evidence Gate pending, and later Tasks inherit authorization only after their
+preceding Evidence Gates.
 
 Current Phase 6 Closure Proposal:
 [`PHASE-6-network-protocol-closure.md`](../tasks/reports/PHASE-6-network-protocol-closure.md).
@@ -287,11 +291,14 @@ Synchronous MatchingEngine orchestration is implemented: exact-next command
 validation, immutable outcomes, frozen OrderBook delegation, engine-owned
 TradeId/EventSequence allocation, and Trade/Execution result mapping.
 
-Market-order execution and Netty protocol remain future work. The approved
-Disruptor pipeline is implemented as a bounded component boundary and frozen
-at `v0.3.0-engineering-baseline`. Phase 5 now provides a versioned command WAL,
-strict segmented scanning, offline genesis replay and corruption/torn-tail
-evidence; it does not provide live durability, Snapshot or online Recovery.
+Market-order execution remains future work. Protocol v1 and the single-session
+Netty gateway are implemented and frozen at `v0.5.0-engineering-baseline`;
+Phase 7 now adds the opt-in durable Netty composition under the approved
+WAL-before-pipeline boundary. The approved Disruptor pipeline remains a
+bounded component boundary frozen at `v0.3.0-engineering-baseline`. Phase 5
+provides a versioned command WAL, strict segmented scanning, offline genesis
+replay and corruption/torn-tail evidence; Snapshot and online Recovery remain
+deferred.
 
 ## Performance Evidence
 

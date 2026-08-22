@@ -37,8 +37,9 @@ OpenAI model-selection guidance is linked from `.codex/MASTER_PROMPT.md`.
 Phase 7 — Live Durable Command Pipeline Integration is active under approved
 ADR-0015 and its Complete Blueprint. TASK-024 durable contracts are completed
 with exact-SHA CI evidence; TASK-025 coordinator implementation and Evidence
-Gate are complete at `2342897` / CI `32564005988`, and TASK-026 is the next
-dependency-ordered Task. Phase Closure, merge, `v0.6.0-engineering-baseline`,
+Gate are complete at `2342897` / CI `32564005988`; TASK-026 durable Netty
+composition is implemented locally and awaits its exact-SHA Evidence Gate.
+Phase Closure, merge, `v0.6.0-engineering-baseline`,
 Snapshot, online Recovery and Product Release remain unauthorized. The frozen `v0.5.0-engineering-baseline`
 continues to protect the Phase 2–6 production paths.
 
@@ -115,9 +116,9 @@ acknowledgement. See [`network.md`](docs/benchmark/network.md) and the
 
 The approved Phase 7 boundary adds the WAL-before-pipeline integration layer
 as a dependency-ordered live durable foundation. TASK-024 is complete;
-TASK-025 is complete with exact-SHA Evidence Gate PASS; TASK-026 is next. The
-Gateway composition, failure/replay verification and benchmark/docs work
-remain in TASK-026 through TASK-028. No online Recovery, reconnect,
+TASK-025 is complete with exact-SHA Evidence Gate PASS. TASK-026 is locally
+implemented with its Evidence Gate pending; failure/replay verification and
+benchmark/docs work remain in TASK-027 through TASK-028. No online Recovery, reconnect,
 deduplication, multi-session support, Product Release or production-readiness
 claim is authorized.
 
