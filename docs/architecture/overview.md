@@ -14,7 +14,10 @@ implementation of the approved binary Network Protocol and single-session
 Netty gateway is complete and frozen at `v0.5.0-engineering-baseline`:
 TASK-019 through TASK-023 are archived after passing their evidence gates,
 including deterministic network verification and component/loopback benchmark
-evidence. Product Release remains separately governed.
+evidence. Phase 7 now has an approved ADR and Complete Blueprint for Live
+Durable Command Pipeline Integration; TASK-024 contracts are implemented with
+its Evidence Gate pending, and later Tasks depend on their preceding Evidence
+Gates. Product Release remains separately governed.
 
 ## Scope
 
@@ -27,6 +30,8 @@ Client
   -> Netty Network Adapter / Binary Protocol [Phase 6 baseline frozen]
   -> Decoder / Validation                    [Phase 6 implemented]
   -> Ingress                                 [Phase 6 single session / one in-flight]
+  -> Durable Command Coordinator             [Phase 7 execution active]
+       -> Command WAL append + SYNC force    [Phase 7 execution active]
   -> RingBuffer / Disruptor Pipeline         [Phase 4 implemented / evidence recorded]
   -> MatchingEngine                          [Phase 3 baseline frozen]
        -> sequence / orchestration
@@ -78,6 +83,9 @@ explicit non-goals.
    and frozen at `v0.4.0-engineering-baseline`**.
 6. Network adapter and protocol — **Completed and frozen at
    `v0.5.0-engineering-baseline`**.
-7. Snapshot and online Recovery — **Future Work**.
-8. Evidence-driven performance alternatives — **Future Work; benchmark and
+7. Live durable Command WAL/Pipeline integration — **Blueprint Approved /
+   Execution Active**. TASK-024's contracts stage is implemented; the live
+   runtime remains unstarted pending the dependency-ordered Evidence Gates.
+8. Snapshot and online Recovery — **Future Work; separate Blueprint required**.
+9. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.

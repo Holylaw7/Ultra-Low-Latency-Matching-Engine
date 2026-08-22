@@ -4,8 +4,10 @@
 
 Phase 5 implements a JDK-only, versioned command WAL and strict offline
 deterministic replay baseline, completed and frozen at
-`v0.4.0-engineering-baseline`. It does not implement online crash recovery,
-Snapshot restore or live pipeline durability.
+`v0.4.0-engineering-baseline`. Phase 7 has an approved Blueprint; its TASK-024
+durable contracts/configuration stage is implemented, while the live runtime
+remains unstarted pending the dependency-ordered Evidence Gates. Online crash
+recovery and Snapshot restore remain future work.
 
 ## Implemented Offline Flow
 
@@ -49,9 +51,23 @@ Snapshot
     -> verify state hash
 ```
 
-Snapshot format, state restore, online recovery orchestration, live
-pipeline/WAL integration, durable acknowledgements, Network and replication
-remain future work and require a separate approved Blueprint.
+Snapshot format, state restore, online recovery orchestration, durable
+acknowledgements, and replication remain future work and require a separate
+approved Blueprint. Phase 7 has an approved Blueprint and its TASK-024 durable
+contracts/configuration stage is implemented, but no live runtime has started.
+The approved runtime composition remains inactive pending its dependency-ordered
+Evidence Gates:
+
+```text
+Protocol request
+    -> WAL append + SYNC_EACH_APPEND
+    -> Pipeline admission
+    -> MatchingEngine
+```
+
+This ordering is authorized only within the Phase 7 Blueprint and its Evidence
+Gates. It does not claim online recovery, client-received durability or
+production readiness.
 
 ## Verification
 

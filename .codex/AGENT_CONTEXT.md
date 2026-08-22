@@ -1,6 +1,6 @@
 # AGENT_CONTEXT — Matching Engine Current State
 
-> Last Updated: 2026-08-21
+> Last Updated: 2026-08-22
 > Purpose: compact current-state index; detailed history lives in Tasks, Stage
 > Reports, ADRs and Git.
 
@@ -10,20 +10,20 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node, in-memory, deterministic matching engine |
-| Phase | Phase 6 — Binary Network Protocol and Single-Session Gateway (`Completed / Baseline Frozen`) |
+| Phase | Phase 7 — Live Durable Command Pipeline Integration (`Blueprint Approved / Execution Active`) |
 | Latest product task | [`TASK-20260821-023`](../tasks/completed/TASK-20260821-023-phase6-network-benchmark-docs.md) — Completed / Evidence PASS |
-| Latest architecture decision | [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md) — Approved |
-| Current planning task | TASK-019..023 archived; Phase 6 baseline frozen |
+| Latest architecture decision | [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md) — Approved |
+| Current planning task | [`TASK-20260822-024`](../tasks/active/TASK-20260822-024-phase7-durable-integration-contracts.md) — In Progress / Evidence Gate pending |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
-| Product stage | Phase 6 Baseline Frozen; Product Release remains separately governed |
-| Product approval | Phase 6 Closure Approved; `v0.5.0-engineering-baseline` frozen; live integration and Product Release not authorized |
+| Product stage | Phase 6 Baseline Frozen; Phase 7 execution active; Product Release separately governed |
+| Product approval | Phase 7 Blueprint Approved; `v0.5.0-engineering-baseline` remains frozen; Phase Closure and Product Release not authorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `master` |
 | Engineering baseline commit | `b7cf68e` |
 | Engineering baseline tag | `v0.5.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/master` at `b7cf68e`; `v0.5.0-engineering-baseline` points to the verified Phase 6 merge commit |
-| CI | master merge [32495076976](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495076976) PASS; baseline tag [32495218654](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495218654) PASS; remediation [32494670117](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32494670117) PASS; final pre-closure evidence [32493384924](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32493384924) PASS |
+| Remote sync | `origin/master` at `2591042`; `v0.5.0-engineering-baseline` remains at the verified Phase 6 merge commit |
+| CI | Phase 6 master merge [32495076976](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495076976) PASS; baseline tag [32495218654](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495218654) PASS; native subagent configuration CI [32497229680](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32497229680) PASS |
 
 ## Project Progress
 
@@ -37,7 +37,8 @@
 | Phase 4 — Event Pipeline | Completed / Approved / Baseline Frozen | [`Final Closure`](../tasks/reports/PHASE-4-event-pipeline-closure.md); `v0.3.0-engineering-baseline` |
 | Phase 5 — Command WAL and Deterministic Replay Foundation | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md); [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md); [`Closure`](../tasks/reports/PHASE-5-command-wal-replay-closure.md); `v0.4.0-engineering-baseline` |
 | Phase 6 — Binary Network Protocol and Single-Session Gateway | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-6-network-protocol-blueprint.md); [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md); [`Closure`](../tasks/reports/PHASE-6-network-protocol-closure.md); `v0.5.0-engineering-baseline` |
-| Phase 7+ — Snapshot/recovery integration and performance evolution | Future Work | separately approved future Blueprints |
+| Phase 7 — Live Durable Command Pipeline Integration | Blueprint Approved / Execution Active | [`Blueprint`](../tasks/blueprints/PHASE-7-live-durable-command-pipeline-blueprint.md); [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md); TASK-024..028 |
+| Phase 8+ — Snapshot/recovery integration and performance evolution | Future Work | separately approved future Blueprints |
 
 ## Current Product Gate
 
@@ -98,6 +99,11 @@ ADR-0011 Final Approved
   -> v0.5.0-engineering-baseline / tag CI [Completed / PASS]
   -> TASK-019 through TASK-023 [Archived]
   -> Phase 6 [Baseline Frozen]
+  -> Phase 7 Discovery / ADR-0015 / Complete Blueprint [Prepared]
+  -> Human Phase 7 Blueprint Approval [Approved]
+  -> TASK-024 [In Progress / contracts implemented; Evidence Gate pending]
+  -> TASK-025 through TASK-028 [Authorized conditionally on Evidence Gates]
+  -> Phase 7 implementation [Authorized in dependency order]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
@@ -139,11 +145,23 @@ pipeline-failure-to-gateway terminal propagation are verified by
 implementation-path review and lower-level tests; dynamic gateway fault
 injection for those three paths was not performed and is an explicitly
 accepted baseline limitation. No production-only test seam was introduced.
-Product Release, live WAL integration, Snapshot and online Recovery remain
-separately governed.
+Product Release, Snapshot and online Recovery remain separately governed. Phase
+7 now has an approved ADR and complete Blueprint for Live Durable Command
+Pipeline Integration. TASK-024 contracts/configuration implementation is
+complete and its Evidence Gate is pending; TASK-025 through TASK-028 remain
+conditionally authorized after their preceding Evidence Gates.
+Phase Closure, merge and `v0.6.0-engineering-baseline` remain unauthorized.
 
 Current Blueprint Proposal:
-[`PHASE-6-network-protocol-blueprint.md`](../tasks/blueprints/PHASE-6-network-protocol-blueprint.md).
+[`PHASE-7-live-durable-command-pipeline-blueprint.md`](../tasks/blueprints/PHASE-7-live-durable-command-pipeline-blueprint.md).
+
+Current Phase 7 ADR:
+[`ADR-0015-live-durable-command-pipeline-integration.md`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md).
+
+Phase 7 Tasks:
+`TASK-024` through `TASK-028` under `tasks/active/`; TASK-024 contracts are
+implemented with its Evidence Gate pending, and later Tasks inherit
+authorization only after their preceding Evidence Gates.
 
 Current Phase 6 Closure Proposal:
 [`PHASE-6-network-protocol-closure.md`](../tasks/reports/PHASE-6-network-protocol-closure.md).
