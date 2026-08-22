@@ -18,5 +18,9 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
 - [`PHASE-4-event-pipeline-blueprint.md`](PHASE-4-event-pipeline-blueprint.md)
   — Completed / Approved / frozen at `v0.3.0-engineering-baseline`.
 - [`PHASE-5-command-wal-and-replay-blueprint.md`](PHASE-5-command-wal-and-replay-blueprint.md)
-  — Proposed; implementation is not authorized pending Human Blueprint
-  Approval.
+  — Completed / Approved / frozen at `v0.4.0-engineering-baseline`.
+- [`PHASE-6-network-protocol-blueprint.md`](PHASE-6-network-protocol-blueprint.md)
+  — Completed / Approved / frozen at `v0.5.0-engineering-baseline`.
+- [`PHASE-7-live-durable-command-pipeline-blueprint.md`](PHASE-7-live-durable-command-pipeline-blueprint.md)
+  — Approved; TASK-024 through TASK-028 authorized in dependency order;
+  implementation is active under Evidence Gates.

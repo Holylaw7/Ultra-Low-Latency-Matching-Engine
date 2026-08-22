@@ -4,8 +4,18 @@
 
 Phase 5 implements a JDK-only, versioned command WAL and strict offline
 deterministic replay baseline, completed and frozen at
-`v0.4.0-engineering-baseline`. It does not implement online crash recovery,
-Snapshot restore or live pipeline durability.
+`v0.4.0-engineering-baseline`. Phase 7 has an approved Blueprint; TASK-024
+durable contracts/configuration and TASK-025 WAL-before-pipeline coordination
+are complete with exact-SHA Evidence Gates, including TASK-026 durable Netty
+composition at `a978fe7` / CI `32565087793`. The Human-approved TASK-027 Round 2
+terminal remediation is complete at `7b9106f` / CI `32571940187` after baseline
+and prior remediation runs `32565591806`, `32566165212` and `32570890919`; its
+ read-only Evidence Gate is PASS. TASK-028 benchmark and closure evidence are
+ complete at `9fed6b2` / CI `32574274905`, with verifier,
+benchmark-reviewer and docs-auditor PASS. Human Phase 7 Closure Review is the
+next gate. Earlier evidence synchronization runs remain historical records.
+Online
+crash recovery and Snapshot restore remain future work.
 
 ## Implemented Offline Flow
 
@@ -49,9 +59,25 @@ Snapshot
     -> verify state hash
 ```
 
-Snapshot format, state restore, online recovery orchestration, live
-pipeline/WAL integration, durable acknowledgements, Network and replication
-remain future work and require a separate approved Blueprint.
+Snapshot format, state restore, online recovery orchestration, durable
+acknowledgements, and replication remain future work and require a separate
+approved Blueprint. Phase 7 has an approved Blueprint; TASK-024 through
+TASK-026 and the approved TASK-027 Round 2 runtime-composition remediation are
+complete at `7b9106f` / CI `32571940187`; TASK-027 read-only Evidence Gate is
+PASS, and TASK-028 benchmark/closure evidence is complete at `9fed6b2` / CI
+`32574274905`; its read-only Evidence Gate is PASS and Human Phase 7 Closure
+Review is next:
+
+```text
+Protocol request
+    -> WAL append + SYNC_EACH_APPEND
+    -> Pipeline admission
+    -> MatchingEngine
+```
+
+This ordering is authorized only within the Phase 7 Blueprint and its Evidence
+Gates. It does not claim online recovery, client-received durability or
+production readiness.
 
 ## Verification
 

@@ -14,7 +14,17 @@ implementation of the approved binary Network Protocol and single-session
 Netty gateway is complete and frozen at `v0.5.0-engineering-baseline`:
 TASK-019 through TASK-023 are archived after passing their evidence gates,
 including deterministic network verification and component/loopback benchmark
-evidence. Product Release remains separately governed.
+evidence. Phase 7 now has an approved ADR and Complete Blueprint for Live
+Durable Command Pipeline Integration; TASK-024 contracts, TASK-025 coordinator
+and TASK-026 durable Netty composition have passed their Evidence Gates, with
+TASK-026 at `a978fe7` / CI `32565087793`. Human-approved TASK-027 Round 2
+terminal remediation is complete at `7b9106f` / CI `32571940187`, after
+baseline and prior remediation runs `32565591806`, `32566165212` and
+`32570890919`; the final read-only Evidence Gate for TASK-027 is PASS. TASK-028
+benchmark implementation and closure evidence are complete at `9fed6b2` / CI
+`32574274905`; verifier, benchmark-reviewer and docs-auditor all PASS. Human
+Phase 7 Closure Review is the next gate. Product Release remains separately
+governed.
 
 ## Scope
 
@@ -27,6 +37,8 @@ Client
   -> Netty Network Adapter / Binary Protocol [Phase 6 baseline frozen]
   -> Decoder / Validation                    [Phase 6 implemented]
   -> Ingress                                 [Phase 6 single session / one in-flight]
+  -> Durable Command Coordinator             [Phase 7 execution active]
+       -> Command WAL append + SYNC force    [Phase 7 execution active]
   -> RingBuffer / Disruptor Pipeline         [Phase 4 implemented / evidence recorded]
   -> MatchingEngine                          [Phase 3 baseline frozen]
        -> sequence / orchestration
@@ -78,6 +90,13 @@ explicit non-goals.
    and frozen at `v0.4.0-engineering-baseline`**.
 6. Network adapter and protocol — **Completed and frozen at
    `v0.5.0-engineering-baseline`**.
-7. Snapshot and online Recovery — **Future Work**.
-8. Evidence-driven performance alternatives — **Future Work; benchmark and
+7. Live durable Command WAL/Pipeline integration — **Blueprint Approved /
+   Execution Active**. TASK-024 contracts, TASK-025 coordinator and TASK-026
+   durable Netty composition and the approved TASK-027 Round 2 remediation are
+   complete at `7b9106f` / CI `32571940187` with exact-SHA evidence; TASK-027
+   verifier/docs-auditor Evidence Gate PASS; TASK-028 benchmark/docs evidence
+   is complete at `9fed6b2` / CI `32574274905`, with all read-only reviewers
+   PASS. Human Phase 7 Closure Review is next.
+8. Snapshot and online Recovery — **Future Work; separate Blueprint required**.
+9. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.

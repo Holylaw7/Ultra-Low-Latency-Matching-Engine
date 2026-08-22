@@ -19,7 +19,8 @@ New multi-task phases use Phase Blueprint Mode:
 ```text
 Sol architecture / complete Phase Blueprint
     -> one Human Blueprint Approval
-    -> Terra implementation with test, diff and CI checkpoints
+    -> Main Luna Max implementation with test, diff and CI checkpoints
+    -> parallel read-only verifier/docs/benchmark auditors when useful
     -> Exception Gate only when scope or architecture changes
     -> Sol final Closure Review
     -> one Human Phase Closure Approval
@@ -33,11 +34,25 @@ OpenAI model-selection guidance is linked from `.codex/MASTER_PROMPT.md`.
 
 ## Current Stage
 
-Phase 3 — MatchingEngine is completed, approved and frozen at
-`v0.2.0-engineering-baseline`. The baseline contains the Domain Model, frozen
-Phase 2 OrderBook, synchronous MatchingEngine orchestration, immutable
-Trade/Execution results and deterministic execution evidence. It does not
-contain WAL, Replay, Snapshot, Recovery, Network or production optimization.
+Phase 7 — Live Durable Command Pipeline Integration is active under approved
+ADR-0015 and its Complete Blueprint. TASK-024 durable contracts are completed
+with exact-SHA CI evidence; TASK-025 coordinator implementation and Evidence
+Gate are complete at `2342897` / CI `32564005988`; TASK-026 durable Netty
+composition is complete at `a978fe7` / CI `32565087793`; TASK-027 Round 2
+terminal remediation is complete at `7b9106f` / CI `32571940187`, with 12
+focused Phase 7 tests and 158 full core tests. Its read-only verifier and
+  docs-auditor Evidence Gate is PASS; TASK-028 benchmark implementation and
+  evidence are complete at `9fed6b2` / CI `32574274905`, with read-only
+  verifier, benchmark-reviewer and docs-auditor PASS. Human Phase 7 Closure
+  Review is the next gate.
+Phase Closure, merge, `v0.6.0-engineering-baseline`,
+Snapshot, online Recovery and Product Release remain unauthorized. The frozen `v0.5.0-engineering-baseline`
+continues to protect the Phase 2–6 production paths.
+
+The Phase 3 MatchingEngine baseline is completed, approved and frozen at
+`v0.2.0-engineering-baseline`. It contains the Domain Model, frozen Phase 2
+OrderBook, synchronous MatchingEngine orchestration, immutable Trade/Execution
+results and deterministic execution evidence.
 
 Phase Blueprint Mode is completed, approved and active as the governance
 standard for future multi-task phases. The complete Phase 4 Event Pipeline
@@ -74,16 +89,16 @@ The repository currently contains:
 - Architecture, ADR, benchmark, and performance documentation skeleton
 - Task workspace with ADR-first Phase Blueprints, evidence gates and Exception Gates
 
-Implemented Phase 2 behavior includes deterministic limit-order matching,
+Historical Phase 2 behavior includes deterministic limit-order matching,
 price-time priority, maker-price fragments, partial/full fills, and residual
-resting. Stage 2 adds synchronous command processing, OrderBook integration
-and deterministic Trade/Execution result generation. Publication, WAL, network
-and performance optimization remain outside the current scope.
+resting. Phase 3 adds synchronous command processing, OrderBook integration
+and deterministic Trade/Execution result generation. Later phases add the
+pipeline, WAL, protocol and the currently active live durable integration.
 
-The implemented Phase 4 boundary adds a bounded single-producer/single-consumer
+The Phase 4 boundary added a bounded single-producer/single-consumer
 event pipeline in front of the existing synchronous MatchingEngine. WAL,
 Replay, Snapshot, Recovery, Network and production optimization remain
-explicit non-goals. See
+explicit non-goals for that historical phase. See
 [`PHASE-4-event-pipeline-blueprint.md`](tasks/blueprints/PHASE-4-event-pipeline-blueprint.md).
 
 The approved Phase 5 boundary is a versioned segmented command WAL plus strict
@@ -104,6 +119,19 @@ fragmentation/coalescing checks and bounded codec/loopback benchmark are
 component evidence only; a local write is not a durable or client-receipt
 acknowledgement. See [`network.md`](docs/benchmark/network.md) and the
 [Phase 6 Closure Proposal](tasks/reports/PHASE-6-network-protocol-closure.md).
+
+The approved Phase 7 boundary adds the WAL-before-pipeline integration layer
+as a dependency-ordered live durable foundation. TASK-024 and TASK-025 are
+complete with exact-SHA Evidence Gate PASS. TASK-026 is complete at `a978fe7`
+with CI `32565087793`; TASK-027 Round 2 terminal remediation passed exact-SHA
+CI `32571940187` after baseline and prior remediation runs `32565591806`,
+`32566165212` and `32570890919`. TASK-027 read-only Evidence Gate is PASS.
+TASK-028 now has its four-boundary Java 21 JMH benchmark, component claim
+summary, Closure Proposal and synchronized evidence at `9fed6b2` / CI
+`32574274905`; the read-only verifier, benchmark-reviewer and docs-auditor
+all PASS. Human Phase 7 Closure Review is next. No online Recovery, reconnect,
+deduplication, multi-session support, Product Release or production-readiness
+claim is authorized.
 
 ## Build
 
@@ -174,6 +202,25 @@ This measures fixed Submit/Cancel codec vectors and a sequential loopback
 request-to-complete-result round trip. Results are local-host component
 evidence, not durable ACK, concurrent-client, Internet or Product Release
 claims; see [`network.md`](docs/benchmark/network.md).
+
+Run the Phase 7 live durable component/loopback baseline with Java 21:
+
+```powershell
+mvn -pl benchmark -am -DskipTests package
+& 'E:\Java\microsoft-jdk-21\bin\java.exe' -jar `
+  benchmark/target/matching-engine-benchmark-0.1.0-SNAPSHOT.jar `
+  'DurablePipelineBenchmark.*' -wi 1 -i 2 -f 1 -t 1 `
+  -w 1s -r 1s -foe true -rf json `
+  -rff benchmark-results/phase7-durable-full.json
+```
+
+This keeps WAL append/force, append-plus-publish, local result encoding and
+one-in-flight alternating Submit/Cancel loopback separate. The committed
+summary records CPU, storage, JDK/JVM/GC, Netty allocator, workload, segment
+settings, warmup/forks and P50/P95/P99/P999. It is component/local-host
+evidence only; it is not a durable ACK, power-loss, online Recovery,
+concurrent-client or Product Release claim. See
+[`durable-pipeline.md`](docs/benchmark/durable-pipeline.md).
 
 ## Structure
 

@@ -113,6 +113,28 @@ frontier option for complex reasoning/coding, Terra balances intelligence and
 cost, and Luna targets cost-sensitive high-volume work.
 Reference: https://developers.openai.com/api/docs/models
 
+### Native Subagent Execution Amendment — 2026-08-22
+
+The default execution topology is now explicitly:
+
+```text
+Main Luna Max
+  = orchestrator + sole sequential production-code writer
+        |
+        +-- verifier (Luna Max / read-only)
+        +-- benchmark-reviewer (Luna Max / read-only when needed)
+        +-- docs-auditor (Luna Medium / read-only)
+```
+
+The `implementer` profile remains available only for an isolated,
+non-overlapping patch. It is not the default writer for a dependency-ordered
+Task chain. A stalled writer delegation is cancelled and resumed by the main
+agent; it is not an Exception Gate unless it reveals an architecture, scope or
+acceptance problem. Exactly one writer is active at any time, while read-only
+auditors may run in parallel after a bounded checkpoint. This amendment changes
+execution routing only; it does not change approval authority, Blueprint scope,
+Exception Gates or Closure requirements.
+
 ## Scope
 
 ### Changed
