@@ -86,9 +86,10 @@ This ordering is authorized only within the Phase 7 Blueprint and its Evidence
 Gates. It does not claim online recovery, client-received durability or
 production readiness.
 
-The proposed Phase 8 design preserves those boundaries. It requests narrowly
-additive checkpoint/restore and recovered-runtime construction APIs, but does
-not authorize them until Human Phase 8 Blueprint Approval.
+The approved Phase 8 design preserves those boundaries. TASK-029 has delivered
+the narrowly additive canonical checkpoint export/restore APIs at `66fc9d2` /
+CI `32577713667`; TASK-030 Snapshot codec/store is next. Recovered-runtime
+construction remains gated by the later dependency Tasks.
 
 ## Verification
 
