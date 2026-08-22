@@ -22,9 +22,9 @@
 | Engineering baseline commit | `b7cf68e` |
 | Engineering baseline tag | `v0.5.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/feature/phase7-live-durable-command-pipeline` is synchronized; code checkpoint `7b9106f`; final documentation evidence checkpoint `62ae68f`; status-only reconciliation `b24db93` / CI `32572561973` is also pushed; subsequent status-only edits remain documentation-only; `origin/master` remains at `2591042`; `v0.5.0-engineering-baseline` remains at the verified Phase 6 merge commit |
+| Remote sync | `origin/feature/phase7-live-durable-command-pipeline` is synchronized; code checkpoint `7b9106f`; final documentation evidence checkpoint `62ae68f`; status-only reconciliation `b24db93` / CI `32572561973` and final Evidence-Gate documentation verification `b6eaa8d` / CI `32572786850` are also pushed; subsequent status-only edits remain documentation-only; `origin/master` remains at `2591042`; `v0.5.0-engineering-baseline` remains at the verified Phase 6 merge commit |
 | Latest Phase 7 CI | Round 2 terminal remediation `7b9106f` — [32571940187](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32571940187) PASS; focused suite 12 tests; full `mvn verify` 158 core tests; Checkstyle 0 |
-| Latest Phase 7 docs CI | Final evidence synchronization `62ae68f` — [32572441090](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32572441090) PASS; status-only reconciliation `b24db93` — [32572561973](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32572561973) PASS |
+| Latest Phase 7 docs CI | Final evidence synchronization `62ae68f` — [32572441090](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32572441090) PASS; reconciliation `b24db93` — [32572561973](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32572561973) PASS; final Evidence-Gate documentation verification `b6eaa8d` — [32572786850](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32572786850) PASS |
 | CI | Phase 7 TASK-024 implementation exact-SHA run [32562594583](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32562594583) PASS; Phase 7 docs/status sync exact-SHA run [32562746074](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32562746074) PASS; Phase 7 TASK-025 implementation exact-SHA run [32564005988](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32564005988) PASS; Phase 7 TASK-025 evidence/status sync exact-SHA run [32564290961](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32564290961) PASS; Phase 7 TASK-026 implementation exact-SHA run [32565087793](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32565087793) PASS; Phase 7 TASK-027 baseline verification exact-SHA run [32565591806](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32565591806) PASS; Phase 7 TASK-027 test-remediation exact-SHA run [32566165212](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32566165212) PASS; Phase 7 approved-boundary remediation exact-SHA run [32570890919](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32570890919) PASS; Phase 7 remediation documentation sync exact-SHA run [32571104763](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32571104763) PASS; Phase 6 master merge [32495076976](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495076976) PASS; baseline tag [32495218654](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495218654) PASS; native subagent configuration CI [32497229680](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32497229680) PASS |
 
 ## Project Progress
@@ -175,8 +175,9 @@ are complete with exact-SHA CI PASS. Human Exception Gate remediation for
 TASK-027 Round 2 remediation is complete at `7b9106f` / CI `32571940187`; the
 read-only Evidence Gate review is pending, and TASK-028 remains paused. Final
 evidence synchronization is `62ae68f` / CI `32572441090`; status-only
-reconciliation `b24db93` / CI `32572561973` also passed without production
-changes.
+reconciliation `b24db93` / CI `32572561973` and final Evidence-Gate
+documentation verification `b6eaa8d` / CI `32572786850` also passed without
+production changes.
 
 Current Phase 6 Closure Proposal:
 [`PHASE-6-network-protocol-closure.md`](../tasks/reports/PHASE-6-network-protocol-closure.md).

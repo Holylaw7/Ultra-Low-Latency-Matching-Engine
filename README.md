@@ -124,8 +124,9 @@ with CI `32565087793`; TASK-027 Round 2 terminal remediation passed exact-SHA
 CI `32571940187` after baseline and prior remediation runs `32565591806`,
 `32566165212` and `32570890919`. TASK-028 remains paused pending the final
 read-only Evidence Gate. Final evidence synchronization is `62ae68f` / CI
-`32572441090`; status-only reconciliation `b24db93` / CI `32572561973` also
-passed without production changes. No online Recovery, reconnect,
+`32572441090`; status-only reconciliation `b24db93` / CI `32572561973` and
+final Evidence-Gate documentation verification `b6eaa8d` / CI `32572786850`
+also passed without production changes. No online Recovery, reconnect,
 deduplication, multi-session support, Product Release or production-readiness
 claim is authorized.
 
