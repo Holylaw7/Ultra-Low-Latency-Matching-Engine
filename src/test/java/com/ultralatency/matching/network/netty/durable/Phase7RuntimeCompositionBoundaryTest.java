@@ -147,6 +147,104 @@ class Phase7RuntimeCompositionBoundaryTest {
                 configuration.durableConfiguration().walConfiguration()).size());
     }
 
+    @Test
+    void disconnectBeforeResponseCompletionFailsCoordinatorAndRetainsWal() throws Exception {
+        final DurableNetworkConfiguration configuration =
+                DurableNetworkConfiguration.defaults(tempDir.resolve("disconnect-window-wal"));
+        final AppendPublishBarrier barrier = new AppendPublishBarrier();
+        final ControlledResponseWritePort responseWriter = new ControlledResponseWritePort();
+        final DurableMatchingEngineTcpServer server = new DurableMatchingEngineTcpServer(
+                configuration,
+                barrier,
+                responseWriter);
+        server.start();
+        try (Socket socket = connect(server)) {
+            final OutputStream output = socket.getOutputStream();
+            output.write(encode(new SubmitLimitRequest(
+                    ClientRequestId.of(1),
+                    OrderId.of(9004),
+                    Side.BUY,
+                    Price.of(100),
+                    Quantity.of(1))));
+            output.flush();
+
+            assertTrue(barrier.appendReturned.await(TEST_TIMEOUT.toMillis(), TimeUnit.MILLISECONDS));
+            barrier.releaseAppend.countDown();
+            assertTrue(barrier.publishAccepted.await(
+                    TEST_TIMEOUT.toMillis(), TimeUnit.MILLISECONDS));
+            barrier.releasePublish.countDown();
+            assertTrue(responseWriter.writeAttempted.await(
+                    TEST_TIMEOUT.toMillis(), TimeUnit.MILLISECONDS));
+            assertFalse(responseWriter.pendingFuture().isDone());
+            assertEquals(NetworkGatewayState.RUNNING, server.state());
+
+            socket.setSoLinger(true, 0);
+            socket.shutdownInput();
+            socket.shutdownOutput();
+            socket.close();
+
+            awaitState(server, NetworkGatewayState.FAILED);
+            awaitCoordinatorState(server, DurableLifecycleState.FAILED);
+            assertEquals(DurableFailureStage.DISCONNECT,
+                    server.coordinator().terminalFailure().orElseThrow().stage());
+            assertThrows(DurableTerminalException.class, () -> server.coordinator().accept(
+                    ClientRequestId.of(2),
+                    (DurableCommandSequence sequence) -> new SubmitLimitCommand(
+                            sequence.toSequence(),
+                            OrderId.of(9005),
+                            Side.BUY,
+                            Price.of(100),
+                            Quantity.of(1))));
+        } finally {
+            server.shutdown(TEST_TIMEOUT);
+        }
+        assertEquals(1, CommandWalReader.read(
+                configuration.durableConfiguration().walConfiguration()).size());
+    }
+
+    @Test
+    void synchronousOutboundWriteFailureConvergesCoordinatorAndGateway() throws Exception {
+        final DurableNetworkConfiguration configuration =
+                DurableNetworkConfiguration.defaults(tempDir.resolve("sync-write-failure-wal"));
+        final ControlledResponseWritePort responseWriter = new ControlledResponseWritePort();
+        final DurableMatchingEngineTcpServer server = new DurableMatchingEngineTcpServer(
+                configuration,
+                DurableRuntimePortFactory.production(),
+                responseWriter);
+        final IllegalStateException writeFailure = new IllegalStateException("synchronous write");
+        responseWriter.throwSynchronously(writeFailure);
+        server.start();
+        try (Socket socket = connect(server)) {
+            final OutputStream output = socket.getOutputStream();
+            output.write(encode(new SubmitLimitRequest(
+                    ClientRequestId.of(1),
+                    OrderId.of(9006),
+                    Side.BUY,
+                    Price.of(100),
+                    Quantity.of(1))));
+            output.flush();
+
+            awaitState(server, NetworkGatewayState.FAILED);
+            awaitCoordinatorState(server, DurableLifecycleState.FAILED);
+            assertSame(writeFailure, server.failureCause().orElseThrow());
+            assertEquals(DurableFailureStage.OUTBOUND_WRITE,
+                    server.coordinator().terminalFailure().orElseThrow().stage());
+            assertSame(writeFailure, server.coordinator().terminalFailure().orElseThrow().cause());
+            assertThrows(DurableTerminalException.class, () -> server.coordinator().accept(
+                    ClientRequestId.of(2),
+                    (DurableCommandSequence sequence) -> new SubmitLimitCommand(
+                            sequence.toSequence(),
+                            OrderId.of(9007),
+                            Side.BUY,
+                            Price.of(100),
+                            Quantity.of(1))));
+        } finally {
+            server.shutdown(TEST_TIMEOUT);
+        }
+        assertEquals(1, CommandWalReader.read(
+                configuration.durableConfiguration().walConfiguration()).size());
+    }
+
     private static Socket connect(final DurableMatchingEngineTcpServer server) throws Exception {
         final InetAddress address = server.localAddress().orElseThrow().getAddress();
         final int port = server.localAddress().orElseThrow().getPort();
@@ -255,6 +353,7 @@ class Phase7RuntimeCompositionBoundaryTest {
         private final CountDownLatch writeAttempted = new CountDownLatch(1);
         private final AtomicReference<ChannelPromise> pending = new AtomicReference<>();
         private final AtomicReference<ProtocolResponse> pendingResponse = new AtomicReference<>();
+        private final AtomicReference<RuntimeException> synchronousFailure = new AtomicReference<>();
 
         @Override
         public void write(final Channel channel, final ProtocolResponse response) {
@@ -265,10 +364,15 @@ class Phase7RuntimeCompositionBoundaryTest {
         public ChannelFuture writeAndFlush(
                 final Channel channel,
                 final ProtocolResponse response) {
+            final RuntimeException failure = synchronousFailure.get();
+            if (failure != null) {
+                throw failure;
+            }
             final ChannelPromise promise = channel.newPromise();
             pending.set(promise);
             pendingResponse.set(response);
             writeAttempted.countDown();
+            channel.read();
             return promise;
         }
 
@@ -276,6 +380,14 @@ class Phase7RuntimeCompositionBoundaryTest {
             final ChannelPromise promise = pending.get();
             assertTrue(promise != null, "write future was not captured");
             promise.setFailure(cause);
+        }
+
+        private ChannelFuture pendingFuture() {
+            return pending.get();
+        }
+
+        private void throwSynchronously(final RuntimeException failure) {
+            synchronousFailure.set(failure);
         }
     }
 }

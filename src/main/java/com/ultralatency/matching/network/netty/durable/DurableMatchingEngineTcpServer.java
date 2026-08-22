@@ -291,7 +291,10 @@ public final class DurableMatchingEngineTcpServer {
 
     void onSessionInactive(final Channel channel) {
         if (channel == activeChannel && state == NetworkGatewayState.RUNNING) {
-            failTerminal(new IllegalStateException("Active durable session disconnected"));
+            final IllegalStateException failure =
+                    new IllegalStateException("Active durable session disconnected");
+            failCoordinator(DurableFailureStage.DISCONNECT, failure);
+            failTerminal(failure);
         }
     }
 
@@ -394,6 +397,7 @@ public final class DurableMatchingEngineTcpServer {
                 }
             });
         } catch (final Throwable failure) {
+            failCoordinator(DurableFailureStage.OUTBOUND_WRITE, failure);
             failTerminal(failure);
         }
     }
@@ -552,6 +556,7 @@ public final class DurableMatchingEngineTcpServer {
                 }
             });
         } catch (final Throwable failure) {
+            failCoordinator(DurableFailureStage.OUTBOUND_WRITE, failure);
             failTerminal(failure);
         }
     }
