@@ -394,5 +394,6 @@ unlisted file/API/scope change.
 ADR-0016: Approved
 Implementation: Authorized in dependency order
 Merge / v0.7.0-engineering-baseline: Not authorized
-Next Gate: TASK-029 Evidence Gate
+TASK-029: Completed / Evidence Gate PASS at `66fc9d2` / CI `32577713667`
+Next Gate: TASK-030 Evidence Gate
 ```

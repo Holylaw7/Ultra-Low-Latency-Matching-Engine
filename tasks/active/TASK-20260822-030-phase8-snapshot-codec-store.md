@@ -4,8 +4,8 @@
 | --- | --- |
 | Task | `TASK-20260822-030` / Snapshot v1 Codec and Atomic Store |
 | Phase / ADR / Blueprint | Phase 8 / ADR-0016 / `PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md` |
-| Status | Approved — Authorized after TASK-029 Evidence Gate |
-| Depends on | TASK-029 Evidence Gate PASS |
+| Status | Approved — Authorized / Next |
+| Depends on | TASK-029 Evidence Gate PASS at `66fc9d2` / CI `32577713667` |
 | Manual Gate | No after Blueprint approval; Exception Gate remains active |
 | Planned report | `tasks/reports/PHASE-8-task-030.md` |
 

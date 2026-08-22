@@ -4,9 +4,9 @@
 | --- | --- |
 | Task | `TASK-20260822-029` / Canonical Engine Checkpoint Foundation |
 | Phase / ADR / Blueprint | Phase 8 / ADR-0016 / `PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md` |
-| Status | Approved — Authorized / Next |
+| Status | Completed / Evidence Gate PASS |
 | Depends on | Human Phase 8 Blueprint Approval — satisfied |
-| Manual Gate | No after Blueprint approval; Exception Gate remains active |
+| Manual Gate | No after Blueprint approval; Exception Gate remained clear |
 | Planned report | `tasks/reports/PHASE-8-task-029.md` |
 
 ## Decision
@@ -44,26 +44,26 @@ matching algorithm change, new dependency or performance optimization.
 
 ## Acceptance Criteria
 
-- [ ] Canonical export orders BUY prices descending and SELL prices ascending,
+- [x] Canonical export orders BUY prices descending and SELL prices ascending,
   with FIFO preserved inside each price.
-- [ ] Each active order retains OrderId, Side, Price, original/remaining
+- [x] Each active order retains OrderId, Side, Price, original/remaining
   Quantity and original Command Sequence.
-- [ ] Engine checkpoint retains last applied Command Sequence, next TradeId and
+- [x] Engine checkpoint retains last applied Command Sequence, next TradeId and
   next EventSequence.
-- [ ] Export/restore/export is structurally equal and produces an equal
+- [x] Export/restore/export is structurally equal and produces an equal
   canonical checkpoint digest covering sequence/counters and active state.
-- [ ] Fixed public probe after restore produces equal ordered EngineResult,
+- [x] Fixed public probe after restore produces equal ordered EngineResult,
   TradeId and EventSequence.
-- [ ] Duplicate IDs, invalid values/order, counter mismatch or malformed state
+- [x] Duplicate IDs, invalid values/order, counter mismatch or malformed state
   fails before mutating a live engine.
-- [ ] Existing constructors and Phase 2-7 behavior remain compatible.
+- [x] Existing constructors and Phase 2-7 behavior remain compatible.
 
 ## Evidence Gate
 
 Focused checkpoint tests, full `mvn verify`, Checkstyle 0, `git diff --check`,
 approved-file audit, no unlisted frozen changes, logical commit, normal push and
-exact-SHA CI PASS. Synchronize this plan and `PHASE-8-task-029.md` only after
-evidence passes.
+exact-SHA CI PASS. Evidence passed at `66fc9d2` / CI `32577713667`; synchronize
+this plan and `PHASE-8-task-029.md`, then archive this task before TASK-030.
 
 ## Exception Gate
 

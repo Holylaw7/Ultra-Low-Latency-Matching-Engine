@@ -40,17 +40,19 @@ focused evidence gates; TASK-028 benchmark/docs evidence is at `9fed6b2` / CI
 `32574274905`, with verifier, benchmark-reviewer and docs-auditor PASS. The
 Phase 7 merge commit is `6473365`, master CI is `32574891113`, and tag CI is
 `32574958017`. Snapshot, online Recovery, reconnect/deduplication, multi-session
-support, Phase 8 implementation and Product Release remain unauthorized. The
+support, Phase 8 merge/tag and Product Release remain unauthorized. The
 frozen `v0.6.0-engineering-baseline` continues to protect the Phase 2–6
 production paths.
 
 Phase 8 Blueprint is approved. [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
 the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)
-and TASK-029 through TASK-034 are authorized in dependency order. TASK-029 is
-the current implementation task; later tasks remain gated. The
+and TASK-029 through TASK-034 are authorized in dependency order. TASK-029
+canonical checkpoint export/restore is complete at `66fc9d2` with exact-SHA CI
+`32577713667` PASS; TASK-030 is the current implementation task and later tasks
+remain gated. The
 proposal keeps WAL as the sole authority, compares pure-WAL recovery with a
 derived Snapshot-plus-tail path, and makes listener-last recovery a required
-invariant. Phase 8 production implementation is authorized only from TASK-029;
+invariant. Phase 8 production implementation is authorized from TASK-030;
 merge and
 `v0.7.0-engineering-baseline` remain unauthorized.
 

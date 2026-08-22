@@ -14,7 +14,8 @@
 | Implementation Branch | `feature/phase8-snapshot-online-recovery` |
 | Planned Tasks | `TASK-20260822-029` through `TASK-20260822-034` |
 | Implementation | `Authorized in dependency order` |
-| Next Gate | `TASK-029 Evidence Gate` |
+| Current Task | `TASK-20260822-030` — Snapshot v1 codec and atomic store |
+| Next Gate | `TASK-030 Evidence Gate` |
 
 ## 2. Phase Objective
 
@@ -174,7 +175,7 @@ Sequence must match.
 
 | Order | Task | Goal | Dependency | Planned report |
 | ---: | --- | --- | --- | --- |
-| 1 | `TASK-20260822-029` | Canonical engine checkpoint export/restore | Baseline | `tasks/reports/PHASE-8-task-029.md` |
+| 1 | `TASK-20260822-029` | Canonical engine checkpoint export/restore | Baseline | Completed / Evidence Gate PASS at `66fc9d2` / CI `32577713667`; `tasks/reports/PHASE-8-task-029.md` |
 | 2 | `TASK-20260822-030` | Snapshot v1 codec and atomic store | TASK-029 | `tasks/reports/PHASE-8-task-030.md` |
 | 3 | `TASK-20260822-031` | Recovery planner and replay executor | TASK-030 | `tasks/reports/PHASE-8-task-031.md` |
 | 4 | `TASK-20260822-032` | Recoverable live runtime handoff | TASK-031 | `tasks/reports/PHASE-8-task-032.md` |
@@ -223,7 +224,7 @@ file change triggers the Exception Gate.
 ### Snapshot correctness
 
 - [ ] Snapshot v1 golden bytes match the exact ADR layout.
-- [ ] Canonical engine checkpoint round-trips active state, original/remaining
+- [x] Canonical engine checkpoint round-trips active state, original/remaining
   quantity, bid/ask priority, FIFO order and engine counters.
 - [ ] Malformed checkpoint or Snapshot fails without partial mutation.
 - [ ] Snapshot WAL-prefix and canonical checkpoint digests validate exactly.
@@ -417,13 +418,15 @@ Phase 9 and Product Release remain unauthorized.
 | Date | Reviewer | Decision | Approved ADRs / Tasks | Constraints |
 | --- | --- | --- | --- | --- |
 | 2026-08-22 | Human Developer | Approved | ADR-0016 D1-D14; TASK-029..034 | Strict dependency order; per-Task Evidence Gates and Exception Gates; merge/tag/Phase 9/Product Release remain unauthorized |
+| 2026-08-22 | Evidence Gate | TASK-029 PASS | Canonical checkpoint export/restore, focused tests, full verification and exact-SHA CI `32577713667` accepted; TASK-030 is next | No Exception Gate |
 
 ```text
 Phase 8 Discovery: Completed
 ADR-0016: Approved
 Complete Blueprint: Approved
-TASK-029 through TASK-034: Authorized in dependency order
+TASK-029: Completed / Evidence Gate PASS
+TASK-030 through TASK-034: Authorized conditionally by predecessor Evidence Gates
 Implementation: Authorized
 Merge / v0.7.0-engineering-baseline: Not Authorized
-Next Gate: TASK-029 Evidence Gate
+Next Gate: TASK-030 Evidence Gate
 ```

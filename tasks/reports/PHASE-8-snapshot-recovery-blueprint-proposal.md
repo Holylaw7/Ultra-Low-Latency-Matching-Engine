@@ -7,10 +7,11 @@ Phase 8 Discovery: Completed
 Architect Review: PASS
 ADR-0016: Approved
 Complete Blueprint: Approved
-TASK-029 through TASK-034: Authorized in dependency order
-Production implementation: Authorized from TASK-029
+TASK-029: Completed / Evidence Gate PASS at `66fc9d2` / CI `32577713667`
+TASK-030 through TASK-034: Authorized conditionally by predecessor Evidence Gates
+Production implementation: TASK-030 is next
 Merge / v0.7.0-engineering-baseline: Not Authorized
-Next Gate: TASK-029 Evidence Gate
+Next Gate: TASK-030 Evidence Gate
 ```
 
 ## Discovery Decision
@@ -69,7 +70,8 @@ validated recovered state.
   identity, evidence and deferred scope.
 - [`Phase 8 Blueprint`](../blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)
   defines the complete authorization boundary.
-- TASK-029 through TASK-034 are present under `tasks/active/` as proposed plans.
+- TASK-029 is archived with its Evidence Gate PASS report; TASK-030 through
+  TASK-034 remain under `tasks/active/` as dependency-gated plans.
 
 Dependency order after Human approval would be:
 
