@@ -118,6 +118,9 @@ concurrent generation against it is unsupported.
 
 - Proposal branch: `docs/phase8-snapshot-recovery-blueprint`.
 - Baseline: `v0.6.0-engineering-baseline` at `6473365`.
+- Proposal content checkpoint: `c51e759` / exact-SHA CI
+  [`32576740050`](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32576740050) PASS.
+- Remote: pushed to `origin/docs/phase8-snapshot-recovery-blueprint`.
 - Production code changes in this proposal: none.
 - `.vscode/`: pre-existing untracked user directory, untouched and excluded.
 - Implementation branch, merge and tag remain unauthorized.
@@ -133,6 +136,7 @@ Checkstyle: 0 violations
 git diff --check: PASS
 Markdown relative-link check: PASS
 Production/build diff: 0
+Proposal content exact-SHA CI: 32576740050 PASS
 ```
 
 The corrected proposal makes the canonical checkpoint digest counter-sensitive,
