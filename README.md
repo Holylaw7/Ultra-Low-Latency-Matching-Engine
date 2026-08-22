@@ -19,7 +19,8 @@ New multi-task phases use Phase Blueprint Mode:
 ```text
 Sol architecture / complete Phase Blueprint
     -> one Human Blueprint Approval
-    -> Terra implementation with test, diff and CI checkpoints
+    -> Main Luna Max implementation with test, diff and CI checkpoints
+    -> parallel read-only verifier/docs/benchmark auditors when useful
     -> Exception Gate only when scope or architecture changes
     -> Sol final Closure Review
     -> one Human Phase Closure Approval
@@ -33,11 +34,18 @@ OpenAI model-selection guidance is linked from `.codex/MASTER_PROMPT.md`.
 
 ## Current Stage
 
-Phase 3 — MatchingEngine is completed, approved and frozen at
-`v0.2.0-engineering-baseline`. The baseline contains the Domain Model, frozen
-Phase 2 OrderBook, synchronous MatchingEngine orchestration, immutable
-Trade/Execution results and deterministic execution evidence. It does not
-contain WAL, Replay, Snapshot, Recovery, Network or production optimization.
+Phase 7 — Live Durable Command Pipeline Integration is active under approved
+ADR-0015 and its Complete Blueprint. TASK-024 durable contracts are completed
+with exact-SHA CI evidence; TASK-025 coordinator implementation has passed its
+local focused/regression gates and is awaiting commit/push/exact-SHA CI. Phase
+Closure, merge, `v0.6.0-engineering-baseline`, Snapshot, online Recovery and
+Product Release remain unauthorized. The frozen `v0.5.0-engineering-baseline`
+continues to protect the Phase 2–6 production paths.
+
+The Phase 3 MatchingEngine baseline is completed, approved and frozen at
+`v0.2.0-engineering-baseline`. It contains the Domain Model, frozen Phase 2
+OrderBook, synchronous MatchingEngine orchestration, immutable Trade/Execution
+results and deterministic execution evidence.
 
 Phase Blueprint Mode is completed, approved and active as the governance
 standard for future multi-task phases. The complete Phase 4 Event Pipeline
@@ -74,16 +82,16 @@ The repository currently contains:
 - Architecture, ADR, benchmark, and performance documentation skeleton
 - Task workspace with ADR-first Phase Blueprints, evidence gates and Exception Gates
 
-Implemented Phase 2 behavior includes deterministic limit-order matching,
+Historical Phase 2 behavior includes deterministic limit-order matching,
 price-time priority, maker-price fragments, partial/full fills, and residual
-resting. Stage 2 adds synchronous command processing, OrderBook integration
-and deterministic Trade/Execution result generation. Publication, WAL, network
-and performance optimization remain outside the current scope.
+resting. Phase 3 adds synchronous command processing, OrderBook integration
+and deterministic Trade/Execution result generation. Later phases add the
+pipeline, WAL, protocol and the currently active live durable integration.
 
-The implemented Phase 4 boundary adds a bounded single-producer/single-consumer
+The Phase 4 boundary added a bounded single-producer/single-consumer
 event pipeline in front of the existing synchronous MatchingEngine. WAL,
 Replay, Snapshot, Recovery, Network and production optimization remain
-explicit non-goals. See
+explicit non-goals for that historical phase. See
 [`PHASE-4-event-pipeline-blueprint.md`](tasks/blueprints/PHASE-4-event-pipeline-blueprint.md).
 
 The approved Phase 5 boundary is a versioned segmented command WAL plus strict
@@ -104,6 +112,14 @@ fragmentation/coalescing checks and bounded codec/loopback benchmark are
 component evidence only; a local write is not a durable or client-receipt
 acknowledgement. See [`network.md`](docs/benchmark/network.md) and the
 [Phase 6 Closure Proposal](tasks/reports/PHASE-6-network-protocol-closure.md).
+
+The approved Phase 7 boundary adds the WAL-before-pipeline integration layer
+as a dependency-ordered live durable foundation. TASK-024 is complete;
+TASK-025 is locally implemented and awaits its exact-SHA Evidence Gate. The
+runtime, Gateway composition, failure/replay verification and benchmark/docs
+work remain in TASK-026 through TASK-028. No online Recovery, reconnect,
+deduplication, multi-session support, Product Release or production-readiness
+claim is authorized.
 
 ## Build
 

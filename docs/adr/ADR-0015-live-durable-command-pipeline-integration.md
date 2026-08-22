@@ -182,5 +182,5 @@ acceptance criteria or any scope expansion.
 ```text
 ADR-0015: Approved
 Implementation: Authorized in dependency order
-Next Gate: TASK-024 Evidence Gate
+Next Gate: TASK-025 Evidence Gate
 ```
