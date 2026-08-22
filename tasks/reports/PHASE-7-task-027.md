@@ -22,7 +22,7 @@
 | Checkstyle | PASS — 0 violations |
 | Frozen-path audit | PASS — zero changes under Domain/OrderBook/Engine/WAL/Recovery/Pipeline/Protocol |
 | Exception Gate | Approved — limited Phase-7 runtime-composition remediation |
-| Next gate | TASK-028 benchmark/documentation/closure evidence |
+| Next gate | Human Phase 7 Closure Review; TASK-028 Evidence Gate PASS |
 
 ## Delivered
 

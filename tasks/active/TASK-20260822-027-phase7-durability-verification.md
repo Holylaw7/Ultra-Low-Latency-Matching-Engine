@@ -6,7 +6,7 @@
 | Phase / ADR / Blueprint | Phase 7 / ADR-0015 / `PHASE-7-live-durable-command-pipeline-blueprint.md` |
 | Status | Limited Remediation Round 2 Completed / Evidence Gate PASS |
 | Scope | Tests, deterministic barriers/fixtures and verification report only |
-| Next Gate | TASK-028 read-only Evidence Gate, then Phase 7 Closure Review |
+| Next Gate | Human Phase 7 Closure Review (TASK-028 Evidence Gate PASS) |
 
 ## Acceptance
 
