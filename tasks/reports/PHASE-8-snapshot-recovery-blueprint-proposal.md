@@ -9,11 +9,12 @@ ADR-0016: Approved
 Complete Blueprint: Approved
 TASK-029: Completed / Evidence Gate PASS at `66fc9d2` / CI `32577713667`
 TASK-030: Completed / Evidence Gate PASS at `6907391` / CI `32579065372`
-TASK-031: Authorized / Next
-TASK-032 through TASK-034: Authorized conditionally by predecessor Evidence Gates
-Production implementation: TASK-031 is next
+TASK-031: Completed / Evidence Gate PASS at `eaed8b8` / CI `32580018903`
+TASK-032: Authorized / Next
+TASK-033 through TASK-034: Authorized conditionally by predecessor Evidence Gates
+Production implementation: TASK-032 is next
 Merge / v0.7.0-engineering-baseline: Not Authorized
-Next Gate: TASK-031 Evidence Gate
+Next Gate: TASK-032 Evidence Gate
 ```
 
 ## Discovery Decision
@@ -72,15 +73,16 @@ validated recovered state.
   identity, evidence and deferred scope.
 - [`Phase 8 Blueprint`](../blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)
   defines the complete authorization boundary.
-- TASK-029 is archived with its Evidence Gate PASS report; TASK-030 through
-  TASK-034 remain under `tasks/active/` as dependency-gated plans.
+- TASK-029 through TASK-031 are archived with their Evidence Gate PASS reports;
+  TASK-032 through TASK-034 remain under `tasks/active/` as dependency-gated
+  plans.
 
 Dependency order after Human approval would be:
 
 ```text
 TASK-029 canonical checkpoint [PASS]
     -> TASK-030 Snapshot v1 codec/store [PASS]
-    -> TASK-031 recovery planner/replay
+    -> TASK-031 recovery planner/replay [PASS]
     -> TASK-032 live handoff
     -> TASK-033 crash/corruption/determinism verification
     -> TASK-034 benchmark/docs/Closure Proposal
@@ -146,8 +148,9 @@ Proposal content exact-SHA CI: 32576740050 PASS
 The corrected proposal makes the canonical checkpoint digest counter-sensitive,
 protects offline Snapshot generation with the shared recovery lease and stable
 WAL inventory check, and compares pure-WAL versus Snapshot-tail results only for
-their common `N+1..M` replay suffix. TASK-030 has now passed its strict codec,
-publication, lease and inventory Evidence Gate; TASK-031 is the next gate.
+their common `N+1..M` replay suffix. TASK-030 has passed its strict codec,
+publication, lease and inventory Evidence Gate, and TASK-031 has passed its
+strict offline recovery/replay Evidence Gate; TASK-032 is the next gate.
 
 ## Required Human Decision
 
@@ -162,6 +165,6 @@ the listed Exception Gates and deferred scope
 ```
 
 Human Phase 8 Blueprint Approval is recorded in ADR-0016 and the Blueprint.
-Implementation may continue with TASK-031; later Tasks remain locked behind
+Implementation may continue with TASK-032; later Tasks remain locked behind
 their predecessor Evidence Gates. Phase 8 Closure, merge and baseline tagging
 remain unauthorized.

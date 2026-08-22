@@ -24,6 +24,6 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
 - [`PHASE-7-live-durable-command-pipeline-blueprint.md`](PHASE-7-live-durable-command-pipeline-blueprint.md)
   — Completed / Approved / frozen at `v0.6.0-engineering-baseline`.
 - [`PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md`](PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)
-  — Approved; TASK-029 and TASK-030 completed / Evidence Gate PASS,
-  TASK-031 authorized next, and TASK-032 through TASK-034 remain conditional on
+  — Approved; TASK-029, TASK-030 and TASK-031 completed / Evidence Gate PASS,
+  TASK-032 authorized next, and TASK-033 through TASK-034 remain conditional on
   dependency-ordered Evidence Gates. Merge and baseline tag remain unauthorized.

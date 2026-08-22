@@ -14,8 +14,8 @@
 | Implementation Branch | `feature/phase8-snapshot-online-recovery` |
 | Planned Tasks | `TASK-20260822-029` through `TASK-20260822-034` |
 | Implementation | `Authorized in dependency order` |
-| Current Task | `TASK-20260822-031` — Recovery planner and replay executor |
-| Next Gate | `TASK-031 Evidence Gate` |
+| Current Task | `TASK-20260822-032` — Recoverable live runtime handoff |
+| Next Gate | `TASK-032 Evidence Gate` |
 
 ## 2. Phase Objective
 
@@ -177,7 +177,7 @@ Sequence must match.
 | ---: | --- | --- | --- | --- |
 | 1 | `TASK-20260822-029` | Canonical engine checkpoint export/restore | Baseline | Completed / Evidence Gate PASS at `66fc9d2` / CI `32577713667`; `tasks/reports/PHASE-8-task-029.md` |
 | 2 | `TASK-20260822-030` | Snapshot v1 codec and atomic store | TASK-029 | Completed / Evidence Gate PASS at `6907391` / CI `32579065372`; `tasks/reports/PHASE-8-task-030.md` |
-| 3 | `TASK-20260822-031` | Recovery planner and replay executor | TASK-030 | `tasks/reports/PHASE-8-task-031.md` |
+| 3 | `TASK-20260822-031` | Recovery planner and replay executor | TASK-030 | Completed / Evidence Gate PASS at `eaed8b8` / CI `32580018903`; `tasks/reports/PHASE-8-task-031.md` |
 | 4 | `TASK-20260822-032` | Recoverable live runtime handoff | TASK-031 | `tasks/reports/PHASE-8-task-032.md` |
 | 5 | `TASK-20260822-033` | Crash, corruption and determinism verification | TASK-032 | `tasks/reports/PHASE-8-task-033.md` |
 | 6 | `TASK-20260822-034` | Recovery benchmark, documentation and Closure Proposal | TASK-033 | `tasks/reports/PHASE-8-task-034.md` |
@@ -234,18 +234,19 @@ file change triggers the Exception Gate.
 
 ### Recovery correctness
 
-- [ ] Empty WAL starts from genesis.
-- [ ] Non-empty WAL recovers through explicitly selected `PURE_WAL`.
-- [ ] Snapshot N plus WAL tail `N+1..M` restores the same final checkpoint as
+- [x] Empty WAL starts from genesis.
+- [x] Non-empty WAL recovers through explicitly selected `PURE_WAL`.
+- [x] Snapshot N plus WAL tail `N+1..M` restores the same final checkpoint as
   pure WAL replay.
-- [ ] Snapshot at WAL end restores without duplicate application.
+- [x] Snapshot at WAL end restores without duplicate application.
 - [ ] First live command after recovery uses `WAL end + 1`.
-- [ ] Recovery replay outputs are not sent to a client.
+- [x] Recovery replay outputs are not sent to a client.
 
 ### Failure and corruption
 
-- [ ] Only WAL v1's approved final torn-tail repair may modify WAL.
-- [ ] Hard WAL corruption, gaps, invalid Snapshot, checksum/digest mismatch,
+- [x] Only WAL v1's approved final torn-tail repair may modify WAL; TASK-031
+  adds no WAL mutation or truncation.
+- [x] Hard WAL corruption, gaps, invalid Snapshot, checksum/digest mismatch,
   Snapshot newer than WAL and incompatible formats fail closed.
 - [ ] Temporary Snapshot files are ignored; published corruption is not.
 - [ ] Any startup/handoff failure occurs before listener bind, preserves first
@@ -253,9 +254,9 @@ file change triggers the Exception Gate.
 
 ### Determinism and identity
 
-- [ ] Pure WAL and Snapshot-tail recovery produce an equal complete canonical
+- [x] Pure WAL and Snapshot-tail recovery produce an equal complete canonical
   checkpoint digest and fixed public probe.
-- [ ] For Snapshot N and WAL end M, ordered EngineResult, TradeId and
+- [x] For Snapshot N and WAL end M, ordered EngineResult, TradeId and
   EventSequence are equal for the common replay suffix `N+1..M`; prefix results
   `1..N` are not reconstructed or emitted by Snapshot restore.
 - [ ] RequestId restarts at 1 for a new TCP session; Command Sequence, TradeId
@@ -420,6 +421,7 @@ Phase 9 and Product Release remain unauthorized.
 | 2026-08-22 | Human Developer | Approved | ADR-0016 D1-D14; TASK-029..034 | Strict dependency order; per-Task Evidence Gates and Exception Gates; merge/tag/Phase 9/Product Release remain unauthorized |
 | 2026-08-22 | Evidence Gate | TASK-029 PASS | Canonical checkpoint export/restore, focused tests, full verification and exact-SHA CI `32577713667` accepted; TASK-030 authorized | No Exception Gate |
 | 2026-08-22 | Evidence Gate | TASK-030 PASS | Snapshot v1 codec/store, strict validation, atomic publication, offline generator, lease/inventory checks and focused/full verification accepted at `6907391` / CI `32579065372`; TASK-031 is next | No Exception Gate |
+| 2026-08-22 | Evidence Gate | TASK-031 PASS | Explicit PURE_WAL and SNAPSHOT_THEN_WAL offline recovery, strict prefix binding, WAL-tail replay, convergence and fail-closed matrix accepted at `eaed8b8` / CI `32580018903`; TASK-032 is next | No Exception Gate |
 
 ```text
 Phase 8 Discovery: Completed
@@ -427,9 +429,10 @@ ADR-0016: Approved
 Complete Blueprint: Approved
 TASK-029: Completed / Evidence Gate PASS
 TASK-030: Completed / Evidence Gate PASS at `6907391` / CI `32579065372`
-TASK-031: Authorized / Next
-TASK-032 through TASK-034: Authorized conditionally by predecessor Evidence Gates
+TASK-031: Completed / Evidence Gate PASS at `eaed8b8` / CI `32580018903`
+TASK-032: Authorized / Next
+TASK-033 through TASK-034: Authorized conditionally by predecessor Evidence Gates
 Implementation: Authorized
 Merge / v0.7.0-engineering-baseline: Not Authorized
-Next Gate: TASK-031 Evidence Gate
+Next Gate: TASK-032 Evidence Gate
 ```

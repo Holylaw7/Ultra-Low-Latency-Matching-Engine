@@ -18,7 +18,8 @@ verified. Online crash recovery and Snapshot restore are governed by approved
 ADR-0016 and the Complete Phase 8 Blueprint. TASK-029 canonical checkpoint
 export/restore is complete at `66fc9d2` / exact-SHA CI `32577713667` PASS;
 TASK-030 Snapshot codec/store is complete at `6907391` / exact-SHA CI
-`32579065372` PASS; TASK-031 recovery planner is next and later implementation
+`32579065372` PASS; TASK-031 recovery planner is complete at `eaed8b8` /
+exact-SHA CI `32580018903` PASS; TASK-032 is next and later implementation
 remains gated by dependency Evidence Gates.
 
 ## Implemented Offline Flow
@@ -90,8 +91,9 @@ production readiness.
 The approved Phase 8 design preserves those boundaries. TASK-029 has delivered
 the narrowly additive canonical checkpoint export/restore APIs at `66fc9d2` /
 CI `32577713667`; TASK-030 Snapshot codec/store is complete at `6907391` /
-CI `32579065372`. Recovered-runtime construction remains gated by TASK-031
-and the later dependency Tasks.
+CI `32579065372`; TASK-031 offline recovery planner/replay is complete at
+`eaed8b8` / CI `32580018903`. Recovered-runtime construction remains gated by
+TASK-032 and the later dependency Tasks.
 
 ## Verification
 
