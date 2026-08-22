@@ -49,18 +49,14 @@
 - Human Exception Gate approved the limited runtime-composition remediation.
 - Round 1 remediation commit `ae71786` / exact-SHA CI
   [32570890919](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32570890919)
-  PASS. Focused Phase 7 evidence covers 10 tests; full `mvn verify` covers 156
-  core tests with Checkstyle 0.
+  PASS; Round 2 supersedes its evidence counts.
 - Human Exception Gate approved Round 2 terminal convergence remediation.
 - Round 2 commit `7b9106f` / exact-SHA CI
   [32571940187](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32571940187)
   PASS. Focused Phase 7 evidence covers 12 tests; full `mvn verify` covers 158
   core tests with Checkstyle 0.
-- Documentation synchronization commit `4a08af3` / exact-SHA CI
-  [32572125714](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32572125714)
-  PASS.
-- Final evidence synchronization commit `f2e9ad3` / exact-SHA CI
-  [32572261039](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32572261039)
+- Final evidence synchronization commit `62ae68f` / exact-SHA CI
+  [32572441090](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32572441090)
   PASS.
 - The Evidence Gate remains pending read-only verifier/docs-auditor review;
   TASK-028 stays locked until that review passes.
