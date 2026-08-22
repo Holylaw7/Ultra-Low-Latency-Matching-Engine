@@ -8,20 +8,20 @@
 | Task | `TASK-20260822-027` — Durability, Failure and Replay Verification |
 | Authorization | Human Phase Blueprint Approval; TASK-026 Evidence Gate passed |
 | Scope | Tests, deterministic barriers/fixtures and verification report only |
-| Implementation | Complete for the authorized verification stage |
+| Implementation | Limited remediation complete; Evidence Gate review pending |
 | Branch | `feature/phase7-live-durable-command-pipeline` |
-| HEAD at final verification | `80838db` — `test(phase7): verify durable failure and replay boundaries` |
-| Commit | `80838db` — pushed to `origin/feature/phase7-live-durable-command-pipeline` |
+| HEAD at remediation | `ae71786` — `test(phase7): add deterministic runtime failure boundaries` |
+| Commit | `ae71786` — pushed to `origin/feature/phase7-live-durable-command-pipeline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
 | Push | PASS — branch synchronized |
-| CI | PASS — exact-SHA run [32565591806](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32565591806) |
-| Working tree | Documentation synchronization is pending; pre-existing `.vscode/` remains untouched |
-| Focused evidence | PASS — 6 new tests |
-| Regression evidence | PASS — `mvn verify`, 152 core tests |
+| CI | PASS — baseline [32565591806](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32565591806); timing remediation [32566165212](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32566165212); approved-boundary remediation [32570890919](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32570890919) |
+| Working tree | Status/documentation synchronization is pending; pre-existing `.vscode/` remains untouched |
+| Focused evidence | PASS — 10 Phase 7 tests |
+| Regression evidence | PASS — `mvn verify`, 156 core tests |
 | Checkstyle | PASS — 0 violations |
 | Frozen-path audit | PASS — zero changes under Domain/OrderBook/Engine/WAL/Recovery/Pipeline/Protocol |
-| Exception Gate | Not triggered |
-| Next gate | TASK-028 Evidence Gate |
+| Exception Gate | Approved — limited Phase-7 runtime-composition remediation |
+| Next gate | Read-only verifier/docs-auditor Evidence Gate review |
 
 ## Delivered
 
@@ -31,9 +31,13 @@
 - Added a real live WAL + Pipeline transcript test. It closes the WAL, replays
   it through a new genesis MatchingEngine, compares ordered EngineResults and
   the canonical SHA-256 digest, then compares a fixed public probe result.
-- Added loopback network verification for disconnect after durable admission and
-  coalesced second-request rejection. The latter proves that only the first
-  request reaches the WAL when the one-in-flight rule is violated.
+- Added deterministic barriers around the real append/force and publish
+  adapters, plus a Phase-7 durable response-write boundary that can expose a
+  pending/failing local Netty future. The normal production constructor remains
+  wired to the real adapters.
+- Added focused verification for append-return-before-publish, response
+  completion ordering, outbound write failure, first-cause retention, terminal
+  state, WAL retention and later admission rejection.
 - Reused existing `CommandWalWriterTest` rotation-failure coverage and
   `MatchingEnginePipelineFailureTest` handler/terminal-failure coverage. No
   reflection, sleep-based correctness oracle, production-only seam or frozen
@@ -42,11 +46,11 @@
 ## Verification Evidence
 
 ```text
-mvn -pl core '-Dtest=com.ultralatency.matching.integration.durable.Phase7DurabilityVerificationTest,com.ultralatency.matching.network.netty.durable.Phase7NetworkFailureVerificationTest' test
-  BUILD SUCCESS; Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
+mvn -pl core '-Dtest=com.ultralatency.matching.integration.durable.Phase7DurabilityVerificationTest,com.ultralatency.matching.network.netty.durable.Phase7NetworkFailureVerificationTest,com.ultralatency.matching.network.netty.durable.Phase7RuntimeCompositionBoundaryTest' test
+  BUILD SUCCESS; Tests run: 10, Failures: 0, Errors: 0, Skipped: 0
 
 mvn verify
-  BUILD SUCCESS; core Tests run: 152, Failures: 0, Errors: 0, Skipped: 0
+  BUILD SUCCESS; core Tests run: 156, Failures: 0, Errors: 0, Skipped: 0
   Checkstyle: 0 violations
 
 git diff --check
@@ -54,19 +58,19 @@ git diff --check
 ```
 
 The frozen-path audit found no changed files under the Phase 2–6 production
-boundaries or the frozen Protocol/WAL/Pipeline paths. The verification commit
-and exact-SHA CI result are recorded above; remaining synchronization is
-documentation-only.
+boundaries or the frozen Protocol/WAL/Pipeline paths. The approved additive
+runtime-composition boundary is confined to Phase 7 durable integration and
+does not change Protocol v1, WAL v1 or the frozen pipeline/engine APIs.
 
 ## Evidence Boundary and Known Limitations
 
 - Append-before-publish, append failure, durable-then-`FULL`, publication
   failure, Pipeline handler failure and WAL rotation failure are covered by
   deterministic tests without changing production code.
-- The live loopback disconnect path proves terminal ownership/ambiguity after
-  durable admission and the coalesced-frame path proves one-in-flight
-  rejection. A direct outbound `write()` fault injector was intentionally not
-  added; dynamic local write-failure injection is not claimed.
+- The live loopback suite retains its ambiguity coverage. Deterministic
+  append-return, publish-return and outbound write-future failure evidence is
+  now provided by the approved Phase-7 composition boundary, not by timing
+  guesses or a production-only bypass.
 - No child-process interruption harness is added. No crash-recovery or online
   restart claim is made; the replay assertion is closed-WAL offline replay only.
 - These results are correctness/component evidence. They do not claim durable
@@ -75,12 +79,13 @@ documentation-only.
 
 ## Next Stage
 
-TASK-027 Evidence Gate has passed. TASK-028 is the next authorized
-dependency-ordered Task. Phase Closure,
+TASK-027 Evidence Gate is awaiting read-only verifier/docs-auditor review.
+TASK-028 remains paused until that Evidence Gate passes.
+Phase Closure,
 merge to `master`, `v0.6.0-engineering-baseline`, Snapshot, online Recovery,
 reconnect/deduplication, multi-session support and Product Release remain
 unauthorized.
 
 ## Gate Status
 
-`TASK-027 Evidence Gate PASS — TASK-028 is the next authorized Task.`
+`TASK-027 Limited Remediation Complete — Read-only Evidence Gate review required before TASK-028.`

@@ -178,9 +178,10 @@ acceptance criteria or any scope expansion.
 | --- | --- | --- | --- |
 | 2026-08-22 | Architect / Sol High | Proposed | Phase 7 Blueprint prepared. |
 | 2026-08-22 | Human Developer | Approved | D1-D12 and TASK-024 through TASK-028 approved through the Phase Blueprint. Execution is authorized in strict dependency order; Phase Closure, merge and `v0.6.0-engineering-baseline` remain unauthorized. |
+| 2026-08-22 | Human Exception Gate | Approved — Limited Remediation | Additive Phase-7 runtime-composition barriers and controlled outbound write future; original D1-D12 and acceptance criteria retained. |
 
 ```text
 ADR-0015: Approved
 Implementation: Authorized in dependency order
-Next Gate: TASK-028 Evidence Gate
+Next Gate: TASK-027 Evidence Gate / verifier + docs-auditor review
 ```

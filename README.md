@@ -38,8 +38,10 @@ Phase 7 — Live Durable Command Pipeline Integration is active under approved
 ADR-0015 and its Complete Blueprint. TASK-024 durable contracts are completed
 with exact-SHA CI evidence; TASK-025 coordinator implementation and Evidence
 Gate are complete at `2342897` / CI `32564005988`; TASK-026 durable Netty
-composition is complete at `a978fe7` / CI `32565087793`; TASK-027 verification
-is complete at `80838db` / CI `32565591806`.
+composition is complete at `a978fe7` / CI `32565087793`; the approved TASK-027
+runtime-composition remediation is complete at `ae71786` / CI `32570890919`,
+with 10 focused Phase 7 tests and 156 full core tests. Its Evidence Gate is
+pending read-only verifier/docs-auditor review.
 Phase Closure, merge, `v0.6.0-engineering-baseline`,
 Snapshot, online Recovery and Product Release remain unauthorized. The frozen `v0.5.0-engineering-baseline`
 continues to protect the Phase 2–6 production paths.
@@ -118,8 +120,10 @@ acknowledgement. See [`network.md`](docs/benchmark/network.md) and the
 The approved Phase 7 boundary adds the WAL-before-pipeline integration layer
 as a dependency-ordered live durable foundation. TASK-024 and TASK-025 are
 complete with exact-SHA Evidence Gate PASS. TASK-026 is complete at `a978fe7`
-with CI `32565087793`; TASK-027 is complete at `80838db` with CI
-`32565591806`; TASK-028 is the next authorized benchmark/docs task. No online Recovery, reconnect,
+with CI `32565087793`; TASK-027's approved runtime-composition remediation
+passed exact-SHA CI `32570890919` after baseline/test-remediation runs
+`32565591806` and `32566165212`. TASK-028 remains paused pending the final
+read-only Evidence Gate. No online Recovery, reconnect,
 deduplication, multi-session support, Product Release or production-readiness
 claim is authorized.
 

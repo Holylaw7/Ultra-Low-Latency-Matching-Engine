@@ -12,7 +12,7 @@
 | Updated | `2026-08-22` |
 | Baseline | `v0.5.0-engineering-baseline` at `b7cf68e` |
 | Planned Tasks | `TASK-20260822-024` through `TASK-20260822-028` |
-| Next Gate | `TASK-028 Evidence Gate` |
+| Next Gate | `TASK-027 Evidence Gate / verifier + docs-auditor review` |
 
 ## 2. Phase Goal
 
@@ -224,9 +224,10 @@ limitations explicit, especially force/controller and client-receipt claims.
 | Date | Reviewer | Decision | Approved ADRs / Tasks | Constraints |
 | --- | --- | --- | --- | --- |
 | 2026-08-22 | Human Developer | Approved | ADR-0015 D1-D12; TASK-024..028 | Frozen baselines; Phase 7 only; no live recovery/release |
+| 2026-08-22 | Human Exception Gate | Approved — Limited Remediation | Additive Phase-7 runtime-composition barriers and controlled outbound write future; original acceptance criteria retained | No frozen path/API, format, dependency, recovery semantics or TASK-028 work |
 
 ```text
 Blueprint Status: Approved
 Implementation: Authorized in dependency order
-Next Gate: TASK-028 Evidence Gate
+Next Gate: TASK-027 Evidence Gate / verifier + docs-auditor review
 ```
