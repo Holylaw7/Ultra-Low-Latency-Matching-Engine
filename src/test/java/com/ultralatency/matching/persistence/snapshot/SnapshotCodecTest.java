@@ -81,6 +81,14 @@ class SnapshotCodecTest {
         rewriteCrc(duplicate);
         assertThrows(SnapshotFormatException.class, () -> codec.decode(duplicate));
 
+        final byte[] interleaved = codec.encode(new Snapshot(checkpointWithAsk(), digest(7)));
+        final byte[] secondBid = Arrays.copyOfRange(interleaved, 176, 224);
+        final byte[] ask = Arrays.copyOfRange(interleaved, 224, 272);
+        System.arraycopy(ask, 0, interleaved, 176, 48);
+        System.arraycopy(secondBid, 0, interleaved, 224, 48);
+        rewriteCrc(interleaved);
+        assertThrows(SnapshotFormatException.class, () -> codec.decode(interleaved));
+
         final OrderBookCheckpoint.RestingOrderCheckpoint first = order(1, Side.BUY, 100, 1);
         final OrderBookCheckpoint.RestingOrderCheckpoint second = order(2, Side.BUY, 101, 2);
         assertThrows(
@@ -104,6 +112,16 @@ class SnapshotCodecTest {
                 new OrderBookCheckpoint(
                         List.of(order(1, Side.BUY, 101, 2), order(2, Side.BUY, 100, 3)),
                         List.of()));
+    }
+
+    private static MatchingEngineCheckpoint checkpointWithAsk() {
+        return new MatchingEngineCheckpoint(
+                9,
+                4,
+                6,
+                new OrderBookCheckpoint(
+                        List.of(order(1, Side.BUY, 101, 2), order(3, Side.BUY, 100, 4)),
+                        List.of(order(2, Side.SELL, 99, 3))));
     }
 
     private static OrderBookCheckpoint.RestingOrderCheckpoint order(

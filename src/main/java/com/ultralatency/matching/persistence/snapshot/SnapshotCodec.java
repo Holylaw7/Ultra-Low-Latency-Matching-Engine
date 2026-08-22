@@ -132,11 +132,17 @@ public final class SnapshotCodec {
         buffer.get(canonicalDigest);
         final List<OrderBookCheckpoint.RestingOrderCheckpoint> bids = new ArrayList<>();
         final List<OrderBookCheckpoint.RestingOrderCheckpoint> asks = new ArrayList<>();
+        boolean seenAsk = false;
         for (int index = 0; index < activeCount; index++) {
             final OrderBookCheckpoint.RestingOrderCheckpoint order = readOrder(buffer);
             if (order.side() == Side.BUY) {
+                if (seenAsk) {
+                    throw new SnapshotFormatException(
+                            "Snapshot orders must be canonical bid-then-ask order");
+                }
                 bids.add(order);
             } else {
+                seenAsk = true;
                 asks.add(order);
             }
         }
