@@ -44,6 +44,14 @@ support, Phase 8 implementation and Product Release remain unauthorized. The
 frozen `v0.6.0-engineering-baseline` continues to protect the Phase 2–6
 production paths.
 
+Phase 8 Discovery is complete. [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
+the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)
+and TASK-029 through TASK-034 are proposed for Human Blueprint Review. The
+proposal keeps WAL as the sole authority, compares pure-WAL recovery with a
+derived Snapshot-plus-tail path, and makes listener-last recovery a required
+invariant. Phase 8 production implementation, merge and
+`v0.7.0-engineering-baseline` remain unauthorized.
+
 The Phase 3 MatchingEngine baseline is completed, approved and frozen at
 `v0.2.0-engineering-baseline`. It contains the Domain Model, frozen Phase 2
 OrderBook, synchronous MatchingEngine orchestration, immutable Trade/Execution

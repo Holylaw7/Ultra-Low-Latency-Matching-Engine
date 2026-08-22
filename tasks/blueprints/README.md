@@ -22,5 +22,7 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
 - [`PHASE-6-network-protocol-blueprint.md`](PHASE-6-network-protocol-blueprint.md)
   — Completed / Approved / frozen at `v0.5.0-engineering-baseline`.
 - [`PHASE-7-live-durable-command-pipeline-blueprint.md`](PHASE-7-live-durable-command-pipeline-blueprint.md)
-  — Approved; TASK-024 through TASK-028 authorized in dependency order;
-  implementation is active under Evidence Gates.
+  — Completed / Approved / frozen at `v0.6.0-engineering-baseline`.
+- [`PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md`](PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)
+  — Proposed; Discovery complete, ADR-0016 and TASK-029 through TASK-034 await
+  Human Phase 8 Blueprint Approval. Implementation is not authorized.

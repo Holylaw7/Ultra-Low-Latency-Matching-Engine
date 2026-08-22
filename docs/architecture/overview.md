@@ -95,7 +95,9 @@ explicit non-goals.
    frozen at `v0.6.0-engineering-baseline`**. TASK-024 through TASK-028 passed
    their evidence gates; TASK-028 benchmark/docs evidence is at `9fed6b2` / CI
    `32574274905`. Merge `6473365`, master CI `32574891113` and tag CI
-   `32574958017` are verified. Phase 8 requires a separate Blueprint.
-8. Snapshot and online Recovery — **Future Work; separate Blueprint required**.
+   `32574958017` are verified.
+8. Snapshot checkpoint and online Recovery bootstrap — **ADR-0016 and Complete
+   Blueprint proposed; TASK-029 through TASK-034 not authorized pending Human
+   Phase 8 Blueprint Approval**.
 9. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.

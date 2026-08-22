@@ -14,7 +14,9 @@ and prior remediation runs `32565591806`, `32566165212` and `32570890919`; its
  complete at `9fed6b2` / CI `32574274905`, with verifier,
 benchmark-reviewer and docs-auditor PASS. Human Phase 7 Closure is approved;
 the merge `6473365`, master CI `32574891113` and tag CI `32574958017` are
-verified. Online crash recovery and Snapshot restore remain future work.
+verified. Online crash recovery and Snapshot restore are now described by
+proposed ADR-0016 and the Complete Phase 8 Blueprint. No Phase 8 implementation
+is authorized before Human Blueprint Approval.
 
 ## Implemented Offline Flow
 
@@ -47,23 +49,28 @@ ring sequence remain storage or infrastructure metadata; they cannot replace
   truncated. CRC, header, sequence, segment-order and complete-record failures
   fail closed without salvage.
 
-## Deferred Online Recovery Flow
+## Proposed Phase 8 Recovery Flow
 
 ```text
-Snapshot
-    -> record snapshot position
-    -> restart
-    -> load snapshot
-    -> replay WAL records
-    -> verify state hash
+closed WAL
+    -> strict scan and genesis replay
+    -> canonical engine checkpoint at Sequence N
+    -> immutable Snapshot v1 bound to WAL prefix 1..N
+
+restart
+    -> explicit PURE_WAL or SNAPSHOT_THEN_WAL mode
+    -> strict WAL validation / approved final-tail repair
+    -> restore engine and replay required commands
+    -> verify engine / writer / coordinator next Sequence
+    -> bind network listener last
 ```
 
-Snapshot format, state restore, online recovery orchestration, durable
-acknowledgements, and replication remain future work and require a separate
- approved Blueprint. Phase 7 has completed TASK-024 through TASK-028 with
- approved evidence; TASK-028 benchmark/closure evidence is complete at
- `9fed6b2` / CI `32574274905`. Human Phase 7 Closure is approved and the
- engineering baseline is frozen at `v0.6.0-engineering-baseline`:
+Snapshot format, state restore and online recovery orchestration remain
+proposed work governed by ADR-0016 and TASK-029 through TASK-034. Snapshot is a
+derived acceleration checkpoint; WAL remains authoritative. Hot Snapshot,
+WAL retention, reconnect/deduplication, exactly-once and replication remain
+deferred. Phase 7 completed TASK-024 through TASK-028 with approved evidence;
+the engineering baseline is frozen at `v0.6.0-engineering-baseline`:
 
 ```text
 Protocol request
@@ -75,6 +82,10 @@ Protocol request
 This ordering is authorized only within the Phase 7 Blueprint and its Evidence
 Gates. It does not claim online recovery, client-received durability or
 production readiness.
+
+The proposed Phase 8 design preserves those boundaries. It requests narrowly
+additive checkpoint/restore and recovered-runtime construction APIs, but does
+not authorize them until Human Phase 8 Blueprint Approval.
 
 ## Verification
 
