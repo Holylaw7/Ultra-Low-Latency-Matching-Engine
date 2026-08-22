@@ -65,8 +65,8 @@ Snapshot format, state restore, online recovery orchestration, durable
 acknowledgements, and replication remain future work and require a separate
 approved Blueprint. Phase 7 has an approved Blueprint; TASK-024 through
 TASK-026 and the approved TASK-027 Round 2 runtime-composition remediation are
-complete at `7b9106f` / CI `32571940187`; TASK-027 awaits its read-only Evidence
- Evidence Gate PASS, and TASK-028 is authorized but not started:
+complete at `7b9106f` / CI `32571940187`; TASK-027 read-only Evidence Gate is
+PASS, and TASK-028 is authorized but not started:
 
 ```text
 Protocol request

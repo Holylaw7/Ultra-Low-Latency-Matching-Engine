@@ -13,7 +13,7 @@
 | Phase | Phase 7 — Live Durable Command Pipeline Integration (`Blueprint Approved / Execution Active`) |
 | Latest product task | [`TASK-20260822-027`](../tasks/active/TASK-20260822-027-phase7-durability-verification.md) — Limited Remediation Round 2 Complete / Evidence Gate PASS; TASK-028 authorized next |
 | Latest architecture decision | [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md) — Approved |
-| Current planning task | [`TASK-20260822-027`](../tasks/active/TASK-20260822-027-phase7-durability-verification.md) — verifier/docs-auditor review pending |
+| Current planning task | [`TASK-20260822-028`](../tasks/active/TASK-20260822-028-phase7-benchmark-docs-closure.md) — authorized next; not started |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 6 Baseline Frozen; Phase 7 execution active; Product Release separately governed |
 | Product approval | Phase 7 Blueprint Approved; `v0.5.0-engineering-baseline` remains frozen; Phase Closure and Product Release not authorized |

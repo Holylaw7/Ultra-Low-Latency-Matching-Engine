@@ -186,5 +186,5 @@ acceptance criteria or any scope expansion.
 ```text
 ADR-0015: Approved
 Implementation: Authorized in dependency order
-Next Gate: TASK-027 Evidence Gate / verifier + docs-auditor review
+Next Gate: TASK-028 implementation / Evidence Gate, then Phase 7 Closure Proposal
 ```
