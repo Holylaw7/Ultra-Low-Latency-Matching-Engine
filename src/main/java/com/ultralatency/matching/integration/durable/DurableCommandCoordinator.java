@@ -154,6 +154,24 @@ public final class DurableCommandCoordinator implements DurableCommandCoordinato
         }
     }
 
+    /**
+     * Transitions the coordinator to its first terminal failure.
+     *
+     * <p>This is used by the surrounding Phase 7 runtime composition when a failure occurs after
+     * the coordinator has already returned a durable command, such as a local outbound write
+     * failure. It does not retry, rewind or create a second command sequence.</p>
+     *
+     * @param stage terminal failure boundary
+     * @param cause original failure
+     */
+    public void fail(
+            final DurableFailureStage stage,
+            final Throwable cause) {
+        terminal(
+                Objects.requireNonNull(stage, "stage"),
+                Objects.requireNonNull(cause, "cause"));
+    }
+
     private void append(final DurableCommand command) {
         try {
             appendPort.append(command);

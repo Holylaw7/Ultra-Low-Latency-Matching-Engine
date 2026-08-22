@@ -68,6 +68,8 @@ public final class DurableMatchingEngineTcpServer {
 
     private final Object lifecycleMonitor = new Object();
     private final DurableNetworkConfiguration configuration;
+    private final DurableRuntimePortFactory runtimePortFactory;
+    private final DurableResponseWritePort responseWritePort;
     private volatile NetworkGatewayState state = NetworkGatewayState.NEW;
     private volatile Throwable failureCause;
     private volatile Channel serverChannel;
@@ -89,7 +91,28 @@ public final class DurableMatchingEngineTcpServer {
      */
     public DurableMatchingEngineTcpServer(
             final DurableNetworkConfiguration configuration) {
+        this(configuration, DurableRuntimePortFactory.production(),
+                DurableResponseWritePort.production());
+    }
+
+    /**
+     * Creates a durable server with an additive Phase 7 runtime composition boundary.
+     *
+     * <p>The normal public constructor uses the production identity adapters. This package-local
+     * overload lets deterministic integration tests wrap those same real adapters and control
+     * completion boundaries without changing frozen protocol, WAL, pipeline or engine code.</p>
+     *
+     * @param configuration validated transport and durable settings
+     * @param runtimePortFactory wrapper for the real append and publish adapters
+     * @param responseWritePort result-write boundary
+     */
+    DurableMatchingEngineTcpServer(
+            final DurableNetworkConfiguration configuration,
+            final DurableRuntimePortFactory runtimePortFactory,
+            final DurableResponseWritePort responseWritePort) {
         this.configuration = Objects.requireNonNull(configuration, "configuration");
+        this.runtimePortFactory = Objects.requireNonNull(runtimePortFactory, "runtimePortFactory");
+        this.responseWritePort = Objects.requireNonNull(responseWritePort, "responseWritePort");
     }
 
     /**
@@ -126,9 +149,12 @@ public final class DurableMatchingEngineTcpServer {
                         configuration.durableConfiguration().pipelineConfiguration(),
                         this::onEngineResult,
                         this::onPipelineFailure);
-                coordinator = new DurableCommandCoordinator(
+                final DurableRuntimePorts runtimePorts = runtimePortFactory.create(
                         walWriter::append,
-                        pipeline::tryPublish,
+                        pipeline::tryPublish);
+                coordinator = new DurableCommandCoordinator(
+                        runtimePorts.appendPort(),
+                        runtimePorts.publishPort(),
                         this::onDurableFailure);
                 pipeline.start();
                 coordinator.start();
@@ -353,11 +379,14 @@ public final class DurableMatchingEngineTcpServer {
             final List<ProtocolResponse> responses) {
         try {
             for (int index = 0; index < responses.size() - 1; index++) {
-                channel.write(responses.get(index));
+                responseWritePort.write(channel, responses.get(index));
             }
-            final ChannelFuture completion = channel.writeAndFlush(responses.get(responses.size() - 1));
+            final ChannelFuture completion = responseWritePort.writeAndFlush(
+                    channel,
+                    responses.get(responses.size() - 1));
             completion.addListener(future -> {
                 if (!future.isSuccess()) {
+                    failCoordinator(DurableFailureStage.OUTBOUND_WRITE, future.cause());
                     failTerminal(future.cause());
                 } else if (inFlight == current && state == NetworkGatewayState.RUNNING) {
                     inFlight = null;
@@ -370,6 +399,7 @@ public final class DurableMatchingEngineTcpServer {
     }
 
     private void onPipelineFailure(final Throwable failure) {
+        failCoordinator(DurableFailureStage.PIPELINE, failure);
         scheduleTerminalFailure(failure);
     }
 
@@ -512,9 +542,10 @@ public final class DurableMatchingEngineTcpServer {
 
     private void writeAndClose(final Channel channel, final ProtocolResponse response) {
         try {
-            final ChannelFuture completion = channel.writeAndFlush(response);
+            final ChannelFuture completion = responseWritePort.writeAndFlush(channel, response);
             completion.addListener(future -> {
                 if (!future.isSuccess()) {
+                    failCoordinator(DurableFailureStage.OUTBOUND_WRITE, future.cause());
                     failTerminal(future.cause());
                 } else {
                     channel.close();
@@ -522,6 +553,14 @@ public final class DurableMatchingEngineTcpServer {
             });
         } catch (final Throwable failure) {
             failTerminal(failure);
+        }
+    }
+
+    private void failCoordinator(
+            final DurableFailureStage stage,
+            final Throwable failure) {
+        if (coordinator != null) {
+            coordinator.fail(stage, failure);
         }
     }
 
