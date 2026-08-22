@@ -10,18 +10,18 @@
 | Scope | New `network/netty/durable/**` production and test files |
 | Implementation | Complete for the authorized opt-in composition stage |
 | Branch | `feature/phase7-live-durable-command-pipeline` |
-| HEAD at local verification | `3ad6bd9` — `docs(phase7): sync task025 final evidence head` |
-| Commit | Pending — main writer will create the logical Task commit |
+| HEAD at final implementation evidence | `a978fe7` — `test(phase7): stabilize durable server shutdown` |
+| Commit | `9aef2fe` implementation + `a978fe7` test stabilization |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Push | Pending until the Task commit is created |
-| CI | Pending — no exact-SHA result claimed yet |
-| Working tree | Non-clean for authorized TASK-026 files/report and context sync; pre-existing `.vscode/` remains untouched |
+| Push | PASS — `origin/feature/phase7-live-durable-command-pipeline` contains `a978fe7` |
+| CI | PASS — exact-SHA run [32565087793](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32565087793) |
+| Working tree | Documentation synchronization is pending; pre-existing `.vscode/` remains untouched |
 | Focused evidence | PASS — 2 tests |
 | Regression evidence | PASS — `mvn verify`, 146 core tests |
 | Checkstyle | PASS — 0 violations |
 | Frozen-path audit | PASS — zero changes under Domain/OrderBook/Engine/WAL/Recovery/Pipeline/Protocol |
 | Exception Gate | Not triggered |
-| Next gate | TASK-026 Evidence Gate; commit/push/exact-SHA CI pending |
+| Next gate | TASK-027 Evidence Gate |
 
 ## Delivered
 
@@ -55,9 +55,10 @@ git diff --check
 ```
 
 The frozen-path audit found no changed files under the Phase 2–6 production
-boundaries or the frozen Protocol/WAL/Pipeline paths. The local Evidence Gate
-is not complete until the logical commit, remote push and exact-SHA CI result
-are recorded.
+boundaries or the frozen Protocol/WAL/Pipeline paths. The first CI attempt
+(`32564961239`) exposed a Linux shutdown-order race in the loopback test; the
+test was stabilized without changing production code in `a978fe7`, and the
+exact-SHA CI run above passed.
 
 ## Architecture / ADR Alignment
 
@@ -85,11 +86,12 @@ are recorded.
 
 ## Next Stage
 
-TASK-026 Evidence Gate must pass before TASK-027 work begins. TASK-027 and
-TASK-028 remain authorized conditionally in dependency order. Phase Closure,
+TASK-026 Evidence Gate has passed. TASK-027 is the next authorized
+dependency-ordered Task; TASK-028 remains authorized conditionally on its
+Evidence Gate. Phase Closure,
 merge to `master`, `v0.6.0-engineering-baseline`, Snapshot, online Recovery,
 reconnect/deduplication and Product Release remain unauthorized.
 
 ## Gate Status
 
-`TASK-026 implementation complete locally — commit, push and exact-SHA CI are pending.`
+`TASK-026 Evidence Gate PASS — TASK-027 is the next authorized Task.`

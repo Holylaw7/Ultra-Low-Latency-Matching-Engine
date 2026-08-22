@@ -4,9 +4,9 @@
 | --- | --- |
 | Task | `TASK-20260822-026` / Durable Netty Composition |
 | Phase / ADR / Blueprint | Phase 7 / ADR-0015 / `PHASE-7-live-durable-command-pipeline-blueprint.md` |
-| Status | Implementation Complete; Evidence Gate Pending |
+| Status | Completed / Evidence Gate PASS |
 | Scope | New `network/netty/durable/**` opt-in server/session and tests |
-| Next Gate | TASK-026 Evidence Gate |
+| Next Gate | TASK-027 Evidence Gate |
 
 ## Goal
 
@@ -28,6 +28,6 @@ one in-flight request, EventLoop result scheduling and legacy Gateway behavior.
   WAL, the TASK-025 coordinator, the frozen Pipeline and Protocol v1 codecs.
 - Added loopback and non-empty-WAL startup tests without changing the legacy
   Phase 6 gateway or introducing a production-only test seam.
-- Local implementation evidence is recorded in
-  [`PHASE-7-task-026.md`](../reports/PHASE-7-task-026.md); commit, push and
-  exact-SHA CI remain the Evidence Gate.
+- Final implementation evidence is recorded in
+  [`PHASE-7-task-026.md`](../reports/PHASE-7-task-026.md); commit `a978fe7`
+  and exact-SHA CI run `32565087793` passed.

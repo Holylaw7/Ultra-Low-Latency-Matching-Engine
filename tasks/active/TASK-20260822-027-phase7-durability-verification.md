@@ -4,9 +4,9 @@
 | --- | --- |
 | Task | `TASK-20260822-027` / Durability, Failure and Replay Verification |
 | Phase / ADR / Blueprint | Phase 7 / ADR-0015 / `PHASE-7-live-durable-command-pipeline-blueprint.md` |
-| Status | Approved conditionally; depends on TASK-026 Evidence Gate |
+| Status | Authorized / Next; TASK-026 Evidence Gate passed |
 | Scope | Tests, deterministic barriers/fixtures and verification report only |
-| Next Gate | Preceding Evidence Gate + exact-SHA CI |
+| Next Gate | TASK-027 Evidence Gate + exact-SHA CI |
 
 ## Acceptance
 

@@ -6,8 +6,9 @@ Phase 5 implements a JDK-only, versioned command WAL and strict offline
 deterministic replay baseline, completed and frozen at
 `v0.4.0-engineering-baseline`. Phase 7 has an approved Blueprint; TASK-024
 durable contracts/configuration and TASK-025 WAL-before-pipeline coordination
-are complete with exact-SHA Evidence Gates, and TASK-026 durable Netty
-composition is implemented locally with its Evidence Gate pending. Online
+are complete with exact-SHA Evidence Gates, including TASK-026 durable Netty
+composition at `a978fe7` / CI `32565087793`. TASK-027 is the next authorized
+verification task. Online
 crash recovery and Snapshot restore remain future work.
 
 ## Implemented Offline Flow
@@ -54,10 +55,9 @@ Snapshot
 
 Snapshot format, state restore, online recovery orchestration, durable
 acknowledgements, and replication remain future work and require a separate
-approved Blueprint. Phase 7 has an approved Blueprint; TASK-024 and TASK-025
-are complete, TASK-026 durable composition is implemented locally with its
-Evidence Gate pending, and later runtime composition remains gated by its
-dependency-ordered Evidence Gates:
+approved Blueprint. Phase 7 has an approved Blueprint; TASK-024 through
+TASK-026 are complete with dependency-ordered Evidence Gates, and TASK-027 is
+the next authorized verification task:
 
 ```text
 Protocol request
