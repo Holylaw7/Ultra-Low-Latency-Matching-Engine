@@ -34,6 +34,31 @@ public final class OrderBook {
     }
 
     /**
+     * Captures the active book in canonical price-time order.
+     *
+     * @return immutable checkpoint
+     */
+    public OrderBookCheckpoint checkpoint() {
+        return new OrderBookCheckpoint(
+                bidBook.checkpointOrders(),
+                askBook.checkpointOrders());
+    }
+
+    /**
+     * Restores a fresh order book from a validated checkpoint.
+     *
+     * @param checkpoint immutable canonical checkpoint
+     * @return restored order book
+     */
+    public static OrderBook fromCheckpoint(final OrderBookCheckpoint checkpoint) {
+        Objects.requireNonNull(checkpoint, "checkpoint");
+        final OrderBook restored = new OrderBook();
+        checkpoint.bidOrders().forEach(order -> restored.add(order.toOrder()));
+        checkpoint.askOrders().forEach(order -> restored.add(order.toOrder()));
+        return restored;
+    }
+
+    /**
      * Adds an active limit order to its side-specific price book.
      *
      * @param order order to rest

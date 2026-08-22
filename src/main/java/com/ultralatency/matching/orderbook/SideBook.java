@@ -1,6 +1,8 @@
 package com.ultralatency.matching.orderbook;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.NavigableMap;
 import java.util.Objects;
 import java.util.Optional;
@@ -88,6 +90,18 @@ abstract class SideBook {
 
     int priceLevelCount() {
         return levels.size();
+    }
+
+    List<OrderBookCheckpoint.RestingOrderCheckpoint> checkpointOrders() {
+        final List<OrderBookCheckpoint.RestingOrderCheckpoint> result = new ArrayList<>();
+        for (final PriceLevel level : levels.values()) {
+            OrderNode node = level.head();
+            while (node != null) {
+                result.add(OrderBookCheckpoint.RestingOrderCheckpoint.fromOrder(node.order()));
+                node = node.next();
+            }
+        }
+        return List.copyOf(result);
     }
 
     boolean isEmpty() {
