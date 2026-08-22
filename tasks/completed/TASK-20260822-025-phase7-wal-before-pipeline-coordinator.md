@@ -7,7 +7,7 @@
 | Status | Evidence Gate PASS / Completed |
 | Scope | New durable coordinator and tests under `integration/durable/**` |
 | Report | [`PHASE-7-task-025.md`](../reports/PHASE-7-task-025.md) |
-| Next Gate | TASK-026 Evidence Gate |
+| Next Gate | Phase 7 Closure Approved; task archived |
 
 ## Goal
 
@@ -30,4 +30,5 @@ durable-then-FULL fail-stop semantics and lifecycle ownership.
 - Local implementation evidence is recorded in
   [`PHASE-7-task-025.md`](../reports/PHASE-7-task-025.md); commit, push and
   exact-SHA CI passed on commit `2342897` with GitHub Actions run
-  `32564005988`. TASK-026 is now the next dependency-ordered Evidence Gate.
+  `32564005988`. TASK-026 was the next dependency-ordered Evidence Gate at
+  this checkpoint; the full Phase 7 task chain is now complete and archived.

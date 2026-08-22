@@ -34,20 +34,15 @@ OpenAI model-selection guidance is linked from `.codex/MASTER_PROMPT.md`.
 
 ## Current Stage
 
-Phase 7 — Live Durable Command Pipeline Integration is active under approved
-ADR-0015 and its Complete Blueprint. TASK-024 durable contracts are completed
-with exact-SHA CI evidence; TASK-025 coordinator implementation and Evidence
-Gate are complete at `2342897` / CI `32564005988`; TASK-026 durable Netty
-composition is complete at `a978fe7` / CI `32565087793`; TASK-027 Round 2
-terminal remediation is complete at `7b9106f` / CI `32571940187`, with 12
-focused Phase 7 tests and 158 full core tests. Its read-only verifier and
-  docs-auditor Evidence Gate is PASS; TASK-028 benchmark implementation and
-  evidence are complete at `9fed6b2` / CI `32574274905`, with read-only
-  verifier, benchmark-reviewer and docs-auditor PASS. Human Phase 7 Closure
-  Review is the next gate.
-Phase Closure, merge, `v0.6.0-engineering-baseline`,
-Snapshot, online Recovery and Product Release remain unauthorized. The frozen `v0.5.0-engineering-baseline`
-continues to protect the Phase 2–6 production paths.
+Phase 7 — Live Durable Command Pipeline Integration is completed, approved and
+frozen at `v0.6.0-engineering-baseline`. TASK-024 through TASK-028 passed their
+focused evidence gates; TASK-028 benchmark/docs evidence is at `9fed6b2` / CI
+`32574274905`, with verifier, benchmark-reviewer and docs-auditor PASS. The
+Phase 7 merge commit is `6473365`, master CI is `32574891113`, and tag CI is
+`32574958017`. Snapshot, online Recovery, reconnect/deduplication, multi-session
+support, Phase 8 implementation and Product Release remain unauthorized. The
+frozen `v0.6.0-engineering-baseline` continues to protect the Phase 2–6
+production paths.
 
 The Phase 3 MatchingEngine baseline is completed, approved and frozen at
 `v0.2.0-engineering-baseline`. It contains the Domain Model, frozen Phase 2
@@ -120,18 +115,14 @@ component evidence only; a local write is not a durable or client-receipt
 acknowledgement. See [`network.md`](docs/benchmark/network.md) and the
 [Phase 6 Closure Proposal](tasks/reports/PHASE-6-network-protocol-closure.md).
 
-The approved Phase 7 boundary adds the WAL-before-pipeline integration layer
-as a dependency-ordered live durable foundation. TASK-024 and TASK-025 are
-complete with exact-SHA Evidence Gate PASS. TASK-026 is complete at `a978fe7`
-with CI `32565087793`; TASK-027 Round 2 terminal remediation passed exact-SHA
-CI `32571940187` after baseline and prior remediation runs `32565591806`,
-`32566165212` and `32570890919`. TASK-027 read-only Evidence Gate is PASS.
-TASK-028 now has its four-boundary Java 21 JMH benchmark, component claim
-summary, Closure Proposal and synchronized evidence at `9fed6b2` / CI
-`32574274905`; the read-only verifier, benchmark-reviewer and docs-auditor
-all PASS. Human Phase 7 Closure Review is next. No online Recovery, reconnect,
-deduplication, multi-session support, Product Release or production-readiness
-claim is authorized.
+The approved Phase 7 boundary adds the WAL-before-pipeline integration layer as
+a dependency-ordered live durable foundation. TASK-024 through TASK-028 are
+complete with exact-SHA evidence; TASK-028 has its four-boundary Java 21 JMH
+benchmark and component claim summary at `9fed6b2` / CI `32574274905`. Human
+Phase 7 Closure is approved and the resulting `v0.6.0-engineering-baseline`
+is frozen at merge `6473365`. No online Recovery, reconnect, deduplication,
+multi-session support, Phase 8 implementation, Product Release or
+production-readiness claim is authorized.
 
 ## Build
 

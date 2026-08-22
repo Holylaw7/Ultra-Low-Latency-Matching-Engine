@@ -5,16 +5,16 @@
 ```text
 Phase 7 implementation: Completed
 TASK-024 through TASK-028: Completed / Evidence Gate PASS
-Closure Proposal: Ready for Human Review
-Human Phase 7 Closure Review: Pending
-Merge to master: Not authorized
-v0.6.0-engineering-baseline: Not created
+Closure Proposal: Approved / Baseline Frozen
+Human Phase 7 Closure Review: Approved
+Merge to master: Completed at `6473365` / CI `32574891113`
+v0.6.0-engineering-baseline: Created at merge `6473365` / Tag CI `32574958017`
 Phase 8: Not authorized
 ```
 
-This proposal is the final evidence handoff for the approved Phase 7
-Blueprint. It deliberately stops before the Human Closure Review. No merge,
-tag or Product Release action is authorized by this document.
+This proposal records the final evidence and approved closure of the Phase 7
+Blueprint. The engineering baseline is frozen; no Product Release or Phase 8
+implementation is authorized by this document.
 
 ## Scope delivered
 
@@ -58,8 +58,8 @@ deduplication, multiple sessions or durable client acknowledgement.
 | TASK-028 | Completed / Evidence Gate PASS | Four-boundary JMH matrix; read-only verifier, benchmark-reviewer and docs-auditor PASS; `9fed6b2` / CI `32574274905` |
 
 The prior TASK-027 Evidence Gate was independently reviewed by the read-only
-verifier and docs auditor. TASK-028 now completes the Phase 7 evidence set;
-Human Phase 7 Closure Review is the next gate.
+verifier and docs auditor. TASK-028 completed the Phase 7 evidence set, and
+Human Phase 7 Closure was approved before the merge/tag actions recorded above.
 
 ## TASK-028 benchmark evidence
 
@@ -115,9 +115,11 @@ exact-SHA CI: 32574274905 PASS (9fed6b2)
 The final evidence HEAD and CI run are synchronized in this proposal, the task
 report, Blueprint and `.codex/AGENT_CONTEXT.md`.
 
-## Requested Human Closure decision
+## Human Closure decision and executed actions
 
-The final Evidence Gate has passed. Human review may now decide whether to
-authorize the normal `--no-ff` merge, master verification, annotated
-`v0.6.0-engineering-baseline` tag and TASK-024 through TASK-028 archival. Until
-that separate decision, all of those actions remain unauthorized.
+The final Evidence Gate passed and Human Phase 7 Closure was approved. The
+normal `--no-ff` merge, master verification, annotated
+`v0.6.0-engineering-baseline` tag, tag CI verification and TASK-024 through
+TASK-028 archival were authorized and executed. Phase 8, Product Release,
+Snapshot, online Recovery, reconnect/deduplication and multi-session support
+remain unauthorized.

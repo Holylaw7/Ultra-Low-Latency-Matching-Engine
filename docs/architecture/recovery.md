@@ -12,10 +12,9 @@ terminal remediation is complete at `7b9106f` / CI `32571940187` after baseline
 and prior remediation runs `32565591806`, `32566165212` and `32570890919`; its
  read-only Evidence Gate is PASS. TASK-028 benchmark and closure evidence are
  complete at `9fed6b2` / CI `32574274905`, with verifier,
-benchmark-reviewer and docs-auditor PASS. Human Phase 7 Closure Review is the
-next gate. Earlier evidence synchronization runs remain historical records.
-Online
-crash recovery and Snapshot restore remain future work.
+benchmark-reviewer and docs-auditor PASS. Human Phase 7 Closure is approved;
+the merge `6473365`, master CI `32574891113` and tag CI `32574958017` are
+verified. Online crash recovery and Snapshot restore remain future work.
 
 ## Implemented Offline Flow
 
@@ -61,12 +60,10 @@ Snapshot
 
 Snapshot format, state restore, online recovery orchestration, durable
 acknowledgements, and replication remain future work and require a separate
-approved Blueprint. Phase 7 has an approved Blueprint; TASK-024 through
-TASK-026 and the approved TASK-027 Round 2 runtime-composition remediation are
-complete at `7b9106f` / CI `32571940187`; TASK-027 read-only Evidence Gate is
-PASS, and TASK-028 benchmark/closure evidence is complete at `9fed6b2` / CI
-`32574274905`; its read-only Evidence Gate is PASS and Human Phase 7 Closure
-Review is next:
+ approved Blueprint. Phase 7 has completed TASK-024 through TASK-028 with
+ approved evidence; TASK-028 benchmark/closure evidence is complete at
+ `9fed6b2` / CI `32574274905`. Human Phase 7 Closure is approved and the
+ engineering baseline is frozen at `v0.6.0-engineering-baseline`:
 
 ```text
 Protocol request

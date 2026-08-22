@@ -12,7 +12,7 @@
 | Updated | `2026-08-22` |
 | Baseline | `v0.5.0-engineering-baseline` at `b7cf68e` |
 | Planned Tasks | `TASK-20260822-024` through `TASK-20260822-028` |
-| Next Gate | `Human Phase 7 Closure Review` |
+| Next Gate | `Phase 8 Blueprint Proposal — not authorized` |
 
 ## 2. Phase Goal
 
@@ -142,8 +142,8 @@ No Task may modify the frozen paths listed in Section 3.
 - [x] Focused tests, full `mvn verify`, Checkstyle, diff audit and exact-SHA CI
   pass.
 - [x] Benchmark and claim boundary are reviewed.
-- [x] Phase Closure Proposal is prepared; Human Closure approval remains
-  separate.
+- [x] Phase Closure Proposal is approved; merge, baseline tag and archival are
+  complete. Phase 8 remains separately unauthorized.
 
 ## 10. Verification Strategy
 
@@ -226,10 +226,12 @@ limitations explicit, especially force/controller and client-receipt claims.
 | 2026-08-22 | Human Developer | Approved | ADR-0015 D1-D12; TASK-024..028 | Frozen baselines; Phase 7 only; no live recovery/release |
 | 2026-08-22 | Human Exception Gate | Approved — Limited Remediation | Additive Phase-7 runtime-composition barriers and controlled outbound write future; original acceptance criteria retained | No frozen path/API, format, dependency, recovery semantics or TASK-028 work |
 | 2026-08-22 | Human Exception Gate | Approved — Limited Remediation Round 2 | Coordinator terminal convergence, deterministic pre-response disconnect and synchronous outbound-write propagation; original acceptance criteria retained | No architecture, frozen path/API, dependency, recovery semantics or TASK-028 work |
+| 2026-08-22 | Human Developer | Closure Approved | Phase 7 TASK-024..028 evidence accepted; merge/tag authorized | `6473365` / master CI `32574891113`; `v0.6.0-engineering-baseline` tag CI `32574958017`; Phase 8 and Product Release remain unauthorized |
 
 ```text
-Blueprint Status: Approved
-Implementation: Authorized in dependency order
+Blueprint Status: Approved / Phase 7 Frozen
+Implementation: Completed in dependency order
 TASK-028 implementation/evidence: PASS at `9fed6b2` / CI `32574274905`
-Next Gate: Human Phase 7 Closure Review
+Closure: Approved; merge `6473365`, master CI `32574891113`, tag CI `32574958017`
+Next Gate: Phase 8 Blueprint Proposal — not authorized
 ```

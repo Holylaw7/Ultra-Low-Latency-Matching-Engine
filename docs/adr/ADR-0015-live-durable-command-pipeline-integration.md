@@ -2,8 +2,8 @@
 
 ## Status
 
-Approved — Human Phase 7 Blueprint Approval recorded; implementation is
-authorized in dependency order.
+Approved — Human Phase 7 Blueprint and Closure Approval recorded; implementation
+completed in dependency order and the engineering baseline is frozen.
 
 ## Context
 
@@ -18,10 +18,10 @@ enter the matching pipeline. This Phase must compose the existing components
 without changing Domain, OrderBook, MatchingEngine, WAL v1, offline Replay or
 Protocol v1 semantics.
 
-The linked Phase 7 Blueprint has received Human approval. Implementation is
-authorized only in its dependency order, subject to each Evidence Gate and
-the active Exception Gate; Phase Closure, merge and baseline tagging remain
-unauthorized until separately approved.
+The linked Phase 7 Blueprint received Human approval and was executed in strict
+dependency order with Evidence Gates and Exception Gates. Phase Closure was
+subsequently approved; merge `6473365`, master CI `32574891113` and the
+`v0.6.0-engineering-baseline` tag CI `32574958017` are complete.
 
 ## Goal
 
@@ -182,10 +182,12 @@ acceptance criteria or any scope expansion.
 | 2026-08-22 | Human Developer | Approved | D1-D12 and TASK-024 through TASK-028 approved through the Phase Blueprint. Execution is authorized in strict dependency order; Phase Closure, merge and `v0.6.0-engineering-baseline` remain unauthorized. |
 | 2026-08-22 | Human Exception Gate | Approved — Limited Remediation | Additive Phase-7 runtime-composition barriers and controlled outbound write future; original D1-D12 and acceptance criteria retained. |
 | 2026-08-22 | Human Exception Gate | Approved — Limited Remediation Round 2 | Coordinator terminal convergence, deterministic pre-response disconnect and synchronous outbound-write propagation; original D1-D12 and acceptance criteria retained. |
+| 2026-08-22 | Human Developer | Closure Approved | TASK-024 through TASK-028 evidence accepted; merge `6473365`, master CI `32574891113`, and `v0.6.0-engineering-baseline` tag CI `32574958017` completed. Phase 8 and Product Release remain unauthorized. |
 
 ```text
 ADR-0015: Approved
-Implementation: Authorized in dependency order
+Implementation: Completed in dependency order
 TASK-028 implementation and Evidence Gate: PASS at `9fed6b2` / CI `32574274905`
-Next Gate: Human Phase 7 Closure Review
+Closure: Approved / `v0.6.0-engineering-baseline` frozen at `6473365`
+Next Gate: Phase 8 Blueprint Proposal — not authorized
 ```

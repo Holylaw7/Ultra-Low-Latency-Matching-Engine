@@ -7,7 +7,7 @@
 | Status | Evidence Gate PASS / Completed |
 | Scope | New `integration/durable/**` contracts, configuration and focused tests |
 | Report | [`PHASE-7-task-024.md`](../reports/PHASE-7-task-024.md) |
-| Next Gate | TASK-026 Evidence Gate |
+| Next Gate | Phase 7 Closure Approved; task archived |
 
 ## Goal
 
@@ -36,6 +36,6 @@ Snapshot, Recovery or optimization.
 - Exact-SHA evidence passed on commit
   `93be16638a20cfc2ed16cf3ecd6d5d0b07c885e5`; GitHub Actions run
   `32562594583` passed on `feature/phase7-live-durable-command-pipeline`.
-- TASK-024 and TASK-025 are complete. TASK-026 is the next authorized
-  dependency-ordered Task; Phase 7 runtime composition remains governed by
-  its later Evidence Gates.
+- At this checkpoint TASK-026 was the next dependency-ordered Task. TASK-024
+  through TASK-028 subsequently completed, the Phase 7 Closure was approved,
+  and this task is archived under the frozen `v0.6.0-engineering-baseline`.

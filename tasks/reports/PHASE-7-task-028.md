@@ -16,7 +16,7 @@
 | Exact-SHA CI | [32574274905](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574274905) PASS |
 | Production code | Unchanged; only the authorized benchmark module was added |
 | Raw artifact | Local ignored `benchmark-results/phase7-durable-full.json` |
-| Next gate | Human Phase 7 Closure Review |
+| Next gate | Phase 7 Closure Approved; task archived |
 
 ## Delivered
 
@@ -86,6 +86,6 @@ semantics or any default.
 
 ## Gate Status
 
-`TASK-028 Evidence Gate PASS at 9fed6b2 / CI 32574274905. Phase 7 Closure
-Review is the next Human gate. Merge to master, v0.6.0-engineering-baseline and
-Phase 8 remain locked.`
+`TASK-028 Evidence Gate PASS at 9fed6b2 / CI 32574274905. Phase 7 Closure,
+merge and v0.6.0-engineering-baseline are complete; TASK-028 is archived.
+Phase 8 remains unauthorized.`

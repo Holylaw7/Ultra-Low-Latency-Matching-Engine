@@ -6,7 +6,7 @@
 | Phase / ADR / Blueprint | Phase 7 / ADR-0015 / `PHASE-7-live-durable-command-pipeline-blueprint.md` |
 | Status | Completed / Evidence Gate PASS |
 | Scope | New `network/netty/durable/**` opt-in server/session and tests |
-| Next Gate | TASK-027 Evidence Gate |
+| Next Gate | Phase 7 Closure Approved; task archived |
 
 ## Goal
 

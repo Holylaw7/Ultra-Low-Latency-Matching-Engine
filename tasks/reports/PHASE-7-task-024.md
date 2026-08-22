@@ -20,7 +20,7 @@
 | Checkstyle | PASS — 0 violations |
 | Frozen-path audit | PASS — zero changes under Domain/OrderBook/Engine/WAL/Recovery |
 | Exception Gate | Not triggered |
-| Next gate | TASK-026 Evidence Gate |
+| Next gate | Phase 7 Closure Approved; task archived |
 
 ## Delivered
 

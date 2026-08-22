@@ -6,7 +6,7 @@
 | Phase / ADR / Blueprint | Phase 7 / ADR-0015 / `PHASE-7-live-durable-command-pipeline-blueprint.md` |
 | Status | Completed / Evidence Gate PASS |
 | Scope | Component/loopback benchmark, reports, README, architecture and context |
-| Next Gate | Human Phase 7 Closure Review |
+| Next Gate | Phase 7 Closure Approved; task archived |
 | Branch | `feature/phase7-live-durable-command-pipeline` |
 | Current HEAD | `9fed6b2` benchmark/docs evidence checkpoint |
 | Remote / push | `origin` synchronized; push PASS |
@@ -48,5 +48,6 @@ read-only verifier / benchmark-reviewer / docs-auditor: PASS
 exact-SHA CI for TASK-028 checkpoint: 32574274905 PASS
 ```
 
-Phase 7 Closure Review is the next Human gate. Merge to `master`,
-`v0.6.0-engineering-baseline` and Phase 8 remain unauthorized.
+Phase 7 Closure Review is approved. Merge `6473365`, master CI
+`32574891113`, `v0.6.0-engineering-baseline` tag CI `32574958017` and task
+archival are complete. Phase 8 remains unauthorized.

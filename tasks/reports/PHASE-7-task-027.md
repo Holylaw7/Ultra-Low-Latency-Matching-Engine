@@ -22,7 +22,7 @@
 | Checkstyle | PASS — 0 violations |
 | Frozen-path audit | PASS — zero changes under Domain/OrderBook/Engine/WAL/Recovery/Pipeline/Protocol |
 | Exception Gate | Approved — limited Phase-7 runtime-composition remediation |
-| Next gate | Human Phase 7 Closure Review; TASK-028 Evidence Gate PASS |
+| Next gate | Phase 7 Closure Approved; task archived |
 
 ## Delivered
 
@@ -89,11 +89,12 @@ CI [32572878416](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/a
 TASK-028 benchmark/documentation implementation and its Closure Proposal are
 complete at `9fed6b2` / exact-SHA CI
 [32574274905](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574274905).
-The read-only verifier, benchmark-reviewer and docs-auditor all PASS. Human Phase 7 Closure,
-merge to `master`, `v0.6.0-engineering-baseline`, Snapshot, online Recovery,
-reconnect/deduplication, multi-session support and Product Release remain
-unauthorized.
+The read-only verifier, benchmark-reviewer and docs-auditor all PASS. Human
+Phase 7 Closure, merge to `master` and `v0.6.0-engineering-baseline` are
+complete. Snapshot, online Recovery, reconnect/deduplication, multi-session
+support and Product Release remain unauthorized.
 
 ## Gate Status
 
-`TASK-027 Evidence Gate PASS — TASK-028 Evidence Gate PASS; Human Phase 7 Closure, merge and tag remain locked.`
+`TASK-027 Evidence Gate PASS — TASK-028 Evidence Gate PASS; Phase 7 Closure,
+merge and tag completed; Phase 8 remains unauthorized.`

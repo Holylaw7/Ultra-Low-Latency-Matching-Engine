@@ -21,7 +21,7 @@
 | Checkstyle | PASS — 0 violations |
 | Frozen-path audit | PASS — zero changes under Domain/OrderBook/Engine/Pipeline/WAL/Recovery/Network |
 | Exception Gate | Not triggered |
-| Next gate | TASK-026 Evidence Gate |
+| Next gate | Phase 7 Closure Approved; task archived |
 
 ## Delivered
 
@@ -76,11 +76,12 @@ recorded, so the TASK-025 Evidence Gate is complete.
 
 ## Next Stage
 
-TASK-025 Evidence Gate passed. TASK-026 through TASK-028 remain authorized
-conditionally in dependency order. Phase Closure,
-merge to `master`, `v0.6.0-engineering-baseline`, Snapshot, online Recovery,
-reconnect/deduplication and Product Release remain unauthorized.
+TASK-025 Evidence Gate passed. At this checkpoint TASK-026 through TASK-028
+remained authorized conditionally in dependency order; they subsequently
+completed and Phase 7 Closure was approved with the baseline now frozen.
+Snapshot, online Recovery, reconnect/deduplication and Product Release remain
+unauthorized.
 
 ## Gate Status
 
-`TASK-025 Evidence Gate PASS — TASK-026 is the next authorized dependency-ordered Task.`
+`TASK-025 Evidence Gate PASS — historical checkpoint; Phase 7 is now closed and archived.`
