@@ -18,8 +18,10 @@ enter the matching pipeline. This Phase must compose the existing components
 without changing Domain, OrderBook, MatchingEngine, WAL v1, offline Replay or
 Protocol v1 semantics.
 
-This ADR is a proposal only. It authorizes no implementation until the linked
-Phase 7 Blueprint receives Human approval.
+The linked Phase 7 Blueprint has received Human approval. Implementation is
+authorized only in its dependency order, subject to each Evidence Gate and
+the active Exception Gate; Phase Closure, merge and baseline tagging remain
+unauthorized until separately approved.
 
 ## Goal
 
