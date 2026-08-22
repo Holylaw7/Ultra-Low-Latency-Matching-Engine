@@ -189,18 +189,23 @@ Latest completed plan:
 Latest completed governance task:
 [`TASK-20260821-009-phase-blueprint-governance.md`](../tasks/completed/TASK-20260821-009-phase-blueprint-governance.md).
 
-Native subagent configuration:
+Native subagent configuration and execution policy:
 
 - `.codex/config.toml` enables subagents with a maximum of four concurrent
   child threads and Luna/high defaults.
 - `architect.toml` is Sol/high and read-only for Blueprint, Closure and
   Exception Gate reviews.
-- `implementer.toml` is Luna/max and workspace-write for one authorized writer.
+- `implementer.toml` is Luna/max and workspace-write for an optional isolated
+  writer; it is not the default sequential Task executor.
 - `verifier.toml` is Luna/max and read-only for correctness/evidence audits.
 - `benchmark-reviewer.toml` is Luna/max and read-only for benchmark methodology.
 - `docs-auditor.toml` is Luna/medium and read-only for status/evidence sync.
 
-The enforced topology is one writer plus parallel read-only auditors. Subagents
+The enforced topology is **Main Luna Max = orchestrator + default sole writer**,
+with parallel read-only auditors when useful. The implementer subagent is an
+optional isolated worker only for non-overlapping patches. A stalled writer
+delegation is cancelled and resumed by the main agent; it is not an Exception
+Gate unless it reveals an architecture, scope or acceptance problem. Subagents
 cannot authorize merge, tag, release, destructive Git actions or Phase Closure;
 any ADR conflict, frozen-path/API change, scope expansion or weakened criterion
 must stop the main agent at the Exception Gate.

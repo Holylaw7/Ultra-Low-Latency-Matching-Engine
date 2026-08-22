@@ -1,4 +1,7 @@
 [agents]
+# The interactive/main Luna agent owns the normal sequential write path.
+# Native child agents are reserved for bounded read-only audits by default;
+# implementer.toml is an optional isolated writer profile.
 enabled = true
 max_concurrent_threads_per_session = 4
 default_subagent_model = "gpt-5.6-luna"

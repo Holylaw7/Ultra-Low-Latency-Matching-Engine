@@ -289,7 +289,7 @@ or replaces an approval gate. When these models are available, prefer:
 | Work | Recommended model / effort |
 | --- | --- |
 | Architecture, ADR set and complete Phase Blueprint | Sol / high |
-| Approved implementation writer | Luna / max |
+| Approved implementation writer | Main Luna / max; optional isolated writer subagent |
 | Read-only correctness and evidence audit | Luna / max |
 | Read-only benchmark methodology review | Luna / max |
 | Documentation synchronization and evidence audit | Luna / medium |
@@ -309,6 +309,13 @@ Reference: https://developers.openai.com/api/docs/models
 Codex native subagents are available for bounded, independent work. The
 repository configuration is in `.codex/config.toml` and `.codex/agents/`.
 Subagents are execution helpers, not additional approval authorities.
+
+The main Luna Max agent is the default implementation owner. Do not delegate
+the primary sequential implementation path to the `implementer` subagent by
+default. A writer subagent is an optional isolated worker only when its files
+are independent, non-overlapping and easy for the main agent to review as one
+bounded patch. This avoids adding a second orchestration hop to a dependency-
+ordered Task chain.
 
 Default topology:
 
@@ -331,8 +338,10 @@ Rules:
    `AGENT_CONTEXT` before making a review or implementation recommendation.
 4. Read-only auditors must not modify files, add test seams or redesign an
    approved architecture.
-5. The implementer may write only explicitly authorized scope and must run the
-   required evidence gates before reporting completion.
+5. The main agent must write the normal sequential Task path directly. An
+   optional implementer subagent may write only explicitly authorized,
+   isolated scope and must run the required evidence gates before reporting
+   completion.
 6. If any subagent finds an ADR conflict, frozen-file/API change, persistence
    format change, new critical dependency, scope expansion, weakened criterion
    or other Exception Gate, the main agent must stop all further implementation
@@ -343,6 +352,16 @@ Rules:
 8. Subagent workflows do not authorize merge, tag, release, destructive Git
    actions or Phase Closure. Those remain governed by the existing approval
    gates.
+
+9. Do not repeatedly respawn a stalled writer subagent. If a delegated writer
+   produces no useful artifact, no concrete progress or remains incomplete,
+   cancel that delegation and resume the approved Task in the main agent. A
+   scheduling or execution stall is not an Exception Gate unless it reveals an
+   architecture, scope or acceptance problem.
+
+10. Exactly one writer may be active at a time. Read-only auditors may run in
+    parallel after a bounded implementation checkpoint; they never become
+    additional writers.
 
 Use explicit prompts such as `spawn three read-only auditors in parallel` for
 important Task checkpoints and Closure reviews. Do not spawn agents for every
