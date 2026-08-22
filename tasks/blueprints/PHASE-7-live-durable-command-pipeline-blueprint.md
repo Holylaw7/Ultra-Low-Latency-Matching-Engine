@@ -12,7 +12,7 @@
 | Updated | `2026-08-22` |
 | Baseline | `v0.5.0-engineering-baseline` at `b7cf68e` |
 | Planned Tasks | `TASK-20260822-024` through `TASK-20260822-028` |
-| Next Gate | `TASK-028 read-only Evidence Gate; then Human Phase 7 Closure Review` |
+| Next Gate | `Human Phase 7 Closure Review` |
 
 ## 2. Phase Goal
 
@@ -138,10 +138,10 @@ No Task may modify the frozen paths listed in Section 3.
 
 ### Completion Evidence
 
-- [ ] TASK-024 through TASK-028 completed in order.
-- [ ] Focused tests, full `mvn verify`, Checkstyle, diff audit and exact-SHA CI
+- [x] TASK-024 through TASK-028 completed in order.
+- [x] Focused tests, full `mvn verify`, Checkstyle, diff audit and exact-SHA CI
   pass.
-- [ ] Benchmark and claim boundary are reviewed.
+- [x] Benchmark and claim boundary are reviewed.
 - [x] Phase Closure Proposal is prepared; Human Closure approval remains
   separate.
 
@@ -230,6 +230,6 @@ limitations explicit, especially force/controller and client-receipt claims.
 ```text
 Blueprint Status: Approved
 Implementation: Authorized in dependency order
-TASK-028 implementation/evidence: prepared; read-only Evidence Gate pending
-Next Gate: verifier + benchmark-reviewer + docs-auditor, exact-SHA CI, then Human Phase 7 Closure Review
+TASK-028 implementation/evidence: PASS at `9fed6b2` / CI `32574274905`
+Next Gate: Human Phase 7 Closure Review
 ```

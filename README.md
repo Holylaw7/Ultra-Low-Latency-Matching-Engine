@@ -41,10 +41,10 @@ Gate are complete at `2342897` / CI `32564005988`; TASK-026 durable Netty
 composition is complete at `a978fe7` / CI `32565087793`; TASK-027 Round 2
 terminal remediation is complete at `7b9106f` / CI `32571940187`, with 12
 focused Phase 7 tests and 158 full core tests. Its read-only verifier and
- docs-auditor Evidence Gate is PASS; final status synchronization is `589c1d3`
- / CI `32572878416`. TASK-028 benchmark implementation and evidence are
- prepared; read-only benchmark/verifier/docs review and exact-SHA CI are
- pending.
+  docs-auditor Evidence Gate is PASS; TASK-028 benchmark implementation and
+  evidence are complete at `9fed6b2` / CI `32574274905`, with read-only
+  verifier, benchmark-reviewer and docs-auditor PASS. Human Phase 7 Closure
+  Review is the next gate.
 Phase Closure, merge, `v0.6.0-engineering-baseline`,
 Snapshot, online Recovery and Product Release remain unauthorized. The frozen `v0.5.0-engineering-baseline`
 continues to protect the Phase 2–6 production paths.
@@ -127,12 +127,9 @@ with CI `32565087793`; TASK-027 Round 2 terminal remediation passed exact-SHA
 CI `32571940187` after baseline and prior remediation runs `32565591806`,
 `32566165212` and `32570890919`. TASK-027 read-only Evidence Gate is PASS.
 TASK-028 now has its four-boundary Java 21 JMH benchmark, component claim
-summary, Closure Proposal and context synchronization prepared; the final
-read-only Evidence Gate and exact-SHA CI are pending. Final evidence
-synchronization before TASK-028 is `62ae68f` / CI `32572441090`; status-only
-reconciliation `b24db93` / CI `32572561973` and final Evidence-Gate
-documentation verification `b6eaa8d` / CI `32572786850`
-also passed without production changes. No online Recovery, reconnect,
+summary, Closure Proposal and synchronized evidence at `9fed6b2` / CI
+`32574274905`; the read-only verifier, benchmark-reviewer and docs-auditor
+all PASS. Human Phase 7 Closure Review is next. No online Recovery, reconnect,
 deduplication, multi-session support, Product Release or production-readiness
 claim is authorized.
 

@@ -186,7 +186,6 @@ acceptance criteria or any scope expansion.
 ```text
 ADR-0015: Approved
 Implementation: Authorized in dependency order
-TASK-028 implementation and Closure Proposal: prepared
-Next Gate: read-only benchmark/verifier/docs Evidence Gate and exact-SHA CI,
-then Human Phase 7 Closure Review
+TASK-028 implementation and Evidence Gate: PASS at `9fed6b2` / CI `32574274905`
+Next Gate: Human Phase 7 Closure Review
 ```

@@ -87,12 +87,13 @@ TASK-027 Evidence Gate: PASS — verifier and docs-auditor are both read-only
 PASS. The final status synchronization is documented at `589c1d3` / exact-SHA
 CI [32572878416](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32572878416).
 TASK-028 benchmark/documentation implementation and its Closure Proposal are
-prepared; the final read-only Evidence Gate and exact-SHA CI remain pending.
-Phase Closure,
+complete at `9fed6b2` / exact-SHA CI
+[32574274905](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574274905).
+The read-only verifier, benchmark-reviewer and docs-auditor all PASS. Human Phase 7 Closure,
 merge to `master`, `v0.6.0-engineering-baseline`, Snapshot, online Recovery,
 reconnect/deduplication, multi-session support and Product Release remain
 unauthorized.
 
 ## Gate Status
 
-`TASK-027 Evidence Gate PASS — TASK-028 authorized as next task; Phase 7 Closure, merge and tag remain locked.`
+`TASK-027 Evidence Gate PASS — TASK-028 Evidence Gate PASS; Human Phase 7 Closure, merge and tag remain locked.`

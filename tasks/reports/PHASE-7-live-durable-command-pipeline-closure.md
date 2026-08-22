@@ -4,8 +4,8 @@
 
 ```text
 Phase 7 implementation: Completed
-TASK-024 through TASK-028: Completed / TASK-028 Evidence Gate pending
-Closure Proposal: Prepared
+TASK-024 through TASK-028: Completed / Evidence Gate PASS
+Closure Proposal: Ready for Human Review
 Human Phase 7 Closure Review: Pending
 Merge to master: Not authorized
 v0.6.0-engineering-baseline: Not created
@@ -55,11 +55,11 @@ deduplication, multiple sessions or durable client acknowledgement.
 | TASK-025 | Completed / PASS | WAL-before-pipeline coordinator; exact-SHA CI recorded in TASK-025 report |
 | TASK-026 | Completed / PASS | Additive durable Netty composition; exact-SHA CI recorded in TASK-026 report |
 | TASK-027 | Completed / PASS | 12 focused tests, 158 core regression tests, Round 2 terminal/disconnect evidence; final sync `c4be5b9` / CI `32573193281` |
-| TASK-028 | Implementation complete / Gate pending | Four-boundary JMH matrix, reports and context sync; pending read-only reviewers and exact-SHA final gate |
+| TASK-028 | Completed / Evidence Gate PASS | Four-boundary JMH matrix; read-only verifier, benchmark-reviewer and docs-auditor PASS; `9fed6b2` / CI `32574274905` |
 
 The prior TASK-027 Evidence Gate was independently reviewed by the read-only
-verifier and docs auditor. TASK-028 is the only remaining evidence task before
-the Phase 7 Closure Review.
+verifier and docs auditor. TASK-028 now completes the Phase 7 evidence set;
+Human Phase 7 Closure Review is the next gate.
 
 ## TASK-028 benchmark evidence
 
@@ -97,28 +97,27 @@ Protocol v1
 TASK-028 changes are limited to the benchmark module and documentation. The
 pre-existing `.vscode/` directory remains untracked and untouched.
 
-## Required final Evidence Gate
+## Final Evidence Gate — PASS
 
-Before Closure Review, the main agent must complete:
+Before Closure Review, the main agent completed:
 
 ```text
-benchmark-reviewer (read-only) PASS
-verifier (read-only) PASS
-docs-auditor (read-only) PASS
-mvn verify PASS
-Checkstyle 0
-git diff --check PASS
-frozen production diff = 0
-exact-SHA CI PASS
+benchmark-reviewer (read-only): PASS
+verifier (read-only): PASS
+docs-auditor (read-only): PASS
+mvn verify: PASS; 158 core tests, 0 failures
+Checkstyle: 0 violations
+git diff --check: PASS
+frozen production diff: 0
+exact-SHA CI: 32574274905 PASS (9fed6b2)
 ```
 
-The final evidence HEAD and CI run must replace any stale TASK-028 planning
-references in this proposal, the task report, Blueprint and
-`.codex/AGENT_CONTEXT.md`.
+The final evidence HEAD and CI run are synchronized in this proposal, the task
+report, Blueprint and `.codex/AGENT_CONTEXT.md`.
 
 ## Requested Human Closure decision
 
-If the final Evidence Gate passes, Human review may decide whether to authorize
-the normal `--no-ff` merge, master verification, annotated
+The final Evidence Gate has passed. Human review may now decide whether to
+authorize the normal `--no-ff` merge, master verification, annotated
 `v0.6.0-engineering-baseline` tag and TASK-024 through TASK-028 archival. Until
 that separate decision, all of those actions remain unauthorized.
