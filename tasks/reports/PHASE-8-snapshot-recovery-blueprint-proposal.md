@@ -8,10 +8,12 @@ Architect Review: PASS
 ADR-0016: Approved
 Complete Blueprint: Approved
 TASK-029: Completed / Evidence Gate PASS at `66fc9d2` / CI `32577713667`
-TASK-030 through TASK-034: Authorized conditionally by predecessor Evidence Gates
-Production implementation: TASK-030 is next
+TASK-030: Completed / Evidence Gate PASS at `6907391` / CI `32579065372`
+TASK-031: Authorized / Next
+TASK-032 through TASK-034: Authorized conditionally by predecessor Evidence Gates
+Production implementation: TASK-031 is next
 Merge / v0.7.0-engineering-baseline: Not Authorized
-Next Gate: TASK-030 Evidence Gate
+Next Gate: TASK-031 Evidence Gate
 ```
 
 ## Discovery Decision
@@ -76,8 +78,8 @@ validated recovered state.
 Dependency order after Human approval would be:
 
 ```text
-TASK-029 canonical checkpoint
-    -> TASK-030 Snapshot v1 codec/store
+TASK-029 canonical checkpoint [PASS]
+    -> TASK-030 Snapshot v1 codec/store [PASS]
     -> TASK-031 recovery planner/replay
     -> TASK-032 live handoff
     -> TASK-033 crash/corruption/determinism verification
@@ -144,7 +146,8 @@ Proposal content exact-SHA CI: 32576740050 PASS
 The corrected proposal makes the canonical checkpoint digest counter-sensitive,
 protects offline Snapshot generation with the shared recovery lease and stable
 WAL inventory check, and compares pure-WAL versus Snapshot-tail results only for
-their common `N+1..M` replay suffix.
+their common `N+1..M` replay suffix. TASK-030 has now passed its strict codec,
+publication, lease and inventory Evidence Gate; TASK-031 is the next gate.
 
 ## Required Human Decision
 
@@ -159,5 +162,6 @@ the listed Exception Gates and deferred scope
 ```
 
 Human Phase 8 Blueprint Approval is recorded in ADR-0016 and the Blueprint.
-Implementation may begin only with TASK-029; later Tasks remain locked behind
-their predecessor Evidence Gates.
+Implementation may continue with TASK-031; later Tasks remain locked behind
+their predecessor Evidence Gates. Phase 8 Closure, merge and baseline tagging
+remain unauthorized.

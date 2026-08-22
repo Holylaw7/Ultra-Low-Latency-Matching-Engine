@@ -48,11 +48,12 @@ Phase 8 Blueprint is approved. [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoin
 the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)
 and TASK-029 through TASK-034 are authorized in dependency order. TASK-029
 canonical checkpoint export/restore is complete at `66fc9d2` with exact-SHA CI
-`32577713667` PASS; TASK-030 is the current implementation task and later tasks
-remain gated. The
+`32577713667` PASS; TASK-030 Snapshot v1 codec/store is complete at `6907391`
+with exact-SHA CI `32579065372` PASS; TASK-031 is the current implementation
+task and later tasks remain gated. The
 proposal keeps WAL as the sole authority, compares pure-WAL recovery with a
 derived Snapshot-plus-tail path, and makes listener-last recovery a required
-invariant. Phase 8 production implementation is authorized from TASK-030;
+invariant. Phase 8 production implementation is authorized from TASK-031;
 merge and
 `v0.7.0-engineering-baseline` remain unauthorized.
 

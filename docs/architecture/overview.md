@@ -29,7 +29,9 @@ Product Release remains separately governed.
 
 Phase 8 Blueprint/ADR-0016 is approved. TASK-029 canonical checkpoint
 export/restore is complete at `66fc9d2` with exact-SHA CI `32577713667` PASS;
-TASK-030 Snapshot codec/store is next and later recovery Tasks remain gated.
+TASK-030 Snapshot codec/store is complete at `6907391` with exact-SHA CI
+`32579065372` PASS; TASK-031 recovery planner is next and later Tasks remain
+gated.
 
 ## Scope
 
@@ -54,7 +56,7 @@ Client
             -> structural limit matching
        -> Trade / Execution events           [Phase 3 implemented]
   -> Command WAL / Offline Replay            [Phase 5 implemented baseline]
-  -> Snapshot / Online Recovery              [Phase 8 approved; TASK-029 PASS; TASK-030 next]
+  -> Snapshot / Online Recovery              [Phase 8 approved; TASK-029/030 PASS; TASK-031 next]
   -> Output / Metrics                        [Future Work]
 ```
 
@@ -102,6 +104,7 @@ explicit non-goals.
    `32574958017` are verified.
 8. Snapshot checkpoint and online Recovery bootstrap — **ADR-0016 and Complete
    Blueprint approved; TASK-029 completed at `66fc9d2` / CI `32577713667`,
-   TASK-030 next, later Tasks gated by dependency Evidence Gates**.
+   TASK-030 completed at `6907391` / CI `32579065372`, TASK-031 next, later
+   Tasks gated by dependency Evidence Gates**.
 9. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.

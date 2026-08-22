@@ -14,8 +14,8 @@
 | Implementation Branch | `feature/phase8-snapshot-online-recovery` |
 | Planned Tasks | `TASK-20260822-029` through `TASK-20260822-034` |
 | Implementation | `Authorized in dependency order` |
-| Current Task | `TASK-20260822-030` — Snapshot v1 codec and atomic store |
-| Next Gate | `TASK-030 Evidence Gate` |
+| Current Task | `TASK-20260822-031` — Recovery planner and replay executor |
+| Next Gate | `TASK-031 Evidence Gate` |
 
 ## 2. Phase Objective
 
@@ -176,7 +176,7 @@ Sequence must match.
 | Order | Task | Goal | Dependency | Planned report |
 | ---: | --- | --- | --- | --- |
 | 1 | `TASK-20260822-029` | Canonical engine checkpoint export/restore | Baseline | Completed / Evidence Gate PASS at `66fc9d2` / CI `32577713667`; `tasks/reports/PHASE-8-task-029.md` |
-| 2 | `TASK-20260822-030` | Snapshot v1 codec and atomic store | TASK-029 | `tasks/reports/PHASE-8-task-030.md` |
+| 2 | `TASK-20260822-030` | Snapshot v1 codec and atomic store | TASK-029 | Completed / Evidence Gate PASS at `6907391` / CI `32579065372`; `tasks/reports/PHASE-8-task-030.md` |
 | 3 | `TASK-20260822-031` | Recovery planner and replay executor | TASK-030 | `tasks/reports/PHASE-8-task-031.md` |
 | 4 | `TASK-20260822-032` | Recoverable live runtime handoff | TASK-031 | `tasks/reports/PHASE-8-task-032.md` |
 | 5 | `TASK-20260822-033` | Crash, corruption and determinism verification | TASK-032 | `tasks/reports/PHASE-8-task-033.md` |
@@ -223,12 +223,12 @@ file change triggers the Exception Gate.
 
 ### Snapshot correctness
 
-- [ ] Snapshot v1 golden bytes match the exact ADR layout.
+- [x] Snapshot v1 golden bytes match the exact ADR layout.
 - [x] Canonical engine checkpoint round-trips active state, original/remaining
   quantity, bid/ask priority, FIFO order and engine counters.
-- [ ] Malformed checkpoint or Snapshot fails without partial mutation.
-- [ ] Snapshot WAL-prefix and canonical checkpoint digests validate exactly.
-- [ ] Offline generation holds the exclusive recovery lease from before scan
+- [x] Malformed checkpoint or Snapshot fails without partial mutation.
+- [x] Snapshot WAL-prefix and canonical checkpoint digests validate exactly.
+- [x] Offline generation holds the exclusive recovery lease from before scan
   through atomic publication and rejects an unavailable lease or changed WAL
   segment inventory/file size.
 
@@ -418,15 +418,18 @@ Phase 9 and Product Release remain unauthorized.
 | Date | Reviewer | Decision | Approved ADRs / Tasks | Constraints |
 | --- | --- | --- | --- | --- |
 | 2026-08-22 | Human Developer | Approved | ADR-0016 D1-D14; TASK-029..034 | Strict dependency order; per-Task Evidence Gates and Exception Gates; merge/tag/Phase 9/Product Release remain unauthorized |
-| 2026-08-22 | Evidence Gate | TASK-029 PASS | Canonical checkpoint export/restore, focused tests, full verification and exact-SHA CI `32577713667` accepted; TASK-030 is next | No Exception Gate |
+| 2026-08-22 | Evidence Gate | TASK-029 PASS | Canonical checkpoint export/restore, focused tests, full verification and exact-SHA CI `32577713667` accepted; TASK-030 authorized | No Exception Gate |
+| 2026-08-22 | Evidence Gate | TASK-030 PASS | Snapshot v1 codec/store, strict validation, atomic publication, offline generator, lease/inventory checks and focused/full verification accepted at `6907391` / CI `32579065372`; TASK-031 is next | No Exception Gate |
 
 ```text
 Phase 8 Discovery: Completed
 ADR-0016: Approved
 Complete Blueprint: Approved
 TASK-029: Completed / Evidence Gate PASS
-TASK-030 through TASK-034: Authorized conditionally by predecessor Evidence Gates
+TASK-030: Completed / Evidence Gate PASS at `6907391` / CI `32579065372`
+TASK-031: Authorized / Next
+TASK-032 through TASK-034: Authorized conditionally by predecessor Evidence Gates
 Implementation: Authorized
 Merge / v0.7.0-engineering-baseline: Not Authorized
-Next Gate: TASK-030 Evidence Gate
+Next Gate: TASK-031 Evidence Gate
 ```
