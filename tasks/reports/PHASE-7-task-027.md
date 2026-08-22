@@ -86,7 +86,8 @@ does not change Protocol v1, WAL v1 or the frozen pipeline/engine APIs.
 TASK-027 Evidence Gate: PASS — verifier and docs-auditor are both read-only
 PASS. The final status synchronization is documented at `589c1d3` / exact-SHA
 CI [32572878416](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32572878416).
-TASK-028 is now authorized as the next task, but has not started.
+TASK-028 benchmark/documentation implementation and its Closure Proposal are
+prepared; the final read-only Evidence Gate and exact-SHA CI remain pending.
 Phase Closure,
 merge to `master`, `v0.6.0-engineering-baseline`, Snapshot, online Recovery,
 reconnect/deduplication, multi-session support and Product Release remain

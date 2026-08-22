@@ -20,8 +20,10 @@ and TASK-026 durable Netty composition have passed their Evidence Gates, with
 TASK-026 at `a978fe7` / CI `32565087793`. Human-approved TASK-027 Round 2
 terminal remediation is complete at `7b9106f` / CI `32571940187`, after
 baseline and prior remediation runs `32565591806`, `32566165212` and
-`32570890919`; the final read-only Evidence Gate is PASS and TASK-028 is
-authorized as the next task but has not started. Final evidence synchronization is `62ae68f` / CI `32572441090`, with
+`32570890919`; the final read-only Evidence Gate for TASK-027 is PASS. TASK-028
+benchmark implementation and closure evidence are prepared; its final
+read-only Evidence Gate is pending. Final evidence synchronization before
+TASK-028 is `62ae68f` / CI `32572441090`, with
 status-only reconciliation `b24db93` / CI `32572561973` and final
 Evidence-Gate documentation verification `b6eaa8d` / CI `32572786850` also
 passed without production changes. Product
@@ -95,8 +97,8 @@ explicit non-goals.
    Execution Active**. TASK-024 contracts, TASK-025 coordinator and TASK-026
    durable Netty composition and the approved TASK-027 Round 2 remediation are
    complete at `7b9106f` / CI `32571940187` with exact-SHA evidence; TASK-027
-   verifier/docs-auditor Evidence Gate PASS; TASK-028 is authorized as the next
-   task but has not started.
+    verifier/docs-auditor Evidence Gate PASS; TASK-028 benchmark/docs evidence
+    is prepared and its final read-only Evidence Gate is pending.
 8. Snapshot and online Recovery — **Future Work; separate Blueprint required**.
 9. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.

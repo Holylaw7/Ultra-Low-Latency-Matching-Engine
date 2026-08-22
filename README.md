@@ -41,9 +41,10 @@ Gate are complete at `2342897` / CI `32564005988`; TASK-026 durable Netty
 composition is complete at `a978fe7` / CI `32565087793`; TASK-027 Round 2
 terminal remediation is complete at `7b9106f` / CI `32571940187`, with 12
 focused Phase 7 tests and 158 full core tests. Its read-only verifier and
-docs-auditor Evidence Gate is PASS; final status synchronization is `589c1d3`
-/ CI `32572878416`. TASK-028 is authorized as the next task but has not
-started.
+ docs-auditor Evidence Gate is PASS; final status synchronization is `589c1d3`
+ / CI `32572878416`. TASK-028 benchmark implementation and evidence are
+ prepared; read-only benchmark/verifier/docs review and exact-SHA CI are
+ pending.
 Phase Closure, merge, `v0.6.0-engineering-baseline`,
 Snapshot, online Recovery and Product Release remain unauthorized. The frozen `v0.5.0-engineering-baseline`
 continues to protect the Phase 2–6 production paths.
@@ -124,10 +125,13 @@ as a dependency-ordered live durable foundation. TASK-024 and TASK-025 are
 complete with exact-SHA Evidence Gate PASS. TASK-026 is complete at `a978fe7`
 with CI `32565087793`; TASK-027 Round 2 terminal remediation passed exact-SHA
 CI `32571940187` after baseline and prior remediation runs `32565591806`,
-`32566165212` and `32570890919`. TASK-027 read-only Evidence Gate is PASS;
-TASK-028 is authorized as the next task but has not started. Final evidence synchronization is `62ae68f` / CI
-`32572441090`; status-only reconciliation `b24db93` / CI `32572561973` and
-final Evidence-Gate documentation verification `b6eaa8d` / CI `32572786850`
+`32566165212` and `32570890919`. TASK-027 read-only Evidence Gate is PASS.
+TASK-028 now has its four-boundary Java 21 JMH benchmark, component claim
+summary, Closure Proposal and context synchronization prepared; the final
+read-only Evidence Gate and exact-SHA CI are pending. Final evidence
+synchronization before TASK-028 is `62ae68f` / CI `32572441090`; status-only
+reconciliation `b24db93` / CI `32572561973` and final Evidence-Gate
+documentation verification `b6eaa8d` / CI `32572786850`
 also passed without production changes. No online Recovery, reconnect,
 deduplication, multi-session support, Product Release or production-readiness
 claim is authorized.
@@ -201,6 +205,25 @@ This measures fixed Submit/Cancel codec vectors and a sequential loopback
 request-to-complete-result round trip. Results are local-host component
 evidence, not durable ACK, concurrent-client, Internet or Product Release
 claims; see [`network.md`](docs/benchmark/network.md).
+
+Run the Phase 7 live durable component/loopback baseline with Java 21:
+
+```powershell
+mvn -pl benchmark -am -DskipTests package
+& 'E:\Java\microsoft-jdk-21\bin\java.exe' -jar `
+  benchmark/target/matching-engine-benchmark-0.1.0-SNAPSHOT.jar `
+  'DurablePipelineBenchmark.*' -wi 1 -i 2 -f 1 -t 1 `
+  -w 1s -r 1s -foe true -rf json `
+  -rff benchmark-results/phase7-durable-full.json
+```
+
+This keeps WAL append/force, append-plus-publish, local result encoding and
+one-in-flight alternating Submit/Cancel loopback separate. The committed
+summary records CPU, storage, JDK/JVM/GC, Netty allocator, workload, segment
+settings, warmup/forks and P50/P95/P99/P999. It is component/local-host
+evidence only; it is not a durable ACK, power-loss, online Recovery,
+concurrent-client or Product Release claim. See
+[`durable-pipeline.md`](docs/benchmark/durable-pipeline.md).
 
 ## Structure
 

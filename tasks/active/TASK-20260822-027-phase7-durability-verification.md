@@ -6,7 +6,7 @@
 | Phase / ADR / Blueprint | Phase 7 / ADR-0015 / `PHASE-7-live-durable-command-pipeline-blueprint.md` |
 | Status | Limited Remediation Round 2 Completed / Evidence Gate PASS |
 | Scope | Tests, deterministic barriers/fixtures and verification report only |
-| Next Gate | TASK-028 benchmark/documentation/closure evidence |
+| Next Gate | TASK-028 read-only Evidence Gate, then Phase 7 Closure Review |
 
 ## Acceptance
 
@@ -69,5 +69,6 @@
 - Read-only verifier and docs-auditor Evidence Gate: PASS. Final status
   synchronization is `589c1d3` / exact-SHA CI
   [32572878416](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32572878416).
-  TASK-028 is authorized as the next task but has not started; Phase Closure,
-  merge and tag remain unauthorized.
+  TASK-028 benchmark/documentation implementation and Closure Proposal are
+  prepared; its read-only Evidence Gate and exact-SHA CI remain pending.
+  Phase Closure, merge and tag remain unauthorized.
