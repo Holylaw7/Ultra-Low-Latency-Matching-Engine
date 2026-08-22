@@ -390,7 +390,7 @@ unlisted file/API/scope change.
 | 2026-08-22 | Architect / Sol High | Proposed | Discovery completed; D1-D14 and the complete Phase 8 Blueprint are ready for Human review. |
 | 2026-08-22 | Human Developer | Approved | D1-D14 and TASK-029 through TASK-034 authorized in strict dependency order. Additive checkpoint/restore, recovered-engine construction, validated coordinator sequence seed and new Snapshot/recovery packages are authorized exactly as listed. Per-Task Evidence Gates and Exception Gates remain mandatory; merge/tag/Phase 9 remain unauthorized. |
 | 2026-08-22 | Evidence Gate | TASK-030 PASS | Snapshot v1 codec/store, strict validation, atomic publication, offline generator, recovery lease and WAL inventory stability accepted at `6907391` / CI `32579065372`; TASK-031 is next. |
-| 2026-08-22 | Evidence Gate | TASK-031 PASS | Explicit PURE_WAL and SNAPSHOT_THEN_WAL offline recovery, strict prefix binding, WAL-tail replay, convergence and fail-closed matrix accepted at `eaed8b8` / CI `32580018903`; TASK-032 is next. |
+| 2026-08-22 | Evidence Gate | TASK-031 PASS | Explicit PURE_WAL and SNAPSHOT_THEN_WAL offline recovery, strict prefix binding, WAL-tail replay, convergence and fail-closed matrix accepted at `eaed8b8` / CI `32580018903`; status sync `ce3f22b` / CI `32580536044` PASS; TASK-032 is next. |
 
 ```text
 ADR-0016: Approved

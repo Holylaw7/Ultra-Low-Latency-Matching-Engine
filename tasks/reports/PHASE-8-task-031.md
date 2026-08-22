@@ -13,6 +13,7 @@
 | Evidence HEAD | `eaed8b8` — offline recovery planner and replay executor |
 | Remote / push | `origin` synchronized; push PASS |
 | Exact-SHA CI | [32580018903](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32580018903) PASS |
+| Documentation sync | `ce3f22b` / [32580536044](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32580536044) PASS |
 | Working tree | Tracked tree clean; pre-existing `.vscode/` remains untouched |
 | Next gate | TASK-032 recoverable live runtime handoff |
 
@@ -42,6 +43,7 @@ git diff --check: PASS
 Approved/frozen-path audit: PASS; only recovery/online/** and focused tests
 were changed by the implementation checkpoint
 Exact-SHA CI: eaed8b8 -> 32580018903 PASS
+Documentation/status sync: ce3f22b -> 32580536044 PASS
 Read-only verifier: PASS
 ```
 

@@ -421,7 +421,7 @@ Phase 9 and Product Release remain unauthorized.
 | 2026-08-22 | Human Developer | Approved | ADR-0016 D1-D14; TASK-029..034 | Strict dependency order; per-Task Evidence Gates and Exception Gates; merge/tag/Phase 9/Product Release remain unauthorized |
 | 2026-08-22 | Evidence Gate | TASK-029 PASS | Canonical checkpoint export/restore, focused tests, full verification and exact-SHA CI `32577713667` accepted; TASK-030 authorized | No Exception Gate |
 | 2026-08-22 | Evidence Gate | TASK-030 PASS | Snapshot v1 codec/store, strict validation, atomic publication, offline generator, lease/inventory checks and focused/full verification accepted at `6907391` / CI `32579065372`; TASK-031 is next | No Exception Gate |
-| 2026-08-22 | Evidence Gate | TASK-031 PASS | Explicit PURE_WAL and SNAPSHOT_THEN_WAL offline recovery, strict prefix binding, WAL-tail replay, convergence and fail-closed matrix accepted at `eaed8b8` / CI `32580018903`; TASK-032 is next | No Exception Gate |
+| 2026-08-22 | Evidence Gate | TASK-031 PASS | Explicit PURE_WAL and SNAPSHOT_THEN_WAL offline recovery, strict prefix binding, WAL-tail replay, convergence and fail-closed matrix accepted at `eaed8b8` / CI `32580018903`; status sync `ce3f22b` / CI `32580536044` PASS; TASK-032 is next | No Exception Gate |
 
 ```text
 Phase 8 Discovery: Completed
