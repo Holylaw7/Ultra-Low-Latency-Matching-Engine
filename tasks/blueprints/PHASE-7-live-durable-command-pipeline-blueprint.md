@@ -225,6 +225,7 @@ limitations explicit, especially force/controller and client-receipt claims.
 | --- | --- | --- | --- | --- |
 | 2026-08-22 | Human Developer | Approved | ADR-0015 D1-D12; TASK-024..028 | Frozen baselines; Phase 7 only; no live recovery/release |
 | 2026-08-22 | Human Exception Gate | Approved — Limited Remediation | Additive Phase-7 runtime-composition barriers and controlled outbound write future; original acceptance criteria retained | No frozen path/API, format, dependency, recovery semantics or TASK-028 work |
+| 2026-08-22 | Human Exception Gate | Approved — Limited Remediation Round 2 | Coordinator terminal convergence, deterministic pre-response disconnect and synchronous outbound-write propagation; original acceptance criteria retained | No architecture, frozen path/API, dependency, recovery semantics or TASK-028 work |
 
 ```text
 Blueprint Status: Approved

@@ -17,10 +17,11 @@ including deterministic network verification and component/loopback benchmark
 evidence. Phase 7 now has an approved ADR and Complete Blueprint for Live
 Durable Command Pipeline Integration; TASK-024 contracts, TASK-025 coordinator
 and TASK-026 durable Netty composition have passed their Evidence Gates, with
-TASK-026 at `a978fe7` / CI `32565087793`. Human-approved TASK-027
-runtime-composition remediation is complete at `ae71786` / CI `32570890919`,
-with baseline/test-remediation runs `32565591806` and `32566165212`; the final
-read-only Evidence Gate review is pending and TASK-028 is paused. Product
+TASK-026 at `a978fe7` / CI `32565087793`. Human-approved TASK-027 Round 2
+terminal remediation is complete at `7b9106f` / CI `32571940187`, after
+baseline and prior remediation runs `32565591806`, `32566165212` and
+`32570890919`; the final read-only Evidence Gate review is pending and TASK-028
+is paused. Product
 Release remains separately governed.
 
 ## Scope
@@ -89,9 +90,9 @@ explicit non-goals.
    `v0.5.0-engineering-baseline`**.
 7. Live durable Command WAL/Pipeline integration — **Blueprint Approved /
    Execution Active**. TASK-024 contracts, TASK-025 coordinator and TASK-026
-   durable Netty composition and the approved TASK-027 remediation are complete
-   with exact-SHA CI evidence; TASK-027 awaits verifier/docs-auditor Evidence
-   Gate review, and TASK-028 is paused.
+   durable Netty composition and the approved TASK-027 Round 2 remediation are
+   complete at `7b9106f` / CI `32571940187` with exact-SHA evidence; TASK-027
+   awaits verifier/docs-auditor Evidence Gate review, and TASK-028 is paused.
 8. Snapshot and online Recovery — **Future Work; separate Blueprint required**.
 9. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.

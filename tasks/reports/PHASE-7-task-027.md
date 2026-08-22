@@ -8,16 +8,16 @@
 | Task | `TASK-20260822-027` — Durability, Failure and Replay Verification |
 | Authorization | Human Phase Blueprint Approval; TASK-026 Evidence Gate passed |
 | Scope | Tests, deterministic barriers/fixtures and verification report only |
-| Implementation | Limited remediation complete; Evidence Gate review pending |
+| Implementation | Limited remediation Round 2 complete; Evidence Gate review pending |
 | Branch | `feature/phase7-live-durable-command-pipeline` |
-| HEAD at remediation | `ae71786` — `test(phase7): add deterministic runtime failure boundaries` |
-| Commit | `ae71786` — pushed to `origin/feature/phase7-live-durable-command-pipeline` |
+| HEAD at remediation | `7b9106f` — `test(phase7): converge terminal failure semantics` |
+| Commit | `7b9106f` — pushed to `origin/feature/phase7-live-durable-command-pipeline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
 | Push | PASS — branch synchronized |
-| CI | PASS — baseline [32565591806](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32565591806); timing remediation [32566165212](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32566165212); approved-boundary remediation [32570890919](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32570890919) |
-| Working tree | Status/documentation synchronization is pending; pre-existing `.vscode/` remains untouched |
-| Focused evidence | PASS — 10 Phase 7 tests |
-| Regression evidence | PASS — `mvn verify`, 156 core tests |
+| CI | PASS — baseline [32565591806](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32565591806); timing remediation [32566165212](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32566165212); approved-boundary remediation [32570890919](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32570890919); Round 2 [32571940187](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32571940187) |
+| Working tree | Code evidence is committed; documentation synchronization is pending; pre-existing `.vscode/` remains untouched |
+| Focused evidence | PASS — 12 Phase 7 tests |
+| Regression evidence | PASS — `mvn verify`, 158 core tests |
 | Checkstyle | PASS — 0 violations |
 | Frozen-path audit | PASS — zero changes under Domain/OrderBook/Engine/WAL/Recovery/Pipeline/Protocol |
 | Exception Gate | Approved — limited Phase-7 runtime-composition remediation |
@@ -38,6 +38,9 @@
 - Added focused verification for append-return-before-publish, response
   completion ordering, outbound write failure, first-cause retention, terminal
   state, WAL retention and later admission rejection.
+- Added coordinator terminal convergence for active-session disconnect and
+  synchronous outbound-write exceptions, plus a deterministic disconnect test
+  while the response future remains incomplete.
 - Reused existing `CommandWalWriterTest` rotation-failure coverage and
   `MatchingEnginePipelineFailureTest` handler/terminal-failure coverage. No
   reflection, sleep-based correctness oracle, production-only seam or frozen
@@ -47,10 +50,10 @@
 
 ```text
 mvn -pl core '-Dtest=com.ultralatency.matching.integration.durable.Phase7DurabilityVerificationTest,com.ultralatency.matching.network.netty.durable.Phase7NetworkFailureVerificationTest,com.ultralatency.matching.network.netty.durable.Phase7RuntimeCompositionBoundaryTest' test
-  BUILD SUCCESS; Tests run: 10, Failures: 0, Errors: 0, Skipped: 0
+  BUILD SUCCESS; Tests run: 12, Failures: 0, Errors: 0, Skipped: 0
 
 mvn verify
-  BUILD SUCCESS; core Tests run: 156, Failures: 0, Errors: 0, Skipped: 0
+  BUILD SUCCESS; core Tests run: 158, Failures: 0, Errors: 0, Skipped: 0
   Checkstyle: 0 violations
 
 git diff --check
@@ -88,4 +91,4 @@ unauthorized.
 
 ## Gate Status
 
-`TASK-027 Limited Remediation Complete — Read-only Evidence Gate review required before TASK-028.`
+`TASK-027 Limited Remediation Round 2 Complete — Read-only Evidence Gate review required before TASK-028.`

@@ -4,7 +4,7 @@
 | --- | --- |
 | Task | `TASK-20260822-027` / Durability, Failure and Replay Verification |
 | Phase / ADR / Blueprint | Phase 7 / ADR-0015 / `PHASE-7-live-durable-command-pipeline-blueprint.md` |
-| Status | Limited Remediation Completed / Evidence Gate Pending Review |
+| Status | Limited Remediation Round 2 Completed / Evidence Gate Pending Review |
 | Scope | Tests, deterministic barriers/fixtures and verification report only |
 | Next Gate | Read-only verifier/docs-auditor Evidence Gate review |
 
@@ -32,6 +32,9 @@
   append/pipeline adapters can be wrapped for post-return barriers, and the
   durable response-write boundary can expose a controlled pending/failing
   Netty future. The normal public constructor remains wired to real adapters.
+- Round 2 converges active-session disconnect and synchronous outbound-write
+  exceptions through coordinator terminal failure, and adds a deterministic
+  pre-response-completion disconnect test.
 - Reused existing WAL rotation and Pipeline handler-failure tests; no
   production-only seam or frozen-path change was introduced.
 
@@ -47,6 +50,11 @@
 - Remediation commit `ae71786` / exact-SHA CI
   [32570890919](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32570890919)
   PASS. Focused Phase 7 evidence covers 10 tests; full `mvn verify` covers 156
+  core tests with Checkstyle 0.
+- Human Exception Gate approved Round 2 terminal convergence remediation.
+- Round 2 commit `7b9106f` / exact-SHA CI
+  [32571940187](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32571940187)
+  PASS. Focused Phase 7 evidence covers 12 tests; full `mvn verify` covers 158
   core tests with Checkstyle 0.
 - The Evidence Gate remains pending read-only verifier/docs-auditor review;
   TASK-028 stays locked until that review passes.
