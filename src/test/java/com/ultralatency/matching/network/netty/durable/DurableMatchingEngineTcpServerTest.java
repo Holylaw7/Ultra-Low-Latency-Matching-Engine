@@ -63,11 +63,12 @@ class DurableMatchingEngineTcpServerTest {
                 assertEquals(1L, longAt(response, 24));
                 assertEquals(1, unsigned(response[32]));
                 assertEquals(0, intAt(response, 36));
+                assertEquals(
+                        com.ultralatency.matching.network.netty.gateway.NetworkGatewayState.STOPPED,
+                        server.shutdown(Duration.ofSeconds(2)));
             }
         } finally {
-            assertEquals(
-                    com.ultralatency.matching.network.netty.gateway.NetworkGatewayState.STOPPED,
-                    server.shutdown(Duration.ofSeconds(2)));
+            server.shutdown(Duration.ofSeconds(2));
         }
 
         final List<com.ultralatency.matching.engine.EngineCommand> commands = CommandWalReader.read(
