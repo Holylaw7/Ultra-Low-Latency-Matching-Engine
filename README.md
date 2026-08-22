@@ -40,8 +40,10 @@ with exact-SHA CI evidence; TASK-025 coordinator implementation and Evidence
 Gate are complete at `2342897` / CI `32564005988`; TASK-026 durable Netty
 composition is complete at `a978fe7` / CI `32565087793`; TASK-027 Round 2
 terminal remediation is complete at `7b9106f` / CI `32571940187`, with 12
-focused Phase 7 tests and 158 full core tests. Its Evidence Gate is pending
-read-only verifier/docs-auditor review.
+focused Phase 7 tests and 158 full core tests. Its read-only verifier and
+docs-auditor Evidence Gate is PASS; final status synchronization is `589c1d3`
+/ CI `32572878416`. TASK-028 is authorized as the next task but has not
+started.
 Phase Closure, merge, `v0.6.0-engineering-baseline`,
 Snapshot, online Recovery and Product Release remain unauthorized. The frozen `v0.5.0-engineering-baseline`
 continues to protect the Phase 2–6 production paths.
@@ -122,8 +124,8 @@ as a dependency-ordered live durable foundation. TASK-024 and TASK-025 are
 complete with exact-SHA Evidence Gate PASS. TASK-026 is complete at `a978fe7`
 with CI `32565087793`; TASK-027 Round 2 terminal remediation passed exact-SHA
 CI `32571940187` after baseline and prior remediation runs `32565591806`,
-`32566165212` and `32570890919`. TASK-028 remains paused pending the final
-read-only Evidence Gate. Final evidence synchronization is `62ae68f` / CI
+`32566165212` and `32570890919`. TASK-027 read-only Evidence Gate is PASS;
+TASK-028 is authorized as the next task but has not started. Final evidence synchronization is `62ae68f` / CI
 `32572441090`; status-only reconciliation `b24db93` / CI `32572561973` and
 final Evidence-Gate documentation verification `b6eaa8d` / CI `32572786850`
 also passed without production changes. No online Recovery, reconnect,

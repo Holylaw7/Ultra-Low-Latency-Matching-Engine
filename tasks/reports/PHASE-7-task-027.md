@@ -8,7 +8,7 @@
 | Task | `TASK-20260822-027` — Durability, Failure and Replay Verification |
 | Authorization | Human Phase Blueprint Approval; TASK-026 Evidence Gate passed |
 | Scope | Tests, deterministic barriers/fixtures and verification report only |
-| Implementation | Limited remediation Round 2 complete; Evidence Gate review pending |
+| Implementation | Limited remediation Round 2 complete; Evidence Gate PASS |
 | Branch | `feature/phase7-live-durable-command-pipeline` |
 | HEAD at remediation | `7b9106f` — `test(phase7): converge terminal failure semantics` |
 | Commit | `7b9106f` — pushed to `origin/feature/phase7-live-durable-command-pipeline` |
@@ -22,7 +22,7 @@
 | Checkstyle | PASS — 0 violations |
 | Frozen-path audit | PASS — zero changes under Domain/OrderBook/Engine/WAL/Recovery/Pipeline/Protocol |
 | Exception Gate | Approved — limited Phase-7 runtime-composition remediation |
-| Next gate | Read-only verifier/docs-auditor Evidence Gate review |
+| Next gate | TASK-028 benchmark/documentation/closure evidence |
 
 ## Delivered
 
@@ -83,8 +83,10 @@ does not change Protocol v1, WAL v1 or the frozen pipeline/engine APIs.
 
 ## Next Stage
 
-TASK-027 Evidence Gate is awaiting read-only verifier/docs-auditor review.
-TASK-028 remains paused until that Evidence Gate passes.
+TASK-027 Evidence Gate: PASS — verifier and docs-auditor are both read-only
+PASS. The final status synchronization is documented at `589c1d3` / exact-SHA
+CI [32572878416](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32572878416).
+TASK-028 is now authorized as the next task, but has not started.
 Phase Closure,
 merge to `master`, `v0.6.0-engineering-baseline`, Snapshot, online Recovery,
 reconnect/deduplication, multi-session support and Product Release remain
@@ -92,4 +94,4 @@ unauthorized.
 
 ## Gate Status
 
-`TASK-027 Limited Remediation Round 2 Complete — Read-only Evidence Gate review required before TASK-028.`
+`TASK-027 Evidence Gate PASS — TASK-028 authorized as next task; Phase 7 Closure, merge and tag remain locked.`

@@ -12,7 +12,7 @@
 | Updated | `2026-08-22` |
 | Baseline | `v0.5.0-engineering-baseline` at `b7cf68e` |
 | Planned Tasks | `TASK-20260822-024` through `TASK-20260822-028` |
-| Next Gate | `TASK-027 Evidence Gate / verifier + docs-auditor review` |
+| Next Gate | `TASK-028 benchmark/documentation/closure evidence` |
 
 ## 2. Phase Goal
 
@@ -230,5 +230,5 @@ limitations explicit, especially force/controller and client-receipt claims.
 ```text
 Blueprint Status: Approved
 Implementation: Authorized in dependency order
-Next Gate: TASK-027 Evidence Gate / verifier + docs-auditor review
+Next Gate: TASK-028 benchmark/documentation/closure evidence
 ```

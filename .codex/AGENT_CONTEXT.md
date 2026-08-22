@@ -11,7 +11,7 @@
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
 | Phase | Phase 7 — Live Durable Command Pipeline Integration (`Blueprint Approved / Execution Active`) |
-| Latest product task | [`TASK-20260822-027`](../tasks/active/TASK-20260822-027-phase7-durability-verification.md) — Limited Remediation Round 2 Complete / Evidence Gate Review |
+| Latest product task | [`TASK-20260822-027`](../tasks/active/TASK-20260822-027-phase7-durability-verification.md) — Limited Remediation Round 2 Complete / Evidence Gate PASS; TASK-028 authorized next |
 | Latest architecture decision | [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md) — Approved |
 | Current planning task | [`TASK-20260822-027`](../tasks/active/TASK-20260822-027-phase7-durability-verification.md) — verifier/docs-auditor review pending |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
@@ -106,9 +106,9 @@ ADR-0011 Final Approved
   -> TASK-024 [Completed / exact-SHA CI PASS]
   -> TASK-025 [Completed / exact-SHA CI PASS]
   -> TASK-026 [Completed / exact-SHA CI PASS]
-  -> TASK-027 [Limited Remediation Round 2 Completed / Evidence Gate Review]
-  -> TASK-028 [Paused until TASK-027 Evidence Gate PASS]
-  -> Phase 7 implementation [Authorized in dependency order; stopped at TASK-027 Evidence Gate]
+  -> TASK-027 [Limited Remediation Round 2 Completed / Evidence Gate PASS]
+  -> TASK-028 [Authorized next; not started]
+  -> Phase 7 implementation [Authorized in dependency order; stopped before TASK-028 execution]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
@@ -159,8 +159,9 @@ complete with focused/regression evidence and exact-SHA CI PASS (`a978fe7`,
 run `32565087793`). TASK-027 baseline verification passed exact-SHA CI
 (`80838db`, run `32565591806`), then Human-approved the limited Phase-7
 runtime-composition remediation. Round 2 terminal remediation `7b9106f` passed
-exact-SHA CI `32571940187`; the read-only Evidence Gate review is pending.
-TASK-028 remains paused until that review passes.
+exact-SHA CI `32571940187`; read-only verifier/docs-auditor Evidence Gate PASS.
+Final status synchronization is `589c1d3` / CI `32572878416`; TASK-028 is
+authorized next but has not started.
 Phase Closure, merge and `v0.6.0-engineering-baseline` remain unauthorized.
 
 Current Blueprint Proposal:
@@ -173,7 +174,8 @@ Phase 7 Tasks:
 `TASK-024` through `TASK-028` under `tasks/active/`; TASK-024 through TASK-026
 are complete with exact-SHA CI PASS. Human Exception Gate remediation for
 TASK-027 Round 2 remediation is complete at `7b9106f` / CI `32571940187`; the
-read-only Evidence Gate review is pending, and TASK-028 remains paused. Final
+read-only Evidence Gate is PASS, and TASK-028 is authorized next but has not
+started. Final
 evidence synchronization is `62ae68f` / CI `32572441090`; status-only
 reconciliation `b24db93` / CI `32572561973` and final Evidence-Gate
 documentation verification `b6eaa8d` / CI `32572786850` also passed without
