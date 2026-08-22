@@ -10,6 +10,7 @@ import com.ultralatency.matching.domain.Side;
 import com.ultralatency.matching.network.netty.gateway.NetworkGatewayState;
 import com.ultralatency.matching.network.netty.codec.ProtocolRequestEncoder;
 import com.ultralatency.matching.network.protocol.ClientRequestId;
+import com.ultralatency.matching.network.protocol.ProtocolConstants;
 import com.ultralatency.matching.network.protocol.SubmitLimitRequest;
 import com.ultralatency.matching.persistence.wal.CommandWalReader;
 import io.netty.buffer.ByteBuf;
@@ -31,6 +32,27 @@ class Phase7NetworkFailureVerificationTest {
     Path tempDir;
 
     @Test
+    void disconnectBeforeAppendLeavesAnEmptyWalAndFailsTheSession() throws Exception {
+        final DurableNetworkConfiguration configuration =
+                DurableNetworkConfiguration.defaults(tempDir.resolve("before-append-wal"));
+        final DurableMatchingEngineTcpServer server =
+                new DurableMatchingEngineTcpServer(configuration);
+        server.start();
+        try (Socket socket = connect(server)) {
+            socket.shutdownInput();
+            socket.shutdownOutput();
+        }
+        try {
+            awaitState(server, NetworkGatewayState.FAILED);
+        } finally {
+            server.shutdown(Duration.ofSeconds(2));
+        }
+
+        assertEquals(0, CommandWalReader.read(
+                configuration.durableConfiguration().walConfiguration()).size());
+    }
+
+    @Test
     void disconnectAfterDurableAdmissionIsTerminalAndWalRemainsClosedForOfflineReplay()
             throws Exception {
         final DurableNetworkConfiguration configuration =
@@ -40,11 +62,11 @@ class Phase7NetworkFailureVerificationTest {
         server.start();
         try {
             try (Socket socket = connect(server)) {
-                socket.setSoTimeout(2_000);
                 final OutputStream output = socket.getOutputStream();
                 output.write(encode(request(1, 801)));
                 output.flush();
-                readFrame(socket.getInputStream());
+                awaitDurableSequence(server, 2);
+                socket.setSoLinger(true, 0);
             }
             awaitState(server, NetworkGatewayState.FAILED);
             assertTrue(server.failureCause().isPresent());
@@ -57,6 +79,40 @@ class Phase7NetworkFailureVerificationTest {
     }
 
     @Test
+    void disconnectAfterPublishBeforeResponseCompletionIsTerminal() throws Exception {
+        final DurableNetworkConfiguration configuration =
+                DurableNetworkConfiguration.defaults(tempDir.resolve("response-wal"));
+        final DurableMatchingEngineTcpServer server =
+                new DurableMatchingEngineTcpServer(configuration);
+        server.start();
+        try (Socket socket = connect(server)) {
+            socket.setSoTimeout(2_000);
+            final OutputStream output = socket.getOutputStream();
+            output.write(encode(request(1, 821, Side.SELL, 100, 1)));
+            output.flush();
+            readFrame(socket.getInputStream());
+            output.write(encode(request(2, 822, Side.SELL, 100, 1)));
+            output.flush();
+            readFrame(socket.getInputStream());
+
+            output.write(encode(request(3, 823, Side.BUY, 100, 2)));
+            output.flush();
+            final byte[] commandResult = readFrame(socket.getInputStream());
+            assertEquals(ProtocolConstants.COMMAND_RESULT_TYPE, unsigned(commandResult[5]));
+            socket.setSoLinger(true, 0);
+        }
+        awaitState(server, NetworkGatewayState.FAILED);
+        try {
+            assertTrue(server.failureCause().isPresent());
+        } finally {
+            server.shutdown(Duration.ofSeconds(2));
+        }
+
+        assertEquals(3, CommandWalReader.read(
+                configuration.durableConfiguration().walConfiguration()).size());
+    }
+
+    @Test
     void coalescedSecondRequestIsRejectedWithoutASecondDurableCommand() throws Exception {
         final DurableNetworkConfiguration configuration =
                 DurableNetworkConfiguration.defaults(tempDir.resolve("coalesced-wal"));
@@ -65,6 +121,7 @@ class Phase7NetworkFailureVerificationTest {
         server.start();
         try {
             try (Socket socket = connect(server)) {
+                socket.setSoTimeout(2_000);
                 final OutputStream output = socket.getOutputStream();
                 final byte[] first = encode(request(1, 811));
                 final byte[] second = encode(request(2, 812));
@@ -90,12 +147,21 @@ class Phase7NetworkFailureVerificationTest {
     }
 
     private static SubmitLimitRequest request(final long requestId, final long orderId) {
+        return request(requestId, orderId, Side.BUY, 100, 1);
+    }
+
+    private static SubmitLimitRequest request(
+            final long requestId,
+            final long orderId,
+            final Side side,
+            final long price,
+            final long quantity) {
         return new SubmitLimitRequest(
                 ClientRequestId.of(requestId),
                 OrderId.of(orderId),
-                Side.BUY,
-                Price.of(100),
-                Quantity.of(1));
+                side,
+                Price.of(price),
+                Quantity.of(quantity));
     }
 
     private static byte[] encode(final Object request) {
@@ -131,5 +197,22 @@ class Phase7NetworkFailureVerificationTest {
             Thread.onSpinWait();
         }
         assertEquals(expected, server.state());
+    }
+
+    private static void awaitDurableSequence(
+            final DurableMatchingEngineTcpServer server,
+            final long expectedNextSequence) {
+        final long deadline = System.nanoTime() + Duration.ofSeconds(3).toNanos();
+        while (System.nanoTime() < deadline) {
+            if (server.coordinator().nextCommandSequence().value() >= expectedNextSequence) {
+                return;
+            }
+            Thread.onSpinWait();
+        }
+        assertTrue(server.coordinator().nextCommandSequence().value() >= expectedNextSequence);
+    }
+
+    private static int unsigned(final byte value) {
+        return value & 0xFF;
     }
 }
