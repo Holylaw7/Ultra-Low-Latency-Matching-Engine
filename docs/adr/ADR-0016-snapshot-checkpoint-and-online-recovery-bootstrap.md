@@ -2,8 +2,9 @@
 
 ## Status
 
-Proposed — awaiting Human Phase 8 Blueprint Approval. No Phase 8 production
-implementation, merge or baseline tag is authorized by this proposal.
+Approved — Human Phase 8 Blueprint Approval recorded on `2026-08-22`.
+Implementation is authorized only in the enumerated dependency order and under
+the per-Task Evidence Gates. Merge and baseline tagging remain unauthorized.
 
 ## Context
 
@@ -387,10 +388,11 @@ unlisted file/API/scope change.
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
 | 2026-08-22 | Architect / Sol High | Proposed | Discovery completed; D1-D14 and the complete Phase 8 Blueprint are ready for Human review. |
+| 2026-08-22 | Human Developer | Approved | D1-D14 and TASK-029 through TASK-034 authorized in strict dependency order. Additive checkpoint/restore, recovered-engine construction, validated coordinator sequence seed and new Snapshot/recovery packages are authorized exactly as listed. Per-Task Evidence Gates and Exception Gates remain mandatory; merge/tag/Phase 9 remain unauthorized. |
 
 ```text
-ADR-0016: Proposed
-Implementation: Not authorized
+ADR-0016: Approved
+Implementation: Authorized in dependency order
 Merge / v0.7.0-engineering-baseline: Not authorized
-Next Gate: Human Phase 8 Blueprint Approval
+Next Gate: TASK-029 Evidence Gate
 ```

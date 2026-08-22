@@ -24,5 +24,6 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
 - [`PHASE-7-live-durable-command-pipeline-blueprint.md`](PHASE-7-live-durable-command-pipeline-blueprint.md)
   — Completed / Approved / frozen at `v0.6.0-engineering-baseline`.
 - [`PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md`](PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)
-  — Proposed; Discovery complete, ADR-0016 and TASK-029 through TASK-034 await
-  Human Phase 8 Blueprint Approval. Implementation is not authorized.
+  — Approved; TASK-029 authorized next, TASK-030 through TASK-034 authorized
+  conditionally by dependency-ordered Evidence Gates. Merge and baseline tag
+  remain unauthorized.

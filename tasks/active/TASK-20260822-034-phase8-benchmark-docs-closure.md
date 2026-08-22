@@ -4,8 +4,8 @@
 | --- | --- |
 | Task | `TASK-20260822-034` / Recovery Benchmark, Documentation and Closure Proposal |
 | Phase / ADR / Blueprint | Phase 8 / ADR-0016 / `PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md` |
-| Status | Proposed — Not Authorized |
-| Depends on | TASK-033 Evidence Gate PASS after Blueprint approval |
+| Status | Approved — Authorized after TASK-033 Evidence Gate |
+| Depends on | TASK-033 Evidence Gate PASS |
 | Manual Gate | Stops at Human Phase 8 Closure Review |
 | Planned report | `tasks/reports/PHASE-8-task-034.md` |
 

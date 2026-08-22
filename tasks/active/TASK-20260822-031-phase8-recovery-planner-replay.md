@@ -4,8 +4,8 @@
 | --- | --- |
 | Task | `TASK-20260822-031` / Recovery Planner and Replay Executor |
 | Phase / ADR / Blueprint | Phase 8 / ADR-0016 / `PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md` |
-| Status | Proposed — Not Authorized |
-| Depends on | TASK-030 Evidence Gate PASS after Blueprint approval |
+| Status | Approved — Authorized after TASK-030 Evidence Gate |
+| Depends on | TASK-030 Evidence Gate PASS |
 | Manual Gate | No after Blueprint approval; Exception Gate remains active |
 | Planned report | `tasks/reports/PHASE-8-task-031.md` |
 

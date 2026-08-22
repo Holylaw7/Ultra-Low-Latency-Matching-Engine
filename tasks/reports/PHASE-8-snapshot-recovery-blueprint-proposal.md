@@ -5,12 +5,12 @@
 ```text
 Phase 8 Discovery: Completed
 Architect Review: PASS
-ADR-0016: Proposed
-Complete Blueprint: Proposed
-TASK-029 through TASK-034: Proposed / Not Authorized
-Production implementation: Not Authorized
+ADR-0016: Approved
+Complete Blueprint: Approved
+TASK-029 through TASK-034: Authorized in dependency order
+Production implementation: Authorized from TASK-029
 Merge / v0.7.0-engineering-baseline: Not Authorized
-Next Gate: Human Phase 8 Blueprint Approval
+Next Gate: TASK-029 Evidence Gate
 ```
 
 ## Discovery Decision
@@ -156,4 +156,6 @@ continuous dependency-ordered execution after per-Task Evidence Gates
 the listed Exception Gates and deferred scope
 ```
 
-Until that decision is recorded, no Phase 8 implementation may begin.
+Human Phase 8 Blueprint Approval is recorded in ADR-0016 and the Blueprint.
+Implementation may begin only with TASK-029; later Tasks remain locked behind
+their predecessor Evidence Gates.

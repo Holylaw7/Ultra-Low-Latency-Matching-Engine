@@ -4,10 +4,16 @@
 | --- | --- |
 | Task | `TASK-20260822-029` / Canonical Engine Checkpoint Foundation |
 | Phase / ADR / Blueprint | Phase 8 / ADR-0016 / `PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md` |
-| Status | Proposed — Not Authorized |
-| Depends on | Human Phase 8 Blueprint Approval |
+| Status | Approved — Authorized / Next |
+| Depends on | Human Phase 8 Blueprint Approval — satisfied |
 | Manual Gate | No after Blueprint approval; Exception Gate remains active |
 | Planned report | `tasks/reports/PHASE-8-task-029.md` |
+
+## Decision
+
+ADR-0016 D4 and the Phase 8 Blueprint authorize only canonical checkpoint
+export/restore in the listed OrderBook/MatchingEngine files. Snapshot
+serialization and recovery orchestration remain later Tasks.
 
 ## Goal
 

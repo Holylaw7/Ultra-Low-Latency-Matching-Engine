@@ -5,15 +5,16 @@
 | Field | Value |
 | --- | --- |
 | Phase | `Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap` |
-| Blueprint Status | `Proposed — Pending Human Approval` |
+| Blueprint Status | `Approved — Human Blueprint Approval recorded` |
 | Owner | Human Developer |
 | Architect | Architect / Sol High |
 | Created | `2026-08-22` |
 | Baseline | `v0.6.0-engineering-baseline` at `6473365` |
 | Proposal Branch | `docs/phase8-snapshot-recovery-blueprint` |
+| Implementation Branch | `feature/phase8-snapshot-online-recovery` |
 | Planned Tasks | `TASK-20260822-029` through `TASK-20260822-034` |
-| Implementation | `Not Authorized` |
-| Next Gate | `Human Phase 8 Blueprint Approval` |
+| Implementation | `Authorized in dependency order` |
+| Next Gate | `TASK-029 Evidence Gate` |
 
 ## 2. Phase Objective
 
@@ -73,8 +74,9 @@ fails closed; it does not silently trigger fallback.
 | --- | --- | --- |
 | D1-D14 | [`ADR-0016`](../../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md) | Explicit pure-WAL and Snapshot-tail recovery, WAL authority, offline checkpoint, strict format/publication/corruption, listener-last handoff and narrow additive APIs |
 
-All decisions and file exceptions remain proposed until one Human Phase 8
-Blueprint Approval records them.
+All decisions and file exceptions were approved by the Human Phase 8 Blueprint
+Approval recorded below. Execution remains limited to the listed Tasks and
+Evidence Gates.
 
 ## 6. Architecture and Responsibility Boundaries
 
@@ -414,14 +416,14 @@ Phase 9 and Product Release remain unauthorized.
 
 | Date | Reviewer | Decision | Approved ADRs / Tasks | Constraints |
 | --- | --- | --- | --- | --- |
-| Pending | Human Developer | Pending | ADR-0016 D1-D14; TASK-029..034 | No implementation until explicit approval |
+| 2026-08-22 | Human Developer | Approved | ADR-0016 D1-D14; TASK-029..034 | Strict dependency order; per-Task Evidence Gates and Exception Gates; merge/tag/Phase 9/Product Release remain unauthorized |
 
 ```text
 Phase 8 Discovery: Completed
-ADR-0016: Proposed
-Complete Blueprint: Proposed
-TASK-029 through TASK-034: Proposed / Not Authorized
-Implementation: Not Authorized
+ADR-0016: Approved
+Complete Blueprint: Approved
+TASK-029 through TASK-034: Authorized in dependency order
+Implementation: Authorized
 Merge / v0.7.0-engineering-baseline: Not Authorized
-Next Gate: Human Phase 8 Blueprint Approval
+Next Gate: TASK-029 Evidence Gate
 ```

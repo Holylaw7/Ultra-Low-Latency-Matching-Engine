@@ -14,9 +14,9 @@ and prior remediation runs `32565591806`, `32566165212` and `32570890919`; its
  complete at `9fed6b2` / CI `32574274905`, with verifier,
 benchmark-reviewer and docs-auditor PASS. Human Phase 7 Closure is approved;
 the merge `6473365`, master CI `32574891113` and tag CI `32574958017` are
-verified. Online crash recovery and Snapshot restore are now described by
-proposed ADR-0016 and the Complete Phase 8 Blueprint. No Phase 8 implementation
-is authorized before Human Blueprint Approval.
+verified. Online crash recovery and Snapshot restore are governed by approved
+ADR-0016 and the Complete Phase 8 Blueprint. TASK-029 is authorized; later
+implementation remains gated by dependency Evidence Gates.
 
 ## Implemented Offline Flow
 
@@ -66,7 +66,7 @@ restart
 ```
 
 Snapshot format, state restore and online recovery orchestration remain
-proposed work governed by ADR-0016 and TASK-029 through TASK-034. Snapshot is a
+approved work governed by ADR-0016 and TASK-029 through TASK-034. Snapshot is a
 derived acceleration checkpoint; WAL remains authoritative. Hot Snapshot,
 WAL retention, reconnect/deduplication, exactly-once and replication remain
 deferred. Phase 7 completed TASK-024 through TASK-028 with approved evidence;

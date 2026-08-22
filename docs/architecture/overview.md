@@ -97,7 +97,7 @@ explicit non-goals.
    `32574274905`. Merge `6473365`, master CI `32574891113` and tag CI
    `32574958017` are verified.
 8. Snapshot checkpoint and online Recovery bootstrap — **ADR-0016 and Complete
-   Blueprint proposed; TASK-029 through TASK-034 not authorized pending Human
-   Phase 8 Blueprint Approval**.
+   Blueprint approved; TASK-029 authorized, later Tasks gated by dependency
+   Evidence Gates**.
 9. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.
