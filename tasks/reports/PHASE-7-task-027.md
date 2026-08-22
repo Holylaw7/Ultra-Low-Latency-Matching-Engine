@@ -15,8 +15,8 @@
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
 | Push | PASS — branch synchronized |
 | CI | PASS — baseline [32565591806](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32565591806); timing remediation [32566165212](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32566165212); approved-boundary remediation [32570890919](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32570890919); Round 2 [32571940187](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32571940187) |
-| Working tree | Code and documentation evidence are committed at `4a08af3`; pre-existing `.vscode/` remains untouched |
-| Documentation CI | PASS — synchronization commit `4a08af3`, exact-SHA run [32572125714](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32572125714) |
+| Working tree | Code checkpoint `7b9106f` and documentation evidence checkpoint `f2e9ad3` are committed; pre-existing `.vscode/` remains untouched |
+| Documentation CI | PASS — final evidence synchronization `f2e9ad3`, exact-SHA run [32572261039](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32572261039) |
 | Focused evidence | PASS — 12 Phase 7 tests |
 | Regression evidence | PASS — `mvn verify`, 158 core tests |
 | Checkstyle | PASS — 0 violations |
