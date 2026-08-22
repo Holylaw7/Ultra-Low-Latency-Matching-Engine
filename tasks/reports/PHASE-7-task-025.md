@@ -10,18 +10,18 @@
 | Scope | New coordinator and tests under `integration/durable/**` |
 | Implementation | Complete for the authorized coordinator stage |
 | Branch | `feature/phase7-live-durable-command-pipeline` |
-| HEAD at verification | `075059b` — `docs(codex): make main agent default writer` |
-| Commit | Pending — main writer will create the logical Task commit |
+| HEAD at verification | `2342897` — `feat(phase7): add WAL-before-pipeline coordinator` |
+| Commit | `2342897` — pushed to `origin/feature/phase7-live-durable-command-pipeline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Push | Pending until the Task commit is created |
-| CI | Pending — no exact-SHA result claimed yet |
+| Push | PASS — branch synchronized |
+| CI | PASS — exact-SHA GitHub Actions run [32564005988](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32564005988) |
 | Working tree | Non-clean for TASK-025 code/report plus synchronized ADR, README and context docs; pre-existing `.vscode/` remains untouched |
 | Focused evidence | PASS — 15 tests including TASK-024 contracts |
 | Regression evidence | PASS — `mvn verify`, 144 tests |
 | Checkstyle | PASS — 0 violations |
 | Frozen-path audit | PASS — zero changes under Domain/OrderBook/Engine/Pipeline/WAL/Recovery/Network |
 | Exception Gate | Not triggered |
-| Next gate | TASK-025 Evidence Gate; commit/push/exact-SHA CI pending |
+| Next gate | TASK-026 Evidence Gate |
 
 ## Delivered
 
@@ -54,8 +54,8 @@ git diff --check
 ```
 
 The frozen-path audit found no changed files under the Phase 2–6 production
-boundaries. The local Evidence Gate is not complete until the logical commit,
-remote push and exact-SHA CI result are recorded.
+boundaries. The logical commit, remote push and exact-SHA CI result are now
+recorded, so the TASK-025 Evidence Gate is complete.
 
 ## Architecture / ADR Alignment
 
@@ -76,11 +76,11 @@ remote push and exact-SHA CI result are recorded.
 
 ## Next Stage
 
-TASK-025 Evidence Gate must pass before TASK-026 work begins. TASK-026 through
-TASK-028 remain authorized conditionally in dependency order. Phase Closure,
+TASK-025 Evidence Gate passed. TASK-026 through TASK-028 remain authorized
+conditionally in dependency order. Phase Closure,
 merge to `master`, `v0.6.0-engineering-baseline`, Snapshot, online Recovery,
 reconnect/deduplication and Product Release remain unauthorized.
 
 ## Gate Status
 
-`Blueprint Authorized — continue to TASK-025 Evidence Gate after commit, push and exact-SHA CI.`
+`TASK-025 Evidence Gate PASS — TASK-026 is the next authorized dependency-ordered Task.`

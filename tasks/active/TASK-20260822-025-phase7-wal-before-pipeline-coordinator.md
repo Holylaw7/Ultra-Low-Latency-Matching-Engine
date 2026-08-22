@@ -4,10 +4,10 @@
 | --- | --- |
 | Task | `TASK-20260822-025` / WAL-before-Pipeline Coordinator |
 | Phase / ADR / Blueprint | Phase 7 / ADR-0015 / `PHASE-7-live-durable-command-pipeline-blueprint.md` |
-| Status | Implementation Complete; Evidence Gate Pending |
+| Status | Evidence Gate PASS / Completed |
 | Scope | New durable coordinator and tests under `integration/durable/**` |
 | Report | [`PHASE-7-task-025.md`](../reports/PHASE-7-task-025.md) |
-| Next Gate | TASK-025 Evidence Gate |
+| Next Gate | TASK-026 Evidence Gate |
 
 ## Goal
 
@@ -29,4 +29,5 @@ durable-then-FULL fail-stop semantics and lifecycle ownership.
   sequence-contract and lifecycle tests.
 - Local implementation evidence is recorded in
   [`PHASE-7-task-025.md`](../reports/PHASE-7-task-025.md); commit, push and
-  exact-SHA CI remain the Evidence Gate.
+  exact-SHA CI passed on commit `2342897` with GitHub Actions run
+  `32564005988`. TASK-026 is now the next dependency-ordered Evidence Gate.

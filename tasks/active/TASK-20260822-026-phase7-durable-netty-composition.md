@@ -4,9 +4,9 @@
 | --- | --- |
 | Task | `TASK-20260822-026` / Durable Netty Composition |
 | Phase / ADR / Blueprint | Phase 7 / ADR-0015 / `PHASE-7-live-durable-command-pipeline-blueprint.md` |
-| Status | Approved conditionally; depends on TASK-025 Evidence Gate |
+| Status | Authorized / Next |
 | Scope | New `network/netty/durable/**` opt-in server/session and tests |
-| Next Gate | Preceding Evidence Gate + exact-SHA CI |
+| Next Gate | TASK-026 Evidence Gate |
 
 ## Goal
 
