@@ -4,9 +4,9 @@
 | --- | --- |
 | Task | `TASK-20260822-028` / Benchmark, Documentation and Closure Evidence |
 | Phase / ADR / Blueprint | Phase 7 / ADR-0015 / `PHASE-7-live-durable-command-pipeline-blueprint.md` |
-| Status | Approved conditionally; depends on TASK-027 Evidence Gate |
+| Status | Authorized / Next; TASK-027 Evidence Gate passed |
 | Scope | Component/loopback benchmark, reports, README, architecture and context |
-| Next Gate | Human Phase 7 Closure Review |
+| Next Gate | TASK-028 Evidence Gate + exact-SHA CI |
 
 ## Acceptance
 

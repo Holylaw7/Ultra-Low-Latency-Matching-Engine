@@ -4,7 +4,7 @@
 | --- | --- |
 | Task | `TASK-20260822-027` / Durability, Failure and Replay Verification |
 | Phase / ADR / Blueprint | Phase 7 / ADR-0015 / `PHASE-7-live-durable-command-pipeline-blueprint.md` |
-| Status | Implementation Complete; Evidence Gate Pending |
+| Status | Completed / Evidence Gate PASS |
 | Scope | Tests, deterministic barriers/fixtures and verification report only |
 | Next Gate | TASK-027 Evidence Gate + exact-SHA CI |
 
@@ -29,3 +29,9 @@
   durable single-session server.
 - Reused existing WAL rotation and Pipeline handler-failure tests; no
   production-only seam or frozen-path change was introduced.
+
+## Evidence Gate
+
+- Verification commit: `80838db`
+- Exact-SHA CI: [32565591806](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32565591806) PASS
+- Next authorized task: TASK-028 Benchmark, Documentation and Closure Evidence
