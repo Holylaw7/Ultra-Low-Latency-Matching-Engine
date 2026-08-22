@@ -4,9 +4,9 @@
 | --- | --- |
 | Task | `TASK-20260822-025` / WAL-before-Pipeline Coordinator |
 | Phase / ADR / Blueprint | Phase 7 / ADR-0015 / `PHASE-7-live-durable-command-pipeline-blueprint.md` |
-| Status | Approved conditionally; depends on TASK-024 Evidence Gate |
+| Status | Approved; TASK-024 Evidence Gate PASS; Authorized / next |
 | Scope | New durable coordinator and tests under `integration/durable/**` |
-| Next Gate | TASK-024 Evidence Gate + exact-SHA CI |
+| Next Gate | TASK-025 Evidence Gate |
 
 ## Goal
 

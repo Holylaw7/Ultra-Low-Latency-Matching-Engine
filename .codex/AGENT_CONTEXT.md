@@ -13,17 +13,17 @@
 | Phase | Phase 7 — Live Durable Command Pipeline Integration (`Blueprint Approved / Execution Active`) |
 | Latest product task | [`TASK-20260821-023`](../tasks/completed/TASK-20260821-023-phase6-network-benchmark-docs.md) — Completed / Evidence PASS |
 | Latest architecture decision | [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md) — Approved |
-| Current planning task | [`TASK-20260822-024`](../tasks/active/TASK-20260822-024-phase7-durable-integration-contracts.md) — In Progress / Evidence Gate pending |
+| Current planning task | [`TASK-20260822-025`](../tasks/active/TASK-20260822-025-phase7-wal-before-pipeline-coordinator.md) — Authorized / next |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 6 Baseline Frozen; Phase 7 execution active; Product Release separately governed |
 | Product approval | Phase 7 Blueprint Approved; `v0.5.0-engineering-baseline` remains frozen; Phase Closure and Product Release not authorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
-| Branch | `master` |
+| Branch | `feature/phase7-live-durable-command-pipeline` |
 | Engineering baseline commit | `b7cf68e` |
 | Engineering baseline tag | `v0.5.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/master` at `2591042`; `v0.5.0-engineering-baseline` remains at the verified Phase 6 merge commit |
-| CI | Phase 6 master merge [32495076976](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495076976) PASS; baseline tag [32495218654](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495218654) PASS; native subagent configuration CI [32497229680](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32497229680) PASS |
+| Remote sync | `origin/feature/phase7-live-durable-command-pipeline` at `93be16638a20cfc2ed16cf3ecd6d5d0b07c885e5`; `origin/master` remains at `2591042`; `v0.5.0-engineering-baseline` remains at the verified Phase 6 merge commit |
+| CI | Phase 7 TASK-024 exact-SHA run [32562594583](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32562594583) PASS; Phase 6 master merge [32495076976](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495076976) PASS; baseline tag [32495218654](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495218654) PASS; native subagent configuration CI [32497229680](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32497229680) PASS |
 
 ## Project Progress
 
@@ -101,8 +101,9 @@ ADR-0011 Final Approved
   -> Phase 6 [Baseline Frozen]
   -> Phase 7 Discovery / ADR-0015 / Complete Blueprint [Prepared]
   -> Human Phase 7 Blueprint Approval [Approved]
-  -> TASK-024 [In Progress / contracts implemented; Evidence Gate pending]
-  -> TASK-025 through TASK-028 [Authorized conditionally on Evidence Gates]
+  -> TASK-024 [Completed / exact-SHA CI PASS]
+  -> TASK-025 [Authorized / Next]
+  -> TASK-026 through TASK-028 [Authorized conditionally on Evidence Gates]
   -> Phase 7 implementation [Authorized in dependency order]
 ```
 
@@ -147,9 +148,10 @@ injection for those three paths was not performed and is an explicitly
 accepted baseline limitation. No production-only test seam was introduced.
 Product Release, Snapshot and online Recovery remain separately governed. Phase
 7 now has an approved ADR and complete Blueprint for Live Durable Command
-Pipeline Integration. TASK-024 contracts/configuration implementation is
-complete and its Evidence Gate is pending; TASK-025 through TASK-028 remain
-conditionally authorized after their preceding Evidence Gates.
+Pipeline Integration. TASK-024 contracts/configuration implementation and its
+Evidence Gate are complete with exact-SHA CI PASS; TASK-025 is authorized next,
+and TASK-026 through TASK-028 remain conditionally authorized after their
+preceding Evidence Gates.
 Phase Closure, merge and `v0.6.0-engineering-baseline` remain unauthorized.
 
 Current Blueprint Proposal:
@@ -159,8 +161,8 @@ Current Phase 7 ADR:
 [`ADR-0015-live-durable-command-pipeline-integration.md`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md).
 
 Phase 7 Tasks:
-`TASK-024` through `TASK-028` under `tasks/active/`; TASK-024 contracts are
-implemented with its Evidence Gate pending, and later Tasks inherit
+`TASK-024` through `TASK-028` under `tasks/active/`; TASK-024 is completed with
+exact-SHA CI PASS, TASK-025 is authorized next, and later Tasks inherit
 authorization only after their preceding Evidence Gates.
 
 Current Phase 6 Closure Proposal:

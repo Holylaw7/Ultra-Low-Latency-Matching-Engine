@@ -15,9 +15,9 @@ Netty gateway is complete and frozen at `v0.5.0-engineering-baseline`:
 TASK-019 through TASK-023 are archived after passing their evidence gates,
 including deterministic network verification and component/loopback benchmark
 evidence. Phase 7 now has an approved ADR and Complete Blueprint for Live
-Durable Command Pipeline Integration; TASK-024 contracts are implemented with
-its Evidence Gate pending, and later Tasks depend on their preceding Evidence
-Gates. Product Release remains separately governed.
+Durable Command Pipeline Integration; TASK-024 contracts and its Evidence Gate
+are complete, TASK-025 is authorized next, and later Tasks depend on their
+preceding Evidence Gates. Product Release remains separately governed.
 
 ## Scope
 

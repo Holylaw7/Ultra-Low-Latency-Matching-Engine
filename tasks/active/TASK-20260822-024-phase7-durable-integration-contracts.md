@@ -4,10 +4,10 @@
 | --- | --- |
 | Task | `TASK-20260822-024` / Durable Integration Contracts |
 | Phase / ADR / Blueprint | Phase 7 / ADR-0015 / `PHASE-7-live-durable-command-pipeline-blueprint.md` |
-| Status | Implementation Complete; Evidence Gate Pending |
+| Status | Evidence Gate PASS / Completed |
 | Scope | New `integration/durable/**` contracts, configuration and focused tests |
 | Report | [`PHASE-7-task-024.md`](../reports/PHASE-7-task-024.md) |
-| Next Gate | TASK-024 Evidence Gate; exact-SHA CI remains pending until commit/push |
+| Next Gate | TASK-025 Evidence Gate |
 
 ## Goal
 
@@ -33,5 +33,9 @@ Snapshot, Recovery or optimization.
 - Evidence recorded in [`PHASE-7-task-024.md`](../reports/PHASE-7-task-024.md):
   focused tests PASS, `mvn verify` PASS, Checkstyle PASS and frozen-path audit
   PASS.
-- Task remains at the Evidence Gate because no commit, push or exact-SHA CI
-  evidence exists yet.
+- Exact-SHA evidence passed on commit
+  `93be16638a20cfc2ed16cf3ecd6d5d0b07c885e5`; GitHub Actions run
+  `32562594583` passed on `feature/phase7-live-durable-command-pipeline`.
+- TASK-024 is complete. TASK-025 is the next authorized dependency-ordered
+  Task; Phase 7 runtime composition remains governed by its later Evidence
+  Gates.

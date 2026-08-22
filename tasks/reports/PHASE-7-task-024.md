@@ -9,18 +9,18 @@
 | Authorization | Human Phase Blueprint Approval inherited |
 | Scope | New `integration/durable/**` contracts, configuration and focused tests |
 | Implementation | Complete for the authorized contract stage |
-| Branch | `master` |
-| HEAD at verification | `2591042` — `chore(codex): configure native subagents` |
+| Branch | `feature/phase7-live-durable-command-pipeline` |
+| Commit | `93be16638a20cfc2ed16cf3ecd6d5d0b07c885e5` — `feat(phase7): add durable integration contracts` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Push | Not performed; commit/push remain pending |
-| CI | Pending until commit/push; no new exact-SHA CI result claimed |
-| Working tree | Non-clean; pre-existing Phase 7 worktree changes preserved |
+| Push | Pushed to `origin/feature/phase7-live-durable-command-pipeline` |
+| CI | PASS — exact-SHA GitHub Actions run [32562594583](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32562594583) |
+| Working tree | After evidence-sync commit: only pre-existing untracked `.vscode/`; no other changes |
 | Focused evidence | PASS — 9 tests |
 | Regression evidence | PASS — `mvn verify`, 138 tests |
 | Checkstyle | PASS — 0 violations |
 | Frozen-path audit | PASS — zero changes under Domain/OrderBook/Engine/WAL/Recovery |
 | Exception Gate | Not triggered |
-| Next gate | TASK-024 Evidence Gate; exact-SHA CI pending until commit/push |
+| Next gate | TASK-025 Evidence Gate |
 
 ## Delivered
 
