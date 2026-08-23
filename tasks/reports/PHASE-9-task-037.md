@@ -10,6 +10,9 @@
 | Result | In Progress — Evidence Gate pending |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Branch | `feature/phase9-system-qualification` |
+| Implementation | `b80e12e` + resource-evidence refinement `0ee094c` |
+| Standard CI | `32629749230` PASS |
+| Quick Lane CI | `32629749209` PASS |
 | Next Gate | TASK-038 remains locked until PASS |
 
 ## Goal
@@ -27,6 +30,10 @@ checks long-run resource behavior without modifying the production runtime.
 - manifest, resource CSV, JFR and failure-artifact hashing;
 - focused configuration and short-lane integration tests.
 
+The short-lane implementation evidence is complete at `0ee094c`. The real
+60-minute / 1,000,000-command Full lane is an explicit manual evidence unit;
+it has not been claimed or substituted by the short lane.
+
 ## Explicitly Not Implemented
 
 - the real 60-minute / 1,000,000-command campaign in CI;
@@ -38,12 +45,13 @@ checks long-run resource behavior without modifying the production runtime.
 ## Evidence Plan
 
 ```text
-mvn -pl qualification -am test       # PASS
-mvn verify                            # pending final gate
-git diff --check                      # pending final gate
-frozen-path audit                     # pending final gate
-verifier + docs-auditor               # pending final gate
-exact-SHA CI                          # pending final gate
+mvn -pl qualification -am test       # PASS (18 qualification incl. 1 skip; 195 core)
+mvn verify                            # PASS
+git diff --check                      # PASS
+frozen-path audit                     # PASS (0 production-path changes)
+standard exact-SHA CI                 # 32629749230 PASS
+quick-lane exact-SHA CI               # 32629749209 PASS
+verifier + docs-auditor               # pending final task review
 ```
 
 The short lane proves harness composition only. A Full Qualification claim

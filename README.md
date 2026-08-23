@@ -44,8 +44,8 @@ and TASK-035 through TASK-040 are authorized in strict dependency order.
 TASK-035 qualification foundation is complete at `22d13fe` with exact-SHA CI
 `32625554518` PASS; TASK-036 Evidence Gate is complete after remediation at
 `f90e42c` with standard CI `32627744868` and quick-lane CI `32627744878` PASS;
-TASK-037 is authorized next on the `feature/phase9-system-qualification`
-branch. Phase 9 is an engineering
+TASK-037 is in progress on the `feature/phase9-system-qualification` branch;
+its Evidence Gate remains pending. Phase 9 is an engineering
 qualification phase: production source, runtime semantics and existing formats
 remain frozen; production optimization, Phase 10 and Product Release remain
 unauthorized.
