@@ -19,6 +19,13 @@ public final class QualificationWorkloadV1 {
     /** Stable workload version written to every qualification manifest. */
     public static final String VERSION = "qualification-workload-v1";
 
+    /** Explicit identity for the bounded-state memory qualification workload. */
+    public static final String MEMORY_STEADY_STATE_VERSION =
+            "qualification-memory-steady-state-v1";
+
+    /** Maximum active orders after any complete steady-state cycle. */
+    public static final int MEMORY_STEADY_STATE_MAX_ACTIVE_ORDERS = 1;
+
     private QualificationWorkloadV1() {
     }
 
@@ -35,19 +42,55 @@ public final class QualificationWorkloadV1 {
         }
         final List<EngineCommand> commands = new ArrayList<>(configuration.commandCount());
         for (int index = 0; index < configuration.commandCount(); index++) {
-            final long sequence = index + 1L;
-            final int cycle = index / cycleLength(configuration.profile());
-            final int position = index % cycleLength(configuration.profile());
-            commands.add(command(configuration.profile(), configuration.seed(),
-                    sequence, cycle, position));
+            commands.add(commandAt(configuration, index));
         }
         final List<EngineCommand> immutableCommands = List.copyOf(commands);
         return new QualificationWorkload(
-                VERSION,
+                version(configuration.profile()),
                 configuration.profile(),
                 configuration.seed(),
                 immutableCommands,
                 QualificationCanonicalizer.digest(immutableCommands));
+    }
+
+    /** Returns one deterministic command without materializing the complete workload. */
+    static EngineCommand commandAt(
+            final QualificationConfiguration configuration,
+            final int index) {
+        if (configuration == null) {
+            throw new NullPointerException("configuration");
+        }
+        if (index < 0 || index >= configuration.commandCount()) {
+            throw new IndexOutOfBoundsException("workload index is outside configuration");
+        }
+        final long sequence = index + 1L;
+        final int cycleLength = cycleLength(configuration.profile());
+        final int cycle = index / cycleLength;
+        final int position = index % cycleLength;
+        return command(configuration.profile(), configuration.seed(),
+                sequence, cycle, position);
+    }
+
+    /** Compares a persisted command vector with the deterministic source without a second vector. */
+    static boolean matches(
+            final List<EngineCommand> commands,
+            final QualificationConfiguration configuration) {
+        if (commands == null || configuration == null
+                || commands.size() != configuration.commandCount()) {
+            return false;
+        }
+        for (int index = 0; index < commands.size(); index++) {
+            if (!commands.get(index).equals(commandAt(configuration, index))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** Returns the version identity associated with one profile. */
+    static String version(final QualificationProfile profile) {
+        return profile == QualificationProfile.MEMORY_STEADY_STATE_V1
+                ? MEMORY_STEADY_STATE_VERSION : VERSION;
     }
 
     private static int cycleLength(final QualificationProfile profile) {
@@ -55,6 +98,7 @@ public final class QualificationWorkloadV1 {
             case LIFECYCLE_MIX -> 6;
             case CROSSING_MULTI_MATCH -> 6;
             case RESTING_DEPTH -> 8;
+            case MEMORY_STEADY_STATE_V1 -> 4;
         };
     }
 
@@ -75,6 +119,22 @@ public final class QualificationWorkloadV1 {
                     sequence, baseOrderId, priceOffset, position);
             case RESTING_DEPTH -> restingCommand(
                     sequence, baseOrderId, priceOffset, position);
+            case MEMORY_STEADY_STATE_V1 -> memorySteadyStateCommand(
+                    sequence, baseOrderId, priceOffset, position);
+        };
+    }
+
+    private static EngineCommand memorySteadyStateCommand(
+            final long sequence,
+            final long baseOrderId,
+            final long priceOffset,
+            final int position) {
+        return switch (position) {
+            case 0 -> submit(sequence, baseOrderId, Side.SELL, 100L + priceOffset, 1L);
+            case 1 -> submit(sequence, baseOrderId + 1L, Side.BUY, 100L + priceOffset, 1L);
+            case 2 -> submit(sequence, baseOrderId + 2L, Side.SELL, 101L + priceOffset, 1L);
+            case 3 -> cancel(sequence, baseOrderId + 2L);
+            default -> throw new IllegalArgumentException("unsupported memory steady-state position");
         };
     }
 

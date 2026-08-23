@@ -108,6 +108,21 @@ public record QualificationFullConfiguration(
                 outputDirectory);
     }
 
+    /** Returns the separately versioned bounded-state Full lane for a future approved campaign. */
+    public static QualificationFullConfiguration memorySteadyStateFull(
+            final Path outputDirectory) {
+        return new QualificationFullConfiguration(
+                QualificationLane.FULL,
+                QualificationProfile.MEMORY_STEADY_STATE_V1,
+                20260823L,
+                FULL_MINIMUM_COMMANDS,
+                FULL_MINIMUM_DURATION,
+                Duration.ofSeconds(5),
+                Duration.ofSeconds(5),
+                FULL_MINIMUM_POST_GC_SAMPLES,
+                outputDirectory);
+    }
+
     /** Returns a short harness-only configuration; it is not full qualification evidence. */
     public static QualificationFullConfiguration test(final Path outputDirectory) {
         return new QualificationFullConfiguration(
@@ -115,6 +130,21 @@ public record QualificationFullConfiguration(
                 QualificationProfile.CROSSING_MULTI_MATCH,
                 20260823L,
                 12,
+                Duration.ofMillis(1),
+                Duration.ofSeconds(5),
+                Duration.ofMillis(10),
+                0,
+                outputDirectory);
+    }
+
+    /** Returns a short public-path bounded-state memory qualification configuration. */
+    public static QualificationFullConfiguration memorySteadyStateTest(
+            final Path outputDirectory) {
+        return new QualificationFullConfiguration(
+                QualificationLane.TEST,
+                QualificationProfile.MEMORY_STEADY_STATE_V1,
+                20260823L,
+                32,
                 Duration.ofMillis(1),
                 Duration.ofSeconds(5),
                 Duration.ofMillis(10),

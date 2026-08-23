@@ -12,5 +12,11 @@ public enum QualificationProfile {
     CROSSING_MULTI_MATCH,
 
     /** Exercises a bounded number of resting price levels. */
-    RESTING_DEPTH
+    RESTING_DEPTH,
+
+    /**
+     * Qualification-only workload whose active order state returns to a fixed bound every
+     * cycle. This is a new workload identity; the existing profile vectors remain unchanged.
+     */
+    MEMORY_STEADY_STATE_V1
 }

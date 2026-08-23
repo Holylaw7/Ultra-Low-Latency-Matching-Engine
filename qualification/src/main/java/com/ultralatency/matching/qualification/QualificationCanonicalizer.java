@@ -24,9 +24,13 @@ final class QualificationCanonicalizer {
     static String digest(final List<EngineCommand> commands) {
         final MessageDigest digest = sha256();
         for (final EngineCommand command : commands) {
-            digest.update(encode(command));
+            updateCommand(digest, command);
         }
         return HexFormat.of().formatHex(digest.digest());
+    }
+
+    static void updateCommand(final MessageDigest digest, final EngineCommand command) {
+        Objects.requireNonNull(digest, "digest").update(encode(Objects.requireNonNull(command, "command")));
     }
 
     /**
@@ -48,7 +52,7 @@ final class QualificationCanonicalizer {
         }
         final MessageDigest digest = sha256();
         for (int index = 0; index < exchanges.size(); index++) {
-            digest.update(encode(commands.get(startIndex + index)));
+            updateCommand(digest, commands.get(startIndex + index));
             updateExchange(digest, exchanges.get(index));
         }
         return HexFormat.of().formatHex(digest.digest());
@@ -84,7 +88,7 @@ final class QualificationCanonicalizer {
         return HexFormat.of().formatHex(digest.digest());
     }
 
-    private static void updateExchange(
+    static void updateExchange(
             final MessageDigest digest,
             final QualificationExchange exchange) {
         updateLong(digest, exchange.requestId());

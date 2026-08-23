@@ -53,4 +53,32 @@ class QualificationFullRunnerTest {
                 run.artifactDirectory().resolve("resource-evidence.csv")));
         assertFalse(Files.exists(run.artifactDirectory().resolve("failure-report.txt")));
     }
+
+    @Test
+    void memorySteadyStateLaneUsesThePublicBoundaryAndReportsTheFinalStateBound()
+            throws Exception {
+        final QualificationFullConfiguration configuration =
+                QualificationFullConfiguration.memorySteadyStateTest(
+                        temporaryDirectory.resolve("memory-results"));
+
+        final QualificationFullRun run = new QualificationFullRunner().run(configuration);
+
+        assertTrue(run.qualificationRun().result().success());
+        assertEquals(32, run.qualificationRun().result().acceptedCommands());
+        assertEquals("MEMORY_STEADY_STATE_V1",
+                run.qualificationRun().result().measurements().get("profile"));
+        assertEquals("true",
+                run.qualificationRun().result().measurements().get("memoryStateBoundPassed"));
+        assertEquals("0",
+                run.qualificationRun().result().measurements().get("memoryStateActiveOrderCount"));
+        assertEquals("2",
+                run.qualificationRun().result().measurements().get("retainedProbeCount"));
+        assertEquals(
+                run.qualificationRun().result().measurements().get("walCommandDigestHex"),
+                run.qualificationRun().result().measurements().get("streamedCommandDigestHex"));
+        assertTrue(run.listenerRebound());
+        assertTrue(run.recoveryLeaseReacquired());
+        assertTrue(run.inventoryStable());
+        assertFalse(run.fullCriteriaPassed());
+    }
 }

@@ -90,4 +90,17 @@ class QualificationConfigurationTest {
         assertTrue(configuration.commandCount()
                 < QualificationFullConfiguration.FULL_MINIMUM_COMMANDS);
     }
+
+    @Test
+    void memorySteadyStateFullLaneIsExplicitlyVersionedWithoutStartingARun() {
+        final QualificationFullConfiguration configuration =
+                QualificationFullConfiguration.memorySteadyStateFull(Path.of("results"));
+
+        assertEquals(QualificationLane.FULL, configuration.lane());
+        assertEquals(QualificationProfile.MEMORY_STEADY_STATE_V1, configuration.profile());
+        assertEquals(QualificationFullConfiguration.FULL_MINIMUM_COMMANDS,
+                configuration.commandCount());
+        assertEquals(QualificationFullConfiguration.FULL_MINIMUM_DURATION,
+                configuration.minimumDuration());
+    }
 }

@@ -25,10 +25,16 @@ public record QualificationWorkload(
     /** Creates a validated immutable workload. */
     public QualificationWorkload {
         Objects.requireNonNull(version, "version");
-        if (!QualificationWorkloadV1.VERSION.equals(version)) {
+        Objects.requireNonNull(profile, "profile");
+        final boolean standardVersion = QualificationWorkloadV1.VERSION.equals(version);
+        final boolean memoryVersion = QualificationWorkloadV1.MEMORY_STEADY_STATE_VERSION.equals(version);
+        if (!standardVersion && !memoryVersion) {
             throw new IllegalArgumentException("unsupported workload version: " + version);
         }
-        Objects.requireNonNull(profile, "profile");
+        final boolean memoryProfile = profile == QualificationProfile.MEMORY_STEADY_STATE_V1;
+        if (memoryProfile != memoryVersion) {
+            throw new IllegalArgumentException("workload version does not match profile");
+        }
         if (seed < 0) {
             throw new IllegalArgumentException("seed must be non-negative");
         }

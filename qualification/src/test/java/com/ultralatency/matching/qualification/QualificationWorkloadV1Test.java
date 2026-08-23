@@ -120,4 +120,29 @@ class QualificationWorkloadV1Test {
             assertEquals(24, engine.checkpoint().lastAppliedCommandSequence());
         }
     }
+
+    @Test
+    void memorySteadyStateProfileKeepsLiveOrderStateBounded() {
+        final QualificationConfiguration configuration = new QualificationConfiguration(
+                QualificationProfile.MEMORY_STEADY_STATE_V1,
+                20260823L,
+                64,
+                java.time.Duration.ofSeconds(1),
+                java.nio.file.Path.of("results"));
+        final QualificationWorkload workload = QualificationWorkloadV1.generate(configuration);
+        final MatchingEngine engine = new MatchingEngine();
+        int maximumActiveOrders = 0;
+        for (final com.ultralatency.matching.engine.EngineCommand command : workload.commands()) {
+            engine.process(command);
+            maximumActiveOrders = Math.max(
+                    maximumActiveOrders, engine.checkpoint().activeOrderCount());
+        }
+
+        assertEquals(QualificationWorkloadV1.MEMORY_STEADY_STATE_VERSION, workload.version());
+        assertEquals(0, engine.checkpoint().activeOrderCount());
+        assertEquals(QualificationWorkloadV1.MEMORY_STEADY_STATE_MAX_ACTIVE_ORDERS,
+                maximumActiveOrders);
+        assertEquals(workload.digestHex(),
+                QualificationWorkloadV1.generate(configuration).digestHex());
+    }
 }
