@@ -16,7 +16,7 @@
 | Phase Blueprint | [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md) |
 | Authorization Mode | `Blueprint` |
 | Current Stage | `Completed / Evidence Gate` |
-| Next Gate | `TASK-036 Authorized / Next` |
+| Next Gate | `TASK-036 In Progress` |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline HEAD | `87abbc1` / `v0.7.0-engineering-baseline` |
 | Remote | `origin` |
@@ -132,7 +132,7 @@ contracts. Task 035 must not design or implement the runtime harness.
 | --- | --- |
 | Blueprint | `tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md` |
 | Blueprint Status | `Approved` |
-| Authorized Task / Stages | TASK-035 foundation complete; TASK-036 is authorized next under the approved dependency order. |
+| Authorized Task / Stages | TASK-035 foundation complete; TASK-036 is in progress under the approved dependency order. |
 | Exception Gates | Production/runtime changes, new dependency, unlisted API/format, workload/threshold changes or runtime startup. |
 
 ### Architecture Impact
@@ -234,10 +234,10 @@ checkpoint and record exact-SHA CI before TASK-036.
 | ADR / Decision | `docs/adr/ADR-0017-system-qualification-performance-reliability.md` | Completed / Approved | Implementation | Inherited |
 | Task Approval | This task | Completed / Approved | Implementation | Inherited |
 | Implementation | This task | Completed | Verification | Blueprint |
-| Verification | `tasks/reports/PHASE-9-task-035.md` | PASS — `22d13fe` / CI `32625554518` | TASK-036 | Blueprint |
+| Verification | `tasks/reports/PHASE-9-task-035.md` | PASS — `22d13fe` / CI `32625554518` | TASK-036 In Progress | Blueprint |
 | Benchmark / Profile | Not applicable | Not applicable | Evidence Gate | Blueprint |
-| Documentation and Synchronization | `tasks/reports/PHASE-9-task-035.md` | Synchronized; Evidence Gate PASS | TASK-036 | Blueprint |
-| Completion | This task | Completed / Evidence Gate PASS | TASK-036 / Exception Gate | Blueprint |
+| Documentation and Synchronization | `tasks/reports/PHASE-9-task-035.md` | Synchronized; Evidence Gate PASS | TASK-036 In Progress | Blueprint |
+| Completion | This task | Completed / Evidence Gate PASS | TASK-036 In Progress / Exception Gate | Blueprint |
 
 ## 17. Implementation Log
 

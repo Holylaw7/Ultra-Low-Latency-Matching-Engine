@@ -14,7 +14,7 @@
 | Tests | `12 qualification + 195 core` passed |
 | Build | `mvn verify` passed |
 | CI | `32625554518` PASS |
-| Next Gate | TASK-036 Authorized / Next |
+| Next Gate | TASK-036 In Progress |
 
 ## Goal
 
@@ -69,5 +69,5 @@ TASK-036 remains dependency-locked until this Evidence Gate passes.
 ## Gate
 
 `TASK-035 Evidence Gate` PASS at `22d13fe` / CI `32625554518`. TASK-036 is
-authorized as the next task under the approved Phase 9 dependency order.
+now in progress under the approved Phase 9 dependency order.
 Phase 9 Closure remains unauthorized.

@@ -42,7 +42,7 @@ Phase 9 Blueprint is approved. [`ADR-0017`](docs/adr/ADR-0017-system-qualificati
 the [Complete Phase 9 Blueprint](tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md)
 and TASK-035 through TASK-040 are authorized in strict dependency order.
 TASK-035 qualification foundation is complete at `22d13fe` with exact-SHA CI
-`32625554518` PASS; TASK-036 is authorized next on the
+`32625554518` PASS; TASK-036 is now in progress on the
 `feature/phase9-system-qualification` branch. Phase 9 is an engineering
 qualification phase: production source, runtime semantics and existing formats
 remain frozen; production optimization, Phase 10 and Product Release remain

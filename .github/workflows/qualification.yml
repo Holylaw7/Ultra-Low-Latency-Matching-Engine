@@ -1,0 +1,27 @@
+name: Qualification Quick Lane
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  quick-qualification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Run deterministic quick qualification
+        run: >-
+          mvn --batch-mode --no-transfer-progress
+          -pl qualification -am
+          -Dsurefire.failIfNoSpecifiedTests=false
+          -Dqualification.quick=true
+          -Dtest=QualificationQuickSmokeTest test
