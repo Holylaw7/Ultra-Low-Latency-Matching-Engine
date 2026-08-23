@@ -134,6 +134,12 @@ transient CI evidence and is not represented as a passing gate. The current
 report checkpoint must obtain its own exact-SHA CI PASS before TASK-037 can
 advance.
 
+For the current report checkpoint `331dbb4`, standard CI
+`32639589940` also ended with a generic runner exit and no test annotations;
+it is not a passing gate. Its Qualification Quick Lane
+`32639589960` passed. This is retained as transient CI evidence; TASK-037
+still requires a standard exact-SHA CI PASS before it can advance.
+
 The later docs-only checkpoint `03123fa` produced CI run `32632261832` with a
 generic runner exit and no test annotations; it is not used as Evidence Gate
 proof. The follow-up docs checkpoint `9a8e3d2` was verified by standard CI
