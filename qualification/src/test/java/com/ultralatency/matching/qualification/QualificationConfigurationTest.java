@@ -114,4 +114,20 @@ class QualificationConfigurationTest {
         assertEquals(QualificationConfiguration.MEMORY_STEADY_STATE_MAX_COMMAND_COUNT,
                 configuration.commandCount());
     }
+
+    @Test
+    void continuousMemoryManifestUsesThePersistedPrefixLength() {
+        final QualificationConfiguration base = new QualificationConfiguration(
+                QualificationProfile.MEMORY_STEADY_STATE_V1, 20260823L,
+                QualificationFullConfiguration.FULL_MINIMUM_COMMANDS,
+                Duration.ofSeconds(1), Path.of("results"));
+
+        final QualificationConfiguration manifest = QualificationFullRunner
+                .manifestConfiguration(base, QualificationFullConfiguration.FULL_MINIMUM_COMMANDS + 1);
+
+        assertEquals(QualificationFullConfiguration.FULL_MINIMUM_COMMANDS + 1,
+                manifest.commandCount());
+        assertEquals(base.profile(), manifest.profile());
+        assertEquals(base.seed(), manifest.seed());
+    }
 }

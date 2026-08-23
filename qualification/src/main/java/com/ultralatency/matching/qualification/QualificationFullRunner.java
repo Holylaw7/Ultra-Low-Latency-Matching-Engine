@@ -82,6 +82,9 @@ public final class QualificationFullRunner {
                 final Instant minimumDeadline = started.plus(configuration.minimumDuration());
                 while (commandIndex < workloadConfiguration.commandCount()
                         || continuousMemoryLane && Instant.now().isBefore(minimumDeadline)) {
+                    if (commandIndex >= QualificationWorkloadV1.MEMORY_STEADY_STATE_MAX_COMMANDS) {
+                        throw new IOException("memory steady-state qualification command bound exhausted");
+                    }
                     final EngineCommand command = QualificationWorkloadV1.commandAtForRun(
                             workloadConfiguration, commandIndex);
                     final QualificationExchange exchange = client.exchange(
@@ -392,7 +395,7 @@ public final class QualificationFullRunner {
                 <= QualificationWorkloadV1.MEMORY_STEADY_STATE_MAX_ACTIVE_ORDERS;
     }
 
-    private static QualificationConfiguration manifestConfiguration(
+    static QualificationConfiguration manifestConfiguration(
             final QualificationConfiguration configuration,
             final int persistedCommandCount) {
         if (persistedCommandCount == configuration.commandCount()) {
