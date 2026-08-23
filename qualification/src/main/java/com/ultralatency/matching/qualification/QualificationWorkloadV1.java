@@ -143,9 +143,9 @@ public final class QualificationWorkloadV1 {
             final long seed,
             final long sequence,
             final long cycle,
-            final int position) {
+        final int position) {
         final long baseOrderId = Math.addExact(
-                Math.multiplyExact((long) cycle, 1_000L),
+                Math.multiplyExact(cycle, 1_000L),
                 1L + Math.floorMod(seed, 97L));
         final long priceOffset = Math.floorMod(seed, 7L);
         return switch (profile) {
