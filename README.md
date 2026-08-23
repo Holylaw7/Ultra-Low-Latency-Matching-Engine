@@ -39,7 +39,7 @@ frozen at `v0.6.0-engineering-baseline`. TASK-024 through TASK-028 passed their
 focused evidence gates; TASK-028 benchmark/docs evidence is at `9fed6b2` / CI
 `32574274905`, with verifier, benchmark-reviewer and docs-auditor PASS. The
 Phase 7 merge commit is `6473365`, master CI is `32574891113`, and tag CI is
-`32574958017`. Phase 8 merge/tag, TASK-032+ recovery runtime,
+`32574958017`. Phase 8 merge/tag and TASK-033+ recovery verification,
 reconnect/deduplication, multi-session support and Product Release remain
 unauthorized. The
 frozen `v0.6.0-engineering-baseline` continues to protect the Phase 2–6
