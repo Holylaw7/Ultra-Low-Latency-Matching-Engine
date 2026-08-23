@@ -47,6 +47,7 @@ not part of the measured operation.
 | Storage | `E:` fixed NTFS volume; host reports NVMe SSD media; device mapping not isolated |
 | JDK / VM | OpenJDK 21.0.12 Microsoft build; 64-bit OpenJDK Server VM |
 | Java executable | `E:\Java\microsoft-jdk-21\bin\java.exe` |
+| Estimated max heap | 7.91 GiB (`java -XshowSettings:vm -version`; no explicit `-Xmx`) |
 | JMH | 1.37 |
 | JVM arguments | none; launcher defaults |
 | GC | G1 GC, JDK default; not independently isolated |
@@ -57,6 +58,20 @@ not part of the measured operation.
 The full matrix completed successfully with 20 benchmark/parameter
 combinations (five methods × two command counts × two segment sizes), with
 Throughput and SampleTime modes recorded.
+
+The same matrix was also run with JMH's built-in `gc` profiler, producing the
+ignored `benchmark-results/phase8-recovery-gc.json`. Its secondary metrics
+across all methods and parameters ranged as follows:
+
+| Metric | Minimum | Maximum | Unit |
+| --- | ---: | ---: | --- |
+| `gc.alloc.rate` | 52.789 | 1,922.390 | MB/sec |
+| `gc.alloc.rate.norm` | 51,663.677 | 1,354,989.795 | B/op |
+| `gc.count` | 0 | 6 | counts |
+| `gc.time` | 0 | 4 | ms |
+
+These are one-fork, one-iteration JMH profiler observations; they are not
+allocation-free or production-GC claims.
 
 ## Deterministic Fixture Metadata
 
@@ -99,10 +114,20 @@ not statistical production guarantees.
 | snapshotTailRecovery | 1,024 | 4,128 | 1.243 | 1.663 | 2.063 | 2.589 |
 | snapshotTailRecovery | 1,024 | 65,536 | 0.684 | 0.958 | 1.231 | 1.571 |
 
-Throughput scores are retained in the ignored raw JMH JSON. They are not
-recast as end-to-end or production throughput. The high P999 observations are
-reported rather than discarded, which is important for interpreting this
-single-fork local-host baseline.
+Throughput is the JMH `primaryMetric.score` with unit `ops/ms` in
+`benchmark-results/phase8-recovery-full.json`. The observed scores were:
+
+| Benchmark | 256 / 4,128 | 256 / 65,536 | 1,024 / 4,128 | 1,024 / 65,536 |
+| --- | ---: | ---: | ---: | ---: |
+| bootstrapToListener | 0.262 | 0.292 | 0.186 | 0.255 |
+| offlineSnapshotCreation | 0.261 | 0.280 | 0.051 | 0.059 |
+| pureWalReplay | 1.897 | 2.309 | 0.821 | 1.693 |
+| snapshotDecodeRestore | 15.410 | 15.430 | 10.440 | 10.580 |
+| snapshotTailRecovery | 1.492 | 1.802 | 0.758 | 1.350 |
+
+Scores are not recast as end-to-end or production throughput. The high P999
+observations are reported rather than discarded, which is important for
+interpreting this single-fork local-host baseline.
 
 ## Evidence Gate
 

@@ -368,6 +368,12 @@ Verified fact:
   see [`durable-pipeline.md`](../docs/benchmark/durable-pipeline.md). The
   results are component/local-host observations only and are not durable ACK,
   power-loss, online Recovery or production-readiness claims.
+- Phase 8 TASK-034 evidence separates pure-WAL replay, Snapshot decode,
+  Snapshot-tail recovery, offline Snapshot creation and bootstrap-to-listener
+  over a 20-case matrix. It records heap metadata, JMH GC-profiler allocation
+  metrics, Throughput `ops/ms` and SampleTime P50/P95/P99/P999 in
+  [`PHASE-8-task-034.md`](../tasks/reports/PHASE-8-task-034.md); the results are
+  component/local-host observations only.
 - Raw JSON and JFR artifacts are local and ignored; reports record their paths,
   generation commands, summaries and limitations.
 

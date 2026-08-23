@@ -42,7 +42,8 @@ defaults or authorize optimization.
 
 ## Acceptance Criteria
 
-- [x] Required benchmark boundaries, dimensions, metadata and percentiles are
+- [x] Required benchmark boundaries, dimensions, metadata, heap,
+  allocation/GC evidence and percentiles are
   recorded and internally consistent with raw evidence.
 - [ ] verifier, benchmark-reviewer and docs-auditor independently report PASS.
 - [ ] ADR, Blueprint, all task reports, recovery docs, README and context share

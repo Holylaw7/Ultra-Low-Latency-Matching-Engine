@@ -127,7 +127,9 @@ tail observations remain evidence, not a production latency claim.
   publication and network I/O.
 - Scan timing is not recovery time; replay timing is not crash-recovery time.
 - Snapshot, online recovery, live pipeline/WAL integration, Network,
-  replication, GC profiling and production optimization remain out of scope.
+  replication and production optimization remain out of scope. Phase 8
+  records GC-profiler observations only as component evidence; they do not
+  establish a production allocation or GC claim.
 - Filesystem cache, Windows scheduling, one fork and one one-second sample
   limit inference. More rigorous performance work requires a separate
   evidence/optimization decision.
@@ -161,10 +163,21 @@ respectively. Physical fixture metadata is:
 
 The run used Microsoft Windows 11 Home Chinese build 26200, a 13th Gen Intel
 Core i9-13900H, an `E:` NTFS/NVMe host volume, Microsoft OpenJDK 21.0.12,
-JMH 1.37, the G1 default collector, no explicit JVM arguments, one fork,
-one thread, one 1-second warmup and one 1-second measurement. Required
+JMH 1.37, the G1 default collector, no explicit JVM arguments, an estimated
+7.91 GiB maximum heap (`java -XshowSettings:vm -version`), one fork, one
+thread, one 1-second warmup and one 1-second measurement. Required
 SampleTime P50/P95/P99/P999 values for all 20 benchmark/parameter combinations
 are recorded in [`PHASE-8-task-034.md`](../../tasks/reports/PHASE-8-task-034.md).
+
+The same matrix was run with JMH's built-in `gc` profiler. Across all methods
+and parameters, `gc.alloc.rate` ranged from 52.789 to 1,922.390 MB/sec,
+`gc.alloc.rate.norm` from 51,663.677 to 1,354,989.795 B/op, `gc.count` from
+0 to 6 counts and `gc.time` from 0 to 4 ms. The profiler output is local and
+ignored at `benchmark-results/phase8-recovery-gc.json`.
+
+The Throughput `primaryMetric.score` values (unit `ops/ms`) from the main raw
+JSON are summarized in the task report across both command counts and segment
+sizes; no best-case-only result is selected.
 
 These are component/local-host observations only. They do not claim production
 RTO, online crash-recovery time, availability, durable client acknowledgement,
