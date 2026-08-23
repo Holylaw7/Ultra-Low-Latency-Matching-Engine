@@ -109,7 +109,7 @@ explicit non-goals.
    TASK-030 completed at `6907391` / CI `32579065372`, TASK-031 completed at
     `eaed8b8` / CI `32580018903`, TASK-032 complete at `22568e6` / CI
     `32613235358`, TASK-033 complete at `eff5955` / CI `32614610701`, status
-    synchronization at `bdb8937` / CI `32614827416`, TASK-034 next, later Tasks
+    synchronization at `15e68bf` / CI `32615035994`, TASK-034 next, later Tasks
     gated by dependency Evidence Gates**.
 9. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.

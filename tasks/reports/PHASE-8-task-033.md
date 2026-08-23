@@ -69,7 +69,7 @@ mvn verify: BUILD SUCCESS; 195 tests, 0 failures
 Checkstyle: 0 violations
 git diff --check: PASS
 Exact-SHA CI: eff5955 -> 32614610701 PASS
-Documentation/status synchronization: `bdb8937` -> CI `32614827416` PASS
+Documentation/status synchronization: `15e68bf` -> CI `32615035994` PASS
 Production code changes: 0
 Frozen WAL/Snapshot/Protocol/runtime semantics: unchanged
 ```
@@ -90,6 +90,6 @@ Release remain outside this task.
 ## Gate Status
 
 `TASK-033` implementation evidence is accepted at `eff5955` / CI
-`32614610701`; final documentation/status synchronization is `bdb8937` / CI
-`32614827416` PASS. TASK-034 is authorized as the next task. Phase 8 Closure,
+`32614610701`; final documentation/status synchronization is `15e68bf` / CI
+`32615035994` PASS. TASK-034 is authorized as the next task. Phase 8 Closure,
 merge, `v0.7.0-engineering-baseline` and Phase 9 remain unauthorized.
