@@ -123,9 +123,16 @@ duration-gate remediation CI          # 32636481415 PASS
 duration-gate quick-lane CI            # 32636481409 PASS
 full run #1                            # preserved threshold failure
 full run #2                            # preserved natural-sample failure
-final docs checkpoint                # 9a8e3d2 / 32632329094 PASS
+current report checkpoint              # this docs commit; exact-SHA CI required
 verifier + docs-auditor               # PASS
 ```
+
+The first standard CI for the preceding report checkpoint `af2eef0`
+(`32639448577`) ended with a generic runner exit and no test annotations; its
+Quick Lane (`32639448552`) passed. The failed standard run is retained as
+transient CI evidence and is not represented as a passing gate. The current
+report checkpoint must obtain its own exact-SHA CI PASS before TASK-037 can
+advance.
 
 The later docs-only checkpoint `03123fa` produced CI run `32632261832` with a
 generic runner exit and no test annotations; it is not used as Evidence Gate
