@@ -247,6 +247,8 @@ Human approval on 2026-08-23 authorizes only qualification-layer changes:
 - keep a future Memory Steady-State Full run continuously processing its
   deterministic bounded cycle until the duration and command-count gates are
   satisfied, rather than idling after the minimum prefix;
+- enforce a five-million-command qualification-only safety bound that fails
+  closed rather than lowering the approved Full thresholds;
 - prove bounded retention, deterministic golden/digest equivalence, public-path
   integration and manifest metadata with focused tests and exact-SHA CI;
 - derive the memory-lane maximum/final active-order counts from public request /

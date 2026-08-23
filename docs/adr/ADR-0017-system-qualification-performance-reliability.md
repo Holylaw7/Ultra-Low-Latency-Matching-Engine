@@ -167,7 +167,10 @@ absence of memory leaks. A Full run using this lane requires a separate Human
 Full Campaign authorization after remediation Evidence Gate completion. Its
 observation window continues to process the deterministic bounded cycle until
 the duration and command-count gates are satisfied; it may not finish the
-minimum command prefix and then idle while claiming continuous observation.
+minimum command prefix and then idle while claiming continuous observation. A
+qualification-only five-million-command safety bound is fail-closed: exhausting
+it invalidates the run rather than lowering either the 60-minute or
+one-million-accepted-command gate.
 
 ## Scope Boundary
 

@@ -14,8 +14,8 @@
 | Related ADR | [`ADR-0017`](../../docs/adr/ADR-0017-system-qualification-performance-reliability.md) |
 | Phase Blueprint | [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md) |
 | Authorization Mode | `Blueprint` |
-| Current Stage | `Limited Qualification-Only Remediation / Evidence Gate` |
-| Next Gate | Human approval for a new Memory Steady-State Full Campaign after remediation Evidence Gate PASS |
+| Current Stage | `Limited Qualification-Only Remediation / Evidence Gate PASS` |
+| Next Gate | Human approval for a new Memory Steady-State Full Campaign |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Remediation checkpoint | `23ca7f0` — bounded streaming, continuous memory lane and public-state evidence |
@@ -77,7 +77,9 @@ must never be reported as Full Qualification.
   observed maximum and final counts reconcile with recovery.
 - [ ] A future Memory Steady-State Full run continues the bounded cycle until
   both duration and command-count gates are satisfied; it does not finish the
-  minimum prefix and idle during the declared observation window.
+  minimum prefix and idle during the declared observation window. The
+  qualification-only five-million-command safety bound fails closed if
+  exhausted; it cannot lower either approved Full threshold.
 - [ ] Existing `QualificationWorkloadV1` golden vectors and preserved Run #1/#2
   artifacts remain unchanged and non-qualifying.
 - [ ] Full qualification requires both duration and command-count thresholds;
@@ -93,10 +95,11 @@ must never be reported as Full Qualification.
   exact-SHA CI pass.
 - [ ] verifier and docs-auditor return PASS before TASK-038 unlocks.
 
-Current local remediation evidence at `23ca7f0`: `mvn -pl qualification -am test` passes
-36 qualification tests (2 intentionally skipped) and 195 core tests;
-`mvn verify` and Checkstyle pass. Exact-SHA CI and read-only reviewer gates are
-still required. No new Full Campaign has been started.
+Remediation Evidence Gate is PASS at `c420313`: `mvn -pl qualification -am test`
+passes 36 qualification tests (2 intentionally skipped) and 195 core tests;
+`mvn verify`, Checkstyle, verifier and docs-auditor pass. Standard exact-SHA CI
+`32645549709` and Quick Lane `32645549694` both pass. No new Full Campaign has
+been started.
 
 ## 6. Frozen Boundary
 

@@ -45,7 +45,8 @@ TASK-035 qualification foundation is complete at `22d13fe` with exact-SHA CI
 `32625554518` PASS; TASK-036 Evidence Gate is complete after remediation at
 `f90e42c` with standard CI `32627744868` and quick-lane CI `32627744878` PASS;
 TASK-037 is in progress on the `feature/phase9-system-qualification` branch;
-its Limited Qualification-Only Remediation Evidence Gate is pending. The
+its Limited Qualification-Only Remediation Evidence Gate is PASS at `c420313`
+with standard CI `32645549709` and Quick Lane `32645549694` PASS. The
 amendment adds bounded streaming evidence and a separately versioned
 `MEMORY_STEADY_STATE_V1` lane; implementation checkpoint `23ca7f0` is locally
 verified, but no new Full Campaign is authorized yet. Phase 9 is an engineering
