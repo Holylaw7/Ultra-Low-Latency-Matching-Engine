@@ -37,8 +37,8 @@ exact-SHA CI `32580018903` PASS; TASK-032 live handoff is complete at
 Closure Proposal preparation is complete at `9835624` with exact-SHA CI
 `32616029460` PASS; verifier, benchmark-reviewer and docs-auditor PASS. The
 technical Closure input is `c59d7c0` / CI `32616802595` PASS with 195 tests,
-0 failures and Checkstyle 0. Phase 8 Closure requires docs/evidence-only
-remediation, then Sol High delta review and Human Closure Approval.
+0 failures and Checkstyle 0. Human Phase 8 Closure Approval is recorded;
+normal merge/master verification and baseline tagging are authorized.
 
 ## Scope
 
@@ -63,7 +63,7 @@ Client
             -> structural limit matching
        -> Trade / Execution events           [Phase 3 implemented]
   -> Command WAL / Offline Replay            [Phase 5 implemented baseline]
-  -> Snapshot / Online Recovery              [TASK-029..034 evidence accepted; docs/evidence remediation pending]
+  -> Snapshot / Online Recovery              [Human Closure Approved; merge/tag execution pending]
   -> Output / Metrics                        [Future Work]
 ```
 
@@ -116,7 +116,8 @@ explicit non-goals.
    `32613235358`, TASK-033 complete at `eff5955` / CI `32614610701`, and
     TASK-034 benchmark/Closure Proposal preparation complete at `9835624` / CI
     `32616029460`; technical Closure input `c59d7c0` / CI `32616802595` PASS
-    with 195 tests, 0 failures and Checkstyle 0. Phase 8 Closure requires
-    docs/evidence remediation; merge/tag and later Tasks remain unauthorized**.
+    with 195 tests, 0 failures and Checkstyle 0. Human Phase 8 Closure Approval
+    is recorded; merge/tag and final sync are authorized, while later Tasks
+    remain unauthorized**.
 9. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.

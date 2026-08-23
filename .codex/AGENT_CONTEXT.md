@@ -10,13 +10,13 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
-| Phase | Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap (`TASK-034 PASS / docs-only Closure Remediation authorized`) |
+| Phase | Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap (`Human Closure Approved; merge/tag execution authorized`) |
 | Latest product task | [`TASK-20260822-034`](../tasks/completed/TASK-20260822-034-phase8-benchmark-docs-closure.md) — Completed / Evidence Gate PASS / Closure Proposal ready |
 | Latest architecture decision | [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md) — Approved |
-| Current planning task | [`TASK-20260822-034`](../tasks/completed/TASK-20260822-034-phase8-benchmark-docs-closure.md) — Completed; docs/evidence-only remediation authorized; Sol High delta review pending |
+| Current planning task | [`TASK-20260822-034`](../tasks/completed/TASK-20260822-034-phase8-benchmark-docs-closure.md) — Completed; Human Phase 8 Closure Approved; merge/tag execution pending |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 7 Baseline Frozen at `v0.6.0-engineering-baseline`; Product Release separately governed |
-| Product approval | Phase 7 Closure Approved and baseline frozen; Phase 8 technical evidence accepted at `c59d7c0` / CI `32616802595`, docs-only Closure Remediation authorized, merge/tag and Product Release not authorized |
+| Product approval | Phase 7 Closure Approved and baseline frozen; Phase 8 Human Closure Approved after technical input `c59d7c0` / CI `32616802595` and remediation `4bdfb97` / CI `32620164524`; merge/tag authorized, Phase 9/Product Release unauthorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `feature/phase8-snapshot-online-recovery` |
 | Engineering baseline commit | `6473365` (Phase 7 merge) |
@@ -124,8 +124,8 @@ ADR-0011 Final Approved
   -> TASK-033 [Completed / Evidence Gate PASS at `eff5955` / CI `32614610701`]
   -> TASK-034 [Completed / Evidence Gate PASS at `9835624` / CI `32616029460`]
   -> Technical Closure input [c59d7c0 / CI `32616802595` PASS; 195 tests / 0 failures / Checkstyle 0]
-  -> Phase 8 Closure [CHANGES REQUIRED; docs/evidence-only remediation authorized]
-  -> Sol High delta-only Closure Review [Pending]
+  -> Phase 8 Closure [Human Approved]
+  -> Merge/master verification/tag/final sync [Authorized / Pending]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
@@ -184,8 +184,9 @@ complete at `22568e6` / CI `32613235358`; TASK-033 is complete at `eff5955` /
 CI `32614610701`; TASK-034 benchmark and Closure Proposal preparation is
 complete at `9835624` / CI `32616029460`. The technical Closure input is
 `c59d7c0` / CI `32616802595` PASS with 195 tests, 0 failures and Checkstyle 0.
-Closure is blocked only by stale evidence references; docs/evidence-only
-remediation is authorized before the Sol High delta review.
+Human Phase 8 Closure Approval is recorded after the docs-only remediation and
+Sol High delta review. Normal merge/master verification/tag/final sync are now
+authorized; Phase 9 and Product Release remain locked.
 Reconnect/deduplication,
 multi-session support and Product Release remain outside the proposal.
 
@@ -296,7 +297,7 @@ Current evidence:
 | Versioned command WAL and strict offline deterministic replay | Approved / Implemented / Baseline Frozen | [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md) |
 | Binary protocol v1 and single-session Netty gateway | Approved / Implemented / Baseline Frozen | [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md); `v0.5.0-engineering-baseline` |
 | Live durable command pipeline integration | Approved / Implemented / Baseline Frozen | [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md); `v0.6.0-engineering-baseline` |
-| Snapshot checkpoint and online recovery bootstrap | TASK-029..034 Evidence Gates PASS; docs/evidence-only Closure Remediation authorized; delta review pending | [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md); [`TASK-034 report`](../tasks/reports/PHASE-8-task-034.md) |
+| Snapshot checkpoint and online recovery bootstrap | TASK-029..034 Evidence Gates PASS; Human Closure Approved; merge/tag execution pending | [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md); [`TASK-034 report`](../tasks/reports/PHASE-8-task-034.md) |
 
 If a Task and linked ADR disagree, stop and synchronize them before work.
 
@@ -305,7 +306,7 @@ If a Task and linked ADR disagree, stop and synchronize them before work.
 | Decision | Status | Source |
 | --- | --- | --- |
 | Live durable command pipeline | Approved / TASK-024..028 archived / Baseline Frozen | [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md); `v0.6.0-engineering-baseline` |
-| Snapshot checkpoint and online recovery bootstrap | TASK-029..034 Evidence Gates PASS; docs/evidence-only Closure Remediation authorized; delta review pending | [`Phase 8 Blueprint`](../tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md) |
+| Snapshot checkpoint and online recovery bootstrap | TASK-029..034 Evidence Gates PASS; Human Closure Approved; merge/tag execution pending | [`Phase 8 Blueprint`](../tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md) |
 
 ADR-0015 composes the single-session Gateway, Command WAL and Event Pipeline
 under WAL-before-execute and fail-stop semantics. TASK-024..028 implement and
@@ -321,9 +322,9 @@ probe evidence. Dynamic `force(true)`/move fault injection remains explicitly
 unverified because no production-only seam is authorized. TASK-034 benchmark
 and Closure Proposal preparation is complete. Technical Closure input is
 `c59d7c0` / CI `32616802595` PASS with 195 tests, 0 failures and Checkstyle 0.
-Closure is blocked only by stale evidence synchronization; docs/evidence-only
-remediation is authorized and later Phase 8 authorization remains locked
-pending delta review.
+Human Phase 8 Closure Approval is recorded; normal merge/master verification,
+tag and final status sync are authorized. Later Phase 8 scope and Phase 9 remain
+locked.
 
 ## Verified Current Implementation
 
@@ -407,7 +408,7 @@ Client
        -> active OrderId index
   -> Trade / Execution results        [Engine generation implemented]
   -> Command WAL / Offline Replay     [Phase 5 baseline frozen]
-  -> Snapshot / Online Recovery       [TASK-029..034 evidence accepted; docs/evidence remediation pending]
+  -> Snapshot / Online Recovery       [Human Closure Approved; merge/tag execution pending]
   -> Output / Metrics                 [Future Work]
 ```
 

@@ -189,6 +189,6 @@ production-only seam, and no hardware power-loss guarantee is claimed.
 
 TASK-034 Closure Proposal is prepared but not approved. The technical Closure
 input is `c59d7c0` / CI `32616802595` PASS with 195 tests, 0 failures and
-Checkstyle 0. A docs/evidence-only Limited Closure Remediation is authorized;
-the next gate is Sol High delta-only Phase 8 Closure Review. Merge,
-`v0.7.0-engineering-baseline`, Phase 9 and Product Release remain unauthorized.
+Checkstyle 0. Human Phase 8 Closure Approval is recorded; the next gate is
+master verification and `v0.7.0-engineering-baseline` tag CI. Phase 9 and
+Product Release remain unauthorized.

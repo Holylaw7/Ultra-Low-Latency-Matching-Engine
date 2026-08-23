@@ -4,7 +4,7 @@
 | --- | --- |
 | Task | `TASK-20260822-034` / Recovery Benchmark, Documentation and Closure Proposal |
 | Phase / ADR / Blueprint | Phase 8 / ADR-0016 / `PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md` |
-| Status | Completed — Evidence Gate PASS; technical Closure input `c59d7c0` / CI `32616802595` PASS; docs/evidence-only remediation authorized; Sol High delta review pending |
+| Status | Completed — Evidence Gate PASS; technical Closure input `c59d7c0` / CI `32616802595` PASS; Human Phase 8 Closure Approved; merge/tag execution pending |
 | Depends on | TASK-033 Evidence Gate PASS |
 | Manual Gate | Stops at Human Phase 8 Closure Review |
 | Planned report | `tasks/reports/PHASE-8-task-034.md` |
@@ -58,9 +58,9 @@ Focused recovery/benchmark smoke, full `mvn verify`, Checkstyle 0,
 `git diff --check`, approved/frozen-path audit, all three read-only audits PASS,
 logical commit, normal push and exact-SHA CI PASS.
 
-Then STOP at Sol High delta-only Phase 8 Closure Review and Human Closure
-Approval. TASK-034 was archived before Human Closure Approval; this is a
-governance sequencing deviation only.
+Human Phase 8 Closure Approval is recorded. Proceed with the authorized
+merge/master verification/tag/final sync sequence. TASK-034 was archived before
+Human Closure Approval; this is a governance sequencing deviation only.
 
 ## Exception Gate
 

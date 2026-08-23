@@ -64,10 +64,10 @@ The benchmark matrix and limitations are recorded in
 [`recovery.md`](docs/benchmark/recovery.md). The proposal keeps WAL as the
 sole authority, compares pure-WAL recovery with a derived Snapshot-plus-tail
 path, and makes listener-last recovery a required invariant. Phase 8 technical
-Closure is accepted, but the Closure Review requires a docs/evidence-only
-Limited Closure Remediation to remove stale final evidence references. Sol High
-delta review and Human Closure Approval remain pending; merge and
-`v0.7.0-engineering-baseline` remain unauthorized.
+Closure and Sol High delta review are approved. Human Phase 8 Closure Approval
+authorizes the normal merge/master verification and creation of
+`v0.7.0-engineering-baseline`; Phase 9 and Product Release remain unauthorized
+until separately governed.
 
 The Phase 3 MatchingEngine baseline is completed, approved and frozen at
 `v0.2.0-engineering-baseline`. It contains the Domain Model, frozen Phase 2

@@ -14,9 +14,9 @@ TASK-032: Completed / Evidence Gate PASS at `22568e6` / CI `32613235358`
   TASK-033: Completed / Evidence Gate PASS at `eff5955` / CI `32614610701`
   TASK-034: Completed / Evidence Gate PASS at `9835624` / CI `32616029460`
   Technical Closure input: `c59d7c0` / CI `32616802595` PASS; 195 tests, 0 failures, Checkstyle 0
-  Phase 8 Closure: CHANGES REQUIRED — docs/evidence-only remediation authorized
+  Phase 8 Closure: Human Approved — merge/tag execution authorized
 Merge / v0.7.0-engineering-baseline: Not Authorized
-  Next Gate: Sol High delta-only Phase 8 Closure Review after remediation exact-SHA CI
+  Next Gate: master verification, `v0.7.0-engineering-baseline`, tag CI and final sync
 ```
 
 ## Discovery Decision
@@ -88,8 +88,9 @@ TASK-029 canonical checkpoint [PASS]
     -> TASK-032 live handoff [PASS]
     -> TASK-033 crash/corruption/determinism verification [PASS]
     -> TASK-034 benchmark/docs/Closure Proposal [PASS]
-    -> docs/evidence-only Limited Closure Remediation
-    -> STOP at delta-only Human Phase 8 Closure Review
+      -> docs/evidence-only Limited Closure Remediation [PASS]
+      -> Human Phase 8 Closure Approval [APPROVED]
+      -> --no-ff merge / master verification / baseline tag
 ```
 
 ## Frozen Boundary and Requested Exceptions
@@ -168,6 +169,6 @@ the listed Exception Gates and deferred scope
 ```
 
 Human Phase 8 Blueprint Approval is recorded in ADR-0016 and the Blueprint.
-Implementation is complete; only docs/evidence-only Limited Closure Remediation
-is authorized. Phase 8 Closure, merge and baseline tagging remain unauthorized
-until the delta review passes.
+Implementation and Closure Review are complete. Human Closure Approval authorizes
+the normal merge, master verification and baseline tagging. Phase 9 and Product
+Release remain unauthorized.

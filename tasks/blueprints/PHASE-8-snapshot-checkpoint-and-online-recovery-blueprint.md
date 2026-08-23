@@ -14,8 +14,8 @@
 | Implementation Branch | `feature/phase8-snapshot-online-recovery` |
 | Planned Tasks | `TASK-20260822-029` through `TASK-20260822-034` |
 | Implementation | `Authorized in dependency order` |
-| Current Task | `TASK-20260822-034` — Completed; final evidence remediation |
-| Next Gate | `Sol High delta-only Phase 8 Closure Review` |
+| Current Task | `TASK-20260822-034` — Completed; Human Closure Approved |
+| Next Gate | `--no-ff` merge, master verification, baseline tag and final sync |
 
 ## 2. Phase Objective
 
@@ -429,6 +429,7 @@ Phase 9 and Product Release remain unauthorized.
 | 2026-08-23 | Evidence Gate | TASK-033 PASS | Repeated PURE_WAL/SNAPSHOT_THEN_WAL convergence, fixed public probe, strict corruption/temp-file behavior, listener-last failure and first-live-command evidence accepted at `eff5955` / CI `32614610701`; force/move fault injection remains an explicit limitation with no production seam. TASK-034 followed under the approved dependency gate. | No Exception Gate remains |
 | 2026-08-23 | Evidence Gate | TASK-034 PASS | RecoveryBenchmark full 20-case matrix, heap metadata, JMH GC-profiler allocation evidence, environment/workload metadata, Throughput `ops/ms`, SampleTime P50/P95/P99/P999 evidence and component claim limits accepted at `9835624` / CI `32616029460`; verifier, benchmark-reviewer and docs-auditor PASS. Technical Closure input `c59d7c0` / CI `32616802595` records 195 tests, 0 failures and Checkstyle 0. | Merge/tag/Phase 9 remain unauthorized |
 | 2026-08-23 | Sol High Closure Review | CHANGES REQUIRED | Technical implementation accepted; final evidence synchronization is stale/incomplete. Docs/evidence-only Limited Closure Remediation authorized; no production, test or benchmark changes. | Merge/tag/Phase 9 remain unauthorized |
+| 2026-08-23 | Human Developer | Closure Approved | Technical Closure input `c59d7c0` / CI `32616802595` PASS; remediation `4bdfb97` / CI `32620164524` PASS; Sol High delta-only review approved. Normal `--no-ff` merge, master verification and annotated `v0.7.0-engineering-baseline` authorized. | Phase 9/Product Release remain unauthorized |
 
 ```text
 Phase 8 Discovery: Completed
@@ -439,9 +440,9 @@ TASK-030: Completed / Evidence Gate PASS at `6907391` / CI `32579065372`
 TASK-031: Completed / Evidence Gate PASS at `eaed8b8` / CI `32580018903`
 TASK-032: Completed / Evidence Gate PASS at `22568e6` / CI `32613235358`
 TASK-033: Completed / Evidence Gate PASS
-TASK-034: Completed / Evidence Gate PASS at `9835624` / CI `32616029460`; technical Closure input `c59d7c0` / CI `32616802595` PASS; docs/evidence-only remediation authorized
+TASK-034: Completed / Evidence Gate PASS at `9835624` / CI `32616029460`; technical Closure input `c59d7c0` / CI `32616802595` PASS; Human Closure Approved
 Implementation: Authorized
-Phase 8 Closure: CHANGES REQUIRED
-Merge / v0.7.0-engineering-baseline: Not Authorized
-Next Gate: Sol High delta-only Phase 8 Closure Review after remediation exact-SHA CI
+Phase 8 Closure: Human Approved
+Merge / v0.7.0-engineering-baseline: Authorized after master verification
+Next Gate: master exact-SHA CI, tag CI and final status sync
 ```

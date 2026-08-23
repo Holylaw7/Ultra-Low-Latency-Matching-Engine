@@ -171,10 +171,12 @@ measurement limit inference.
 ## Closure Proposal (Not Yet Approved)
 
 The Phase 8 technical Closure input is `c59d7c0` with exact-SHA CI
-`32616802595` PASS. A docs/evidence-only Limited Closure Remediation is
-authorized to synchronize current-state documents with that input and record
-the 195-test regression. TASK-034 was archived before Human Closure Approval;
-this is a governance sequencing deviation only.
+`32616802595` PASS. The docs/evidence-only Limited Closure Remediation is
+complete at `4bdfb97` with exact-SHA CI `32620164524` PASS. Human Phase 8
+Closure Approval is now recorded; normal `--no-ff` merge, master verification
+and annotated `v0.7.0-engineering-baseline` are authorized. TASK-034 was
+archived before Human Closure Approval; this is a governance sequencing
+deviation only.
 
 After the Evidence Gate PASS, the only authorized next gate is:
 
@@ -184,7 +186,7 @@ TASK-034 Evidence Gate PASS
     -> Human Phase 8 Closure Approval
 ```
 
-Only after remediation exact-SHA CI passes and Human Closure Approval may the
-project authorize a normal `--no-ff` merge, master verification,
-`v0.7.0-engineering-baseline` and final status synchronization. Merge, tag,
-Phase 9 and Product Release remain unauthorized at this checkpoint.
+Human Closure Approval has authorized the normal `--no-ff` merge, master
+verification, `v0.7.0-engineering-baseline` and final status synchronization.
+The tag must point to the verified Phase 8 merge commit. Phase 9 and Product
+Release remain unauthorized at this checkpoint.

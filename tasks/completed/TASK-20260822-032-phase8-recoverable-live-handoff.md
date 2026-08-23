@@ -76,6 +76,6 @@ documentation closure work remain separate tasks.
 `TASK-032` is complete and archived after Evidence Gate PASS at `22568e6` /
 CI `32613235358`; at that historical checkpoint `TASK-033` was the next
 authorized task. The current Phase 8 state is TASK-029..034 Evidence Gate PASS
-with technical Closure input `c59d7c0` / CI `32616802595`; docs/evidence-only
-remediation is authorized. Phase 8 Closure, merge, `v0.7.0-engineering-baseline`
-and Phase 9 remain unauthorized.
+with technical Closure input `c59d7c0` / CI `32616802595`; Human Phase 8
+Closure Approval is recorded and merge/tag execution is authorized. Phase 9 and
+Product Release remain unauthorized.
