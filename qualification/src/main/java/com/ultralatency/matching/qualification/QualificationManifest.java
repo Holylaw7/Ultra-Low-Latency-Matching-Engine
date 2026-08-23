@@ -40,6 +40,16 @@ public record QualificationManifest(
         Objects.requireNonNull(configuration, "configuration");
         Objects.requireNonNull(outputDirectory, "outputDirectory");
         outputDirectory = outputDirectory.toAbsolutePath().normalize();
+        if (workload.profile() != configuration.profile()
+                || workload.seed() != configuration.seed()
+                || workload.commandCount() != configuration.commandCount()) {
+            throw new IllegalArgumentException(
+                    "workload and configuration identity must agree");
+        }
+        if (!outputDirectory.equals(configuration.outputDirectory())) {
+            throw new IllegalArgumentException(
+                    "outputDirectory must match configuration");
+        }
         environment = Map.copyOf(Objects.requireNonNull(environment, "environment"));
         for (final Map.Entry<String, String> entry : environment.entrySet()) {
             requireText(entry.getKey(), "environment key");

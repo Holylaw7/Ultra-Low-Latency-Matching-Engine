@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -58,6 +59,24 @@ class QualificationManifestTest {
 
         assertEquals(result.digestHex(), manifest.withResult(result).resultDigestHex());
         assertFalse(Files.exists(outputDirectory));
+    }
+
+    @Test
+    void manifestRejectsWorkloadConfigurationIdentityMismatch() {
+        final QualificationConfiguration configuration = new QualificationConfiguration(
+                QualificationProfile.LIFECYCLE_MIX, 1, 1,
+                Duration.ofSeconds(1), temporaryDirectory.resolve("results"));
+        final QualificationConfiguration otherConfiguration = new QualificationConfiguration(
+                QualificationProfile.RESTING_DEPTH, 1, 1,
+                Duration.ofSeconds(1), temporaryDirectory.resolve("results"));
+        final QualificationWorkload workload = QualificationWorkloadV1.generate(
+                otherConfiguration);
+
+        assertThrows(IllegalArgumentException.class, () -> new QualificationManifest(
+                "run-1", "abc123", "v0.7.0-engineering-baseline", workload,
+                configuration, configuration.outputDirectory(), Map.of(),
+                QualificationCanonicalizer.digest(configuration),
+                QualificationCanonicalizer.EMPTY_DIGEST, Instant.now()));
     }
 
     private static String validDigest() {
