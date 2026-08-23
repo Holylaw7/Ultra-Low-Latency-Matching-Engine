@@ -14,7 +14,7 @@
 | Tests | `12 qualification + 195 core` passed |
 | Build | `mvn verify` passed |
 | CI | `32625554518` PASS |
-| Next Gate | TASK-036 In Progress |
+| Next Gate | TASK-036 Evidence Remediation |
 
 ## Goal
 
@@ -68,6 +68,7 @@ TASK-036 remains dependency-locked until this Evidence Gate passes.
 
 ## Gate
 
-`TASK-035 Evidence Gate` PASS at `22d13fe` / CI `32625554518`. TASK-036 is
-now in progress under the approved Phase 9 dependency order.
+`TASK-035 Evidence Gate` PASS at `22d13fe` / CI `32625554518`. TASK-036
+implementation is present at `c7df983`, but limited evidence remediation is
+required before TASK-037 can unlock.
 Phase 9 Closure remains unauthorized.

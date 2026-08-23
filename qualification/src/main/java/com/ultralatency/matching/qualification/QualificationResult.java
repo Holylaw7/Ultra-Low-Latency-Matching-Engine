@@ -10,9 +10,9 @@ import java.util.Objects;
  * @param acceptedCommands accepted command count
  * @param responseCount response count observed by the client
  * @param tradeCount trade count observed by the public result stream
- * @param checkpointDigestHex final checkpoint digest
+ * @param checkpointDigestHex final recovered MatchingEngine checkpoint digest
  * @param transcriptDigestHex ordered result transcript digest
- * @param publicProbeDigestHex final public probe digest
+ * @param publicProbeDigestHex canonical digest of the fixed public-protocol probe suffix
  * @param measurements bounded named measurements
  */
 public record QualificationResult(

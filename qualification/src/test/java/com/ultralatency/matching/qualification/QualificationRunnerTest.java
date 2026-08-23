@@ -2,6 +2,7 @@ package com.ultralatency.matching.qualification;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
@@ -36,6 +37,10 @@ class QualificationRunnerTest {
         assertEquals(first.result().transcriptDigestHex(), second.result().transcriptDigestHex());
         assertEquals(first.result().publicProbeDigestHex(), second.result().publicProbeDigestHex());
         assertEquals(first.result().digestHex(), second.result().digestHex());
+        assertEquals("2", first.result().measurements().get("publicProbeSuffixLength"));
+        assertNotEquals(
+                first.result().measurements().get("walCommandDigestHex"),
+                first.result().checkpointDigestHex());
         assertEquals(3, first.restartCycles());
         assertFalse(Files.exists(configuration.outputDirectory()));
     }

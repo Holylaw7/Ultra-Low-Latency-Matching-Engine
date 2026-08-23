@@ -31,5 +31,5 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   Tag CI `32622757607` PASS. Phase 8 is frozen.
 - [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](PHASE-9-system-qualification-and-long-run-reliability-blueprint.md)
   — Approved; TASK-035 through TASK-040 authorized in strict dependency order.
-  TASK-035 Evidence Gate PASS; TASK-036 is in progress. Phase 9 Closure, merge, `v0.8.0-engineering-baseline`,
+  TASK-036 requires limited evidence remediation; TASK-037 remains locked. Phase 9 Closure, merge, `v0.8.0-engineering-baseline`,
   Phase 10 and Product Release remain unauthorized.

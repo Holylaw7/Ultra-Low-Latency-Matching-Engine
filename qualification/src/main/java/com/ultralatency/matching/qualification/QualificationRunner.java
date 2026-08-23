@@ -7,6 +7,8 @@ import com.ultralatency.matching.network.netty.recovery.RecoverableNetworkConfig
 import com.ultralatency.matching.persistence.wal.CommandWalReader;
 import com.ultralatency.matching.persistence.wal.WalConfiguration;
 import com.ultralatency.matching.recovery.online.RecoveryMode;
+import com.ultralatency.matching.recovery.online.RecoveryPlanner;
+import com.ultralatency.matching.recovery.online.RecoveryResult;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,6 +34,9 @@ public final class QualificationRunner {
 
     /** Quick-lane restart count required by the Phase 9 Blueprint. */
     public static final int QUICK_RESTART_CYCLES = 3;
+
+    /** Number of final public exchanges included in the deterministic probe suffix. */
+    public static final int PUBLIC_PROBE_SUFFIX_LENGTH = 2;
 
     /** Runs the default three-cycle public-boundary qualification. */
     public QualificationRun run(final QualificationConfiguration configuration)
@@ -85,13 +90,21 @@ public final class QualificationRunner {
             if (!persistedCommands.equals(workload.commands())) {
                 throw new IOException("WAL command stream differs from public workload");
             }
-            final String checkpointDigest = QualificationCanonicalizer.digest(persistedCommands);
+            final RecoveryResult recovered = RecoveryPlanner.create(
+                    walConfiguration, snapshotDirectory).recover(RecoveryMode.PURE_WAL);
+            if (recovered.walEndSequence() != persistedCommands.size()) {
+                throw new IOException("recovered WAL end does not match persisted workload");
+            }
+            final String walCommandDigest = QualificationCanonicalizer.digest(persistedCommands);
+            final String checkpointDigest = recovered.checkpointDigestHex();
             final String transcriptDigestHex = HexFormat.of().formatHex(transcriptDigest.digest());
-            final QualificationExchange lastExchange = exchanges.get(exchanges.size() - 1);
-            final String publicProbeDigest = lastExchange.transcriptDigestHex();
+            final int probeStart = Math.max(
+                    0, exchanges.size() - PUBLIC_PROBE_SUFFIX_LENGTH);
+            final String publicProbeDigest = QualificationCanonicalizer.digestPublicProbe(
+                    workload.commands(), exchanges.subList(probeStart, exchanges.size()), probeStart);
             final Map<String, String> measurements = measurements(
                     configuration, restartCycles, persistedCommands, responseCount, tradeCount,
-                    walDirectory, checkpointDigest, transcriptDigestHex);
+                    walDirectory, walCommandDigest, checkpointDigest, transcriptDigestHex);
             final QualificationResult result = new QualificationResult(
                     true,
                     workload.commandCount(),
@@ -135,6 +148,7 @@ public final class QualificationRunner {
             final long responseCount,
             final long tradeCount,
             final Path walDirectory,
+            final String walCommandDigest,
             final String checkpointDigest,
             final String transcriptDigest) throws IOException {
         final long walBytes;
@@ -161,8 +175,10 @@ public final class QualificationRunner {
         values.put("tradeCount", Long.toString(tradeCount));
         values.put("walBytes", Long.toString(walBytes));
         values.put("walSegmentCount", Long.toString(segmentCount));
+        values.put("walCommandDigestHex", walCommandDigest);
         values.put("checkpointDigestHex", checkpointDigest);
         values.put("transcriptDigestHex", transcriptDigest);
+        values.put("publicProbeSuffixLength", Integer.toString(PUBLIC_PROBE_SUFFIX_LENGTH));
         return Map.copyOf(values);
     }
 

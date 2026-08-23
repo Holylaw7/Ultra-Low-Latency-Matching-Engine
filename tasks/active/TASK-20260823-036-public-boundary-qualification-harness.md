@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260823-036` |
 | Title | Deterministic public-boundary end-to-end qualification harness |
-| Status | `In Progress` |
+| Status | `Changes Required / Evidence Remediation` |
 | Owner | Human Developer |
 | Implementer | Main Codex / Luna Max — only writer |
 | Created | `2026-08-23` |
@@ -14,8 +14,8 @@
 | Related ADR | [`ADR-0017`](../../docs/adr/ADR-0017-system-qualification-performance-reliability.md) |
 | Phase Blueprint | [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md) |
 | Authorization Mode | `Blueprint` |
-| Current Stage | `Implementation` |
-| Next Gate | `TASK-036 Evidence Gate` |
+| Current Stage | `Evidence Remediation` |
+| Next Gate | `TASK-036 Evidence Rerun` |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 
@@ -49,14 +49,14 @@ three recovery-backed sessions and deterministic transcript/WAL evidence.
 
 ## 5. Acceptance Criteria
 
-- [ ] Requests are encoded and sent through Protocol v1 TCP frames.
-- [ ] Responses are validated for request identity, command sequence, ordering,
+- [x] Requests are encoded and sent through Protocol v1 TCP frames.
+- [x] Responses are validated for request identity, command sequence, ordering,
   match count and response-frame integrity.
-- [ ] Three sessions recover the same WAL-backed runtime without sequence gaps.
-- [ ] Persisted WAL commands equal the versioned workload command stream.
-- [ ] Repeated runs with the same workload produce identical result digests.
-- [ ] Explicit quick lane executes 10,000 commands across three sessions.
-- [ ] `mvn verify`, Checkstyle, `git diff --check`, frozen-path audit and exact-
+- [x] Three sessions recover the same WAL-backed runtime without sequence gaps.
+- [x] Persisted WAL commands equal the versioned workload command stream.
+- [x] Repeated runs with the same workload produce identical result digests.
+- [x] Explicit quick lane executes 10,000 commands across three sessions.
+- [x] `mvn verify`, Checkstyle, `git diff --check`, frozen-path audit and exact-
   SHA CI pass.
 - [ ] verifier and docs-auditor return PASS before TASK-037 unlock.
 
@@ -82,6 +82,11 @@ full 60-minute / 1,000,000-command qualification lane.
 
 ## 8. Gate
 
-TASK-037 remains locked until this task's focused tests, quick smoke, full
-verification, exact-SHA CI and read-only audits all pass. Phase 9 Closure,
-merge and `v0.8.0-engineering-baseline` remain unauthorized.
+The implementation and automated evidence gates pass at `c7df983`, but the
+read-only verifier identified two evidence-semantics defects: the checkpoint
+digest must be derived from the recovered MatchingEngine checkpoint rather
+than the WAL command list, and the public-probe digest must cover a fixed
+structured Protocol v1 suffix rather than one response-frame digest. Limited
+remediation is in progress; TASK-037 remains locked until the corrected code,
+tests and read-only audits pass. Phase 9 Closure, merge and
+`v0.8.0-engineering-baseline` remain unauthorized.
