@@ -57,6 +57,9 @@ class RecoverableDurableRuntimeTest {
                     new DurableCommandSequence(3),
                     runtime.coordinator().nextCommandSequence());
             assertEquals(DurableLifecycleState.RUNNING, runtime.coordinator().state());
+            assertThrows(
+                    IOException.class,
+                    () -> RecoveryLease.acquire(wal.directory()));
             assertEquals(3, runtime.recoveryResult().engine().checkpoint()
                     .lastAppliedCommandSequence() + 1);
 
@@ -92,6 +95,9 @@ class RecoverableDurableRuntimeTest {
         assertThrows(RuntimeException.class, runtime::start);
         assertEquals(RecoveryRuntimeState.FAILED, runtime.state());
         assertTrue(runtime.failureCause().isPresent());
+        try (RecoveryLease ignored = RecoveryLease.acquire(wal.directory())) {
+            assertTrue(ignored.isHeld());
+        }
         assertThrows(IllegalStateException.class, runtime::coordinator);
         runtime.shutdown();
     }

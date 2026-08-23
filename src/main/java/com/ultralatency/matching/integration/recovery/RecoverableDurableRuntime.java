@@ -76,19 +76,14 @@ public final class RecoverableDurableRuntime implements AutoCloseable {
         }
         try {
             final DurableConfiguration durable = configuration.durableConfiguration();
+            recoveryLease = RecoveryLease.acquire(durable.walConfiguration().directory());
             recoveryResult = RecoveryPlanner.create(
                     durable.walConfiguration(),
                     configuration.snapshotDirectory())
-                    .recover(configuration.recoveryMode());
+                    .recover(configuration.recoveryMode(), recoveryLease);
             synchronized (lifecycleMonitor) {
                 state = RecoveryRuntimeState.RECOVERED;
             }
-
-            /*
-             * The planner owns the scan lease during offline recovery. The runtime acquires the
-             * same cooperative lease before opening live resources and keeps it through shutdown.
-             */
-            recoveryLease = RecoveryLease.acquire(durable.walConfiguration().directory());
             walWriter = CommandWalWriter.open(durable.walConfiguration());
             if (walWriter.nextCommandSequence() != recoveryResult.nextCommandSequence()) {
                 throw new IllegalStateException("WAL writer sequence does not converge with recovery");

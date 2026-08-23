@@ -70,15 +70,38 @@ public final class RecoveryPlanner {
      */
     public RecoveryResult recover(final RecoveryMode mode) throws IOException {
         Objects.requireNonNull(mode, "mode");
-        try (RecoveryLease ignored = RecoveryLease.acquire(walConfiguration.directory())) {
-            final List<EngineCommand> commands = readStrictWal();
-            final long walEnd = commands.size();
-            final String walDigest = digestCommands(commands, 0, commands.size());
-            if (mode == RecoveryMode.PURE_WAL) {
-                return recoverPureWal(commands, walEnd, walDigest);
-            }
-            return recoverFromSnapshot(commands, walEnd, walDigest);
+        try (RecoveryLease lease = RecoveryLease.acquire(walConfiguration.directory())) {
+            return recover(mode, lease);
         }
+    }
+
+    /**
+     * Executes recovery while the caller retains ownership of an already-held lease.
+     *
+     * <p>This overload is used by online bootstrap so the same recovery lease remains held from
+     * the strict scan through live handoff and runtime shutdown. The planner never closes the
+     * supplied lease; the caller that acquired it remains responsible for release.</p>
+     *
+     * @param mode explicit recovery policy
+     * @param externallyOwnedLease lease acquired by the lifecycle owner
+     * @return recovered engine and internal replay evidence
+     * @throws IOException when the lease is not held or strict recovery fails
+     */
+    public RecoveryResult recover(
+            final RecoveryMode mode,
+            final RecoveryLease externallyOwnedLease) throws IOException {
+        Objects.requireNonNull(mode, "mode");
+        Objects.requireNonNull(externallyOwnedLease, "externallyOwnedLease");
+        if (!externallyOwnedLease.isHeld()) {
+            throw new IOException("Recovery lease must be held by the caller");
+        }
+        final List<EngineCommand> commands = readStrictWal();
+        final long walEnd = commands.size();
+        final String walDigest = digestCommands(commands, 0, commands.size());
+        if (mode == RecoveryMode.PURE_WAL) {
+            return recoverPureWal(commands, walEnd, walDigest);
+        }
+        return recoverFromSnapshot(commands, walEnd, walDigest);
     }
 
     private List<EngineCommand> readStrictWal() throws IOException {

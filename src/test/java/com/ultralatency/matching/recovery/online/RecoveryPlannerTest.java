@@ -13,6 +13,7 @@ import com.ultralatency.matching.engine.EngineCommand;
 import com.ultralatency.matching.engine.MatchingEngine;
 import com.ultralatency.matching.engine.SubmitLimitCommand;
 import com.ultralatency.matching.persistence.snapshot.OfflineSnapshotGenerator;
+import com.ultralatency.matching.persistence.snapshot.RecoveryLease;
 import com.ultralatency.matching.persistence.snapshot.Snapshot;
 import com.ultralatency.matching.persistence.snapshot.SnapshotStore;
 import com.ultralatency.matching.persistence.wal.CommandWalWriter;
@@ -43,6 +44,36 @@ class RecoveryPlannerTest {
         assertEquals(0, result.snapshotSequence());
         assertTrue(result.replayTranscript().results().isEmpty());
         assertEquals(0, result.checkpoint().lastAppliedCommandSequence());
+    }
+
+    @Test
+    void externallyOwnedLeaseRemainsHeldAfterRecovery() throws IOException {
+        final WalConfiguration configuration = configuration("externally-owned-wal");
+        try (RecoveryLease lease = RecoveryLease.acquire(configuration.directory())) {
+            final RecoveryResult result = planner(configuration, "externally-owned-snapshots")
+                    .recover(RecoveryMode.PURE_WAL, lease);
+
+            assertEquals(0, result.walEndSequence());
+            assertTrue(lease.isHeld());
+            assertThrows(
+                    IOException.class,
+                    () -> RecoveryLease.acquire(configuration.directory()));
+        }
+        try (RecoveryLease reacquired = RecoveryLease.acquire(configuration.directory())) {
+            assertTrue(reacquired.isHeld());
+        }
+    }
+
+    @Test
+    void closedExternallyOwnedLeaseIsRejected() throws IOException {
+        final WalConfiguration configuration = configuration("closed-lease-wal");
+        final RecoveryLease lease = RecoveryLease.acquire(configuration.directory());
+        lease.close();
+
+        assertThrows(
+                IOException.class,
+                () -> planner(configuration, "closed-lease-snapshots")
+                        .recover(RecoveryMode.PURE_WAL, lease));
     }
 
     @Test
