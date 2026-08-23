@@ -23,6 +23,9 @@ public record QualificationConfiguration(
     /** Maximum command count permitted by the Phase 9 foundation contract. */
     public static final int MAX_COMMAND_COUNT = 1_000_000;
 
+    /** Qualification-only upper bound for the continuously active memory lane. */
+    public static final int MEMORY_STEADY_STATE_MAX_COMMAND_COUNT = 5_000_000;
+
     /** Maximum command timeout accepted by the foundation contract. */
     public static final Duration MAX_COMMAND_TIMEOUT = Duration.ofMinutes(5);
 
@@ -32,9 +35,11 @@ public record QualificationConfiguration(
         if (seed < 0) {
             throw new IllegalArgumentException("seed must be non-negative");
         }
-        if (commandCount <= 0 || commandCount > MAX_COMMAND_COUNT) {
+        final int maximumCommandCount = profile == QualificationProfile.MEMORY_STEADY_STATE_V1
+                ? MEMORY_STEADY_STATE_MAX_COMMAND_COUNT : MAX_COMMAND_COUNT;
+        if (commandCount <= 0 || commandCount > maximumCommandCount) {
             throw new IllegalArgumentException(
-                    "commandCount must be between 1 and " + MAX_COMMAND_COUNT);
+                    "commandCount must be between 1 and " + maximumCommandCount);
         }
         Objects.requireNonNull(commandTimeout, "commandTimeout");
         if (commandTimeout.isZero() || commandTimeout.isNegative()

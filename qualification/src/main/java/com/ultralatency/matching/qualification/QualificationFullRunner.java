@@ -56,6 +56,8 @@ public final class QualificationFullRunner {
         final Instant started = Instant.now();
         final QualificationStreamingAccumulator streaming =
                 new QualificationStreamingAccumulator(QualificationRunner.PUBLIC_PROBE_SUFFIX_LENGTH);
+        final QualificationPublicStateTracker publicState = new QualificationPublicStateTracker();
+        QualificationPublicStateTracker.Summary publicStateSummary = null;
         boolean listenerRebound = false;
         boolean recoveryLeaseReacquired = false;
         boolean inventoryStable = false;
@@ -85,8 +87,10 @@ public final class QualificationFullRunner {
                     final QualificationExchange exchange = client.exchange(
                             command, commandIndex + 1L);
                     streaming.accept(command, exchange);
+                    publicState.accept(command, exchange);
                     commandIndex++;
                 }
+                publicStateSummary = publicState.finish();
                 if (!continuousMemoryLane) {
                     awaitMinimumDuration(started, configuration);
                 }
@@ -110,6 +114,8 @@ public final class QualificationFullRunner {
             closeJfr(jfr);
             jfrClosed = true;
             final QualificationStreamingSummary streamingSummary = streaming.finish();
+            publicStateSummary = Objects.requireNonNull(publicStateSummary,
+                    "public state summary");
 
             final List<EngineCommand> persisted = CommandWalReader.read(walConfiguration);
             if (!QualificationWorkloadV1.matches(persisted, workloadConfiguration)) {
@@ -140,14 +146,16 @@ public final class QualificationFullRunner {
             inventoryStable = storageInventory.stable();
 
             final Duration elapsed = Duration.between(started, Instant.now());
-            final QualificationWorkload workload = QualificationWorkloadV1.generate(
+            final QualificationConfiguration manifestConfiguration = manifestConfiguration(
                     workloadConfiguration, persisted.size());
+            final QualificationWorkload workload = QualificationWorkloadV1.generate(
+                    manifestConfiguration);
             final String walDigest = QualificationCanonicalizer.digest(persisted);
             if (!walDigest.equals(streamingSummary.commandDigestHex())) {
                 throw new IOException("streamed workload digest differs from persisted WAL digest");
             }
             final boolean memoryStateBoundPassed = memoryStateBoundPassed(
-                    configuration.profile(), recovered);
+                    configuration.profile(), publicStateSummary, recovered);
             writeResourceEvidence(resourcePath, resources);
             final boolean lanePassed = laneAssertionsPass(
                     configuration, workload.commandCount(), listenerRebound,
@@ -168,23 +176,24 @@ public final class QualificationFullRunner {
                             configuration, elapsed, measurementElapsed, persisted, walDigest,
                             recovered.checkpointDigestHex(), streamingSummary, resources,
                             storageInventory, memoryStateBoundPassed,
-                            recovered.checkpoint().activeOrderCount(), fullCriteria));
+                            recovered.checkpoint().activeOrderCount(), publicStateSummary,
+                            fullCriteria));
             final QualificationManifest manifest = new QualificationManifest(
                     runId,
                     System.getProperty("qualification.git.sha", "working-tree"),
                     System.getProperty("qualification.baseline", "v0.7.0-engineering-baseline"),
                     workload,
-                    workloadConfiguration,
+                    manifestConfiguration,
                     configuration.outputDirectory(),
                     environment(configuration, elapsed, walDirectory),
-                    QualificationCanonicalizer.digest(workloadConfiguration),
+                    QualificationCanonicalizer.digest(manifestConfiguration),
                     result.digestHex(),
                     started);
             Files.writeString(manifestPath, manifestText(
                     configuration, manifest, result, elapsed, listenerRebound,
                     recoveryLeaseReacquired, inventoryStable, resources, jfrPath,
                     resourcePath, artifactHashesPath, storageInventory,
-                    memoryStateBoundPassed, measurementElapsed, fullCriteria));
+                    memoryStateBoundPassed, publicStateSummary, measurementElapsed, fullCriteria));
             final String jfrDigest = QualificationArtifactHasher.sha256(jfrPath);
             final String manifestDigest = QualificationArtifactHasher.sha256(manifestPath);
             final String resourceDigest = QualificationArtifactHasher.sha256(resourcePath);
@@ -309,6 +318,7 @@ public final class QualificationFullRunner {
             final QualificationStorageInventory inventory,
             final boolean memoryStateBoundPassed,
             final int memoryStateActiveOrderCount,
+            final QualificationPublicStateTracker.Summary publicState,
             final boolean fullCriteriaPassed) {
         final Map<String, String> values = new HashMap<>();
         values.put("lane", configuration.lane().name());
@@ -330,6 +340,13 @@ public final class QualificationFullRunner {
         values.put("memoryStateActiveOrderCount", Integer.toString(memoryStateActiveOrderCount));
         values.put("memoryStateActiveOrderBound",
                 Integer.toString(QualificationWorkloadV1.MEMORY_STEADY_STATE_MAX_ACTIVE_ORDERS));
+        values.put("publicStateMaximumActiveOrderCount",
+                Integer.toString(publicState.maximumActiveOrderCount()));
+        values.put("publicStateFinalActiveOrderCount",
+                Integer.toString(publicState.finalActiveOrderCount()));
+        values.put("publicStateBoundPassed", Boolean.toString(publicState.boundPassed()));
+        values.put("publicStateMatchesRecovered", Boolean.toString(
+                publicState.finalActiveOrderCount() == memoryStateActiveOrderCount));
         values.put("heapGuardPassed", Boolean.toString(resources.heapGuardPassed()));
         values.put("fullCriteriaPassed", Boolean.toString(fullCriteriaPassed));
         values.put("campaignMinimumPostGcSamples",
@@ -366,10 +383,28 @@ public final class QualificationFullRunner {
 
     private static boolean memoryStateBoundPassed(
             final QualificationProfile profile,
+            final QualificationPublicStateTracker.Summary publicState,
             final RecoveryResult recovered) {
         return profile != QualificationProfile.MEMORY_STEADY_STATE_V1
-                || recovered.checkpoint().activeOrderCount()
+                || publicState.boundPassed()
+                && publicState.finalActiveOrderCount() == recovered.checkpoint().activeOrderCount()
+                && recovered.checkpoint().activeOrderCount()
                 <= QualificationWorkloadV1.MEMORY_STEADY_STATE_MAX_ACTIVE_ORDERS;
+    }
+
+    private static QualificationConfiguration manifestConfiguration(
+            final QualificationConfiguration configuration,
+            final int persistedCommandCount) {
+        if (persistedCommandCount == configuration.commandCount()) {
+            return configuration;
+        }
+        if (configuration.profile() != QualificationProfile.MEMORY_STEADY_STATE_V1
+                || persistedCommandCount < configuration.commandCount()) {
+            throw new IllegalArgumentException("persisted command count cannot describe manifest");
+        }
+        return new QualificationConfiguration(
+                configuration.profile(), configuration.seed(), persistedCommandCount,
+                configuration.commandTimeout(), configuration.outputDirectory());
     }
 
     private static String inputArguments() {
@@ -392,6 +427,7 @@ public final class QualificationFullRunner {
             final Path artifactHashesPath,
             final QualificationStorageInventory inventory,
             final boolean memoryStateBoundPassed,
+            final QualificationPublicStateTracker.Summary publicState,
             final Duration measurementElapsed,
             final boolean fullCriteriaPassed) {
         final Map<String, String> values = new java.util.TreeMap<>();
@@ -424,6 +460,13 @@ public final class QualificationFullRunner {
         values.put("snapshotFiles", inventory.snapshotFilesText());
         values.put("temporaryFileCount", Long.toString(inventory.temporaryFileCount()));
         values.put("memoryStateBoundPassed", Boolean.toString(memoryStateBoundPassed));
+        values.put("publicStateMaximumActiveOrderCount",
+                Integer.toString(publicState.maximumActiveOrderCount()));
+        values.put("publicStateFinalActiveOrderCount",
+                Integer.toString(publicState.finalActiveOrderCount()));
+        values.put("publicStateBoundPassed", Boolean.toString(publicState.boundPassed()));
+        values.put("publicStateMatchesRecovered", Boolean.toString(
+                Boolean.parseBoolean(result.measurements().get("publicStateMatchesRecovered"))));
         values.put("memoryStateActiveOrderBound",
                 Integer.toString(QualificationWorkloadV1.MEMORY_STEADY_STATE_MAX_ACTIVE_ORDERS));
         values.put("baselineThreadCount", Long.toString(resources.baselineThreadCount()));

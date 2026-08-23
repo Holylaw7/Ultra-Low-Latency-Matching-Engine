@@ -71,6 +71,15 @@ class QualificationFullRunnerTest {
                 run.qualificationRun().result().measurements().get("memoryStateBoundPassed"));
         assertEquals("0",
                 run.qualificationRun().result().measurements().get("memoryStateActiveOrderCount"));
+        assertEquals("1",
+                run.qualificationRun().result().measurements()
+                        .get("publicStateMaximumActiveOrderCount"));
+        assertEquals("0",
+                run.qualificationRun().result().measurements()
+                        .get("publicStateFinalActiveOrderCount"));
+        assertEquals("true",
+                run.qualificationRun().result().measurements()
+                        .get("publicStateMatchesRecovered"));
         assertEquals("2",
                 run.qualificationRun().result().measurements().get("retainedProbeCount"));
         assertEquals(

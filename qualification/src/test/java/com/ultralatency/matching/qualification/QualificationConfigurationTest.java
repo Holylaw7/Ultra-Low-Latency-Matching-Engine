@@ -103,4 +103,15 @@ class QualificationConfigurationTest {
         assertEquals(QualificationFullConfiguration.FULL_MINIMUM_DURATION,
                 configuration.minimumDuration());
     }
+
+    @Test
+    void memorySteadyStateManifestMayDescribeAContinuousQualificationPrefix() {
+        final QualificationConfiguration configuration = new QualificationConfiguration(
+                QualificationProfile.MEMORY_STEADY_STATE_V1, 20260823L,
+                QualificationConfiguration.MEMORY_STEADY_STATE_MAX_COMMAND_COUNT,
+                Duration.ofSeconds(1), Path.of("results"));
+
+        assertEquals(QualificationConfiguration.MEMORY_STEADY_STATE_MAX_COMMAND_COUNT,
+                configuration.commandCount());
+    }
 }

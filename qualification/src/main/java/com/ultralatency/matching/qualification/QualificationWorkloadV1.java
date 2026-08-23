@@ -27,7 +27,8 @@ public final class QualificationWorkloadV1 {
     public static final int MEMORY_STEADY_STATE_MAX_ACTIVE_ORDERS = 1;
 
     /** Qualification-only upper bound for a continuous steady-state command prefix. */
-    public static final int MEMORY_STEADY_STATE_MAX_COMMANDS = 5_000_000;
+    public static final int MEMORY_STEADY_STATE_MAX_COMMANDS =
+            QualificationConfiguration.MEMORY_STEADY_STATE_MAX_COMMAND_COUNT;
 
     private QualificationWorkloadV1() {
     }
