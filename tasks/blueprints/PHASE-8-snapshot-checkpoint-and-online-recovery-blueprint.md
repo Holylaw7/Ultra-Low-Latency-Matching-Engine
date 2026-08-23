@@ -14,8 +14,8 @@
 | Implementation Branch | `feature/phase8-snapshot-online-recovery` |
 | Planned Tasks | `TASK-20260822-029` through `TASK-20260822-034` |
 | Implementation | `Authorized in dependency order` |
-| Current Task | `TASK-20260822-033` — Crash, corruption and determinism verification |
-| Next Gate | `TASK-033 Evidence Gate` |
+| Current Task | `TASK-20260822-034` — Recovery benchmark, documentation and Closure Proposal |
+| Next Gate | `TASK-034 Evidence Gate` |
 
 ## 2. Phase Objective
 
@@ -179,7 +179,7 @@ Sequence must match.
 | 2 | `TASK-20260822-030` | Snapshot v1 codec and atomic store | TASK-029 | Completed / Evidence Gate PASS at `6907391` / CI `32579065372`; `tasks/reports/PHASE-8-task-030.md` |
 | 3 | `TASK-20260822-031` | Recovery planner and replay executor | TASK-030 | Completed / Evidence Gate PASS at `eaed8b8` / CI `32580018903`; `tasks/reports/PHASE-8-task-031.md` |
 | 4 | `TASK-20260822-032` | Recoverable live runtime handoff | TASK-031 | Completed / Evidence Gate PASS at `22568e6` / CI `32613235358`; `tasks/reports/PHASE-8-task-032.md` |
-| 5 | `TASK-20260822-033` | Crash, corruption and determinism verification | TASK-032 | Authorized / Next; `tasks/reports/PHASE-8-task-033.md` |
+| 5 | `TASK-20260822-033` | Crash, corruption and determinism verification | TASK-032 | Completed / Evidence Gate PASS at `eff5955` / CI `32614610701`; `tasks/reports/PHASE-8-task-033.md` |
 | 6 | `TASK-20260822-034` | Recovery benchmark, documentation and Closure Proposal | TASK-033 | `tasks/reports/PHASE-8-task-034.md` |
 
 After Blueprint approval, Tasks may execute continuously in this exact order.

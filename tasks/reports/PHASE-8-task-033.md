@@ -11,7 +11,7 @@
 | Checkpoint | `eff5955` — `test-phase8-determinism-probe-and-evidence` |
 | Exact-SHA CI | [32614610701](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32614610701) PASS |
 | Working tree | Tracked tree clean after checkpoint; pre-existing `.vscode/` remains untouched |
-| Next gate | Read-only verifier and documentation synchronization, then TASK-034 |
+| Next gate | TASK-034 Evidence Gate; Phase 8 Closure remains separately locked |
 
 ## Added Dynamic Evidence
 
@@ -69,6 +69,7 @@ mvn verify: BUILD SUCCESS; 195 tests, 0 failures
 Checkstyle: 0 violations
 git diff --check: PASS
 Exact-SHA CI: eff5955 -> 32614610701 PASS
+Documentation/status synchronization: `bdb8937` -> CI `32614827416` PASS
 Production code changes: 0
 Frozen WAL/Snapshot/Protocol/runtime semantics: unchanged
 ```
@@ -88,7 +89,7 @@ Release remain outside this task.
 
 ## Gate Status
 
-`TASK-033` implementation evidence is prepared at `eff5955` / CI
-`32614610701`. After read-only verifier and documentation evidence gates pass,
-TASK-034 becomes authorized. Phase 8 Closure, merge, `v0.7.0-engineering-baseline`
-and Phase 9 remain unauthorized.
+`TASK-033` implementation evidence is accepted at `eff5955` / CI
+`32614610701`; final documentation/status synchronization is `bdb8937` / CI
+`32614827416` PASS. TASK-034 is authorized as the next task. Phase 8 Closure,
+merge, `v0.7.0-engineering-baseline` and Phase 9 remain unauthorized.

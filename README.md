@@ -53,12 +53,13 @@ canonical checkpoint export/restore is complete at `66fc9d2` with exact-SHA CI
 with exact-SHA CI `32579065372` PASS; TASK-031 offline recovery planner/replay
 is complete at `eaed8b8` with exact-SHA CI `32580018903` PASS; TASK-032
 recoverable live handoff is complete at `22568e6` with exact-SHA CI
-`32613235358` PASS; TASK-033 is the current task and later tasks remain gated. The
+`32613235358` PASS; TASK-033 verification is complete at `eff5955` with exact-SHA
+CI `32614610701` PASS and final status synchronization at `bdb8937` with CI
+`32614827416` PASS; TASK-034 is next. The
 proposal keeps WAL as the sole authority, compares pure-WAL recovery with a
 derived Snapshot-plus-tail path, and makes listener-last recovery a required
 invariant. Phase 8 production implementation is authorized from TASK-033;
-merge and
-`v0.7.0-engineering-baseline` remain unauthorized.
+merge and `v0.7.0-engineering-baseline` remain unauthorized.
 
 The Phase 3 MatchingEngine baseline is completed, approved and frozen at
 `v0.2.0-engineering-baseline`. It contains the Domain Model, frozen Phase 2

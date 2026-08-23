@@ -11,7 +11,7 @@
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
 | Phase | Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap (`TASK-033 PASS / TASK-034 Next`) |
-| Latest product task | [`TASK-20260822-032`](../tasks/completed/TASK-20260822-032-phase8-recoverable-live-handoff.md) — Completed / Evidence Gate PASS / Archived |
+| Latest product task | [`TASK-20260822-033`](../tasks/completed/TASK-20260822-033-phase8-recovery-verification.md) — Completed / Evidence Gate PASS / Archived |
 | Latest architecture decision | [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md) — Approved |
 | Current planning task | [`TASK-20260822-034`](../tasks/active/TASK-20260822-034-phase8-benchmark-docs-closure.md) — Recovery benchmark, documentation and closure preparation; Authorized / Next |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
@@ -25,7 +25,7 @@
 | Remote sync | `origin/master` synchronized at final Phase 7 docs commit `8c45513`; pre-existing `.vscode/` remains untouched; `v0.6.0-engineering-baseline` is frozen at merge `6473365` |
 | Latest Phase 7 CI | Master merge `6473365` — [32574891113](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574891113) PASS; tag `v0.6.0-engineering-baseline` — [32574958017](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574958017) PASS |
 | Latest Phase 7 docs CI | TASK-028 evidence checkpoint `9fed6b2` — [32574274905](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574274905) PASS; final docs sync commits are included in merge `6473365` |
-| Latest Phase 8 CI | TASK-032 remediation `22568e6` — [32613235358](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32613235358) PASS; TASK-033 evidence `eff5955` — [32614610701](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32614610701) PASS; docs/status synchronization pending final commit; TASK-034 is next |
+| Latest Phase 8 CI | TASK-032 remediation `22568e6` — [32613235358](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32613235358) PASS; TASK-033 evidence `eff5955` — [32614610701](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32614610701) PASS; final docs/status sync `bdb8937` — [32614827416](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32614827416) PASS; TASK-034 is next |
 | CI | Phase 7 TASK-024 implementation exact-SHA run [32562594583](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32562594583) PASS; Phase 7 docs/status sync exact-SHA run [32562746074](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32562746074) PASS; Phase 7 TASK-025 implementation exact-SHA run [32564005988](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32564005988) PASS; Phase 7 TASK-025 evidence/status sync exact-SHA run [32564290961](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32564290961) PASS; Phase 7 TASK-026 implementation exact-SHA run [32565087793](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32565087793) PASS; Phase 7 TASK-027 baseline verification exact-SHA run [32565591806](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32565591806) PASS; Phase 7 TASK-027 test-remediation exact-SHA run [32566165212](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32566165212) PASS; Phase 7 approved-boundary remediation exact-SHA run [32570890919](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32570890919) PASS; Phase 7 remediation documentation sync exact-SHA run [32571104763](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32571104763) PASS; Phase 6 master merge [32495076976](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495076976) PASS; baseline tag [32495218654](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495218654) PASS; native subagent configuration CI [32497229680](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32497229680) PASS |
 
 ## Project Progress
@@ -178,8 +178,8 @@ recorded. TASK-029 canonical checkpoint implementation is complete at
 `66fc9d2` / CI `32577713667`; TASK-030 Snapshot v1 codec/store is complete at
 `6907391` / CI `32579065372`; TASK-031 offline recovery planner/replay is
 complete at `eaed8b8` / CI `32580018903`; TASK-032 recoverable live handoff is
-complete at `22568e6` / CI `32613235358`; TASK-033 is the current authorized
-implementation.
+complete at `22568e6` / CI `32613235358`; TASK-033 is complete at `eff5955` /
+CI `32614610701`, and TASK-034 is the current authorized implementation.
 Reconnect/deduplication,
 multi-session support and Product Release remain outside the proposal.
 

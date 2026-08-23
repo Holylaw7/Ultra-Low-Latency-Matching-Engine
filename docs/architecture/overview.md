@@ -32,8 +32,8 @@ export/restore is complete at `66fc9d2` with exact-SHA CI `32577713667` PASS;
 TASK-030 Snapshot codec/store is complete at `6907391` with exact-SHA CI
 `32579065372` PASS; TASK-031 recovery planner is complete at `eaed8b8` with
 exact-SHA CI `32580018903` PASS; TASK-032 live handoff is complete at
-`22568e6` with exact-SHA CI `32613235358` PASS; TASK-033 is next and later
-Tasks remain gated.
+`22568e6` with exact-SHA CI `32613235358` PASS; TASK-033 is complete at
+`eff5955` with exact-SHA CI `32614610701` PASS, and TASK-034 is next.
 
 ## Scope
 
@@ -58,7 +58,7 @@ Client
             -> structural limit matching
        -> Trade / Execution events           [Phase 3 implemented]
   -> Command WAL / Offline Replay            [Phase 5 implemented baseline]
-  -> Snapshot / Online Recovery              [Phase 8 approved; TASK-029/030/031/032 PASS; TASK-033 next]
+  -> Snapshot / Online Recovery              [Phase 8 approved; TASK-029/030/031/032/033 PASS; TASK-034 next]
   -> Output / Metrics                        [Future Work]
 ```
 
@@ -108,7 +108,8 @@ explicit non-goals.
    Blueprint approved; TASK-029 completed at `66fc9d2` / CI `32577713667`,
    TASK-030 completed at `6907391` / CI `32579065372`, TASK-031 completed at
     `eaed8b8` / CI `32580018903`, TASK-032 complete at `22568e6` / CI
-    `32613235358`, TASK-033 next, later Tasks gated by dependency Evidence
-    Gates**.
+    `32613235358`, TASK-033 complete at `eff5955` / CI `32614610701`, status
+    synchronization at `bdb8937` / CI `32614827416`, TASK-034 next, later Tasks
+    gated by dependency Evidence Gates**.
 9. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.
