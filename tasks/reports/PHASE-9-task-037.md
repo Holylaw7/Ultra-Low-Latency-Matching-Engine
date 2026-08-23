@@ -93,12 +93,12 @@ standard exact-SHA CI (implementation) # 32630209329 PASS
 quick-lane exact-SHA CI (implementation) # 32630209194 PASS
 final docs checkpoint                # c70ff16 / 32632212555 PASS
 verifier + docs-auditor               # PASS
+```
 
 The later docs-only checkpoint `03123fa` produced CI run `32632261832` with a
 generic runner exit and no test annotations; it is not used as Evidence Gate
-proof. The preceding `c70ff16` checkpoint remains the last standard-CI PASS;
-the next exact-SHA run must pass before this report is considered synchronized.
-```
+proof. The follow-up docs checkpoint `9a8e3d2` was verified by standard CI
+`32632329094 PASS` and Quick Lane `32632329103 PASS`.
 
 The short lane proves harness composition only. A Full Qualification claim
 requires one immutable run satisfying both 60 minutes and 1,000,000 accepted
