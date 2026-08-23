@@ -8,8 +8,8 @@
 | Task | `TASK-20260822-033` — Crash, Corruption and Determinism Verification |
 | Authorization | Phase 8 Blueprint approval; TASK-032 Evidence Gate PASS |
 | Implementation | Test fixtures and public-contract verification complete |
-| Checkpoint | `addac41` — `test-phase8-live-handoff-evidence` |
-| Exact-SHA CI | [32614362309](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32614362309) PASS |
+| Checkpoint | `eff5955` — `test-phase8-determinism-probe-and-evidence` |
+| Exact-SHA CI | [32614610701](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32614610701) PASS |
 | Working tree | Tracked tree clean after checkpoint; pre-existing `.vscode/` remains untouched |
 | Next gate | Read-only verifier and documentation synchronization, then TASK-034 |
 
@@ -68,7 +68,7 @@ Focused new tests: 4 passed, 0 failures
 mvn verify: BUILD SUCCESS; 195 tests, 0 failures
 Checkstyle: 0 violations
 git diff --check: PASS
-Exact-SHA CI: addac41 -> 32614362309 PASS
+Exact-SHA CI: eff5955 -> 32614610701 PASS
 Production code changes: 0
 Frozen WAL/Snapshot/Protocol/runtime semantics: unchanged
 ```
@@ -88,7 +88,7 @@ Release remain outside this task.
 
 ## Gate Status
 
-`TASK-033` implementation evidence is prepared at `addac41` / CI
-`32614362309`. After read-only verifier and documentation evidence gates pass,
+`TASK-033` implementation evidence is prepared at `eff5955` / CI
+`32614610701`. After read-only verifier and documentation evidence gates pass,
 TASK-034 becomes authorized. Phase 8 Closure, merge, `v0.7.0-engineering-baseline`
 and Phase 9 remain unauthorized.

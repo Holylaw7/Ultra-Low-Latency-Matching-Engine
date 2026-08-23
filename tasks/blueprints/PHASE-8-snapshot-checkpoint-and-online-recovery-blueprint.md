@@ -250,7 +250,7 @@ Exception Gate.
   adds no WAL mutation or truncation.
 - [x] Hard WAL corruption, gaps, invalid Snapshot, checksum/digest mismatch,
   Snapshot newer than WAL and incompatible formats fail closed.
-- [ ] Temporary Snapshot files are ignored; published corruption is not.
+- [x] Temporary Snapshot files are ignored; published corruption is not.
 - [x] Any startup/handoff failure occurs before listener bind, preserves first
   cause and rejects later admission.
 
@@ -426,6 +426,7 @@ Phase 9 and Product Release remain unauthorized.
 | 2026-08-22 | Evidence Gate | TASK-031 PASS | Explicit PURE_WAL and SNAPSHOT_THEN_WAL offline recovery, strict prefix binding, WAL-tail replay, convergence and fail-closed matrix accepted at `eaed8b8` / CI `32580018903`; status sync `ce3f22b` / CI `32580536044` PASS; TASK-032 is next | No Exception Gate |
 | 2026-08-23 | Human Exception Gate | TASK-032 limited remediation approved | Additive externally-owned `RecoveryLease` overload in `RecoveryPlanner.java`; runtime ownership remains continuous from pre-scan through shutdown. No format, protocol, recovery-mode, retry or session changes. | Restricted to lease ownership/handoff |
 | 2026-08-23 | Evidence Gate | TASK-032 PASS | Listener-last handoff, sequence convergence, first live Submit/Cancel, RequestId reset, failure-before-bind and continuous lease ownership accepted at `22568e6` / CI `32613235358`; report and task archived. | No Exception Gate remains |
+| 2026-08-23 | Evidence Gate | TASK-033 PASS | Repeated PURE_WAL/SNAPSHOT_THEN_WAL convergence, fixed public probe, strict corruption/temp-file behavior, listener-last failure and first-live-command evidence accepted at `eff5955` / CI `32614610701`; force/move fault injection remains an explicit limitation with no production seam. TASK-034 is next. | No Exception Gate remains |
 
 ```text
 Phase 8 Discovery: Completed
@@ -435,9 +436,9 @@ TASK-029: Completed / Evidence Gate PASS
 TASK-030: Completed / Evidence Gate PASS at `6907391` / CI `32579065372`
 TASK-031: Completed / Evidence Gate PASS at `eaed8b8` / CI `32580018903`
 TASK-032: Completed / Evidence Gate PASS at `22568e6` / CI `32613235358`
-TASK-033: Authorized / Next
-TASK-034: Authorized conditionally by TASK-033 Evidence Gate
+TASK-033: Completed / Evidence Gate PASS
+TASK-034: Authorized / Next
 Implementation: Authorized
 Merge / v0.7.0-engineering-baseline: Not Authorized
-Next Gate: TASK-033 Evidence Gate
+Next Gate: TASK-034 Evidence Gate
 ```
