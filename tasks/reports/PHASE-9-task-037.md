@@ -10,7 +10,7 @@
 | Result | In Progress — Full Qualification threshold failure; Human decision pending |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Branch | `feature/phase9-system-qualification` |
-| Implementation | `b80e12e` + `0ee094c` + evidence-boundary fix `db18eac` |
+| Implementation | `b80e12e` + `0ee094c` + evidence-boundary fix `db18eac` + qualification teardown fix `63e54f9` |
 | Duration-gate remediation | `5a3917d` |
 | Standard CI | `32636481415` PASS |
 | Quick Lane CI | `32636481409` PASS |
@@ -35,6 +35,19 @@ checks long-run resource behavior without modifying the production runtime.
 The short-lane implementation evidence is complete at `0ee094c`. The real
 60-minute / 1,000,000-command Full lane is an explicit manual evidence unit;
 it has not been claimed or substituted by the short lane.
+
+The transient qualification CI failures were diagnosed as a harness teardown
+ordering race, not a production runtime failure. The runner closed the
+Protocol v1 client before shutting down the server; the server was still
+`RUNNING` when the client's `channelInactive` callback correctly applied the
+active-session disconnect terminal rule. Both qualification runners now shut
+down the server before closing the client (`63e54f9`). This preserves the
+production disconnect semantics and makes test teardown deterministic.
+
+The repair was verified by the focused full-runner test, five repeated local
+runs, `mvn verify`, and exact-SHA CI `32640760008` PASS. Qualification Quick
+Lane CI `32640759989` also passed. Earlier failed CI runs remain retained as
+historical transient evidence and are not reclassified as passing gates.
 
 The explicit manual entry point is:
 
@@ -121,6 +134,8 @@ git diff --check                      # PASS
 frozen-path audit                     # PASS (0 production-path changes)
 duration-gate remediation CI          # 32636481415 PASS
 duration-gate quick-lane CI            # 32636481409 PASS
+qualification teardown fix CI          # 32640760008 PASS
+qualification teardown quick lane CI   # 32640759989 PASS
 full run #1                            # preserved threshold failure
 full run #2                            # preserved natural-sample failure
 current report checkpoint              # this docs commit; exact-SHA CI required
