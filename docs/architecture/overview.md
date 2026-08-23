@@ -31,7 +31,9 @@ Phase 8 Blueprint/ADR-0016 is approved. TASK-029 canonical checkpoint
 export/restore is complete at `66fc9d2` with exact-SHA CI `32577713667` PASS;
 TASK-030 Snapshot codec/store is complete at `6907391` with exact-SHA CI
 `32579065372` PASS; TASK-031 recovery planner is complete at `eaed8b8` with
-exact-SHA CI `32580018903` PASS; TASK-032 is next and later Tasks remain gated.
+exact-SHA CI `32580018903` PASS; TASK-032 live handoff is complete at
+`22568e6` with exact-SHA CI `32613235358` PASS; TASK-033 is next and later
+Tasks remain gated.
 
 ## Scope
 
@@ -56,7 +58,7 @@ Client
             -> structural limit matching
        -> Trade / Execution events           [Phase 3 implemented]
   -> Command WAL / Offline Replay            [Phase 5 implemented baseline]
-  -> Snapshot / Online Recovery              [Phase 8 approved; TASK-029/030/031 PASS; TASK-032 next]
+  -> Snapshot / Online Recovery              [Phase 8 approved; TASK-029/030/031/032 PASS; TASK-033 next]
   -> Output / Metrics                        [Future Work]
 ```
 
@@ -105,7 +107,8 @@ explicit non-goals.
 8. Snapshot checkpoint and online Recovery bootstrap — **ADR-0016 and Complete
    Blueprint approved; TASK-029 completed at `66fc9d2` / CI `32577713667`,
    TASK-030 completed at `6907391` / CI `32579065372`, TASK-031 completed at
-   `eaed8b8` / CI `32580018903`, TASK-032 next, later Tasks gated by dependency
-   Evidence Gates**.
+    `eaed8b8` / CI `32580018903`, TASK-032 complete at `22568e6` / CI
+    `32613235358`, TASK-033 next, later Tasks gated by dependency Evidence
+    Gates**.
 9. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.

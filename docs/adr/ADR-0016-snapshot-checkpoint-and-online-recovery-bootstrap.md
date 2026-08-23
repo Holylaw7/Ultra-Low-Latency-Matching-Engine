@@ -279,6 +279,13 @@ exceptions:
 Existing constructor behavior must remain compatible. Any broader change is an
 Exception Gate.
 
+The TASK-032 Exception Gate additionally authorized one narrow additive
+`RecoveryPlanner.recover(mode, externallyOwnedLease)` overload. It validates a
+caller-held lease, performs the existing strict recovery under that lease and
+never closes it; the caller that acquired the lease remains responsible for
+release through live runtime shutdown. No other existing production-file or
+recovery semantic change is authorized by this exception.
+
 ### D13 — Determinism and performance evidence
 
 Pure-WAL and Snapshot-plus-tail recovery must converge on the same complete
@@ -391,6 +398,8 @@ unlisted file/API/scope change.
 | 2026-08-22 | Human Developer | Approved | D1-D14 and TASK-029 through TASK-034 authorized in strict dependency order. Additive checkpoint/restore, recovered-engine construction, validated coordinator sequence seed and new Snapshot/recovery packages are authorized exactly as listed. Per-Task Evidence Gates and Exception Gates remain mandatory; merge/tag/Phase 9 remain unauthorized. |
 | 2026-08-22 | Evidence Gate | TASK-030 PASS | Snapshot v1 codec/store, strict validation, atomic publication, offline generator, recovery lease and WAL inventory stability accepted at `6907391` / CI `32579065372`; TASK-031 is next. |
 | 2026-08-22 | Evidence Gate | TASK-031 PASS | Explicit PURE_WAL and SNAPSHOT_THEN_WAL offline recovery, strict prefix binding, WAL-tail replay, convergence and fail-closed matrix accepted at `eaed8b8` / CI `32580018903`; status sync `ce3f22b` / CI `32580536044` PASS; TASK-032 is next. |
+| 2026-08-23 | Human Exception Gate | TASK-032 limited remediation approved | Additive externally-owned `RecoveryLease` overload in `RecoveryPlanner.java`; runtime ownership remains continuous from pre-scan through shutdown. No WAL/Snapshot/Protocol format, recovery mode, retry or session changes. |
+| 2026-08-23 | Evidence Gate | TASK-032 PASS | Listener-last handoff, sequence convergence, first live command continuation, RequestId reset, failure-before-bind and continuous lease ownership accepted at `22568e6` / CI `32613235358`; TASK-033 is next. |
 
 ```text
 ADR-0016: Approved
@@ -399,5 +408,6 @@ Merge / v0.7.0-engineering-baseline: Not authorized
 TASK-029: Completed / Evidence Gate PASS at `66fc9d2` / CI `32577713667`
 TASK-030: Completed / Evidence Gate PASS at `6907391` / CI `32579065372`
 TASK-031: Completed / Evidence Gate PASS at `eaed8b8` / CI `32580018903`
-Next Gate: TASK-032 Evidence Gate
+TASK-032: Completed / Evidence Gate PASS at `22568e6` / CI `32613235358`
+Next Gate: TASK-033 Evidence Gate
 ```

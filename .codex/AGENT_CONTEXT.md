@@ -1,6 +1,6 @@
 # AGENT_CONTEXT — Matching Engine Current State
 
-> Last Updated: 2026-08-22
+> Last Updated: 2026-08-23
 > Purpose: compact current-state index; detailed history lives in Tasks, Stage
 > Reports, ADRs and Git.
 
@@ -10,13 +10,13 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
-| Phase | Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap (`TASK-031 PASS / TASK-032 Next`) |
-| Latest product task | [`TASK-20260822-031`](../tasks/completed/TASK-20260822-031-phase8-recovery-planner-replay.md) — Completed / Evidence Gate PASS / Archived |
+| Phase | Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap (`TASK-032 PASS / TASK-033 Next`) |
+| Latest product task | [`TASK-20260822-032`](../tasks/completed/TASK-20260822-032-phase8-recoverable-live-handoff.md) — Completed / Evidence Gate PASS / Archived |
 | Latest architecture decision | [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md) — Approved |
-| Current planning task | [`TASK-20260822-032`](../tasks/active/TASK-20260822-032-phase8-recoverable-live-handoff.md) — Recoverable live runtime handoff; Authorized / Next |
+| Current planning task | [`TASK-20260822-033`](../tasks/active/TASK-20260822-033-phase8-recovery-verification.md) — Crash, corruption and determinism verification; Authorized / Next |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 7 Baseline Frozen at `v0.6.0-engineering-baseline`; Product Release separately governed |
-| Product approval | Phase 7 Closure Approved and baseline frozen; Phase 8 Blueprint Approved, TASK-029/030/031 completed, TASK-032 next, merge/tag and Product Release not authorized |
+| Product approval | Phase 7 Closure Approved and baseline frozen; Phase 8 Blueprint Approved, TASK-029/030/031/032 completed, TASK-033 next, merge/tag and Product Release not authorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `feature/phase8-snapshot-online-recovery` |
 | Engineering baseline commit | `6473365` (Phase 7 merge) |
@@ -25,7 +25,7 @@
 | Remote sync | `origin/master` synchronized at final Phase 7 docs commit `8c45513`; pre-existing `.vscode/` remains untouched; `v0.6.0-engineering-baseline` is frozen at merge `6473365` |
 | Latest Phase 7 CI | Master merge `6473365` — [32574891113](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574891113) PASS; tag `v0.6.0-engineering-baseline` — [32574958017](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574958017) PASS |
 | Latest Phase 7 docs CI | TASK-028 evidence checkpoint `9fed6b2` — [32574274905](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574274905) PASS; final docs sync commits are included in merge `6473365` |
-| Latest Phase 8 CI | TASK-031 code `eaed8b8` — [32580018903](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32580018903) PASS; status sync `ce3f22b` — [32580536044](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32580536044) PASS; TASK-032 is next |
+| Latest Phase 8 CI | TASK-032 remediation `22568e6` — [32613235358](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32613235358) PASS; TASK-032 report/status sync is complete; TASK-033 is next |
 | CI | Phase 7 TASK-024 implementation exact-SHA run [32562594583](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32562594583) PASS; Phase 7 docs/status sync exact-SHA run [32562746074](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32562746074) PASS; Phase 7 TASK-025 implementation exact-SHA run [32564005988](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32564005988) PASS; Phase 7 TASK-025 evidence/status sync exact-SHA run [32564290961](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32564290961) PASS; Phase 7 TASK-026 implementation exact-SHA run [32565087793](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32565087793) PASS; Phase 7 TASK-027 baseline verification exact-SHA run [32565591806](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32565591806) PASS; Phase 7 TASK-027 test-remediation exact-SHA run [32566165212](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32566165212) PASS; Phase 7 approved-boundary remediation exact-SHA run [32570890919](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32570890919) PASS; Phase 7 remediation documentation sync exact-SHA run [32571104763](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32571104763) PASS; Phase 6 master merge [32495076976](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495076976) PASS; baseline tag [32495218654](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495218654) PASS; native subagent configuration CI [32497229680](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32497229680) PASS |
 
 ## Project Progress
@@ -41,7 +41,7 @@
 | Phase 5 — Command WAL and Deterministic Replay Foundation | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md); [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md); [`Closure`](../tasks/reports/PHASE-5-command-wal-replay-closure.md); `v0.4.0-engineering-baseline` |
 | Phase 6 — Binary Network Protocol and Single-Session Gateway | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-6-network-protocol-blueprint.md); [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md); [`Closure`](../tasks/reports/PHASE-6-network-protocol-closure.md); `v0.5.0-engineering-baseline` |
 | Phase 7 — Live Durable Command Pipeline Integration | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-7-live-durable-command-pipeline-blueprint.md); [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md); `v0.6.0-engineering-baseline` |
-| Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap | TASK-029/030/031 PASS / TASK-032 next; later Tasks gated | [`Blueprint`](../tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md); [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md) |
+| Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap | TASK-029/030/031/032 PASS / TASK-033 next; later Tasks gated | [`Blueprint`](../tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md); [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md) |
 | Phase 9+ — Recovery evolution and production hardening | Future Work | separately approved future Blueprints |
 
 ## Current Product Gate
@@ -120,8 +120,9 @@ ADR-0011 Final Approved
   -> TASK-029 [Completed / Evidence Gate PASS at `66fc9d2` / CI `32577713667`]
   -> TASK-030 [Completed / Evidence Gate PASS at `6907391` / CI `32579065372`]
   -> TASK-031 [Completed / Evidence Gate PASS at `eaed8b8` / CI `32580018903`]
-  -> TASK-032 [Authorized / Next]
-  -> TASK-033 through TASK-034 [Authorized conditionally by predecessor Evidence Gates]
+  -> TASK-032 [Completed / Evidence Gate PASS at `22568e6` / CI `32613235358`]
+  -> TASK-033 [Authorized / Next]
+  -> TASK-034 [Authorized conditionally by TASK-033 Evidence Gate]
   -> Phase 8 Closure [Not Authorized]
 ```
 
@@ -176,7 +177,8 @@ a Complete Blueprint and TASK-029 through TASK-034; Human Blueprint Approval is
 recorded. TASK-029 canonical checkpoint implementation is complete at
 `66fc9d2` / CI `32577713667`; TASK-030 Snapshot v1 codec/store is complete at
 `6907391` / CI `32579065372`; TASK-031 offline recovery planner/replay is
-complete at `eaed8b8` / CI `32580018903`; TASK-032 is the current authorized
+complete at `eaed8b8` / CI `32580018903`; TASK-032 recoverable live handoff is
+complete at `22568e6` / CI `32613235358`; TASK-033 is the current authorized
 implementation.
 Reconnect/deduplication,
 multi-session support and Product Release remain outside the proposal.
@@ -288,7 +290,7 @@ Current evidence:
 | Versioned command WAL and strict offline deterministic replay | Approved / Implemented / Baseline Frozen | [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md) |
 | Binary protocol v1 and single-session Netty gateway | Approved / Implemented / Baseline Frozen | [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md); `v0.5.0-engineering-baseline` |
 | Live durable command pipeline integration | Approved / Implemented / Baseline Frozen | [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md); `v0.6.0-engineering-baseline` |
-| Snapshot checkpoint and online recovery bootstrap | TASK-029/030/031 PASS / TASK-032 next; later Tasks gated | [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md) |
+| Snapshot checkpoint and online recovery bootstrap | TASK-029/030/031/032 PASS / TASK-033 next; later Tasks gated | [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md) |
 
 If a Task and linked ADR disagree, stop and synchronize them before work.
 
@@ -297,7 +299,7 @@ If a Task and linked ADR disagree, stop and synchronize them before work.
 | Decision | Status | Source |
 | --- | --- | --- |
 | Live durable command pipeline | Approved / TASK-024..028 archived / Baseline Frozen | [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md); `v0.6.0-engineering-baseline` |
-| Snapshot checkpoint and online recovery bootstrap | TASK-029/030/031 completed / TASK-032 next; later Tasks gated | [`Phase 8 Blueprint`](../tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md) |
+| Snapshot checkpoint and online recovery bootstrap | TASK-029/030/031/032 completed / TASK-033 next; later Tasks gated | [`Phase 8 Blueprint`](../tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md) |
 
 ADR-0015 composes the single-session Gateway, Command WAL and Event Pipeline
 under WAL-before-execute and fail-stop semantics. TASK-024..028 implement and
@@ -306,7 +308,8 @@ pure-WAL and Snapshot-plus-tail recovery with listener-last handoff. TASK-029
 provides the canonical in-memory checkpoint foundation at `66fc9d2` / CI
 `32577713667`; TASK-030 provides the Snapshot v1 codec/store at `6907391` /
 CI `32579065372`; TASK-031 provides offline recovery planner/replay at
-`eaed8b8` / CI `32580018903`; TASK-032 is authorized now and later Tasks require
+`eaed8b8` / CI `32580018903`; TASK-032 provides listener-last live handoff at
+`22568e6` / CI `32613235358`; TASK-033 is authorized now and later Tasks require
 predecessor Evidence Gates.
 
 ## Verified Current Implementation
@@ -334,8 +337,8 @@ Disruptor pipeline remains a bounded component boundary frozen at
 `v0.3.0-engineering-baseline`. Phase 5 provides a versioned command WAL,
 strict segmented scanning, offline genesis replay and corruption/torn-tail
 evidence. Phase 8 authorizes canonical Snapshot checkpoints and listener-last
-  online recovery bootstrap in dependency order; TASK-029, TASK-030 and TASK-031
-  are complete and TASK-032 is the current Task.
+  online recovery bootstrap in dependency order; TASK-029 through TASK-032 are
+  complete and TASK-033 is the current Task.
 
 ## Performance Evidence
 
@@ -384,7 +387,7 @@ Client
        -> active OrderId index
   -> Trade / Execution results        [Engine generation implemented]
   -> Command WAL / Offline Replay     [Phase 5 baseline frozen]
-  -> Snapshot / Online Recovery       [Phase 8 approved; TASK-029/030/031 PASS; TASK-032 next]
+  -> Snapshot / Online Recovery       [Phase 8 approved; TASK-029/030/031/032 PASS; TASK-033 next]
   -> Output / Metrics                 [Future Work]
 ```
 
