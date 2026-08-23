@@ -125,7 +125,12 @@ not bypass their public boundaries.
 
 ### Long-Run Reliability
 
-- Full run reaches both 60 minutes and 1,000,000 accepted commands.
+- Each participating Full run reaches both 60 minutes and 1,000,000 accepted
+  commands under the identical approved workload/JVM/GC/runtime configuration.
+- A qualifying campaign contains at least two independently qualifying runs and
+  at least five cumulative natural post-GC samples.
+- Each run has at least two natural post-GC samples and its own chronological
+  early/late heap guard; samples are never concatenated across runs.
 - No unexpected terminal state, timeout, mismatch or unexplained exception.
 - Owned threads, locks, listener, temporary files and inventory satisfy D7.
 - JFR/GC and manifest evidence are complete.
@@ -182,10 +187,12 @@ JMH performance
 JFR/GC profile
 ```
 
-Full Qualification is one immutable evidence unit. Workload, seed, JVM args,
-GC, WAL/Pipeline/Netty configuration, filesystem and thresholds cannot change
-after the run begins. Any change invalidates that run; results cannot be
-concatenated across configurations.
+Each Full run is an immutable evidence unit, and the campaign is an immutable
+set of such runs. Workload, seed, JVM args, GC, WAL/Pipeline/Netty
+configuration, filesystem and thresholds cannot change after a run begins.
+Any change invalidates that run. Run samples may be counted for the campaign
+threshold only after each run independently passes its chronological guard;
+their observations cannot be concatenated into one synthetic time series.
 
 Raw artifacts remain ignored or CI artifacts. Committed reports contain
 commands, environment, hashes, failures, reruns and limitations.

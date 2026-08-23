@@ -53,7 +53,9 @@ require an Exception Gate.
 The CI lane is bounded at 10,000 commands and three restart cycles. The Full
 Qualification lane is an explicit run requiring both at least 60 minutes and
 at least 1,000,000 accepted commands. Quick evidence cannot substitute for the
-Full lane.
+Full lane. A Full Qualification campaign requires at least two independently
+qualifying Full runs under the same approved workload, JVM/GC and runtime
+configuration.
 
 ### D6 — Long-run success is deterministic and fail-closed
 
@@ -66,8 +68,12 @@ recovery.
 
 Qualification records owned threads, lock reacquisition, listener rebinding,
 temporary files, WAL/Snapshot inventory, JFR and GC samples. A gross-retention
-guard compares natural post-GC first and last quartiles. It detects obvious
-retention but does not claim proof of absence of leaks.
+guard compares natural post-GC first and last quartiles in timestamp order for
+each run. Each participating run requires at least two natural post-GC samples
+and must pass its own chronological guard; the campaign requires at least five
+natural samples across at least two qualifying runs. Samples from different
+runs are never concatenated into a synthetic time series. The guard detects
+obvious retention but does not claim proof of absence of leaks.
 
 ### D8 — Restart and termination campaigns are explicit
 
@@ -106,14 +112,19 @@ before/after evidence and an explicit keep/revert decision.
 
 Failed forks, outliers, crashes and timeouts may not be deleted, hidden or
 re-run until a passing result is obtained. Thresholds and workload parameters
-cannot change after seeing a result.
+cannot change after seeing a result. Campaign evaluation may count only
+independently qualifying runs; non-qualifying runs remain preserved evidence
+and cannot contribute samples to another run's chronological heap series.
 
 ### D14 — Every Full run has a qualification manifest
 
 The manifest records run ID, Git SHA, baseline tag, workload/version/seed,
 environment, counts, inventories, restart/termination counts, digests,
-resource samples, artifact hashes, result and limitations. Raw artifacts stay
-local or in CI artifacts; summaries and hashes are committed.
+resource samples, per-run heap guard result, artifact hashes, result and
+limitations. A campaign summary additionally records participating run IDs,
+configuration identity, cumulative natural sample count and per-run guard
+results. Raw artifacts stay local or in CI artifacts; summaries and hashes are
+committed.
 
 ### D15 — No new critical dependency
 

@@ -7,14 +7,14 @@
 | Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability |
 | Task | `TASK-20260823-037` |
 | Stage | Implementation / Verification |
-| Result | In Progress — Full Qualification threshold failure; Human decision pending |
+| Result | In Progress — Limited campaign-criterion remediation; independent Full Run pending |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Branch | `feature/phase9-system-qualification` |
 | Implementation | `b80e12e` + `0ee094c` + evidence-boundary fix `db18eac` + qualification teardown fix `63e54f9` |
 | Duration-gate remediation | `5a3917d` |
 | Standard CI | `32636481415` PASS |
 | Quick Lane CI | `32636481409` PASS |
-| Next Gate | TASK-038 remains locked until PASS |
+| Next Gate | Campaign Evidence Gate and one independent qualifying Full Run |
 
 ## Goal
 
@@ -61,6 +61,32 @@ mvn -pl qualification -am -Dsurefire.failIfNoSpecifiedTests=false \
 The short TEST lane reports harness success separately from
 `fullCriteriaPassed`; it never produces a Full Qualification claim.
 
+### Limited Criterion Amendment — Human Approved
+
+The single-run requirement of five natural post-GC samples was amended after
+two identical-config runs each produced four natural samples. The approved
+campaign criterion is:
+
+```text
+At least two independently qualifying Full runs.
+Each run: >=60 minutes, >=1,000,000 accepted commands, >=2 natural
+post-GC samples, chronological per-run heap guard PASS, and all correctness,
+recovery and resource checks PASS.
+Campaign: >=5 cumulative natural samples.
+```
+
+Natural observations remain time-ordered within each run. They are not merged
+into a synthetic cross-run series, and all failed artifacts remain preserved.
+The remediation also fixes the previous heap-guard implementation, which
+sorted heap values numerically before selecting quartiles and therefore could
+not prove time-directional retained-heap growth. Raw CSV re-evaluation now
+uses timestamp order through `QualificationResourceEvidenceReader`.
+
+The first run cannot participate because it did not reach 60 minutes. The
+second run may participate only after chronological guard recalculation from
+its original raw resource CSV passes. Human approval authorizes exactly one
+additional independent Full run after this remediation Evidence Gate passes.
+
 ### Full Qualification Attempts (Preserved Failure Evidence)
 
 The first explicit Full lane was executed with the approved immutable
@@ -71,7 +97,7 @@ run: qualification-full-5346263e-ad6f-4dee-8798-92fe017311ef
 acceptedCommands: 1,000,000
 elapsed: 1,916,630 ms (31:56.630)
 minimumDuration: 3,600,000 ms (60 minutes)
-naturalPostGcSampleCount: 4 / 5 required
+naturalPostGcSampleCount: 4 / 5 required under the original criterion
 fullCriteriaPassed: false
 listenerRebound: true
 leaseReacquired: true
@@ -97,8 +123,8 @@ run: qualification-full-326c125e-5c4a-45f8-9690-ad736a81ffc3
 acceptedCommands: 1,000,000
 elapsed: 3,609,294 ms (60:09.294)
 minimumDuration: 3,600,000 ms (60 minutes)
-naturalPostGcSampleCount: 4 / 5 required
-heapGuardAssessed: false
+naturalPostGcSampleCount: 4 / 5 required under the original criterion
+heapGuardAssessed: false under the original single-run criterion
 fullCriteriaPassed: false
 listenerRebound: true
 leaseReacquired: true
@@ -109,17 +135,17 @@ walBytes: 40,019,552
 ```
 
 This follow-up confirms that the duration gate now has the approved AND
-semantics. It still does not qualify as a passing Full lane because the
-required five natural post-GC samples were not observed. No `System.gc()`,
-retry-until-pass behavior, sample filtering, threshold change, production
-change or workload/configuration drift was introduced. Both raw runs remain
-valid failure evidence; no production/runtime failure was observed.
+semantics. Under the amended campaign criterion, Run #2 is eligible for
+participation only after its original resource CSV is recalculated using the
+chronological guard. No `System.gc()`, retry-until-pass behavior, sample
+filtering, JVM/GC tuning, threshold relaxation, production change or
+workload/configuration drift was introduced. Both raw runs remain valid
+failure evidence; no production/runtime failure was observed.
 
 ## Explicitly Not Implemented
 
-- a passing 60-minute / 1,000,000-command campaign (the preserved attempts
-  reached the command and duration thresholds, but the natural-sample gate
-  remained incomplete);
+- a passing campaign (Run #2 chronological re-evaluation and one additional
+  independent qualifying Full run remain outstanding);
 - restart/forced-termination campaign (TASK-038);
 - JMH/JFR performance characterization beyond required soak capture
   (TASK-039);
@@ -136,6 +162,7 @@ duration-gate remediation CI          # 32636481415 PASS
 duration-gate quick-lane CI            # 32636481409 PASS
 qualification teardown fix CI          # 32640760008 PASS
 qualification teardown quick lane CI   # 32640759989 PASS
+campaign criterion remediation         # current checkpoint; exact-SHA CI pending
 full run #1                            # preserved threshold failure
 full run #2                            # preserved natural-sample failure
 current report checkpoint              # this docs commit; exact-SHA CI required
@@ -160,14 +187,16 @@ generic runner exit and no test annotations; it is not used as Evidence Gate
 proof. The follow-up docs checkpoint `9a8e3d2` was verified by standard CI
 `32632329094 PASS` and Quick Lane `32632329103 PASS`.
 
-The short lane proves harness composition only. A Full Qualification claim
-requires one immutable run satisfying both 60 minutes and 1,000,000 accepted
-commands, with no retry/filtering and complete raw artifact metadata.
+The short lane proves harness composition only. A Full Qualification campaign
+claim requires at least two immutable qualifying runs, each satisfying both 60
+minutes and 1,000,000 accepted commands, with chronological per-run heap
+evidence, no retry/filtering and complete raw artifact metadata.
 
 ## Gate
 
-TASK-037 remains in progress because both preserved Full lane attempts did not
-meet all gates: the runner remediation now satisfies the duration criterion,
-but natural post-GC evidence remains at 4/5. TASK-038, Phase 9 Closure, merge and
-`v0.8.0-engineering-baseline` remain unauthorized until a separately approved
-qualification decision produces a passing immutable run.
+TASK-037 remains in progress because the campaign Evidence Gate is not yet
+complete. Run #1 cannot participate because its duration was short; Run #2
+requires chronological raw-evidence re-evaluation, and one additional
+independent Full run is required. TASK-038, Phase 9 Closure, merge and
+`v0.8.0-engineering-baseline` remain unauthorized until the approved campaign
+criterion produces a passing immutable evidence set.

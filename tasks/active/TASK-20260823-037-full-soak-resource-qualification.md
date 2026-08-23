@@ -32,7 +32,9 @@ must never be reported as Full Qualification.
 - immutable Full/Test lane configuration and threshold validation;
 - public-boundary full-run orchestration over the real recoverable server;
 - JFR and non-invasive GC/thread/heap resource sampling;
-- natural post-GC heap guard without `System.gc()`;
+- chronological per-run natural post-GC heap guard without `System.gc()`;
+- campaign evaluator requiring two qualifying runs and five cumulative natural
+  post-GC samples without cross-run timeline concatenation;
 - listener rebind, recovery lease and WAL inventory evidence;
 - raw JFR, resource CSV, manifest and failure artifacts with SHA-256 hashes;
 - focused short-lane tests for the full-run composition and threshold guards.
@@ -51,13 +53,18 @@ must never be reported as Full Qualification.
 ## 5. Acceptance Criteria
 
 - [ ] Full configuration rejects fewer than 1,000,000 commands, less than 60
-  minutes or fewer than five natural post-GC samples.
+  minutes or fewer than two per-run natural post-GC samples.
+- [ ] Campaign evaluation requires at least two independently qualifying Full
+  runs and at least five cumulative natural post-GC samples.
+- [ ] Each run's heap guard uses timestamp order; observations from different
+  runs are never merged into a synthetic time series.
 - [ ] Full runner uses only the public Protocol v1 boundary and records every
   accepted command/result without retry or filtering.
 - [ ] Full qualification requires both duration and command-count thresholds;
   the short lane is explicitly non-full evidence.
 - [ ] Resource evidence records owned runtime threads, listener/lease state,
-  temporary-file/inventory checks and natural post-GC heap observations.
+  temporary-file/inventory checks and chronological natural post-GC heap
+  observations.
 - [ ] JFR, resource CSV, manifest and failure artifacts are preserved and
   hashed; environment and immutable run configuration are recorded.
 - [ ] Focused qualification tests pass without reflection, sleep-based

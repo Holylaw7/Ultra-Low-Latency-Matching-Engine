@@ -7,7 +7,6 @@ import java.lang.management.ThreadMXBean;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -20,7 +19,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public final class QualificationResourceSampler implements AutoCloseable {
 
-    private static final long MEBIBYTE = 1024L * 1024L;
     private static final String SAMPLER_THREAD_PREFIX = "qualification-resource-sampler";
 
     private final Duration interval;
@@ -31,7 +29,6 @@ public final class QualificationResourceSampler implements AutoCloseable {
             ManagementFactory.getGarbageCollectorMXBeans();
     private final ScheduledExecutorService executor;
     private final List<QualificationResourceSample> samples = new ArrayList<>();
-    private final List<Long> naturalPostGcHeapBytes = new ArrayList<>();
     private final Set<String> baselineRuntimeThreads;
     private final long baselineThreadCount;
     private final AtomicBoolean closed = new AtomicBoolean();
@@ -79,10 +76,15 @@ public final class QualificationResourceSampler implements AutoCloseable {
 
     /** Returns evidence after close; live sampling state is otherwise still safe to inspect. */
     public QualificationResourceEvidence evidence() {
-        final List<Long> postGc = List.copyOf(naturalPostGcHeapBytes);
+        final List<QualificationResourceSample> postGcSamples =
+                QualificationHeapGuard.naturalPostGcSamples(samples);
+        final List<Long> postGc = postGcSamples.stream()
+                .map(QualificationResourceSample::naturalPostGcHeapBytes)
+                .toList();
         final boolean assessed = postGc.size() >= minimumPostGcSamples
                 && minimumPostGcSamples > 0;
-        final boolean heapPassed = assessed && heapGuardPasses(postGc);
+        final boolean heapPassed = assessed
+                && QualificationHeapGuard.passes(samples, minimumPostGcSamples);
         final List<String> baseline = baselineRuntimeThreads.stream().sorted().toList();
         final List<String> current = runtimeThreadNames().stream().sorted().toList();
         return new QualificationResourceEvidence(
@@ -109,9 +111,6 @@ public final class QualificationResourceSampler implements AutoCloseable {
         final Long postGc = collections > lastGcCollections
                 ? Math.max(0L, memoryBean.getHeapMemoryUsage().getUsed())
                 : null;
-        if (postGc != null) {
-            naturalPostGcHeapBytes.add(postGc);
-        }
         lastGcCollections = Math.max(lastGcCollections, collections);
         samples.add(new QualificationResourceSample(
                 Instant.now(),
@@ -152,24 +151,4 @@ public final class QualificationResourceSampler implements AutoCloseable {
                 || name.contains("matchingEngine"));
     }
 
-    private static boolean heapGuardPasses(final List<Long> values) {
-        if (values.size() < 5) {
-            return false;
-        }
-        final List<Long> sorted = values.stream().sorted(Comparator.naturalOrder()).toList();
-        final int firstEnd = Math.max(1, sorted.size() / 4);
-        final int lastStart = Math.min(sorted.size() - 1, (sorted.size() * 3) / 4);
-        final long firstMedian = median(sorted.subList(0, firstEnd));
-        final long lastMedian = median(sorted.subList(lastStart, sorted.size()));
-        final long allowance = Math.max(32L * MEBIBYTE, firstMedian / 5L);
-        return lastMedian <= firstMedian + allowance;
-    }
-
-    private static long median(final List<Long> values) {
-        final int middle = values.size() / 2;
-        if (values.size() % 2 == 1) {
-            return values.get(middle);
-        }
-        return values.get(middle - 1) / 2L + values.get(middle) / 2L;
-    }
 }

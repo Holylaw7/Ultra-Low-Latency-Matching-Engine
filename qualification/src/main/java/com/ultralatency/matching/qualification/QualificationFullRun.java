@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Objects;
 
-/** Immutable outcome and raw-artifact locations for one full qualification campaign. */
+/** Immutable outcome and raw-artifact locations for one Full Qualification run. */
 public record QualificationFullRun(
         QualificationRun qualificationRun,
         QualificationResourceEvidence resourceEvidence,
@@ -21,7 +21,7 @@ public record QualificationFullRun(
         String resourceEvidenceDigestHex,
         String artifactHashesDigestHex) {
 
-    /** Validates one campaign outcome. */
+    /** Validates one run outcome; campaign qualification is evaluated separately. */
     public QualificationFullRun {
         Objects.requireNonNull(qualificationRun, "qualificationRun");
         Objects.requireNonNull(resourceEvidence, "resourceEvidence");

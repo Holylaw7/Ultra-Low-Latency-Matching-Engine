@@ -304,6 +304,8 @@ public final class QualificationFullRunner {
                 Boolean.toString(resources.threadBaselineRestored()));
         values.put("heapGuardPassed", Boolean.toString(resources.heapGuardPassed()));
         values.put("fullCriteriaPassed", Boolean.toString(fullCriteriaPassed));
+        values.put("campaignMinimumPostGcSamples",
+                Integer.toString(QualificationFullConfiguration.CAMPAIGN_MINIMUM_POST_GC_SAMPLES));
         values.put("walFileCount", Long.toString(inventory.walFileCount()));
         values.put("walBytes", Long.toString(inventory.walBytes()));
         values.put("walFiles", inventory.walFilesText());
@@ -398,6 +400,8 @@ public final class QualificationFullRunner {
         values.put("sampleInterval", configuration.sampleInterval().toString());
         values.put("minimumDuration", configuration.minimumDuration().toString());
         values.put("minimumPostGcSamples", Integer.toString(configuration.minimumPostGcSamples()));
+        values.put("campaignMinimumPostGcSamples",
+                Integer.toString(QualificationFullConfiguration.CAMPAIGN_MINIMUM_POST_GC_SAMPLES));
         values.put("jvmInputArguments",
                 manifest.environment().getOrDefault("java.vm.inputArguments", ""));
         values.put("filesystem", manifest.environment().getOrDefault("filesystem", "unknown"));
