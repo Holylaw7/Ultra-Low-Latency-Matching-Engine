@@ -7,14 +7,14 @@
 | Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability |
 | Task | `TASK-20260823-037` |
 | Stage | Limited Qualification-Only Remediation / Evidence Gate |
-| Result | In Progress — bounded aggregation and memory-steady-state lane; new Full Campaign not authorized |
+| Result | Remediation Evidence Gate PASS — Human Full Campaign approval pending; no new Full Campaign authorized |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Branch | `feature/phase9-system-qualification` |
 | Implementation | Prior harness commits plus bounded remediation `82112b2`, continuous-lane fixes `2501c71`/`3b5b451`, public-state/manifest fixes `6fc813b`/`23ca7f0` |
 | Duration-gate remediation | `5a3917d` |
-| Standard CI | Prior gates PASS; remediation exact-SHA CI pending |
-| Quick Lane CI | Prior gates PASS; no new Full Campaign started |
-| Next Gate | Remediation Evidence Gate, then separate Human Full Campaign decision |
+| Standard CI | `32645549709` PASS for remediation checkpoint `c420313` |
+| Quick Lane CI | `32645549694` PASS; no new Full Campaign started |
+| Next Gate | Separate Human Full Campaign decision |
 
 ## Goal
 
@@ -40,9 +40,10 @@ The bounded remediation implementation checkpoint is `23ca7f0` (preceded by
 the public-state implementation `6fc813b`, continuous-lane checkpoint
 `3b5b451` and bounded aggregation checkpoint `82112b2`). Local verification
 after that checkpoint reports 36 qualification tests (2 designed skips), 195
-core tests, Checkstyle 0 and `mvn verify` PASS. The final exact-SHA CI and
-read-only reviewer results are still required before this remediation Evidence
-Gate can close.
+core tests, Checkstyle 0 and `mvn verify` PASS. The final remediation checkpoint
+is `c420313`; standard and Quick Lane exact-SHA CI pass, and verifier/docs-auditor
+are PASS. The Evidence Gate is complete; a separate Human decision is still
+required before any new Full Campaign.
 
 The short-lane implementation evidence is complete at `0ee094c`. The real
 60-minute / 1,000,000-command Full lane is an explicit manual evidence unit;
@@ -205,7 +206,8 @@ campaign quick lane                    # 913022b / CI 32642352146 PASS
 Run #2 chronological re-evaluation     # FAIL; original raw artifact preserved
 full run #1                            # preserved threshold failure
 full run #2                            # preserved natural-sample failure
-current report checkpoint              # this docs commit; exact-SHA CI required
+current remediation checkpoint         # c420313; standard CI 32645549709 PASS
+Quick Lane                              # 32645549694 PASS
 verifier + docs-auditor               # PASS
 ```
 
@@ -230,8 +232,9 @@ proof. The follow-up docs checkpoint `9a8e3d2` was verified by standard CI
 The short lane proves harness composition only. A Full Qualification campaign
 claim requires at least two immutable qualifying runs, each satisfying both 60
 minutes and 1,000,000 accepted commands, with chronological per-run heap
-evidence, no retry/filtering and complete raw artifact metadata. The current
-amendment Evidence Gate must pass before a new Full Campaign can be considered.
+evidence, no retry/filtering and complete raw artifact metadata. The amendment
+Evidence Gate is now PASS; a new Full Campaign can only be considered after a
+separate Human approval.
 
 ### Limited Qualification-Only Remediation
 
@@ -257,8 +260,8 @@ remediation Evidence Gate passes.
 
 ## Gate
 
-TASK-037 remains in progress because the Limited Qualification-Only
-Remediation Evidence Gate is not yet complete. Run #1 cannot participate
-because its duration was short, and Run #2 fails the corrected chronological
-heap guard. No new Full run was started. TASK-038, Phase 9 Closure, merge and
+TASK-037 remediation Evidence Gate is PASS. Run #1 cannot participate because
+its duration was short, and Run #2 fails the corrected chronological heap guard.
+No new Full run was started. The next gate is separate Human approval for a
+new `MEMORY_STEADY_STATE_V1` Full Campaign. TASK-038, Phase 9 Closure, merge and
 `v0.8.0-engineering-baseline` remain unauthorized.

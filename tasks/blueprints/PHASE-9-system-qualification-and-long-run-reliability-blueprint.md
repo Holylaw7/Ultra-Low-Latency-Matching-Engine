@@ -14,7 +14,7 @@
 | Blueprint Branch | `docs/phase9-system-qualification-blueprint` |
 | Implementation Branch | `feature/phase9-system-qualification` |
 | Planned Tasks | `TASK-20260823-035` through `TASK-20260823-040` |
-| Next Gate | `TASK-037 Limited Qualification-Only Remediation Evidence Gate; Human Full Campaign Approval required before any new Full run` |
+| Next Gate | `Human approval for a new MEMORY_STEADY_STATE_V1 Full Campaign; no new run is authorized yet` |
 
 ## 2. Phase Goal
 
@@ -300,7 +300,7 @@ Release. Phase 10 remains unauthorized.
 
 ```text
 Blueprint Status: Approved
-Implementation: TASK-036 Evidence Gate PASS; TASK-037 Limited Qualification-Only Remediation / Evidence Gate pending
+Implementation: TASK-036 Evidence Gate PASS; TASK-037 Limited Qualification-Only Remediation / Evidence Gate PASS at `c420313`
 Phase 9 Closure: Not Authorized
 ```
 
@@ -317,8 +317,8 @@ confounded by harness retention and intentionally growing business state:
 - add `MEMORY_STEADY_STATE_V1` as a qualification-only bounded-state lane over
   the unchanged public system boundary;
 - preserve Run #1 and Run #2 as non-qualifying evidence;
-- do not start a new Full Campaign until this remediation passes its Evidence
-  Gate and a separate Human approval is recorded.
+- do not start a new Full Campaign until this remediation Evidence Gate has
+  passed and a separate Human approval is recorded.
 
 The amendment does not authorize production source changes, JVM/GC/workload
 tuning, threshold relaxation, artificial GC, retry-until-pass behavior,

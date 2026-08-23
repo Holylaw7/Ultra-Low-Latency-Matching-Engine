@@ -10,10 +10,10 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
-| Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability (`TASK-037 In Progress; Limited Qualification-Only Remediation Evidence Gate pending`) |
+| Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability (`TASK-037 remediation Evidence Gate PASS; Human Full Campaign approval pending`) |
 | Latest product task | [`TASK-20260822-034`](../tasks/completed/TASK-20260822-034-phase8-benchmark-docs-closure.md) — Completed / Archived / Baseline Frozen |
 | Latest architecture decision | [`ADR-0017`](../docs/adr/ADR-0017-system-qualification-performance-reliability.md) — Approved |
-| Current planning task | [`TASK-20260823-037`](../tasks/active/TASK-20260823-037-full-soak-resource-qualification.md) — In Progress / Limited Qualification-Only Remediation Evidence Gate pending; implementation `23ca7f0` |
+| Current planning task | [`TASK-20260823-037`](../tasks/active/TASK-20260823-037-full-soak-resource-qualification.md) — Remediation Evidence Gate PASS at `c420313` / CI `32645549709`; Human Full Campaign approval pending |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 8 Baseline Frozen at `v0.7.0-engineering-baseline`; Phase 9 qualification in progress; Product Release separately governed |
 | Product approval | Phase 8 Human Closure Approved; merge `87abbc1` / Master CI `32622722649` PASS; `v0.7.0-engineering-baseline` / Tag CI `32622757607` PASS; Phase 9 Blueprint Approved / TASK-037 in progress |
@@ -131,7 +131,7 @@ ADR-0011 Final Approved
   -> Phase 9 Blueprint [Approved]
   -> TASK-20260823-035 [Completed / Evidence Gate PASS at `22d13fe` / CI `32625554518`]
   -> TASK-20260823-036 [Completed / Evidence Gate PASS at `f90e42c` / standard CI `32627744868` and quick CI `32627744878`]
-   -> TASK-20260823-037 [In Progress / Limited Qualification-Only Remediation Evidence Gate pending]
+   -> TASK-20260823-037 [Remediation Evidence Gate PASS; Human Full Campaign approval pending]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
@@ -197,10 +197,10 @@ Approval is recorded, TASK-035 Evidence Gate is PASS at `22d13fe` / CI
 `32625554518`, and TASK-036 Evidence Gate is PASS after remediation at
 `f90e42c` with standard CI `32627744868` and Quick Lane `32627744878` PASS.
 The corrected checkpoint/probe evidence and read-only audits are accepted;
-TASK-037 is in progress; its Limited Qualification-Only Remediation Evidence
-Gate remains pending after implementation checkpoint `23ca7f0`. Local tests,
-Checkstyle and `mvn verify` pass; read-only reviewers and exact-SHA CI remain
-required. No new Full Campaign is authorized.
+TASK-037 remediation Evidence Gate is PASS at `c420313` with standard CI
+`32645549709` and Quick Lane `32645549694` PASS. Local tests, Checkstyle,
+verifier and docs-auditor pass. A new Full Campaign still requires separate
+Human approval and has not been started.
 Production optimization,
 Phase 10 and Product Release remain locked.
 Reconnect/deduplication,
