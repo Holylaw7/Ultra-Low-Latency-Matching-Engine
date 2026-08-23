@@ -10,22 +10,22 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
-| Phase | Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap (`Human Closure Approved; merge/tag execution authorized`) |
-| Latest product task | [`TASK-20260822-034`](../tasks/completed/TASK-20260822-034-phase8-benchmark-docs-closure.md) — Completed / Evidence Gate PASS / Closure Proposal ready |
+| Phase | Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap (`Completed / Approved / Baseline Frozen`) |
+| Latest product task | [`TASK-20260822-034`](../tasks/completed/TASK-20260822-034-phase8-benchmark-docs-closure.md) — Completed / Archived / Baseline Frozen |
 | Latest architecture decision | [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md) — Approved |
-| Current planning task | [`TASK-20260822-034`](../tasks/completed/TASK-20260822-034-phase8-benchmark-docs-closure.md) — Completed; Human Phase 8 Closure Approved; merge/tag execution pending |
+| Current planning task | Phase 8 completed and archived; Phase 9 Blueprint authorization required |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
-| Product stage | Phase 7 Baseline Frozen at `v0.6.0-engineering-baseline`; Product Release separately governed |
-| Product approval | Phase 7 Closure Approved and baseline frozen; Phase 8 Human Closure Approved after technical input `c59d7c0` / CI `32616802595` and remediation `4bdfb97` / CI `32620164524`; merge/tag authorized, Phase 9/Product Release unauthorized |
+| Product stage | Phase 8 Baseline Frozen at `v0.7.0-engineering-baseline`; Product Release separately governed |
+| Product approval | Phase 8 Human Closure Approved; merge `87abbc1` / Master CI `32622722649` PASS; `v0.7.0-engineering-baseline` / Tag CI `32622757607` PASS; Phase 9/Product Release unauthorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `feature/phase8-snapshot-online-recovery` |
-| Engineering baseline commit | `6473365` (Phase 7 merge) |
-| Engineering baseline tag | `v0.6.0-engineering-baseline` |
+| Engineering baseline commit | `87abbc1` (Phase 8 merge) |
+| Engineering baseline tag | `v0.7.0-engineering-baseline` |
 | Remote | `origin` — `git@github.com:Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/master` synchronized at final Phase 7 docs commit `8c45513`; pre-existing `.vscode/` remains untouched; `v0.6.0-engineering-baseline` is frozen at merge `6473365` |
+| Remote sync | `origin/master` synchronized at Phase 8 merge `87abbc1`; pre-existing `.vscode/` remains untouched; `v0.7.0-engineering-baseline` is frozen at merge `87abbc1` |
 | Latest Phase 7 CI | Master merge `6473365` — [32574891113](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574891113) PASS; tag `v0.6.0-engineering-baseline` — [32574958017](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574958017) PASS |
 | Latest Phase 7 docs CI | TASK-028 evidence checkpoint `9fed6b2` — [32574274905](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574274905) PASS; final docs sync commits are included in merge `6473365` |
-| Latest Phase 8 CI | TASK-033 evidence `eff5955` — [32614610701](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32614610701) PASS; TASK-034 benchmark code `9835624` — [32616029460](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32616029460) PASS; technical Closure input `c59d7c0` — [32616802595](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32616802595) PASS; 195 tests / 0 failures / Checkstyle 0 |
+| Latest Phase 8 CI | Technical Closure input `c59d7c0` — [32616802595](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32616802595) PASS; remediation `4bdfb97` — [32620164524](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32620164524) PASS; merge `87abbc1` — [32622722649](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32622722649) PASS; tag — [32622757607](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32622757607) PASS |
 | CI | Phase 7 TASK-024 implementation exact-SHA run [32562594583](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32562594583) PASS; Phase 7 docs/status sync exact-SHA run [32562746074](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32562746074) PASS; Phase 7 TASK-025 implementation exact-SHA run [32564005988](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32564005988) PASS; Phase 7 TASK-025 evidence/status sync exact-SHA run [32564290961](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32564290961) PASS; Phase 7 TASK-026 implementation exact-SHA run [32565087793](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32565087793) PASS; Phase 7 TASK-027 baseline verification exact-SHA run [32565591806](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32565591806) PASS; Phase 7 TASK-027 test-remediation exact-SHA run [32566165212](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32566165212) PASS; Phase 7 approved-boundary remediation exact-SHA run [32570890919](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32570890919) PASS; Phase 7 remediation documentation sync exact-SHA run [32571104763](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32571104763) PASS; Phase 6 master merge [32495076976](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495076976) PASS; baseline tag [32495218654](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32495218654) PASS; native subagent configuration CI [32497229680](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32497229680) PASS |
 
 ## Project Progress
@@ -41,7 +41,7 @@
 | Phase 5 — Command WAL and Deterministic Replay Foundation | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-5-command-wal-and-replay-blueprint.md); [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md); [`Closure`](../tasks/reports/PHASE-5-command-wal-replay-closure.md); `v0.4.0-engineering-baseline` |
 | Phase 6 — Binary Network Protocol and Single-Session Gateway | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-6-network-protocol-blueprint.md); [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md); [`Closure`](../tasks/reports/PHASE-6-network-protocol-closure.md); `v0.5.0-engineering-baseline` |
 | Phase 7 — Live Durable Command Pipeline Integration | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-7-live-durable-command-pipeline-blueprint.md); [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md); `v0.6.0-engineering-baseline` |
-| Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap | TASK-029..034 evidence accepted; docs/evidence-only remediation authorized; delta review pending | [`Blueprint`](../tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md); [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md); [`TASK-034 report`](../tasks/reports/PHASE-8-task-034.md) |
+| Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap | Completed / Human Approved / Baseline Frozen at `v0.7.0-engineering-baseline` | [`Blueprint`](../tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md); [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md); [`TASK-034 report`](../tasks/reports/PHASE-8-task-034.md) |
 | Phase 9+ — Recovery evolution and production hardening | Future Work | separately approved future Blueprints |
 
 ## Current Product Gate
@@ -124,8 +124,10 @@ ADR-0011 Final Approved
   -> TASK-033 [Completed / Evidence Gate PASS at `eff5955` / CI `32614610701`]
   -> TASK-034 [Completed / Evidence Gate PASS at `9835624` / CI `32616029460`]
   -> Technical Closure input [c59d7c0 / CI `32616802595` PASS; 195 tests / 0 failures / Checkstyle 0]
-  -> Phase 8 Closure [Human Approved]
-  -> Merge/master verification/tag/final sync [Authorized / Pending]
+  -> Phase 8 Closure [Completed / Human Approved]
+  -> Merge/master verification/tag/final sync [Completed / PASS]
+  -> v0.7.0-engineering-baseline [Frozen]
+  -> Phase 9 [Not Authorized]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
@@ -184,9 +186,10 @@ complete at `22568e6` / CI `32613235358`; TASK-033 is complete at `eff5955` /
 CI `32614610701`; TASK-034 benchmark and Closure Proposal preparation is
 complete at `9835624` / CI `32616029460`. The technical Closure input is
 `c59d7c0` / CI `32616802595` PASS with 195 tests, 0 failures and Checkstyle 0.
-Human Phase 8 Closure Approval is recorded after the docs-only remediation and
-Sol High delta review. Normal merge/master verification/tag/final sync are now
-authorized; Phase 9 and Product Release remain locked.
+Human Phase 8 Closure Approval is complete after the docs-only remediation and
+Sol High delta review. Merge/master verification/tag/final sync are complete;
+Phase 8 is frozen at `v0.7.0-engineering-baseline`. Phase 9 and Product Release
+remain locked.
 Reconnect/deduplication,
 multi-session support and Product Release remain outside the proposal.
 
@@ -297,7 +300,7 @@ Current evidence:
 | Versioned command WAL and strict offline deterministic replay | Approved / Implemented / Baseline Frozen | [`ADR-0013`](../docs/adr/ADR-0013-command-wal-and-deterministic-replay.md) |
 | Binary protocol v1 and single-session Netty gateway | Approved / Implemented / Baseline Frozen | [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md); `v0.5.0-engineering-baseline` |
 | Live durable command pipeline integration | Approved / Implemented / Baseline Frozen | [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md); `v0.6.0-engineering-baseline` |
-| Snapshot checkpoint and online recovery bootstrap | TASK-029..034 Evidence Gates PASS; Human Closure Approved; merge/tag execution pending | [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md); [`TASK-034 report`](../tasks/reports/PHASE-8-task-034.md) |
+| Snapshot checkpoint and online recovery bootstrap | Completed / Human Approved / Baseline Frozen at `v0.7.0-engineering-baseline` | [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md); [`TASK-034 report`](../tasks/reports/PHASE-8-task-034.md) |
 
 If a Task and linked ADR disagree, stop and synchronize them before work.
 
@@ -306,7 +309,7 @@ If a Task and linked ADR disagree, stop and synchronize them before work.
 | Decision | Status | Source |
 | --- | --- | --- |
 | Live durable command pipeline | Approved / TASK-024..028 archived / Baseline Frozen | [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md); `v0.6.0-engineering-baseline` |
-| Snapshot checkpoint and online recovery bootstrap | TASK-029..034 Evidence Gates PASS; Human Closure Approved; merge/tag execution pending | [`Phase 8 Blueprint`](../tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md) |
+| Snapshot checkpoint and online recovery bootstrap | Completed / Human Approved / Baseline Frozen at `v0.7.0-engineering-baseline` | [`Phase 8 Blueprint`](../tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md) |
 
 ADR-0015 composes the single-session Gateway, Command WAL and Event Pipeline
 under WAL-before-execute and fail-stop semantics. TASK-024..028 implement and
@@ -322,9 +325,9 @@ probe evidence. Dynamic `force(true)`/move fault injection remains explicitly
 unverified because no production-only seam is authorized. TASK-034 benchmark
 and Closure Proposal preparation is complete. Technical Closure input is
 `c59d7c0` / CI `32616802595` PASS with 195 tests, 0 failures and Checkstyle 0.
-Human Phase 8 Closure Approval is recorded; normal merge/master verification,
-tag and final status sync are authorized. Later Phase 8 scope and Phase 9 remain
-locked.
+Human Phase 8 Closure Approval is complete; merge/master verification, tag and
+final status sync are complete. Phase 8 is frozen at `v0.7.0-engineering-baseline`;
+later scope and Phase 9 remain locked.
 
 ## Verified Current Implementation
 
@@ -408,7 +411,7 @@ Client
        -> active OrderId index
   -> Trade / Execution results        [Engine generation implemented]
   -> Command WAL / Offline Replay     [Phase 5 baseline frozen]
-  -> Snapshot / Online Recovery       [Human Closure Approved; merge/tag execution pending]
+  -> Snapshot / Online Recovery       [Phase 8 baseline frozen at v0.7.0]
   -> Output / Metrics                 [Future Work]
 ```
 

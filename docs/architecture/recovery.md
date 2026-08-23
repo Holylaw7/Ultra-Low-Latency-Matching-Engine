@@ -24,8 +24,9 @@ exact-SHA CI `32580018903` PASS; TASK-032 live handoff is complete at
 / exact-SHA CI `32614610701` PASS; TASK-034 benchmark and Closure Proposal
 preparation is complete at `9835624` / exact-SHA CI `32616029460` PASS. The
 technical Closure input is `c59d7c0` / CI `32616802595` PASS with 195 tests,
-0 failures and Checkstyle 0. Human Phase 8 Closure Approval is recorded;
-normal merge/master verification and baseline tagging are authorized.
+0 failures and Checkstyle 0. Human Phase 8 Closure Approval is complete;
+merge `87abbc1`, Master CI `32622722649`, baseline tag
+`v0.7.0-engineering-baseline` and Tag CI `32622757607` are verified.
 
 ## Implemented Offline Flow
 
@@ -108,9 +109,8 @@ Snapshot-tail, offline Snapshot creation and bootstrap-to-listener boundaries;
 its full metadata, P50/P95/P99/P999 values and limitations are recorded in
 [`../benchmark/recovery.md`](../benchmark/recovery.md) and
 [`../../tasks/reports/PHASE-8-task-034.md`](../../tasks/reports/PHASE-8-task-034.md).
-Phase 8 Closure is Human Approved; merge, `v0.7.0-engineering-baseline` and
-final status synchronization are authorized. Phase 9 and Product Release remain
-unauthorized.
+Phase 8 Closure is complete and frozen at `v0.7.0-engineering-baseline`.
+Phase 9 and Product Release remain unauthorized.
 
 ## Verification
 

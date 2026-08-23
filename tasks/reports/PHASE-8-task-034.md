@@ -11,7 +11,7 @@
 | Code checkpoint | `9835624cb4fa31368edda4f4483fa0c6eb78ae65` — `feat-phase8-recovery-benchmark` |
 | Code CI | [32616029460](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32616029460) PASS |
 | Raw benchmark output | `benchmark-results/phase8-recovery-full.json` (local, ignored) |
-| Closure state | Evidence Gate PASS; technical Closure input accepted; docs/evidence-only remediation authorized; Sol High delta review and Human Closure Approval remain pending |
+| Closure state | Completed / Human Closure Approved / Baseline Frozen at `v0.7.0-engineering-baseline` |
 | Working tree policy | Pre-existing `.vscode/` remains untouched and untracked |
 
 ## Scope and Implementation
@@ -186,7 +186,7 @@ TASK-034 Evidence Gate PASS
     -> Human Phase 8 Closure Approval
 ```
 
-Human Closure Approval has authorized the normal `--no-ff` merge, master
-verification, `v0.7.0-engineering-baseline` and final status synchronization.
-The tag must point to the verified Phase 8 merge commit. Phase 9 and Product
-Release remain unauthorized at this checkpoint.
+Human Closure Approval was followed by normal `--no-ff` merge `87abbc1`, Master
+CI `32622722649` PASS, annotated tag `v0.7.0-engineering-baseline` pointing to
+that merge commit, and Tag CI `32622757607` PASS. TASK-029 through TASK-034 are
+archived. Phase 9 and Product Release remain unauthorized.

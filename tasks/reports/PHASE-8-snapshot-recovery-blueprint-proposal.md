@@ -14,9 +14,10 @@ TASK-032: Completed / Evidence Gate PASS at `22568e6` / CI `32613235358`
   TASK-033: Completed / Evidence Gate PASS at `eff5955` / CI `32614610701`
   TASK-034: Completed / Evidence Gate PASS at `9835624` / CI `32616029460`
   Technical Closure input: `c59d7c0` / CI `32616802595` PASS; 195 tests, 0 failures, Checkstyle 0
-  Phase 8 Closure: Human Approved — merge/tag execution authorized
-Merge / v0.7.0-engineering-baseline: Not Authorized
-  Next Gate: master verification, `v0.7.0-engineering-baseline`, tag CI and final sync
+  Phase 8 Closure: Completed / Baseline Frozen
+Merge: `87abbc1` / Master CI `32622722649` PASS
+Baseline: `v0.7.0-engineering-baseline` / Tag CI `32622757607` PASS
+  Next Gate: Phase 9 Blueprint authorization
 ```
 
 ## Discovery Decision
@@ -169,6 +170,6 @@ the listed Exception Gates and deferred scope
 ```
 
 Human Phase 8 Blueprint Approval is recorded in ADR-0016 and the Blueprint.
-Implementation and Closure Review are complete. Human Closure Approval authorizes
-the normal merge, master verification and baseline tagging. Phase 9 and Product
-Release remain unauthorized.
+Implementation, Closure Review and Human Closure Approval are complete. Phase 8
+is frozen at `v0.7.0-engineering-baseline`; Phase 9 and Product Release remain
+unauthorized.

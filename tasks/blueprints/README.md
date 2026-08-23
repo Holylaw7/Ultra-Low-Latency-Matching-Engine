@@ -26,6 +26,7 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
 - [`PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md`](PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)
   — Approved; TASK-029 through TASK-034 completed / Evidence Gate PASS. Technical
   Closure input is `c59d7c0` / CI `32616802595` with 195 tests, 0 failures and
-  Checkstyle 0. Human Phase 8 Closure Approval is recorded; merge and baseline
-  tag execution are authorized, while Phase 9 and Product Release remain
-  unauthorized.
+  Checkstyle 0. Human Phase 8 Closure Approval is complete; merge `87abbc1` /
+  Master CI `32622722649` PASS and baseline tag `v0.7.0-engineering-baseline` /
+  Tag CI `32622757607` PASS. Phase 8 is frozen; Phase 9 and Product Release
+  remain unauthorized.

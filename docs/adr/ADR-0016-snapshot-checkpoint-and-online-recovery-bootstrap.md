@@ -2,9 +2,10 @@
 
 ## Status
 
-Approved — Human Phase 8 Blueprint Approval recorded on `2026-08-22`.
-Implementation is authorized only in the enumerated dependency order and under
-the per-Task Evidence Gates. Merge and baseline tagging remain unauthorized.
+Approved — Human Phase 8 Blueprint and Closure Approval recorded.
+Implementation, merge and baseline tagging are complete under the enumerated
+dependency order and per-Task Evidence Gates. Phase 8 is frozen at
+`v0.7.0-engineering-baseline`; Phase 9 and Product Release remain unauthorized.
 
 ## Context
 
@@ -402,12 +403,15 @@ unlisted file/API/scope change.
 | 2026-08-23 | Evidence Gate | TASK-032 PASS | Listener-last handoff, sequence convergence, first live command continuation, RequestId reset, failure-before-bind and continuous lease ownership accepted at `22568e6` / CI `32613235358`; TASK-033 is next. |
 | 2026-08-23 | Evidence Gate | TASK-034 PASS | RecoveryBenchmark full matrix, heap metadata, JMH GC-profiler allocation evidence, deterministic fixture metadata, Java 21/JMH environment, Throughput `ops/ms` and SampleTime P50/P95/P99/P999 evidence accepted at `9835624` / CI `32616029460`; verifier, benchmark-reviewer and docs-auditor PASS. Technical Closure input is `c59d7c0` / CI `32616802595` PASS with 195 tests, 0 failures and Checkstyle 0. Component/local-host claim boundary and force/move dynamic-injection limitation remain explicit. |
 | 2026-08-23 | Sol High Closure Review | CHANGES REQUIRED | Technical implementation and ADR alignment accepted. Closure is blocked only by stale/incomplete final evidence synchronization; docs/evidence-only Limited Closure Remediation is authorized. |
-| 2026-08-23 | Human Developer | Closure Approved | Technical Closure input `c59d7c0` / CI `32616802595` PASS; remediation `4bdfb97` / CI `32620164524` PASS; Sol High delta-only review approved. Authorized normal `--no-ff` merge, master verification/CI, and annotated `v0.7.0-engineering-baseline`. Phase 9 and Product Release remain unauthorized. |
+| 2026-08-23 | Human Developer | Closure Approved | Technical Closure input `c59d7c0` / CI `32616802595` PASS; remediation `4bdfb97` / CI `32620164524` PASS; Sol High delta-only review approved. Authorized normal `--no-ff` merge, master verification/CI, annotated `v0.7.0-engineering-baseline` and final synchronization. |
 
 ```text
 ADR-0016: Approved
 Implementation: Authorized in dependency order
-Merge / v0.7.0-engineering-baseline: Not authorized
+Phase 8 Closure: Approved / Baseline Frozen
+Merge: `87abbc1` / Master CI `32622722649` PASS
+Baseline: `v0.7.0-engineering-baseline` / Tag CI `32622757607` PASS
+Phase 9 / Product Release: Not authorized
 TASK-029: Completed / Evidence Gate PASS at `66fc9d2` / CI `32577713667`
 TASK-030: Completed / Evidence Gate PASS at `6907391` / CI `32579065372`
 TASK-031: Completed / Evidence Gate PASS at `eaed8b8` / CI `32580018903`
