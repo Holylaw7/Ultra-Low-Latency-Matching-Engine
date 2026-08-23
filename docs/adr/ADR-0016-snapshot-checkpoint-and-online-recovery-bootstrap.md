@@ -400,6 +400,7 @@ unlisted file/API/scope change.
 | 2026-08-22 | Evidence Gate | TASK-031 PASS | Explicit PURE_WAL and SNAPSHOT_THEN_WAL offline recovery, strict prefix binding, WAL-tail replay, convergence and fail-closed matrix accepted at `eaed8b8` / CI `32580018903`; status sync `ce3f22b` / CI `32580536044` PASS; TASK-032 is next. |
 | 2026-08-23 | Human Exception Gate | TASK-032 limited remediation approved | Additive externally-owned `RecoveryLease` overload in `RecoveryPlanner.java`; runtime ownership remains continuous from pre-scan through shutdown. No WAL/Snapshot/Protocol format, recovery mode, retry or session changes. |
 | 2026-08-23 | Evidence Gate | TASK-032 PASS | Listener-last handoff, sequence convergence, first live command continuation, RequestId reset, failure-before-bind and continuous lease ownership accepted at `22568e6` / CI `32613235358`; TASK-033 is next. |
+| 2026-08-23 | Evidence Gate | TASK-034 benchmark/docs preparation | RecoveryBenchmark full matrix, deterministic fixture metadata, Java 21/JMH environment and SampleTime P50/P95/P99/P999 evidence accepted at `9835624` / CI `32616029460`; component/local-host claim boundary and force/move dynamic-injection limitation recorded. Final Closure Review remains pending. |
 
 ```text
 ADR-0016: Approved
@@ -409,5 +410,7 @@ TASK-029: Completed / Evidence Gate PASS at `66fc9d2` / CI `32577713667`
 TASK-030: Completed / Evidence Gate PASS at `6907391` / CI `32579065372`
 TASK-031: Completed / Evidence Gate PASS at `eaed8b8` / CI `32580018903`
 TASK-032: Completed / Evidence Gate PASS at `22568e6` / CI `32613235358`
-Next Gate: TASK-033 Evidence Gate
+TASK-033: Completed / Evidence Gate PASS at `eff5955` / CI `32614610701`
+TASK-034: Benchmark/docs preparation complete at `9835624` / CI `32616029460`; final read-only audits and Closure Review pending
+Next Gate: Sol High Phase 8 Closure Review
 ```

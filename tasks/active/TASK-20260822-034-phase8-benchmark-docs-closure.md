@@ -4,7 +4,7 @@
 | --- | --- |
 | Task | `TASK-20260822-034` / Recovery Benchmark, Documentation and Closure Proposal |
 | Phase / ADR / Blueprint | Phase 8 / ADR-0016 / `PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md` |
-| Status | Approved — Authorized after TASK-033 Evidence Gate |
+| Status | Completed — Evidence Gate preparation complete; final read-only audits and Sol High Closure Review pending |
 | Depends on | TASK-033 Evidence Gate PASS |
 | Manual Gate | Stops at Human Phase 8 Closure Review |
 | Planned report | `tasks/reports/PHASE-8-task-034.md` |
@@ -42,13 +42,13 @@ defaults or authorize optimization.
 
 ## Acceptance Criteria
 
-- [ ] Required benchmark boundaries, dimensions, metadata and percentiles are
+- [x] Required benchmark boundaries, dimensions, metadata and percentiles are
   recorded and internally consistent with raw evidence.
 - [ ] verifier, benchmark-reviewer and docs-auditor independently report PASS.
 - [ ] ADR, Blueprint, all task reports, recovery docs, README and context share
   the final exact-SHA evidence and known limitations.
-- [ ] Phase 8 Closure Proposal is complete but does not claim Human approval.
-- [ ] Merge, `v0.7.0-engineering-baseline`, Phase 9 and Product Release remain
+- [x] Phase 8 Closure Proposal is complete but does not claim Human approval.
+- [x] Merge, `v0.7.0-engineering-baseline`, Phase 9 and Product Release remain
   locked.
 
 ## Final Evidence Gate

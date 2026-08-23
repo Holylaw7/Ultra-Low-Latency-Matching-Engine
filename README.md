@@ -54,12 +54,15 @@ with exact-SHA CI `32579065372` PASS; TASK-031 offline recovery planner/replay
 is complete at `eaed8b8` with exact-SHA CI `32580018903` PASS; TASK-032
 recoverable live handoff is complete at `22568e6` with exact-SHA CI
 `32613235358` PASS; TASK-033 verification is complete at `eff5955` with exact-SHA
-CI `32614610701` PASS and final status synchronization at `15e68bf` with CI
-`32615035994` PASS; TASK-034 is next. The
-proposal keeps WAL as the sole authority, compares pure-WAL recovery with a
-derived Snapshot-plus-tail path, and makes listener-last recovery a required
-invariant. Phase 8 production implementation is authorized from TASK-034;
-merge and `v0.7.0-engineering-baseline` remain unauthorized.
+CI `32614610701` PASS; TASK-034 recovery benchmark and Closure Proposal
+preparation is complete at `9835624` with exact-SHA CI `32616029460` PASS.
+The benchmark matrix and limitations are recorded in
+[`PHASE-8-task-034.md`](tasks/reports/PHASE-8-task-034.md) and
+[`recovery.md`](docs/benchmark/recovery.md). The proposal keeps WAL as the
+sole authority, compares pure-WAL recovery with a derived Snapshot-plus-tail
+path, and makes listener-last recovery a required invariant. Phase 8 Closure
+is now pending Sol High review and Human Closure Approval; merge and
+`v0.7.0-engineering-baseline` remain unauthorized.
 
 The Phase 3 MatchingEngine baseline is completed, approved and frozen at
 `v0.2.0-engineering-baseline`. It contains the Domain Model, frozen Phase 2
@@ -140,6 +143,25 @@ Phase 7 Closure is approved and the resulting `v0.6.0-engineering-baseline`
 is frozen at merge `6473365`. No online Recovery, reconnect, deduplication,
 multi-session support, Phase 8 implementation, Product Release or
 production-readiness claim is authorized.
+
+Run the Phase 8 recovery component benchmark with Java 21:
+
+```powershell
+mvn -pl benchmark -am -DskipTests package
+& 'E:\Java\microsoft-jdk-21\bin\java.exe' -jar `
+  benchmark/target/matching-engine-benchmark-0.1.0-SNAPSHOT.jar `
+  RecoveryBenchmark -wi 1 -i 1 -f 1 -w 1s -r 1s -t 1 -foe true `
+  -rf json -rff benchmark-results/phase8-recovery-full.json
+```
+
+This measures pure-WAL replay, Snapshot decode/restore, Snapshot-tail replay,
+offline Snapshot creation and bootstrap-to-listener as separate component
+boundaries over deterministic 256/1,024-command and 4,128/65,536-byte segment
+fixtures. The raw JSON is local and ignored. The recorded P50/P95/P99/P999
+values, host/JVM metadata and claim limits are in
+[`PHASE-8-task-034.md`](tasks/reports/PHASE-8-task-034.md). These are
+local-host engineering observations, not production RTO, online recovery,
+power-loss, durable-ACK or Product Release claims.
 
 ## Build
 

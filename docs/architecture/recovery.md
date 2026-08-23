@@ -21,8 +21,9 @@ TASK-030 Snapshot codec/store is complete at `6907391` / exact-SHA CI
 `32579065372` PASS; TASK-031 recovery planner is complete at `eaed8b8` /
 exact-SHA CI `32580018903` PASS; TASK-032 live handoff is complete at
 `22568e6` / exact-SHA CI `32613235358` PASS; TASK-033 is complete at `eff5955`
-/ exact-SHA CI `32614610701` PASS, and TASK-034 is next under the dependency
-Evidence Gates.
+/ exact-SHA CI `32614610701` PASS; TASK-034 benchmark and Closure Proposal
+preparation is complete at `9835624` / exact-SHA CI `32616029460` PASS. Phase 8
+Closure remains pending Sol High review and Human Closure Approval.
 
 ## Implemented Offline Flow
 
@@ -96,7 +97,15 @@ CI `32577713667`; TASK-030 Snapshot codec/store is complete at `6907391` /
 CI `32579065372`; TASK-031 offline recovery planner/replay is complete at
 `eaed8b8` / CI `32580018903`; TASK-032 recovered-runtime construction and
 listener-last handoff are complete at `22568e6` / CI `32613235358`.
-TASK-033 and later dependency Tasks remain gated.
+TASK-033 verification is complete at `eff5955` / CI `32614610701`; TASK-034
+recovery benchmark and Closure Proposal preparation is complete at `9835624` /
+CI `32616029460`. The benchmark uses separate pure-WAL, Snapshot decode,
+Snapshot-tail, offline Snapshot creation and bootstrap-to-listener boundaries;
+its full metadata, P50/P95/P99/P999 values and limitations are recorded in
+[`../benchmark/recovery.md`](../benchmark/recovery.md) and
+[`../../tasks/reports/PHASE-8-task-034.md`](../../tasks/reports/PHASE-8-task-034.md).
+Phase 8 Closure, merge, `v0.7.0-engineering-baseline` and Phase 9 remain
+unauthorized.
 
 ## Verification
 
