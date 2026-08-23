@@ -91,7 +91,7 @@ git diff --check                      # PASS
 frozen-path audit                     # PASS (0 production-path changes)
 standard exact-SHA CI (implementation) # 32630209329 PASS
 quick-lane exact-SHA CI (implementation) # 32630209194 PASS
-docs-sync checkpoint                  # 621a459 / 32630396833 PASS
+final docs checkpoint                # f481433 / 32632130698 PASS
 verifier + docs-auditor               # pending final task review
 ```
 
