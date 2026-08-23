@@ -14,8 +14,8 @@
 | Implementation Branch | `feature/phase8-snapshot-online-recovery` |
 | Planned Tasks | `TASK-20260822-029` through `TASK-20260822-034` |
 | Implementation | `Authorized in dependency order` |
-| Current Task | `TASK-20260822-034` — Recovery benchmark, documentation and Closure Proposal |
-| Next Gate | `Sol High Phase 8 Closure Review` |
+| Current Task | `TASK-20260822-034` — Completed; final evidence remediation |
+| Next Gate | `Sol High delta-only Phase 8 Closure Review` |
 
 ## 2. Phase Objective
 
@@ -180,7 +180,7 @@ Sequence must match.
 | 3 | `TASK-20260822-031` | Recovery planner and replay executor | TASK-030 | Completed / Evidence Gate PASS at `eaed8b8` / CI `32580018903`; `tasks/reports/PHASE-8-task-031.md` |
 | 4 | `TASK-20260822-032` | Recoverable live runtime handoff | TASK-031 | Completed / Evidence Gate PASS at `22568e6` / CI `32613235358`; `tasks/reports/PHASE-8-task-032.md` |
 | 5 | `TASK-20260822-033` | Crash, corruption and determinism verification | TASK-032 | Completed / Evidence Gate PASS at `eff5955` / CI `32614610701`; `tasks/reports/PHASE-8-task-033.md` |
-| 6 | `TASK-20260822-034` | Recovery benchmark, documentation and Closure Proposal | TASK-033 | Completed / Evidence Gate PASS at `9835624` / CI `32616029460`; docs/evidence sync `030545a` / CI `32616620054`; `tasks/reports/PHASE-8-task-034.md` |
+| 6 | `TASK-20260822-034` | Recovery benchmark, documentation and Closure Proposal | TASK-033 | Completed / Evidence Gate PASS at `9835624` / CI `32616029460`; technical Closure input `c59d7c0` / CI `32616802595` with 195-test regression; `tasks/reports/PHASE-8-task-034.md` |
 
 After Blueprint approval, Tasks may execute continuously in this exact order.
 Each preceding Task requires its full Evidence Gate and exact-SHA CI PASS. No
@@ -427,7 +427,8 @@ Phase 9 and Product Release remain unauthorized.
 | 2026-08-23 | Human Exception Gate | TASK-032 limited remediation approved | Additive externally-owned `RecoveryLease` overload in `RecoveryPlanner.java`; runtime ownership remains continuous from pre-scan through shutdown. No format, protocol, recovery-mode, retry or session changes. | Restricted to lease ownership/handoff |
 | 2026-08-23 | Evidence Gate | TASK-032 PASS | Listener-last handoff, sequence convergence, first live Submit/Cancel, RequestId reset, failure-before-bind and continuous lease ownership accepted at `22568e6` / CI `32613235358`; report and task archived. | No Exception Gate remains |
 | 2026-08-23 | Evidence Gate | TASK-033 PASS | Repeated PURE_WAL/SNAPSHOT_THEN_WAL convergence, fixed public probe, strict corruption/temp-file behavior, listener-last failure and first-live-command evidence accepted at `eff5955` / CI `32614610701`; force/move fault injection remains an explicit limitation with no production seam. TASK-034 followed under the approved dependency gate. | No Exception Gate remains |
-| 2026-08-23 | Evidence Gate | TASK-034 PASS | RecoveryBenchmark full 20-case matrix, heap metadata, JMH GC-profiler allocation evidence, environment/workload metadata, Throughput `ops/ms`, SampleTime P50/P95/P99/P999 evidence and component claim limits accepted at `9835624` / CI `32616029460`; verifier, benchmark-reviewer and docs-auditor PASS; final docs sync `030545a` / CI `32616620054` PASS. | Merge/tag/Phase 9 remain unauthorized |
+| 2026-08-23 | Evidence Gate | TASK-034 PASS | RecoveryBenchmark full 20-case matrix, heap metadata, JMH GC-profiler allocation evidence, environment/workload metadata, Throughput `ops/ms`, SampleTime P50/P95/P99/P999 evidence and component claim limits accepted at `9835624` / CI `32616029460`; verifier, benchmark-reviewer and docs-auditor PASS. Technical Closure input `c59d7c0` / CI `32616802595` records 195 tests, 0 failures and Checkstyle 0. | Merge/tag/Phase 9 remain unauthorized |
+| 2026-08-23 | Sol High Closure Review | CHANGES REQUIRED | Technical implementation accepted; final evidence synchronization is stale/incomplete. Docs/evidence-only Limited Closure Remediation authorized; no production, test or benchmark changes. | Merge/tag/Phase 9 remain unauthorized |
 
 ```text
 Phase 8 Discovery: Completed
@@ -438,8 +439,9 @@ TASK-030: Completed / Evidence Gate PASS at `6907391` / CI `32579065372`
 TASK-031: Completed / Evidence Gate PASS at `eaed8b8` / CI `32580018903`
 TASK-032: Completed / Evidence Gate PASS at `22568e6` / CI `32613235358`
 TASK-033: Completed / Evidence Gate PASS
-TASK-034: Completed / Evidence Gate PASS at `9835624` / CI `32616029460`; docs/evidence sync `030545a` / CI `32616620054` PASS
+TASK-034: Completed / Evidence Gate PASS at `9835624` / CI `32616029460`; technical Closure input `c59d7c0` / CI `32616802595` PASS; docs/evidence-only remediation authorized
 Implementation: Authorized
+Phase 8 Closure: CHANGES REQUIRED
 Merge / v0.7.0-engineering-baseline: Not Authorized
-Next Gate: Sol High Phase 8 Closure Review after final Evidence Gate
+Next Gate: Sol High delta-only Phase 8 Closure Review after remediation exact-SHA CI
 ```

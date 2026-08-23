@@ -35,9 +35,10 @@ exact-SHA CI `32580018903` PASS; TASK-032 live handoff is complete at
 `22568e6` with exact-SHA CI `32613235358` PASS; TASK-033 is complete at
 `eff5955` with exact-SHA CI `32614610701` PASS; TASK-034 recovery benchmark and
 Closure Proposal preparation is complete at `9835624` with exact-SHA CI
-`32616029460` PASS; verifier, benchmark-reviewer and docs-auditor PASS, with
-final docs/evidence synchronization `030545a` / CI `32616620054` PASS. Phase 8
-Closure remains pending Sol High review and Human Closure Approval.
+`32616029460` PASS; verifier, benchmark-reviewer and docs-auditor PASS. The
+technical Closure input is `c59d7c0` / CI `32616802595` PASS with 195 tests,
+0 failures and Checkstyle 0. Phase 8 Closure requires docs/evidence-only
+remediation, then Sol High delta review and Human Closure Approval.
 
 ## Scope
 
@@ -62,7 +63,7 @@ Client
             -> structural limit matching
        -> Trade / Execution events           [Phase 3 implemented]
   -> Command WAL / Offline Replay            [Phase 5 implemented baseline]
-  -> Snapshot / Online Recovery              [TASK-029..034 evidence prepared; Closure Review pending]
+  -> Snapshot / Online Recovery              [TASK-029..034 evidence accepted; docs/evidence remediation pending]
   -> Output / Metrics                        [Future Work]
 ```
 
@@ -113,8 +114,9 @@ explicit non-goals.
    TASK-030 completed at `6907391` / CI `32579065372`, TASK-031 completed at
     `eaed8b8` / CI `32580018903`, TASK-032 complete at `22568e6` / CI
    `32613235358`, TASK-033 complete at `eff5955` / CI `32614610701`, and
-   TASK-034 benchmark/Closure Proposal preparation complete at `9835624` / CI
-   `32616029460`, docs/evidence sync `030545a` / CI `32616620054` PASS; Phase 8
-   Closure remains pending, with merge/tag and later Tasks unauthorized**.
+    TASK-034 benchmark/Closure Proposal preparation complete at `9835624` / CI
+    `32616029460`; technical Closure input `c59d7c0` / CI `32616802595` PASS
+    with 195 tests, 0 failures and Checkstyle 0. Phase 8 Closure requires
+    docs/evidence remediation; merge/tag and later Tasks remain unauthorized**.
 9. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.

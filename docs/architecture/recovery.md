@@ -22,9 +22,10 @@ TASK-030 Snapshot codec/store is complete at `6907391` / exact-SHA CI
 exact-SHA CI `32580018903` PASS; TASK-032 live handoff is complete at
 `22568e6` / exact-SHA CI `32613235358` PASS; TASK-033 is complete at `eff5955`
 / exact-SHA CI `32614610701` PASS; TASK-034 benchmark and Closure Proposal
-preparation is complete at `9835624` / exact-SHA CI `32616029460` PASS; final
-docs/evidence synchronization `030545a` / CI `32616620054` PASS. Phase 8
-Closure remains pending Sol High review and Human Closure Approval.
+preparation is complete at `9835624` / exact-SHA CI `32616029460` PASS. The
+technical Closure input is `c59d7c0` / CI `32616802595` PASS with 195 tests,
+0 failures and Checkstyle 0. Phase 8 Closure requires docs/evidence-only
+remediation followed by Sol High delta review and Human Closure Approval.
 
 ## Implemented Offline Flow
 
@@ -100,13 +101,15 @@ CI `32579065372`; TASK-031 offline recovery planner/replay is complete at
 listener-last handoff are complete at `22568e6` / CI `32613235358`.
 TASK-033 verification is complete at `eff5955` / CI `32614610701`; TASK-034
 recovery benchmark and Closure Proposal preparation is complete at `9835624` /
-CI `32616029460`; final docs/evidence sync `030545a` / CI `32616620054` PASS.
+CI `32616029460`. The technical Closure input is `c59d7c0` / CI `32616802595`
+PASS; the final regression recorded 195 tests, 0 failures and Checkstyle 0.
 The benchmark uses separate pure-WAL, Snapshot decode,
 Snapshot-tail, offline Snapshot creation and bootstrap-to-listener boundaries;
 its full metadata, P50/P95/P99/P999 values and limitations are recorded in
 [`../benchmark/recovery.md`](../benchmark/recovery.md) and
 [`../../tasks/reports/PHASE-8-task-034.md`](../../tasks/reports/PHASE-8-task-034.md).
-Phase 8 Closure, merge, `v0.7.0-engineering-baseline` and Phase 9 remain
+Phase 8 Closure is CHANGES REQUIRED pending docs/evidence-only remediation and
+delta review; merge, `v0.7.0-engineering-baseline` and Phase 9 remain
 unauthorized.
 
 ## Verification

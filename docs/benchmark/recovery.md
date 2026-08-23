@@ -187,6 +187,8 @@ results cannot authorize an optimization or a default change. `force(true)`
 and atomic-move fault injection remain explicitly unverified without a
 production-only seam, and no hardware power-loss guarantee is claimed.
 
-TASK-034 Closure Proposal is prepared but not approved. The next gate is Sol
-High Phase 8 Closure Review; merge, `v0.7.0-engineering-baseline`, Phase 9 and
-Product Release remain unauthorized.
+TASK-034 Closure Proposal is prepared but not approved. The technical Closure
+input is `c59d7c0` / CI `32616802595` PASS with 195 tests, 0 failures and
+Checkstyle 0. A docs/evidence-only Limited Closure Remediation is authorized;
+the next gate is Sol High delta-only Phase 8 Closure Review. Merge,
+`v0.7.0-engineering-baseline`, Phase 9 and Product Release remain unauthorized.

@@ -97,7 +97,9 @@ TASK-034 benchmark/closure work.
 
 ## Gate Status
 
-`TASK-032 Evidence Gate PASS at 22568e6 / CI 32613235358. TASK-032 is complete
-and may be archived. TASK-033 is the next authorized task after this evidence
-synchronization; TASK-034 remains conditionally gated. Phase 8 Closure, merge,
-v0.7.0-engineering-baseline and Phase 9 remain unauthorized.`
+`TASK-032 Evidence Gate PASS at 22568e6 / CI 32613235358. At this historical
+checkpoint TASK-033 was the next authorized task and TASK-034 remained
+conditionally gated. The current Phase 8 state is TASK-029..034 Evidence Gate
+PASS with technical Closure input c59d7c0 / CI 32616802595; docs/evidence-only
+remediation is authorized. Phase 8 Closure, merge, v0.7.0-engineering-baseline
+and Phase 9 remain unauthorized.`

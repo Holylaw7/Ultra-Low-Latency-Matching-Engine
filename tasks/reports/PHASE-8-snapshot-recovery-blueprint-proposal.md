@@ -11,11 +11,12 @@ TASK-029: Completed / Evidence Gate PASS at `66fc9d2` / CI `32577713667`
 TASK-030: Completed / Evidence Gate PASS at `6907391` / CI `32579065372`
 TASK-031: Completed / Evidence Gate PASS at `eaed8b8` / CI `32580018903`
 TASK-032: Completed / Evidence Gate PASS at `22568e6` / CI `32613235358`
-TASK-033: Authorized / Next
-TASK-034: Authorized conditionally by TASK-033 Evidence Gate
-Production implementation: TASK-033 is next
+  TASK-033: Completed / Evidence Gate PASS at `eff5955` / CI `32614610701`
+  TASK-034: Completed / Evidence Gate PASS at `9835624` / CI `32616029460`
+  Technical Closure input: `c59d7c0` / CI `32616802595` PASS; 195 tests, 0 failures, Checkstyle 0
+  Phase 8 Closure: CHANGES REQUIRED — docs/evidence-only remediation authorized
 Merge / v0.7.0-engineering-baseline: Not Authorized
-Next Gate: TASK-033 Evidence Gate
+  Next Gate: Sol High delta-only Phase 8 Closure Review after remediation exact-SHA CI
 ```
 
 ## Discovery Decision
@@ -74,20 +75,21 @@ validated recovered state.
   identity, evidence and deferred scope.
 - [`Phase 8 Blueprint`](../blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)
   defines the complete authorization boundary.
-- TASK-029 through TASK-031 are archived with their Evidence Gate PASS reports;
-  TASK-032 through TASK-034 remain under `tasks/active/` as dependency-gated
-  plans.
+- TASK-029 through TASK-034 are completed with their Evidence Gate PASS reports;
+  TASK-034 was archived before Human Closure Approval, which is recorded as a
+  governance sequencing deviation only.
 
-Dependency order after Human approval would be:
+The dependency order executed after Human approval was:
 
 ```text
 TASK-029 canonical checkpoint [PASS]
     -> TASK-030 Snapshot v1 codec/store [PASS]
     -> TASK-031 recovery planner/replay [PASS]
-    -> TASK-032 live handoff
-    -> TASK-033 crash/corruption/determinism verification
-    -> TASK-034 benchmark/docs/Closure Proposal
-    -> STOP at Human Phase 8 Closure Review
+    -> TASK-032 live handoff [PASS]
+    -> TASK-033 crash/corruption/determinism verification [PASS]
+    -> TASK-034 benchmark/docs/Closure Proposal [PASS]
+    -> docs/evidence-only Limited Closure Remediation
+    -> STOP at delta-only Human Phase 8 Closure Review
 ```
 
 ## Frozen Boundary and Requested Exceptions
@@ -149,9 +151,9 @@ Proposal content exact-SHA CI: 32576740050 PASS
 The corrected proposal makes the canonical checkpoint digest counter-sensitive,
 protects offline Snapshot generation with the shared recovery lease and stable
 WAL inventory check, and compares pure-WAL versus Snapshot-tail results only for
-their common `N+1..M` replay suffix. TASK-030 has passed its strict codec,
-publication, lease and inventory Evidence Gate, and TASK-031 has passed its
-strict offline recovery/replay Evidence Gate; TASK-032 is the next gate.
+their common `N+1..M` replay suffix. TASK-030 through TASK-034 have passed their
+dependency-ordered Evidence Gates. The technical Closure input is `c59d7c0` /
+CI `32616802595` PASS with 195 tests, 0 failures and Checkstyle 0.
 
 ## Required Human Decision
 
@@ -166,6 +168,6 @@ the listed Exception Gates and deferred scope
 ```
 
 Human Phase 8 Blueprint Approval is recorded in ADR-0016 and the Blueprint.
-Implementation may continue with TASK-032; later Tasks remain locked behind
-their predecessor Evidence Gates. Phase 8 Closure, merge and baseline tagging
-remain unauthorized.
+Implementation is complete; only docs/evidence-only Limited Closure Remediation
+is authorized. Phase 8 Closure, merge and baseline tagging remain unauthorized
+until the delta review passes.

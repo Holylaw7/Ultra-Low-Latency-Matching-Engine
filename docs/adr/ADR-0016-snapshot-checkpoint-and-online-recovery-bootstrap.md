@@ -400,7 +400,8 @@ unlisted file/API/scope change.
 | 2026-08-22 | Evidence Gate | TASK-031 PASS | Explicit PURE_WAL and SNAPSHOT_THEN_WAL offline recovery, strict prefix binding, WAL-tail replay, convergence and fail-closed matrix accepted at `eaed8b8` / CI `32580018903`; status sync `ce3f22b` / CI `32580536044` PASS; TASK-032 is next. |
 | 2026-08-23 | Human Exception Gate | TASK-032 limited remediation approved | Additive externally-owned `RecoveryLease` overload in `RecoveryPlanner.java`; runtime ownership remains continuous from pre-scan through shutdown. No WAL/Snapshot/Protocol format, recovery mode, retry or session changes. |
 | 2026-08-23 | Evidence Gate | TASK-032 PASS | Listener-last handoff, sequence convergence, first live command continuation, RequestId reset, failure-before-bind and continuous lease ownership accepted at `22568e6` / CI `32613235358`; TASK-033 is next. |
-| 2026-08-23 | Evidence Gate | TASK-034 PASS | RecoveryBenchmark full matrix, heap metadata, JMH GC-profiler allocation evidence, deterministic fixture metadata, Java 21/JMH environment, Throughput `ops/ms` and SampleTime P50/P95/P99/P999 evidence accepted at `9835624` / CI `32616029460`; verifier, benchmark-reviewer and docs-auditor PASS; final docs sync `030545a` / CI `32616620054` PASS. Component/local-host claim boundary and force/move dynamic-injection limitation remain explicit. |
+| 2026-08-23 | Evidence Gate | TASK-034 PASS | RecoveryBenchmark full matrix, heap metadata, JMH GC-profiler allocation evidence, deterministic fixture metadata, Java 21/JMH environment, Throughput `ops/ms` and SampleTime P50/P95/P99/P999 evidence accepted at `9835624` / CI `32616029460`; verifier, benchmark-reviewer and docs-auditor PASS. Technical Closure input is `c59d7c0` / CI `32616802595` PASS with 195 tests, 0 failures and Checkstyle 0. Component/local-host claim boundary and force/move dynamic-injection limitation remain explicit. |
+| 2026-08-23 | Sol High Closure Review | CHANGES REQUIRED | Technical implementation and ADR alignment accepted. Closure is blocked only by stale/incomplete final evidence synchronization; docs/evidence-only Limited Closure Remediation is authorized. |
 
 ```text
 ADR-0016: Approved
@@ -411,6 +412,7 @@ TASK-030: Completed / Evidence Gate PASS at `6907391` / CI `32579065372`
 TASK-031: Completed / Evidence Gate PASS at `eaed8b8` / CI `32580018903`
 TASK-032: Completed / Evidence Gate PASS at `22568e6` / CI `32613235358`
 TASK-033: Completed / Evidence Gate PASS at `eff5955` / CI `32614610701`
-TASK-034: Completed / Evidence Gate PASS at `9835624` / CI `32616029460`; docs/evidence sync `030545a` / CI `32616620054` PASS
-Next Gate: Sol High Phase 8 Closure Review
+TASK-034: Completed / Evidence Gate PASS at `9835624` / CI `32616029460`; technical Closure input `c59d7c0` / CI `32616802595` PASS
+Phase 8 Closure: CHANGES REQUIRED — docs/evidence-only Limited Closure Remediation authorized
+Next Gate: Sol High delta-only Phase 8 Closure Review
 ```
