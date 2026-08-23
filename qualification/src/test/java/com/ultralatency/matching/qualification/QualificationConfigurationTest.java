@@ -2,6 +2,7 @@ package com.ultralatency.matching.qualification;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import java.time.Duration;
@@ -39,5 +40,54 @@ class QualificationConfigurationTest {
         assertThrows(IllegalArgumentException.class, () -> new QualificationConfiguration(
                 QualificationProfile.LIFECYCLE_MIX, 1, 1,
                 Duration.ofMinutes(6), Path.of("results")));
+    }
+
+    @Test
+    void fullQualificationConfigurationFreezesTheApprovedThresholds() {
+        final QualificationFullConfiguration configuration =
+                QualificationFullConfiguration.full(Path.of("qualification-results"));
+
+        assertEquals(QualificationLane.FULL, configuration.lane());
+        assertEquals(QualificationFullConfiguration.FULL_MINIMUM_COMMANDS,
+                configuration.commandCount());
+        assertEquals(QualificationFullConfiguration.FULL_MINIMUM_DURATION,
+                configuration.minimumDuration());
+        assertEquals(QualificationFullConfiguration.FULL_MINIMUM_POST_GC_SAMPLES,
+                configuration.minimumPostGcSamples());
+    }
+
+    @Test
+    void fullLaneRejectsCommandsOrDurationBelowTheQualificationGate() {
+        assertThrows(IllegalArgumentException.class, () -> new QualificationFullConfiguration(
+                QualificationLane.FULL,
+                QualificationProfile.LIFECYCLE_MIX,
+                20260823L,
+                QualificationFullConfiguration.FULL_MINIMUM_COMMANDS - 1,
+                QualificationFullConfiguration.FULL_MINIMUM_DURATION,
+                Duration.ofSeconds(1),
+                Duration.ofMillis(10),
+                QualificationFullConfiguration.FULL_MINIMUM_POST_GC_SAMPLES,
+                Path.of("results")));
+        assertThrows(IllegalArgumentException.class, () -> new QualificationFullConfiguration(
+                QualificationLane.FULL,
+                QualificationProfile.LIFECYCLE_MIX,
+                20260823L,
+                QualificationFullConfiguration.FULL_MINIMUM_COMMANDS,
+                QualificationFullConfiguration.FULL_MINIMUM_DURATION.minusSeconds(1),
+                Duration.ofSeconds(1),
+                Duration.ofMillis(10),
+                QualificationFullConfiguration.FULL_MINIMUM_POST_GC_SAMPLES,
+                Path.of("results")));
+    }
+
+    @Test
+    void testLaneIsExplicitlyNotFullEvidence() {
+        final QualificationFullConfiguration configuration =
+                QualificationFullConfiguration.test(Path.of("results"));
+
+        assertTrue(configuration.minimumDuration().compareTo(
+                QualificationFullConfiguration.FULL_MINIMUM_DURATION) < 0);
+        assertTrue(configuration.commandCount()
+                < QualificationFullConfiguration.FULL_MINIMUM_COMMANDS);
     }
 }

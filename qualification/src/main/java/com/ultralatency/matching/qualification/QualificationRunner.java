@@ -132,13 +132,26 @@ public final class QualificationRunner {
         }
     }
 
-    private static RecoverableDurableMatchingEngineTcpServer server(
+    static RecoverableDurableMatchingEngineTcpServer server(
             final Path walDirectory,
             final Path snapshotDirectory) {
+        return server(walDirectory, snapshotDirectory, 0);
+    }
+
+    static RecoverableDurableMatchingEngineTcpServer server(
+            final Path walDirectory,
+            final Path snapshotDirectory,
+            final int port) {
         final DurableNetworkConfiguration durable = DurableNetworkConfiguration.defaults(walDirectory);
+        final DurableNetworkConfiguration configured = new DurableNetworkConfiguration(
+                durable.bindAddress(),
+                port,
+                durable.writeBufferLowWaterMark(),
+                durable.writeBufferHighWaterMark(),
+                durable.durableConfiguration());
         return new RecoverableDurableMatchingEngineTcpServer(
                 RecoverableNetworkConfiguration.from(
-                        durable, snapshotDirectory, RecoveryMode.PURE_WAL));
+                        configured, snapshotDirectory, RecoveryMode.PURE_WAL));
     }
 
     private static Map<String, String> measurements(
