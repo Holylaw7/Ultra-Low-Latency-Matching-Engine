@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
 
 /**
@@ -88,6 +89,7 @@ public final class QualificationFullRunner {
                     responseCount += exchange.responseFrameCount();
                     tradeCount += exchange.matches().size();
                 }
+                awaitMinimumDuration(started, configuration);
             } finally {
                 server.shutdown(workloadConfiguration.commandTimeout());
             }
@@ -218,6 +220,25 @@ public final class QualificationFullRunner {
             resource.close();
         } catch (final Exception ignored) {
             // The primary campaign failure is retained in the failure artifact.
+        }
+    }
+
+    /** Holds a FULL lane alive until its approved duration threshold is reached. */
+    private static void awaitMinimumDuration(
+            final Instant started,
+            final QualificationFullConfiguration configuration) throws IOException {
+        if (configuration.lane() != QualificationLane.FULL) {
+            return;
+        }
+        final Instant deadline = started.plus(configuration.minimumDuration());
+        while (Instant.now().isBefore(deadline)) {
+            final long remainingNanos = Duration.between(Instant.now(), deadline).toNanos();
+            if (remainingNanos > 0) {
+                LockSupport.parkNanos(Math.min(remainingNanos, Duration.ofSeconds(1).toNanos()));
+            }
+            if (Thread.currentThread().isInterrupted()) {
+                throw new IOException("Full Qualification duration hold interrupted");
+            }
         }
     }
 
