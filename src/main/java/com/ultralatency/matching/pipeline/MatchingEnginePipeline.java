@@ -50,7 +50,21 @@ public final class MatchingEnginePipeline {
     public MatchingEnginePipeline(
             final PipelineConfiguration configuration,
             final EngineResultHandler resultHandler) {
-        this(configuration, resultHandler, failure -> { });
+        this(configuration, new MatchingEngine(), resultHandler, failure -> { });
+    }
+
+    /**
+     * Creates a pipeline around a recovered engine without changing the legacy constructor path.
+     *
+     * @param configuration validated pipeline configuration
+     * @param matchingEngine recovered engine exclusively owned after start
+     * @param resultHandler synchronous in-memory result handler
+     */
+    public MatchingEnginePipeline(
+            final PipelineConfiguration configuration,
+            final MatchingEngine matchingEngine,
+            final EngineResultHandler resultHandler) {
+        this(configuration, matchingEngine, resultHandler, failure -> { });
     }
 
     /**
@@ -64,10 +78,26 @@ public final class MatchingEnginePipeline {
             final PipelineConfiguration configuration,
             final EngineResultHandler resultHandler,
             final PipelineFailureHandler failureHandler) {
+        this(configuration, new MatchingEngine(), resultHandler, failureHandler);
+    }
+
+    /**
+     * Creates a pipeline around a recovered engine with an additive terminal-failure observer.
+     *
+     * @param configuration validated pipeline configuration
+     * @param matchingEngine recovered engine exclusively owned after start
+     * @param resultHandler synchronous in-memory result handler
+     * @param failureHandler non-blocking observer for the first terminal failure
+     */
+    public MatchingEnginePipeline(
+            final PipelineConfiguration configuration,
+            final MatchingEngine matchingEngine,
+            final EngineResultHandler resultHandler,
+            final PipelineFailureHandler failureHandler) {
         this.configuration = Objects.requireNonNull(configuration, "configuration");
+        this.matchingEngine = Objects.requireNonNull(matchingEngine, "matchingEngine");
         this.resultHandler = Objects.requireNonNull(resultHandler, "resultHandler");
         this.failureHandler = Objects.requireNonNull(failureHandler, "failureHandler");
-        matchingEngine = new MatchingEngine();
     }
 
     /**

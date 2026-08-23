@@ -22,5 +22,10 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
 - [`PHASE-6-network-protocol-blueprint.md`](PHASE-6-network-protocol-blueprint.md)
   — Completed / Approved / frozen at `v0.5.0-engineering-baseline`.
 - [`PHASE-7-live-durable-command-pipeline-blueprint.md`](PHASE-7-live-durable-command-pipeline-blueprint.md)
-  — Approved; TASK-024 through TASK-028 authorized in dependency order;
-  implementation is active under Evidence Gates.
+  — Completed / Approved / frozen at `v0.6.0-engineering-baseline`.
+- [`PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md`](PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)
+  — Approved; TASK-029 through TASK-034 completed / Evidence Gate PASS. Technical
+  Closure input is `c59d7c0` / CI `32616802595` with 195 tests, 0 failures and
+  Checkstyle 0. Human Phase 8 Closure Approval is recorded; merge and baseline
+  tag execution are authorized, while Phase 9 and Product Release remain
+  unauthorized.

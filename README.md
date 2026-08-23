@@ -39,10 +39,35 @@ frozen at `v0.6.0-engineering-baseline`. TASK-024 through TASK-028 passed their
 focused evidence gates; TASK-028 benchmark/docs evidence is at `9fed6b2` / CI
 `32574274905`, with verifier, benchmark-reviewer and docs-auditor PASS. The
 Phase 7 merge commit is `6473365`, master CI is `32574891113`, and tag CI is
-`32574958017`. Snapshot, online Recovery, reconnect/deduplication, multi-session
-support, Phase 8 implementation and Product Release remain unauthorized. The
+`32574958017`. Phase 8 closure/merge/tag,
+reconnect/deduplication, multi-session support and Product Release remain
+unauthorized. The
 frozen `v0.6.0-engineering-baseline` continues to protect the Phase 2–6
 production paths.
+
+Phase 8 Blueprint is approved. [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
+the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)
+and TASK-029 through TASK-034 are authorized in dependency order. TASK-029
+canonical checkpoint export/restore is complete at `66fc9d2` with exact-SHA CI
+`32577713667` PASS; TASK-030 Snapshot v1 codec/store is complete at `6907391`
+with exact-SHA CI `32579065372` PASS; TASK-031 offline recovery planner/replay
+is complete at `eaed8b8` with exact-SHA CI `32580018903` PASS; TASK-032
+recoverable live handoff is complete at `22568e6` with exact-SHA CI
+`32613235358` PASS; TASK-033 verification is complete at `eff5955` with exact-SHA
+CI `32614610701` PASS; TASK-034 recovery benchmark and Closure Proposal
+preparation is complete at `9835624` with exact-SHA CI `32616029460` PASS;
+verifier, benchmark-reviewer and docs-auditor all PASS. The technical Closure
+input is `c59d7c0` with exact-SHA CI `32616802595` PASS and a 195-test,
+zero-failure, Checkstyle-zero regression.
+The benchmark matrix and limitations are recorded in
+[`PHASE-8-task-034.md`](tasks/reports/PHASE-8-task-034.md) and
+[`recovery.md`](docs/benchmark/recovery.md). The proposal keeps WAL as the
+sole authority, compares pure-WAL recovery with a derived Snapshot-plus-tail
+path, and makes listener-last recovery a required invariant. Phase 8 technical
+Closure and Sol High delta review are approved. Human Phase 8 Closure Approval
+authorizes the normal merge/master verification and creation of
+`v0.7.0-engineering-baseline`; Phase 9 and Product Release remain unauthorized
+until separately governed.
 
 The Phase 3 MatchingEngine baseline is completed, approved and frozen at
 `v0.2.0-engineering-baseline`. It contains the Domain Model, frozen Phase 2
@@ -123,6 +148,25 @@ Phase 7 Closure is approved and the resulting `v0.6.0-engineering-baseline`
 is frozen at merge `6473365`. No online Recovery, reconnect, deduplication,
 multi-session support, Phase 8 implementation, Product Release or
 production-readiness claim is authorized.
+
+Run the Phase 8 recovery component benchmark with Java 21:
+
+```powershell
+mvn -pl benchmark -am -DskipTests package
+& 'E:\Java\microsoft-jdk-21\bin\java.exe' -jar `
+  benchmark/target/matching-engine-benchmark-0.1.0-SNAPSHOT.jar `
+  RecoveryBenchmark -wi 1 -i 1 -f 1 -w 1s -r 1s -t 1 -foe true `
+  -rf json -rff benchmark-results/phase8-recovery-full.json
+```
+
+This measures pure-WAL replay, Snapshot decode/restore, Snapshot-tail replay,
+offline Snapshot creation and bootstrap-to-listener as separate component
+boundaries over deterministic 256/1,024-command and 4,128/65,536-byte segment
+fixtures. The raw JSON is local and ignored. The recorded P50/P95/P99/P999
+values, host/JVM metadata and claim limits are in
+[`PHASE-8-task-034.md`](tasks/reports/PHASE-8-task-034.md). These are
+local-host engineering observations, not production RTO, online recovery,
+power-loss, durable-ACK or Product Release claims.
 
 ## Build
 

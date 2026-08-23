@@ -127,7 +127,68 @@ tail observations remain evidence, not a production latency claim.
   publication and network I/O.
 - Scan timing is not recovery time; replay timing is not crash-recovery time.
 - Snapshot, online recovery, live pipeline/WAL integration, Network,
-  replication, GC profiling and production optimization remain out of scope.
+  replication and production optimization remain out of scope. Phase 8
+  records GC-profiler observations only as component evidence; they do not
+  establish a production allocation or GC claim.
 - Filesystem cache, Windows scheduling, one fork and one one-second sample
   limit inference. More rigorous performance work requires a separate
   evidence/optimization decision.
+
+## Phase 8 TASK-034 Recovery Benchmark
+
+TASK-034 adds a separate recovery benchmark without changing the WAL,
+Snapshot, Recovery, Pipeline or Gateway production semantics. The code
+checkpoint is `9835624cb4fa31368edda4f4483fa0c6eb78ae65` and its exact-SHA CI
+run [32616029460](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32616029460)
+passed. The raw JMH output is local and ignored at
+`benchmark-results/phase8-recovery-full.json`.
+
+Measured boundaries are intentionally separate:
+
+- `pureWalReplay` — genesis replay of the authoritative WAL;
+- `snapshotDecodeRestore` — Snapshot decode and checkpoint restore;
+- `snapshotTailRecovery` — Snapshot restore followed by WAL-tail replay;
+- `offlineSnapshotCreation` — closed-WAL Snapshot generation; and
+- `bootstrapToListener` — process bootstrap to listener-ready.
+
+The deterministic fixture uses three SubmitLimit records and one CancelOrder
+record per four commands. The matrix uses 256 and 1,024 commands, 4,128 and
+65,536-byte segments, half-prefix/half-tail recovery, and 128/512 active orders
+respectively. Physical fixture metadata is:
+
+| Commands | Snapshot sequence | Tail | 4,128-byte segments / bytes | 65,536-byte segments / bytes |
+| ---: | ---: | ---: | ---: | ---: |
+| 256 | 128 | 128 | 3 / 11,872 | 1 / 11,808 |
+| 1,024 | 512 | 512 | 12 / 47,488 | 1 / 47,136 |
+
+The run used Microsoft Windows 11 Home Chinese build 26200, a 13th Gen Intel
+Core i9-13900H, an `E:` NTFS/NVMe host volume, Microsoft OpenJDK 21.0.12,
+JMH 1.37, the G1 default collector, no explicit JVM arguments, an estimated
+7.91 GiB maximum heap (`java -XshowSettings:vm -version`), one fork, one
+thread, one 1-second warmup and one 1-second measurement. Required
+SampleTime P50/P95/P99/P999 values for all 20 benchmark/parameter combinations
+are recorded in [`PHASE-8-task-034.md`](../../tasks/reports/PHASE-8-task-034.md).
+
+The same matrix was run with JMH's built-in `gc` profiler. Across all methods
+and parameters, `gc.alloc.rate` ranged from 52.789 to 1,922.390 MB/sec,
+`gc.alloc.rate.norm` from 51,663.677 to 1,354,989.795 B/op, `gc.count` from
+0 to 6 counts and `gc.time` from 0 to 4 ms. The profiler output is local and
+ignored at `benchmark-results/phase8-recovery-gc.json`.
+
+The Throughput `primaryMetric.score` values (unit `ops/ms`) from the main raw
+JSON are summarized in the task report across both command counts and segment
+sizes; no best-case-only result is selected.
+
+These are component/local-host observations only. They do not claim production
+RTO, online crash-recovery time, availability, durable client acknowledgement,
+power-loss safety, exactly-once behavior, capacity or Product Release
+readiness. `SYNC_EACH_APPEND` remains the correctness default; benchmark
+results cannot authorize an optimization or a default change. `force(true)`
+and atomic-move fault injection remain explicitly unverified without a
+production-only seam, and no hardware power-loss guarantee is claimed.
+
+TASK-034 Closure Proposal is prepared but not approved. The technical Closure
+input is `c59d7c0` / CI `32616802595` PASS with 195 tests, 0 failures and
+Checkstyle 0. Human Phase 8 Closure Approval is recorded; the next gate is
+master verification and `v0.7.0-engineering-baseline` tag CI. Phase 9 and
+Product Release remain unauthorized.

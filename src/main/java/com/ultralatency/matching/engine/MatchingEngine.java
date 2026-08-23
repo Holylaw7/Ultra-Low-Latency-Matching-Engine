@@ -30,11 +30,48 @@ public final class MatchingEngine {
      * Creates an empty synchronous engine with genesis counters.
      */
     public MatchingEngine() {
-        orderBook = new OrderBook();
-        lastAppliedCommandSequence = 0;
-        nextTradeId = 1;
-        nextEventSequence = 1;
+        this(new OrderBook(), 0, 1, 1);
+    }
+
+    private MatchingEngine(
+            final OrderBook orderBook,
+            final long lastAppliedCommandSequence,
+            final long nextTradeId,
+            final long nextEventSequence) {
+        this.orderBook = Objects.requireNonNull(orderBook, "orderBook");
+        this.lastAppliedCommandSequence = lastAppliedCommandSequence;
+        this.nextTradeId = nextTradeId;
+        this.nextEventSequence = nextEventSequence;
         failed = false;
+    }
+
+    /**
+     * Captures the engine counters and active order-book state.
+     *
+     * @return immutable checkpoint
+     */
+    public MatchingEngineCheckpoint checkpoint() {
+        return new MatchingEngineCheckpoint(
+                lastAppliedCommandSequence,
+                nextTradeId,
+                nextEventSequence,
+                orderBook.checkpoint());
+    }
+
+    /**
+     * Restores a fresh engine from a validated checkpoint.
+     *
+     * @param checkpoint immutable checkpoint
+     * @return restored healthy engine
+     */
+    public static MatchingEngine fromCheckpoint(
+            final MatchingEngineCheckpoint checkpoint) {
+        Objects.requireNonNull(checkpoint, "checkpoint");
+        return new MatchingEngine(
+                OrderBook.fromCheckpoint(checkpoint.orderBook()),
+                checkpoint.lastAppliedCommandSequence(),
+                checkpoint.nextTradeId(),
+                checkpoint.nextEventSequence());
     }
 
     /**

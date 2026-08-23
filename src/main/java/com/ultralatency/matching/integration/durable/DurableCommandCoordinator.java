@@ -35,7 +35,21 @@ public final class DurableCommandCoordinator implements DurableCommandCoordinato
     public DurableCommandCoordinator(
             final DurableAppendPort appendPort,
             final DurablePublishPort publishPort) {
-        this(appendPort, publishPort, failure -> { });
+        this(appendPort, publishPort, new DurableCommandSequence(1), failure -> { });
+    }
+
+    /**
+     * Creates a coordinator seeded at a validated recovered next sequence.
+     *
+     * @param appendPort synchronous append/force adapter
+     * @param publishPort non-blocking pipeline publication adapter
+     * @param nextCommandSequence next sequence after the recovered WAL end
+     */
+    public DurableCommandCoordinator(
+            final DurableAppendPort appendPort,
+            final DurablePublishPort publishPort,
+            final DurableCommandSequence nextCommandSequence) {
+        this(appendPort, publishPort, nextCommandSequence, failure -> { });
     }
 
     /**
@@ -49,8 +63,26 @@ public final class DurableCommandCoordinator implements DurableCommandCoordinato
             final DurableAppendPort appendPort,
             final DurablePublishPort publishPort,
             final DurableFailurePort failurePort) {
+        this(appendPort, publishPort, new DurableCommandSequence(1), failurePort);
+    }
+
+    /**
+     * Creates a coordinator with a recovered next sequence and first-failure observer.
+     *
+     * @param appendPort synchronous append/force adapter
+     * @param publishPort non-blocking pipeline publication adapter
+     * @param nextCommandSequence next sequence after the recovered WAL end
+     * @param failurePort first-failure observer
+     */
+    public DurableCommandCoordinator(
+            final DurableAppendPort appendPort,
+            final DurablePublishPort publishPort,
+            final DurableCommandSequence nextCommandSequence,
+            final DurableFailurePort failurePort) {
         this.appendPort = Objects.requireNonNull(appendPort, "appendPort");
         this.publishPort = Objects.requireNonNull(publishPort, "publishPort");
+        this.nextCommandSequence = Objects.requireNonNull(
+                nextCommandSequence, "nextCommandSequence");
         this.failurePort = Objects.requireNonNull(failurePort, "failurePort");
     }
 

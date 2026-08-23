@@ -27,6 +27,19 @@ Phase 7 Closure is approved, the merge commit is `6473365` with master CI
 `32574891113`, and `v0.6.0-engineering-baseline` tag CI is `32574958017`.
 Product Release remains separately governed.
 
+Phase 8 Blueprint/ADR-0016 is approved. TASK-029 canonical checkpoint
+export/restore is complete at `66fc9d2` with exact-SHA CI `32577713667` PASS;
+TASK-030 Snapshot codec/store is complete at `6907391` with exact-SHA CI
+`32579065372` PASS; TASK-031 recovery planner is complete at `eaed8b8` with
+exact-SHA CI `32580018903` PASS; TASK-032 live handoff is complete at
+`22568e6` with exact-SHA CI `32613235358` PASS; TASK-033 is complete at
+`eff5955` with exact-SHA CI `32614610701` PASS; TASK-034 recovery benchmark and
+Closure Proposal preparation is complete at `9835624` with exact-SHA CI
+`32616029460` PASS; verifier, benchmark-reviewer and docs-auditor PASS. The
+technical Closure input is `c59d7c0` / CI `32616802595` PASS with 195 tests,
+0 failures and Checkstyle 0. Human Phase 8 Closure Approval is recorded;
+normal merge/master verification and baseline tagging are authorized.
+
 ## Scope
 
 The system is a single-node, deterministic matching engine. A symbol's order book is owned by one matching thread and is mutated sequentially.
@@ -50,7 +63,7 @@ Client
             -> structural limit matching
        -> Trade / Execution events           [Phase 3 implemented]
   -> Command WAL / Offline Replay            [Phase 5 implemented baseline]
-  -> Snapshot / Online Recovery              [Future Work]
+  -> Snapshot / Online Recovery              [Human Closure Approved; merge/tag execution pending]
   -> Output / Metrics                        [Future Work]
 ```
 
@@ -95,7 +108,16 @@ explicit non-goals.
    frozen at `v0.6.0-engineering-baseline`**. TASK-024 through TASK-028 passed
    their evidence gates; TASK-028 benchmark/docs evidence is at `9fed6b2` / CI
    `32574274905`. Merge `6473365`, master CI `32574891113` and tag CI
-   `32574958017` are verified. Phase 8 requires a separate Blueprint.
-8. Snapshot and online Recovery — **Future Work; separate Blueprint required**.
+   `32574958017` are verified.
+8. Snapshot checkpoint and online Recovery bootstrap — **ADR-0016 and Complete
+   Blueprint approved; TASK-029 completed at `66fc9d2` / CI `32577713667`,
+   TASK-030 completed at `6907391` / CI `32579065372`, TASK-031 completed at
+    `eaed8b8` / CI `32580018903`, TASK-032 complete at `22568e6` / CI
+   `32613235358`, TASK-033 complete at `eff5955` / CI `32614610701`, and
+    TASK-034 benchmark/Closure Proposal preparation complete at `9835624` / CI
+    `32616029460`; technical Closure input `c59d7c0` / CI `32616802595` PASS
+    with 195 tests, 0 failures and Checkstyle 0. Human Phase 8 Closure Approval
+    is recorded; merge/tag and final sync are authorized, while later Tasks
+    remain unauthorized**.
 9. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.
