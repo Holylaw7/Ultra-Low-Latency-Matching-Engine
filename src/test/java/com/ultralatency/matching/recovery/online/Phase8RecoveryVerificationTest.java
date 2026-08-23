@@ -99,6 +99,11 @@ class Phase8RecoveryVerificationTest {
             assertEquals(
                     eventSequences(pureSuffix),
                     eventSequences(snapshotTail.replayTranscript().results()));
+
+            final EngineCommand probe = command(5, 15, Side.SELL, 102, 1);
+            assertEquals(
+                    pure.engine().process(probe),
+                    snapshotTail.engine().process(probe));
         }
     }
 
