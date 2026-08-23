@@ -14,7 +14,7 @@
 | Blueprint Branch | `docs/phase9-system-qualification-blueprint` |
 | Implementation Branch | `feature/phase9-system-qualification` |
 | Planned Tasks | `TASK-20260823-035` through `TASK-20260823-040` |
-| Next Gate | `TASK-035 Implementation / Evidence Gate` |
+| Next Gate | `TASK-036 Implementation / Evidence Gate` |
 
 ## 2. Phase Goal
 
@@ -272,6 +272,6 @@ Release. Phase 10 remains unauthorized.
 
 ```text
 Blueprint Status: Approved
-Implementation: TASK-035 Authorized / Next
+Implementation: TASK-035 Evidence Gate PASS; TASK-036 Authorized / Next
 Phase 9 Closure: Not Authorized
 ```

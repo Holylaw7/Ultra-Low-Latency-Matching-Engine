@@ -7,14 +7,14 @@
 | Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability |
 | Task | `TASK-20260823-035` |
 | Stage | Implementation / Verification |
-| Result | Completed — Evidence Gate pending exact-SHA CI |
+| Result | Completed — Evidence Gate PASS |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Branch | `feature/phase9-system-qualification` |
-| Commit | Pending |
-| Tests | `9 qualification + 195 core` passed |
+| Commit | `22d13fe` |
+| Tests | `12 qualification + 195 core` passed |
 | Build | `mvn verify` passed |
-| CI | Pending exact-SHA checkpoint |
-| Next Gate | TASK-035 Evidence Gate; then TASK-036 if PASS |
+| CI | `32625554518` PASS |
+| Next Gate | TASK-036 Authorized / Next |
 
 ## Goal
 
@@ -33,6 +33,11 @@ start a runtime, open a socket, write a WAL or modify production code.
 - Added configuration bounds, contiguous sequence checks, digest validation,
   immutable collection checks and golden-vector tests.
 - Golden digest vectors are fixed for all three version-one profiles.
+- Manifest now binds configuration and result digests; result binding remains
+  immutable and does not create qualification output.
+- Manifest identity binding now rejects workload/configuration/output mismatches.
+- Evidence checkpoints `176cff7` and `22d13fe` close the verifier findings from
+  the initial `9dc49b5` foundation checkpoint.
 
 ## Explicitly Not Implemented
 
@@ -49,7 +54,7 @@ mvn --batch-mode --no-transfer-progress -pl qualification -am test  # PASS
 mvn --batch-mode --no-transfer-progress verify                     # PASS
 git diff --check                                                    # PASS
 frozen-path audit                                                   # PASS (0)
-exact-SHA CI                                                        # pending commit
+exact-SHA CI                                                        # 32625554518 PASS
 ```
 
 Qualification raw output is not created by this task and remains outside the
@@ -63,5 +68,6 @@ TASK-036 remains dependency-locked until this Evidence Gate passes.
 
 ## Gate
 
-`TASK-035 Evidence Gate` remains pending the committed checkpoint and exact-
-SHA CI. TASK-036 remains locked until that gate passes.
+`TASK-035 Evidence Gate` PASS at `22d13fe` / CI `32625554518`. TASK-036 is
+authorized as the next task under the approved Phase 9 dependency order.
+Phase 9 Closure remains unauthorized.

@@ -41,7 +41,8 @@ approved and frozen at `v0.7.0-engineering-baseline`. The merge commit is
 Phase 9 Blueprint is approved. [`ADR-0017`](docs/adr/ADR-0017-system-qualification-performance-reliability.md),
 the [Complete Phase 9 Blueprint](tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md)
 and TASK-035 through TASK-040 are authorized in strict dependency order.
-TASK-035 qualification foundation is currently in progress on the
+TASK-035 qualification foundation is complete at `22d13fe` with exact-SHA CI
+`32625554518` PASS; TASK-036 is authorized next on the
 `feature/phase9-system-qualification` branch. Phase 9 is an engineering
 qualification phase: production source, runtime semantics and existing formats
 remain frozen; production optimization, Phase 10 and Product Release remain

@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260823-035` |
 | Title | Qualification contracts, workload manifest and module foundation |
-| Status | `In Progress` |
+| Status | `Completed / Evidence Gate PASS` |
 | Owner | Human Developer |
 | Implementer | Main Codex / Luna Max — only writer |
 | Created | `2026-08-23` |
@@ -15,18 +15,18 @@
 | Related ADR | [`ADR-0017`](../../docs/adr/ADR-0017-system-qualification-performance-reliability.md) |
 | Phase Blueprint | [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md) |
 | Authorization Mode | `Blueprint` |
-| Current Stage | `Implementation` |
-| Next Gate | `TASK-035 Evidence Gate` |
+| Current Stage | `Completed / Evidence Gate` |
+| Next Gate | `TASK-036 Authorized / Next` |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline HEAD | `87abbc1` / `v0.7.0-engineering-baseline` |
 | Remote | `origin` |
-| CI | Pending |
+| CI | `32625554518` PASS |
 
 ## 2. Background
 
 Phase 8 froze the durable/recovery runtime at `v0.7.0-engineering-baseline`.
-Phase 9 is authorized to add an external qualification layer. No such module
-or versioned workload contract exists yet.
+Phase 9 is authorized to add an external qualification layer. TASK-035 now
+provides the isolated module and versioned workload contract for later tasks.
 
 ## 3. Goal
 
@@ -49,28 +49,29 @@ behavior.
 
 ### Requirements
 
-- [ ] Add `qualification` to the Maven reactor without changing core semantics.
-- [ ] Define immutable configuration, workload, manifest and result contracts.
-- [ ] Define deterministic workload profiles and default seed `20260823`.
-- [ ] Provide golden vectors covering lifecycle, crossing multi-match and resting depth.
-- [ ] Validate bounds before resource/run allocation.
-- [ ] Keep raw qualification output outside the repository.
+- [x] Add `qualification` to the Maven reactor without changing core semantics.
+- [x] Define immutable configuration, workload, manifest and result contracts.
+- [x] Define deterministic workload profiles and default seed `20260823`.
+- [x] Provide golden vectors covering lifecycle, crossing multi-match and resting depth.
+- [x] Validate bounds before resource/run allocation.
+- [x] Keep raw qualification output outside the repository.
 
 ### Acceptance Criteria
 
-- [ ] Repeated generation with identical version/seed/config is structurally equal.
-- [ ] Invalid version, seed, command count, timeout or output path is rejected.
-- [ ] Manifest records Git SHA/tag, workload, environment placeholders, configuration and result digests.
-- [ ] No runtime is started by TASK-035.
-- [ ] No file under `src/main/java/**`, `src/test/java/**`, `core/pom.xml` or existing benchmark classes changes.
-- [ ] Focused tests, `mvn verify`, Checkstyle 0, `git diff --check`, frozen-path audit and exact-SHA CI pass.
+- [x] Repeated generation with identical version/seed/config is structurally equal.
+- [x] Invalid version, seed, command count, timeout or output path is rejected.
+- [x] Manifest records Git SHA/tag, workload, environment placeholders, configuration and result digests.
+- [x] No runtime is started by TASK-035.
+- [x] No file under `src/main/java/**`, `src/test/java/**`, `core/pom.xml` or existing benchmark classes changes.
+- [x] Focused tests, `mvn verify`, Checkstyle 0, `git diff --check`, frozen-path audit and exact-SHA CI pass.
 
 ## 6. Current Implementation and Scope
 
 ### Current Implementation
 
-The repository has `core` and `benchmark` Maven modules. Qualification code does
-not yet have an isolated module or workload manifest contract.
+The repository now has `core`, `benchmark` and the isolated `qualification`
+Maven module. TASK-035 establishes the qualification contracts without starting
+the runtime or changing production behavior.
 
 ### In Scope
 
@@ -131,7 +132,7 @@ contracts. Task 035 must not design or implement the runtime harness.
 | --- | --- |
 | Blueprint | `tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md` |
 | Blueprint Status | `Approved` |
-| Authorized Task / Stages | TASK-035 foundation only; later Tasks remain dependency-locked until this Evidence Gate passes. |
+| Authorized Task / Stages | TASK-035 foundation complete; TASK-036 is authorized next under the approved dependency order. |
 | Exception Gates | Production/runtime changes, new dependency, unlisted API/format, workload/threshold changes or runtime startup. |
 
 ### Architecture Impact
@@ -233,16 +234,16 @@ checkpoint and record exact-SHA CI before TASK-036.
 | ADR / Decision | `docs/adr/ADR-0017-system-qualification-performance-reliability.md` | Completed / Approved | Implementation | Inherited |
 | Task Approval | This task | Completed / Approved | Implementation | Inherited |
 | Implementation | This task | Completed | Verification | Blueprint |
-| Verification | `tasks/reports/PHASE-9-task-035.md` | Evidence collected; CI pending | Evidence Gate | Blueprint |
+| Verification | `tasks/reports/PHASE-9-task-035.md` | PASS — `22d13fe` / CI `32625554518` | TASK-036 | Blueprint |
 | Benchmark / Profile | Not applicable | Not applicable | Evidence Gate | Blueprint |
-| Documentation and Synchronization | `tasks/reports/PHASE-9-task-035.md` | Synchronized; CI pending | Evidence Gate | Blueprint |
-| Completion | This task | Pending | TASK-036 / Exception Gate | Blueprint |
+| Documentation and Synchronization | `tasks/reports/PHASE-9-task-035.md` | Synchronized; Evidence Gate PASS | TASK-036 | Blueprint |
+| Completion | This task | Completed / Evidence Gate PASS | TASK-036 / Exception Gate | Blueprint |
 
 ## 17. Implementation Log
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
-| 2026-08-23 | Completed locally | Added isolated qualification foundation and deterministic golden vectors. | Focused tests and `mvn verify` PASS; exact-SHA CI pending |
+| 2026-08-23 | Completed | Added foundation, closed version/digest/output evidence gaps, then enforced manifest identity binding. | `22d13fe`; 12 qualification + 195 core tests; exact-SHA CI `32625554518` PASS |
 
 ## 18. Completion Checklist
 
@@ -254,6 +255,6 @@ checkpoint and record exact-SHA CI before TASK-036.
 - [x] Documentation synchronized
 - [x] ADR and Blueprint approval recorded
 - [x] Evidence report exists
-- [ ] Commit created
-- [ ] Remote and CI recorded
-- [ ] Post-commit Git status confirmed
+- [x] Commit created (`22d13fe`, following `176cff7` and initial `9dc49b5`)
+- [x] Remote and CI recorded (`32625554518` PASS)
+- [x] Post-commit Git status confirmed (`.vscode/` only, untouched/untracked)
