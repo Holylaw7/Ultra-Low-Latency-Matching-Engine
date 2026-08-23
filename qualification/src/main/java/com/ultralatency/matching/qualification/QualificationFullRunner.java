@@ -74,13 +74,25 @@ public final class QualificationFullRunner {
                 client = new ProtocolV1QualificationClient(
                         server.localAddress().orElseThrow(),
                         workloadConfiguration.commandTimeout());
-                for (int index = 0; index < workloadConfiguration.commandCount(); index++) {
-                    final EngineCommand command = QualificationWorkloadV1.commandAt(
-                            workloadConfiguration, index);
-                    final QualificationExchange exchange = client.exchange(command, index + 1L);
+                long commandIndex = 0L;
+                final boolean continuousMemoryLane = configuration.lane() == QualificationLane.FULL
+                        && configuration.profile() == QualificationProfile.MEMORY_STEADY_STATE_V1;
+                final Instant minimumDeadline = started.plus(configuration.minimumDuration());
+                while (commandIndex < workloadConfiguration.commandCount()
+                        || continuousMemoryLane && Instant.now().isBefore(minimumDeadline)) {
+                    final EngineCommand command = QualificationWorkloadV1.commandAtForRun(
+                            workloadConfiguration, commandIndex);
+                    final QualificationExchange exchange = client.exchange(
+                            command, commandIndex + 1L);
                     streaming.accept(command, exchange);
+                    commandIndex++;
                 }
-                awaitMinimumDuration(started, configuration);
+                if (!continuousMemoryLane) {
+                    awaitMinimumDuration(started, configuration);
+                }
+                if (commandIndex > Integer.MAX_VALUE) {
+                    throw new IOException("qualification command count exceeds manifest bounds");
+                }
             } finally {
                 shutdownBeforeClientClose(
                         server, client, workloadConfiguration.commandTimeout());
@@ -105,7 +117,7 @@ public final class QualificationFullRunner {
             }
             final RecoveryResult recovered = RecoveryPlanner.create(
                     walConfiguration, snapshotDirectory).recover(RecoveryMode.PURE_WAL);
-            if (recovered.walEndSequence() != workloadConfiguration.commandCount()) {
+            if (recovered.walEndSequence() != persisted.size()) {
                 throw new IOException("Full recovery sequence does not converge");
             }
 
@@ -129,7 +141,7 @@ public final class QualificationFullRunner {
 
             final Duration elapsed = Duration.between(started, Instant.now());
             final QualificationWorkload workload = QualificationWorkloadV1.generate(
-                    workloadConfiguration);
+                    workloadConfiguration, persisted.size());
             final String walDigest = QualificationCanonicalizer.digest(persisted);
             if (!walDigest.equals(streamingSummary.commandDigestHex())) {
                 throw new IOException("streamed workload digest differs from persisted WAL digest");

@@ -26,6 +26,9 @@ public final class QualificationWorkloadV1 {
     /** Maximum active orders after any complete steady-state cycle. */
     public static final int MEMORY_STEADY_STATE_MAX_ACTIVE_ORDERS = 1;
 
+    /** Qualification-only upper bound for a continuous steady-state command prefix. */
+    public static final int MEMORY_STEADY_STATE_MAX_COMMANDS = 5_000_000;
+
     private QualificationWorkloadV1() {
     }
 
@@ -37,12 +40,22 @@ public final class QualificationWorkloadV1 {
      */
     public static QualificationWorkload generate(
             final QualificationConfiguration configuration) {
+        return generate(configuration, configuration.commandCount());
+    }
+
+    /** Generates a deterministic prefix of the selected workload identity. */
+    static QualificationWorkload generate(
+            final QualificationConfiguration configuration,
+            final int commandCount) {
         if (configuration == null) {
             throw new NullPointerException("configuration");
         }
-        final List<EngineCommand> commands = new ArrayList<>(configuration.commandCount());
-        for (int index = 0; index < configuration.commandCount(); index++) {
-            commands.add(commandAt(configuration, index));
+        if (commandCount <= 0 || commandCount > maximumCommandCount(configuration.profile())) {
+            throw new IllegalArgumentException("commandCount is outside workload bounds");
+        }
+        final List<EngineCommand> commands = new ArrayList<>(commandCount);
+        for (int index = 0; index < commandCount; index++) {
+            commands.add(commandAtForRun(configuration, index));
         }
         final List<EngineCommand> immutableCommands = List.copyOf(commands);
         return new QualificationWorkload(
@@ -63,10 +76,23 @@ public final class QualificationWorkloadV1 {
         if (index < 0 || index >= configuration.commandCount()) {
             throw new IndexOutOfBoundsException("workload index is outside configuration");
         }
+        return commandAtForRun(configuration, index);
+    }
+
+    /** Returns one command for a continuous qualification run prefix. */
+    static EngineCommand commandAtForRun(
+            final QualificationConfiguration configuration,
+            final long index) {
+        if (configuration == null) {
+            throw new NullPointerException("configuration");
+        }
+        if (index < 0 || index >= maximumCommandCount(configuration.profile())) {
+            throw new IndexOutOfBoundsException("qualification run index is outside bounds");
+        }
         final long sequence = index + 1L;
         final int cycleLength = cycleLength(configuration.profile());
-        final int cycle = index / cycleLength;
-        final int position = index % cycleLength;
+        final long cycle = index / cycleLength;
+        final int position = Math.toIntExact(index % cycleLength);
         return command(configuration.profile(), configuration.seed(),
                 sequence, cycle, position);
     }
@@ -76,11 +102,15 @@ public final class QualificationWorkloadV1 {
             final List<EngineCommand> commands,
             final QualificationConfiguration configuration) {
         if (commands == null || configuration == null
-                || commands.size() != configuration.commandCount()) {
+                || commands.size() < configuration.commandCount()) {
+            return false;
+        }
+        if (configuration.profile() != QualificationProfile.MEMORY_STEADY_STATE_V1
+                && commands.size() != configuration.commandCount()) {
             return false;
         }
         for (int index = 0; index < commands.size(); index++) {
-            if (!commands.get(index).equals(commandAt(configuration, index))) {
+            if (!commands.get(index).equals(commandAtForRun(configuration, index))) {
                 return false;
             }
         }
@@ -91,6 +121,12 @@ public final class QualificationWorkloadV1 {
     static String version(final QualificationProfile profile) {
         return profile == QualificationProfile.MEMORY_STEADY_STATE_V1
                 ? MEMORY_STEADY_STATE_VERSION : VERSION;
+    }
+
+    private static int maximumCommandCount(final QualificationProfile profile) {
+        return profile == QualificationProfile.MEMORY_STEADY_STATE_V1
+                ? MEMORY_STEADY_STATE_MAX_COMMANDS
+                : QualificationConfiguration.MAX_COMMAND_COUNT;
     }
 
     private static int cycleLength(final QualificationProfile profile) {
@@ -106,7 +142,7 @@ public final class QualificationWorkloadV1 {
             final QualificationProfile profile,
             final long seed,
             final long sequence,
-            final int cycle,
+            final long cycle,
             final int position) {
         final long baseOrderId = Math.addExact(
                 Math.multiplyExact((long) cycle, 1_000L),

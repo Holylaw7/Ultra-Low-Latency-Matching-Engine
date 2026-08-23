@@ -3,10 +3,13 @@ package com.ultralatency.matching.qualification;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.ultralatency.matching.engine.CancelOrderCommand;
 import com.ultralatency.matching.engine.MatchingEngine;
 import com.ultralatency.matching.engine.SubmitLimitCommand;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 /** Golden-vector and determinism tests for QualificationWorkloadV1. */
@@ -144,5 +147,24 @@ class QualificationWorkloadV1Test {
                 maximumActiveOrders);
         assertEquals(workload.digestHex(),
                 QualificationWorkloadV1.generate(configuration).digestHex());
+    }
+
+    @Test
+    void memorySteadyStateCanExtendTheDeterministicPrefixForContinuousObservation() {
+        final QualificationConfiguration configuration = new QualificationConfiguration(
+                QualificationProfile.MEMORY_STEADY_STATE_V1,
+                20260823L,
+                4,
+                java.time.Duration.ofSeconds(1),
+                java.nio.file.Path.of("results"));
+        final List<com.ultralatency.matching.engine.EngineCommand> commands = new ArrayList<>();
+        for (int index = 0; index < 8; index++) {
+            commands.add(QualificationWorkloadV1.commandAtForRun(configuration, index));
+        }
+
+        assertTrue(QualificationWorkloadV1.matches(commands, configuration));
+        assertEquals(8, QualificationWorkloadV1.generate(configuration, 8).commandCount());
+        assertEquals(commands,
+                QualificationWorkloadV1.generate(configuration, 8).commands());
     }
 }
