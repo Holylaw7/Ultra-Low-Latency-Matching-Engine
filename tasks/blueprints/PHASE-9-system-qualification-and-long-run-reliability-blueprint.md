@@ -272,6 +272,6 @@ Release. Phase 10 remains unauthorized.
 
 ```text
 Blueprint Status: Approved
-Implementation: TASK-036 Evidence Remediation; TASK-037 Locked
+Implementation: TASK-036 Evidence Gate PASS; TASK-037 Authorized / Next
 Phase 9 Closure: Not Authorized
 ```

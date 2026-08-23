@@ -234,10 +234,10 @@ checkpoint and record exact-SHA CI before TASK-036.
 | ADR / Decision | `docs/adr/ADR-0017-system-qualification-performance-reliability.md` | Completed / Approved | Implementation | Inherited |
 | Task Approval | This task | Completed / Approved | Implementation | Inherited |
 | Implementation | This task | Completed | Verification | Blueprint |
-| Verification | `tasks/reports/PHASE-9-task-035.md` | PASS — `22d13fe` / CI `32625554518` | TASK-036 Evidence Remediation | Blueprint |
+| Verification | `tasks/reports/PHASE-9-task-035.md` | PASS — `22d13fe` / CI `32625554518` | TASK-036 Evidence Gate PASS | Blueprint |
 | Benchmark / Profile | Not applicable | Not applicable | Evidence Gate | Blueprint |
-| Documentation and Synchronization | `tasks/reports/PHASE-9-task-035.md` | Synchronized; Evidence Gate PASS | TASK-036 Evidence Remediation | Blueprint |
-| Completion | This task | Completed / Evidence Gate PASS | TASK-036 Evidence Remediation / Exception Gate | Blueprint |
+| Documentation and Synchronization | `tasks/reports/PHASE-9-task-035.md` | Synchronized; Evidence Gate PASS | TASK-036 Evidence Gate PASS | Blueprint |
+| Completion | This task | Completed / Evidence Gate PASS | TASK-036 Evidence Gate PASS | Blueprint |
 
 ## 17. Implementation Log
 

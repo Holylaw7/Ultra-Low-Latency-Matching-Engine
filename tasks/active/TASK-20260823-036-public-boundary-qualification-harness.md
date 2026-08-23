@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260823-036` |
 | Title | Deterministic public-boundary end-to-end qualification harness |
-| Status | `Changes Required / Evidence Remediation` |
+| Status | `Completed / Evidence Gate PASS` |
 | Owner | Human Developer |
 | Implementer | Main Codex / Luna Max — only writer |
 | Created | `2026-08-23` |
@@ -14,8 +14,8 @@
 | Related ADR | [`ADR-0017`](../../docs/adr/ADR-0017-system-qualification-performance-reliability.md) |
 | Phase Blueprint | [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md) |
 | Authorization Mode | `Blueprint` |
-| Current Stage | `Evidence Remediation` |
-| Next Gate | `TASK-036 Evidence Rerun` |
+| Current Stage | `Completed / Evidence Gate` |
+| Next Gate | `TASK-037 Authorized / Next` |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 
@@ -58,7 +58,7 @@ three recovery-backed sessions and deterministic transcript/WAL evidence.
 - [x] Explicit quick lane executes 10,000 commands across three sessions.
 - [x] `mvn verify`, Checkstyle, `git diff --check`, frozen-path audit and exact-
   SHA CI pass.
-- [ ] verifier and docs-auditor return PASS before TASK-037 unlock.
+- [x] verifier and docs-auditor return PASS before TASK-037 unlock.
 
 ## 6. Frozen Boundary
 
@@ -82,11 +82,11 @@ full 60-minute / 1,000,000-command qualification lane.
 
 ## 8. Gate
 
-The implementation and automated evidence gates pass at `c7df983`, but the
-read-only verifier identified two evidence-semantics defects: the checkpoint
-digest must be derived from the recovered MatchingEngine checkpoint rather
-than the WAL command list, and the public-probe digest must cover a fixed
-structured Protocol v1 suffix rather than one response-frame digest. Limited
-remediation is in progress; TASK-037 remains locked until the corrected code,
-tests and read-only audits pass. Phase 9 Closure, merge and
-`v0.8.0-engineering-baseline` remain unauthorized.
+The initial implementation evidence is retained at `c7df983` / standard CI
+`32627014499` and quick CI `32627014583`. Limited evidence remediation is
+complete at `f90e42c`: the checkpoint digest now comes from the recovered
+MatchingEngine checkpoint, the WAL command digest is recorded separately, and
+the public-probe digest covers a fixed two-exchange structured Protocol v1
+suffix. Standard CI `32627744868` and Quick Lane `32627744878` pass. The
+verifier and docs-auditor both return PASS; TASK-037 is authorized next. Phase
+9 Closure, merge and `v0.8.0-engineering-baseline` remain unauthorized.
