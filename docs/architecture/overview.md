@@ -35,8 +35,9 @@ exact-SHA CI `32580018903` PASS; TASK-032 live handoff is complete at
 `22568e6` with exact-SHA CI `32613235358` PASS; TASK-033 is complete at
 `eff5955` with exact-SHA CI `32614610701` PASS; TASK-034 recovery benchmark and
 Closure Proposal preparation is complete at `9835624` with exact-SHA CI
-`32616029460` PASS. Phase 8 Closure remains pending Sol High review and Human
-Closure Approval.
+`32616029460` PASS; verifier, benchmark-reviewer and docs-auditor PASS, with
+final docs/evidence synchronization `030545a` / CI `32616620054` PASS. Phase 8
+Closure remains pending Sol High review and Human Closure Approval.
 
 ## Scope
 
@@ -113,7 +114,7 @@ explicit non-goals.
     `eaed8b8` / CI `32580018903`, TASK-032 complete at `22568e6` / CI
    `32613235358`, TASK-033 complete at `eff5955` / CI `32614610701`, and
    TASK-034 benchmark/Closure Proposal preparation complete at `9835624` / CI
-   `32616029460`; Phase 8 Closure remains pending, with merge/tag and later
-   Tasks unauthorized**.
+   `32616029460`, docs/evidence sync `030545a` / CI `32616620054` PASS; Phase 8
+   Closure remains pending, with merge/tag and later Tasks unauthorized**.
 9. Evidence-driven performance alternatives — **Future Work; benchmark and
    ADR required**.

@@ -55,7 +55,9 @@ is complete at `eaed8b8` with exact-SHA CI `32580018903` PASS; TASK-032
 recoverable live handoff is complete at `22568e6` with exact-SHA CI
 `32613235358` PASS; TASK-033 verification is complete at `eff5955` with exact-SHA
 CI `32614610701` PASS; TASK-034 recovery benchmark and Closure Proposal
-preparation is complete at `9835624` with exact-SHA CI `32616029460` PASS.
+preparation is complete at `9835624` with exact-SHA CI `32616029460` PASS;
+verifier, benchmark-reviewer and docs-auditor all PASS, and final docs/evidence
+synchronization is `030545a` with exact-SHA CI `32616620054` PASS.
 The benchmark matrix and limitations are recorded in
 [`PHASE-8-task-034.md`](tasks/reports/PHASE-8-task-034.md) and
 [`recovery.md`](docs/benchmark/recovery.md). The proposal keeps WAL as the
