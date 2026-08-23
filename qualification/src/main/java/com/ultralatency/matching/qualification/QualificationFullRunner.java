@@ -53,6 +53,7 @@ public final class QualificationFullRunner {
         final Path jfrPath = artifactDirectory.resolve("qualification.jfr");
         final Path manifestPath = artifactDirectory.resolve("qualification-manifest.txt");
         final Path resourcePath = artifactDirectory.resolve("resource-evidence.csv");
+        final Path artifactHashesPath = artifactDirectory.resolve("artifact-hashes.txt");
         Files.createDirectories(walDirectory);
         Files.createDirectories(snapshotDirectory);
         final WalConfiguration walConfiguration = WalConfiguration.defaults(walDirectory);
@@ -116,7 +117,9 @@ public final class QualificationFullRunner {
             try (RecoveryLease lease = RecoveryLease.acquire(walDirectory)) {
                 recoveryLeaseReacquired = lease.isHeld();
             }
-            inventoryStable = inventoryStable(walDirectory, snapshotDirectory);
+            final QualificationStorageInventory storageInventory =
+                    QualificationStorageInventory.capture(walDirectory, snapshotDirectory);
+            inventoryStable = storageInventory.stable();
 
             final Duration elapsed = Duration.between(started, Instant.now());
             final QualificationResourceEvidence resources = closeSampler(sampler);
@@ -130,11 +133,14 @@ public final class QualificationFullRunner {
                     workload.commands(), exchanges.subList(probeStart, exchanges.size()), probeStart);
             final String walDigest = QualificationCanonicalizer.digest(persisted);
             writeResourceEvidence(resourcePath, resources);
-            final boolean fullCriteria = criteriaPasses(
+            final boolean lanePassed = laneAssertionsPass(
+                    configuration, workload.commandCount(), listenerRebound,
+                    recoveryLeaseReacquired, inventoryStable);
+            final boolean fullCriteria = fullCriteriaPasses(
                     configuration, workload.commandCount(), elapsed, resources,
                     listenerRebound, recoveryLeaseReacquired, inventoryStable);
             final QualificationResult result = new QualificationResult(
-                    fullCriteria,
+                    lanePassed,
                     workload.commandCount(),
                     responseCount,
                     tradeCount,
@@ -143,7 +149,8 @@ public final class QualificationFullRunner {
                     probe,
                     measurements(
                             configuration, elapsed, persisted, walDigest,
-                            recovered.checkpointDigestHex(), transcript, resources));
+                            recovered.checkpointDigestHex(), transcript, resources,
+                            storageInventory, fullCriteria));
             final QualificationManifest manifest = new QualificationManifest(
                     runId,
                     System.getProperty("qualification.git.sha", "working-tree"),
@@ -158,10 +165,15 @@ public final class QualificationFullRunner {
             Files.writeString(manifestPath, manifestText(
                     configuration, manifest, result, elapsed, listenerRebound,
                     recoveryLeaseReacquired, inventoryStable, resources, jfrPath,
-                    resourcePath));
+                    resourcePath, artifactHashesPath, storageInventory, fullCriteria));
             final String jfrDigest = QualificationArtifactHasher.sha256(jfrPath);
             final String manifestDigest = QualificationArtifactHasher.sha256(manifestPath);
             final String resourceDigest = QualificationArtifactHasher.sha256(resourcePath);
+            writeArtifactHashes(
+                    artifactHashesPath, jfrPath, jfrDigest, manifestPath, manifestDigest,
+                    resourcePath, resourceDigest);
+            final String artifactHashesDigest =
+                    QualificationArtifactHasher.sha256(artifactHashesPath);
             final QualificationRun run = new QualificationRun(manifest, result, 1);
             return new QualificationFullRun(
                     run,
@@ -170,11 +182,14 @@ public final class QualificationFullRunner {
                     listenerRebound,
                     recoveryLeaseReacquired,
                     inventoryStable,
+                    storageInventory,
                     fullCriteria,
                     artifactDirectory,
+                    artifactHashesPath,
                     jfrDigest,
                     manifestDigest,
-                    resourceDigest);
+                    resourceDigest,
+                    artifactHashesDigest);
         } catch (final IOException | RuntimeException exception) {
             writeFailure(artifactDirectory, started, exception);
             throw exception;
@@ -206,7 +221,20 @@ public final class QualificationFullRunner {
         }
     }
 
-    private static boolean criteriaPasses(
+    private static boolean laneAssertionsPass(
+            final QualificationFullConfiguration configuration,
+            final int acceptedCommands,
+            final boolean listenerRebound,
+            final boolean leaseReacquired,
+            final boolean inventoryStable) {
+        return configuration.lane() == QualificationLane.TEST
+                && acceptedCommands > 0
+                && listenerRebound
+                && leaseReacquired
+                && inventoryStable;
+    }
+
+    private static boolean fullCriteriaPasses(
             final QualificationFullConfiguration configuration,
             final int acceptedCommands,
             final Duration elapsed,
@@ -214,8 +242,8 @@ public final class QualificationFullRunner {
             final boolean listenerRebound,
             final boolean leaseReacquired,
             final boolean inventoryStable) {
-        if (configuration.lane() == QualificationLane.TEST) {
-            return acceptedCommands > 0 && listenerRebound && leaseReacquired && inventoryStable;
+        if (configuration.lane() != QualificationLane.FULL) {
+            return false;
         }
         return acceptedCommands >= QualificationFullConfiguration.FULL_MINIMUM_COMMANDS
                 && elapsed.compareTo(configuration.minimumDuration()) >= 0
@@ -234,7 +262,9 @@ public final class QualificationFullRunner {
             final String walDigest,
             final String checkpointDigest,
             final String transcriptDigest,
-            final QualificationResourceEvidence resources) {
+            final QualificationResourceEvidence resources,
+            final QualificationStorageInventory inventory,
+            final boolean fullCriteriaPassed) {
         final Map<String, String> values = new HashMap<>();
         values.put("lane", configuration.lane().name());
         values.put("elapsedMillis", Long.toString(elapsed.toMillis()));
@@ -248,6 +278,14 @@ public final class QualificationFullRunner {
         values.put("threadBaselineRestored",
                 Boolean.toString(resources.threadBaselineRestored()));
         values.put("heapGuardPassed", Boolean.toString(resources.heapGuardPassed()));
+        values.put("fullCriteriaPassed", Boolean.toString(fullCriteriaPassed));
+        values.put("walFileCount", Long.toString(inventory.walFileCount()));
+        values.put("walBytes", Long.toString(inventory.walBytes()));
+        values.put("walFiles", inventory.walFilesText());
+        values.put("snapshotFileCount", Long.toString(inventory.snapshotFileCount()));
+        values.put("snapshotBytes", Long.toString(inventory.snapshotBytes()));
+        values.put("snapshotFiles", inventory.snapshotFilesText());
+        values.put("temporaryFileCount", Long.toString(inventory.temporaryFileCount()));
         return Map.copyOf(values);
     }
 
@@ -287,7 +325,10 @@ public final class QualificationFullRunner {
             final boolean inventoryStable,
             final QualificationResourceEvidence resources,
             final Path jfrPath,
-            final Path resourcePath) {
+            final Path resourcePath,
+            final Path artifactHashesPath,
+            final QualificationStorageInventory inventory,
+            final boolean fullCriteriaPassed) {
         final Map<String, String> values = new java.util.TreeMap<>();
         values.put("acceptedCommands", Long.toString(result.acceptedCommands()));
         values.put("baselineTag", manifest.baselineTag());
@@ -296,7 +337,7 @@ public final class QualificationFullRunner {
         values.put("commandCount", Integer.toString(manifest.workload().commandCount()));
         values.put("commandTimeout", manifest.configuration().commandTimeout().toString());
         values.put("gcCollectors", manifest.environment().getOrDefault("gc.collectors", ""));
-        values.put("fullCriteriaPassed", Boolean.toString(result.success()));
+        values.put("fullCriteriaPassed", Boolean.toString(fullCriteriaPassed));
         values.put("heapGuardPassed", Boolean.toString(resources.heapGuardPassed()));
         values.put("heapGuardAssessed", Boolean.toString(resources.heapGuardAssessed()));
         values.put("jfrPath", jfrPath.toString());
@@ -308,6 +349,14 @@ public final class QualificationFullRunner {
                 Integer.toString(resources.naturalPostGcHeapBytes().size()));
         values.put("publicProbeDigestHex", result.publicProbeDigestHex());
         values.put("resourceEvidencePath", resourcePath.toString());
+        values.put("artifactHashesPath", artifactHashesPath.toString());
+        values.put("walFileCount", Long.toString(inventory.walFileCount()));
+        values.put("walBytes", Long.toString(inventory.walBytes()));
+        values.put("walFiles", inventory.walFilesText());
+        values.put("snapshotFileCount", Long.toString(inventory.snapshotFileCount()));
+        values.put("snapshotBytes", Long.toString(inventory.snapshotBytes()));
+        values.put("snapshotFiles", inventory.snapshotFilesText());
+        values.put("temporaryFileCount", Long.toString(inventory.temporaryFileCount()));
         values.put("baselineThreadCount", Long.toString(resources.baselineThreadCount()));
         values.put("finalThreadCount", Long.toString(resources.finalThreadCount()));
         values.put("baselineRuntimeThreads", String.join(
@@ -370,25 +419,19 @@ public final class QualificationFullRunner {
         }
     }
 
-    private static boolean inventoryStable(final Path walDirectory, final Path snapshotDirectory)
-            throws IOException {
-        return noTemporaryFiles(walDirectory) && noTemporaryFiles(snapshotDirectory)
-                && hasRegularFile(walDirectory);
-    }
-
-    private static boolean hasRegularFile(final Path directory) throws IOException {
-        try (java.util.stream.Stream<Path> paths = Files.list(directory)) {
-            return paths.anyMatch(Files::isRegularFile);
-        }
-    }
-
-    private static boolean noTemporaryFiles(final Path directory) throws IOException {
-        if (!Files.exists(directory)) {
-            return true;
-        }
-        try (java.util.stream.Stream<Path> paths = Files.walk(directory)) {
-            return paths.noneMatch(path -> path.getFileName().toString().endsWith(".tmp"));
-        }
+    private static void writeArtifactHashes(
+            final Path path,
+            final Path jfrPath,
+            final String jfrDigest,
+            final Path manifestPath,
+            final String manifestDigest,
+            final Path resourcePath,
+            final String resourceDigest) throws IOException {
+        final String output = "jfr=" + jfrPath.getFileName() + "\t" + jfrDigest + "\n"
+                + "manifest=" + manifestPath.getFileName() + "\t" + manifestDigest + "\n"
+                + "resourceEvidence=" + resourcePath.getFileName() + "\t" + resourceDigest
+                + "\n";
+        Files.writeString(path, output, StandardCharsets.UTF_8);
     }
 
     private static int freeLoopbackPort() throws IOException {
@@ -403,11 +446,17 @@ public final class QualificationFullRunner {
             final Throwable failure) {
         try {
             Files.createDirectories(artifactDirectory);
+            final Path report = artifactDirectory.resolve("failure-report.txt");
             Files.writeString(
-                    artifactDirectory.resolve("failure-report.txt"),
+                    report,
                     "started=" + started + "\n"
                             + "type=" + failure.getClass().getName() + "\n"
                             + "message=" + String.valueOf(failure.getMessage()) + "\n",
+                    StandardCharsets.UTF_8);
+            final String digest = QualificationArtifactHasher.sha256(report);
+            Files.writeString(
+                    artifactDirectory.resolve("failure-report.sha256"),
+                    "failure-report.txt\t" + digest + "\n",
                     StandardCharsets.UTF_8);
         } catch (final IOException ignored) {
             // Preserve the original campaign failure; the caller receives it unchanged.

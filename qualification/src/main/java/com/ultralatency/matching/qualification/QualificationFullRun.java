@@ -12,11 +12,14 @@ public record QualificationFullRun(
         boolean listenerRebound,
         boolean recoveryLeaseReacquired,
         boolean inventoryStable,
+        QualificationStorageInventory storageInventory,
         boolean fullCriteriaPassed,
         Path artifactDirectory,
+        Path artifactHashesPath,
         String jfrDigestHex,
         String manifestDigestHex,
-        String resourceEvidenceDigestHex) {
+        String resourceEvidenceDigestHex,
+        String artifactHashesDigestHex) {
 
     /** Validates one campaign outcome. */
     public QualificationFullRun {
@@ -27,9 +30,12 @@ public record QualificationFullRun(
             throw new IllegalArgumentException("elapsed must not be negative");
         }
         Objects.requireNonNull(artifactDirectory, "artifactDirectory");
+        Objects.requireNonNull(storageInventory, "storageInventory");
+        Objects.requireNonNull(artifactHashesPath, "artifactHashesPath");
         requireDigest(jfrDigestHex, "jfrDigestHex");
         requireDigest(manifestDigestHex, "manifestDigestHex");
         requireDigest(resourceEvidenceDigestHex, "resourceEvidenceDigestHex");
+        requireDigest(artifactHashesDigestHex, "artifactHashesDigestHex");
     }
 
     private static void requireDigest(final String value, final String name) {
