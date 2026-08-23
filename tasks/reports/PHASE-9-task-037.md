@@ -62,8 +62,9 @@ mvn -pl qualification -am test       # PASS (19 qualification incl. 2 skips; 195
 mvn verify                            # PASS
 git diff --check                      # PASS
 frozen-path audit                     # PASS (0 production-path changes)
-standard exact-SHA CI                 # 32630209329 PASS
-quick-lane exact-SHA CI               # 32630209194 PASS
+standard exact-SHA CI (implementation) # 32630209329 PASS
+quick-lane exact-SHA CI (implementation) # 32630209194 PASS
+docs-sync exact-SHA CI                 # current checkpoint
 verifier + docs-auditor               # pending final task review
 ```
 
