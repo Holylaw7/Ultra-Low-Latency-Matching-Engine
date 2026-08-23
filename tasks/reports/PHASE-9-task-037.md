@@ -11,8 +11,9 @@
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Branch | `feature/phase9-system-qualification` |
 | Implementation | `b80e12e` + `0ee094c` + evidence-boundary fix `db18eac` |
-| Standard CI | `32630209329` PASS |
-| Quick Lane CI | `32630209194` PASS |
+| Duration-gate remediation | `5a3917d` |
+| Standard CI | `32636481415` PASS |
+| Quick Lane CI | `32636481409` PASS |
 | Next Gate | TASK-038 remains locked until PASS |
 
 ## Goal
@@ -47,9 +48,9 @@ mvn -pl qualification -am -Dsurefire.failIfNoSpecifiedTests=false \
 The short TEST lane reports harness success separately from
 `fullCriteriaPassed`; it never produces a Full Qualification claim.
 
-### Full Qualification Attempt (Preserved Failure Evidence)
+### Full Qualification Attempts (Preserved Failure Evidence)
 
-The explicit Full lane was executed once with the approved immutable
+The first explicit Full lane was executed with the approved immutable
 configuration. It was not retried or filtered:
 
 ```text
@@ -72,11 +73,40 @@ resource-evidence hashes. This run is valid failure evidence, not a Full
 Qualification claim; no production defect, retry, threshold change or
 configuration drift was introduced.
 
+The approved qualification-only duration remediation was then applied in
+`5a3917d`: a FULL lane remains active until both the command-count and
+minimum-duration criteria are satisfied. The first run remains preserved, and
+the follow-up run was executed with a new immutable run id under the same
+configuration:
+
+```text
+run: qualification-full-326c125e-5c4a-45f8-9690-ad736a81ffc3
+acceptedCommands: 1,000,000
+elapsed: 3,609,294 ms (60:09.294)
+minimumDuration: 3,600,000 ms (60 minutes)
+naturalPostGcSampleCount: 4 / 5 required
+heapGuardAssessed: false
+fullCriteriaPassed: false
+listenerRebound: true
+leaseReacquired: true
+threadBaselineRestored: true
+temporaryFileCount: 0
+walFileCount: 612
+walBytes: 40,019,552
+```
+
+This follow-up confirms that the duration gate now has the approved AND
+semantics. It still does not qualify as a passing Full lane because the
+required five natural post-GC samples were not observed. No `System.gc()`,
+retry-until-pass behavior, sample filtering, threshold change, production
+change or workload/configuration drift was introduced. Both raw runs remain
+valid failure evidence; no production/runtime failure was observed.
+
 ## Explicitly Not Implemented
 
-- a passing 60-minute / 1,000,000-command campaign (the preserved attempt
-  reached the command threshold but failed the duration and natural-sample
-  gates);
+- a passing 60-minute / 1,000,000-command campaign (the preserved attempts
+  reached the command and duration thresholds, but the natural-sample gate
+  remained incomplete);
 - restart/forced-termination campaign (TASK-038);
 - JMH/JFR performance characterization beyond required soak capture
   (TASK-039);
@@ -89,8 +119,10 @@ mvn -pl qualification -am test       # PASS (19 qualification incl. 2 skips; 195
 mvn verify                            # PASS
 git diff --check                      # PASS
 frozen-path audit                     # PASS (0 production-path changes)
-standard exact-SHA CI (implementation) # 32630209329 PASS
-quick-lane exact-SHA CI (implementation) # 32630209194 PASS
+duration-gate remediation CI          # 32636481415 PASS
+duration-gate quick-lane CI            # 32636481409 PASS
+full run #1                            # preserved threshold failure
+full run #2                            # preserved natural-sample failure
 final docs checkpoint                # 9a8e3d2 / 32632329094 PASS
 verifier + docs-auditor               # PASS
 ```
@@ -106,7 +138,8 @@ commands, with no retry/filtering and complete raw artifact metadata.
 
 ## Gate
 
-TASK-037 remains in progress because the preserved Full lane attempt did not
-meet all gates. TASK-038, Phase 9 Closure, merge and
+TASK-037 remains in progress because both preserved Full lane attempts did not
+meet all gates: the runner remediation now satisfies the duration criterion,
+but natural post-GC evidence remains at 4/5. TASK-038, Phase 9 Closure, merge and
 `v0.8.0-engineering-baseline` remain unauthorized until a separately approved
 qualification decision produces a passing immutable run.
