@@ -28,5 +28,8 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   Closure input is `c59d7c0` / CI `32616802595` with 195 tests, 0 failures and
   Checkstyle 0. Human Phase 8 Closure Approval is complete; merge `87abbc1` /
   Master CI `32622722649` PASS and baseline tag `v0.7.0-engineering-baseline` /
-  Tag CI `32622757607` PASS. Phase 8 is frozen; Phase 9 and Product Release
-  remain unauthorized.
+  Tag CI `32622757607` PASS. Phase 8 is frozen.
+- [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](PHASE-9-system-qualification-and-long-run-reliability-blueprint.md)
+  — Approved; TASK-035 through TASK-040 authorized in strict dependency order.
+  TASK-035 is in progress; Phase 9 Closure, merge, `v0.8.0-engineering-baseline`,
+  Phase 10 and Product Release remain unauthorized.
