@@ -14,10 +14,11 @@
 | Related ADR | [`ADR-0017`](../../docs/adr/ADR-0017-system-qualification-performance-reliability.md) |
 | Phase Blueprint | [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md) |
 | Authorization Mode | `Blueprint` |
-| Current Stage | `Implementation / Evidence Gate` |
-| Next Gate | TASK-038 after Evidence Gate PASS |
+| Current Stage | `Limited Qualification-Only Remediation / Evidence Gate` |
+| Next Gate | Human approval for a new Memory Steady-State Full Campaign after remediation Evidence Gate PASS |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
+| Remediation checkpoint | `23ca7f0` — bounded streaming, continuous memory lane and public-state evidence |
 
 ## 2. Goal
 
@@ -35,6 +36,13 @@ must never be reported as Full Qualification.
 - chronological per-run natural post-GC heap guard without `System.gc()`;
 - campaign evaluator requiring two qualifying runs and five cumulative natural
   post-GC samples without cross-run timeline concatenation;
+- bounded streaming command/transcript aggregation with a fixed public-probe
+  suffix during the heap measurement window;
+- separately versioned `MEMORY_STEADY_STATE_V1` public-boundary lane with a
+  declared active-order bound;
+- public Protocol v1 state tracking of maximum/final active orders with
+  recovered-checkpoint reconciliation;
+- manifest configuration records the actual persisted continuous prefix length;
 - listener rebind, recovery lease and WAL inventory evidence;
 - raw JFR, resource CSV, manifest and failure artifacts with SHA-256 hashes;
 - focused short-lane tests for the full-run composition and threshold guards.
@@ -45,6 +53,7 @@ must never be reported as Full Qualification.
 - restart/forced-termination campaign (TASK-038);
 - JMH/profile optimization work (TASK-039);
 - retries, filtering, deletion of failed evidence or threshold changes after a run;
+- any new Full Campaign before a separate Human approval;
 - direct coordinator, pipeline or MatchingEngine calls from the harness;
 - reconnect, deduplication, multiple sessions or request pipelining;
 - WAL/Snapshot/Protocol/recovery semantic changes;
@@ -58,8 +67,19 @@ must never be reported as Full Qualification.
   runs and at least five cumulative natural post-GC samples.
 - [ ] Each run's heap guard uses timestamp order; observations from different
   runs are never merged into a synthetic time series.
-- [ ] Full runner uses only the public Protocol v1 boundary and records every
-  accepted command/result without retry or filtering.
+- [ ] Full runner uses only the public Protocol v1 boundary and accounts for
+  every accepted command/result through streaming digests and counters without
+  retry or filtering.
+- [ ] Full runner uses bounded streaming counters and retains no million-command
+  exchange history during the heap measurement window.
+- [ ] `MEMORY_STEADY_STATE_V1` is deterministic, separately versioned and keeps
+  active order state within its declared bound through the public boundary; the
+  observed maximum and final counts reconcile with recovery.
+- [ ] A future Memory Steady-State Full run continues the bounded cycle until
+  both duration and command-count gates are satisfied; it does not finish the
+  minimum prefix and idle during the declared observation window.
+- [ ] Existing `QualificationWorkloadV1` golden vectors and preserved Run #1/#2
+  artifacts remain unchanged and non-qualifying.
 - [ ] Full qualification requires both duration and command-count thresholds;
   the short lane is explicitly non-full evidence.
 - [ ] Resource evidence records owned runtime threads, listener/lease state,
@@ -72,6 +92,11 @@ must never be reported as Full Qualification.
 - [ ] `mvn verify`, Checkstyle, `git diff --check`, frozen-path audit and
   exact-SHA CI pass.
 - [ ] verifier and docs-auditor return PASS before TASK-038 unlocks.
+
+Current local remediation evidence at `23ca7f0`: `mvn -pl qualification -am test` passes
+36 qualification tests (2 intentionally skipped) and 195 core tests;
+`mvn verify` and Checkstyle pass. Exact-SHA CI and read-only reviewer gates are
+still required. No new Full Campaign has been started.
 
 ## 6. Frozen Boundary
 
@@ -93,6 +118,10 @@ The short `QualificationFullRunnerTest` exercises composition quickly. A real
 Full lane run remains a manual evidence unit and must not be replaced by the
 short test.
 
+The Human-approved Limited Qualification-Only Amendment does not authorize a
+new Full run. After bounded-streaming and memory-lane remediation passes its
+Evidence Gate, execution must stop for a separate Human Full Campaign decision.
+
 ## 8. Evidence Gate
 
 Evidence is incomplete until implementation, focused tests, full regression,
@@ -101,3 +130,12 @@ exact-SHA CI all agree. Any production defect, unexpected terminal state,
 timeout, digest mismatch, resource leak or configuration drift is retained as
 failure evidence and escalated through the Exception Gate; it is not repaired
 inside this task by changing frozen production code.
+
+## 9. Limited Qualification-Only Amendment Status
+
+Human approval on 2026-08-23 authorizes only `qualification/**`, qualification
+workflow lane/metadata changes if required, and evidence/status documentation.
+The remediation implements streaming/bounded aggregation and the versioned
+`MEMORY_STEADY_STATE_V1` lane. It does not authorize production code, JVM/GC or
+workload tuning, threshold relaxation, artificial GC, retry-until-pass, or a
+new Full Campaign. Run #1 and Run #2 remain preserved non-qualifying evidence.

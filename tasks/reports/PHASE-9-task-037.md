@@ -6,15 +6,15 @@
 | --- | --- |
 | Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability |
 | Task | `TASK-20260823-037` |
-| Stage | Implementation / Verification |
-| Result | In Progress — Limited campaign-criterion remediation; independent Full Run pending |
+| Stage | Limited Qualification-Only Remediation / Evidence Gate |
+| Result | In Progress — bounded aggregation and memory-steady-state lane; new Full Campaign not authorized |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Branch | `feature/phase9-system-qualification` |
-| Implementation | `b80e12e` + `0ee094c` + evidence-boundary fix `db18eac` + qualification teardown fix `63e54f9` |
+| Implementation | Prior harness commits plus bounded remediation `82112b2`, continuous-lane fixes `2501c71`/`3b5b451`, public-state/manifest fixes `6fc813b`/`23ca7f0` |
 | Duration-gate remediation | `5a3917d` |
-| Standard CI | `32636481415` PASS |
-| Quick Lane CI | `32636481409` PASS |
-| Next Gate | Campaign Evidence Gate and one independent qualifying Full Run |
+| Standard CI | Prior gates PASS; remediation exact-SHA CI pending |
+| Quick Lane CI | Prior gates PASS; no new Full Campaign started |
+| Next Gate | Remediation Evidence Gate, then separate Human Full Campaign decision |
 
 ## Goal
 
@@ -31,6 +31,18 @@ checks long-run resource behavior without modifying the production runtime.
 - manifest, resource CSV, JFR and failure-artifact hashing;
 - persisted artifact hash sidecar and WAL/Snapshot storage inventory;
 - focused configuration and short-lane integration tests.
+- bounded streaming command/transcript aggregation with a fixed public-probe
+  suffix during the heap measurement window;
+- separately versioned `MEMORY_STEADY_STATE_V1` bounded-state lane over the
+  public Protocol v1 path.
+
+The bounded remediation implementation checkpoint is `23ca7f0` (preceded by
+the public-state implementation `6fc813b`, continuous-lane checkpoint
+`3b5b451` and bounded aggregation checkpoint `82112b2`). Local verification
+after that checkpoint reports 36 qualification tests (2 designed skips), 195
+core tests, Checkstyle 0 and `mvn verify` PASS. The final exact-SHA CI and
+read-only reviewer results are still required before this remediation Evidence
+Gate can close.
 
 The short-lane implementation evidence is complete at `0ee094c`. The real
 60-minute / 1,000,000-command Full lane is an explicit manual evidence unit;
@@ -84,8 +96,10 @@ uses timestamp order through `QualificationResourceEvidenceReader`.
 
 The first run cannot participate because it did not reach 60 minutes. The
 second run may participate only after chronological guard recalculation from
-its original raw resource CSV passes. Human approval authorizes exactly one
-additional independent Full run after this remediation Evidence Gate passes.
+its original raw resource CSV passes. The Limited Qualification-Only Amendment
+does not authorize a new Full run; it first requires bounded-streaming and
+`MEMORY_STEADY_STATE_V1` Evidence Gate completion, followed by a separate
+Human Full Campaign decision. Both preserved runs remain non-qualifying.
 
 ### Run #2 Chronological Re-evaluation
 
@@ -108,9 +122,8 @@ participate in the qualifying campaign. Its original manifest's
 `heapGuardAssessed=false` remains historical evidence from the former
 single-run five-sample criterion; it was not overwritten. No Full run was
 started after this result. Because neither preserved run currently qualifies,
-the approved single additional run cannot by itself satisfy the campaign's
-minimum of two qualifying runs; any further run authorization requires a new
-Human decision.
+ no new Full run is authorized until the Limited Qualification-Only Amendment
+ Evidence Gate passes and a separate Human decision is recorded.
 
 ### Full Qualification Attempts (Preserved Failure Evidence)
 
@@ -169,8 +182,8 @@ failure evidence; no production/runtime failure was observed.
 
 ## Explicitly Not Implemented
 
-- a passing campaign (Run #2 chronological re-evaluation and one additional
-  independent qualifying Full run remain outstanding);
+- a passing campaign (Run #2 chronological re-evaluation and any new qualifying
+  Full runs remain outstanding and unauthorized);
 - restart/forced-termination campaign (TASK-038);
 - JMH/JFR performance characterization beyond required soak capture
   (TASK-039);
@@ -179,7 +192,7 @@ failure evidence; no production/runtime failure was observed.
 ## Evidence Plan
 
 ```text
-mvn -pl qualification -am test       # PASS (19 qualification incl. 2 skips; 195 core)
+mvn -pl qualification -am test       # PASS (36 qualification incl. 2 skips; 195 core)
 mvn verify                            # PASS
 git diff --check                      # PASS
 frozen-path audit                     # PASS (0 production-path changes)
@@ -217,13 +230,35 @@ proof. The follow-up docs checkpoint `9a8e3d2` was verified by standard CI
 The short lane proves harness composition only. A Full Qualification campaign
 claim requires at least two immutable qualifying runs, each satisfying both 60
 minutes and 1,000,000 accepted commands, with chronological per-run heap
-evidence, no retry/filtering and complete raw artifact metadata.
+evidence, no retry/filtering and complete raw artifact metadata. The current
+amendment Evidence Gate must pass before a new Full Campaign can be considered.
+
+### Limited Qualification-Only Remediation
+
+Human approval on 2026-08-23 authorizes only qualification-layer changes:
+
+- stream command/transcript counters and retain a fixed public-probe suffix;
+- keep post-run WAL materialization and offline recovery outside the heap
+  measurement window;
+- add the separately versioned `MEMORY_STEADY_STATE_V1` bounded-state lane;
+- keep a future Memory Steady-State Full run continuously processing its
+  deterministic bounded cycle until the duration and command-count gates are
+  satisfied, rather than idling after the minimum prefix;
+- prove bounded retention, deterministic golden/digest equivalence, public-path
+  integration and manifest metadata with focused tests and exact-SHA CI;
+- derive the memory-lane maximum/final active-order counts from public request /
+  response observations and reconcile the final count with recovered state;
+- record the actual persisted command-prefix length in any continuous memory
+  lane manifest.
+
+No new Full run is authorized by this remediation. The next gate is a Human
+decision on a new independent Memory Steady-State Full Campaign after the
+remediation Evidence Gate passes.
 
 ## Gate
 
-TASK-037 remains in progress because the campaign Evidence Gate is not yet
-complete. Run #1 cannot participate because its duration was short, and Run #2
-fails the corrected chronological heap guard. No new Full run was started;
-further execution requires a new Human decision because the currently approved
-single additional run cannot produce two qualifying runs by itself. TASK-038,
-Phase 9 Closure, merge and `v0.8.0-engineering-baseline` remain unauthorized.
+TASK-037 remains in progress because the Limited Qualification-Only
+Remediation Evidence Gate is not yet complete. Run #1 cannot participate
+because its duration was short, and Run #2 fails the corrected chronological
+heap guard. No new Full run was started. TASK-038, Phase 9 Closure, merge and
+`v0.8.0-engineering-baseline` remain unauthorized.

@@ -31,5 +31,4 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   Tag CI `32622757607` PASS. Phase 8 is frozen.
 - [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](PHASE-9-system-qualification-and-long-run-reliability-blueprint.md)
   — Approved; TASK-035 through TASK-040 authorized in strict dependency order.
-  TASK-036 Evidence Gate PASS at `f90e42c` / standard CI `32627744868` and Quick Lane `32627744878`; TASK-037 is In Progress with its Evidence Gate pending. Phase 9 Closure, merge, `v0.8.0-engineering-baseline`,
-  Phase 10 and Product Release remain unauthorized.
+  TASK-036 Evidence Gate PASS at `f90e42c` / standard CI `32627744868` and Quick Lane `32627744878`; TASK-037 is In Progress under the Human-approved Limited Qualification-Only Remediation Evidence Gate. The remediation adds bounded streaming evidence and a separately versioned `MEMORY_STEADY_STATE_V1` lane; no new Full Campaign is authorized. Phase 9 Closure, merge, `v0.8.0-engineering-baseline`, Phase 10 and Product Release remain unauthorized.

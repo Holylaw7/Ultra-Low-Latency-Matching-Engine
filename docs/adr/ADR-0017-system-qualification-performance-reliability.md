@@ -46,7 +46,10 @@ explicitly labeled as component evidence.
 generator. It covers lifecycle outcomes, crossing multi-match and resting
 depth. Each run records counts, WAL/Snapshot inventory and final checkpoint,
 transcript and public-probe digests. Workload semantics or version changes
-require an Exception Gate.
+require an Exception Gate. The existing `LIFECYCLE_MIX`,
+`CROSSING_MULTI_MATCH` and `RESTING_DEPTH` vectors remain unchanged. The
+qualification-only `MEMORY_STEADY_STATE_V1` vector is a separately versioned
+bounded-state identity and does not alter those golden vectors.
 
 ### D5 — Quick and Full evidence lanes are separate
 
@@ -73,7 +76,9 @@ each run. Each participating run requires at least two natural post-GC samples
 and must pass its own chronological guard; the campaign requires at least five
 natural samples across at least two qualifying runs. Samples from different
 runs are never concatenated into a synthetic time series. The guard detects
-obvious retention but does not claim proof of absence of leaks.
+obvious retention but does not claim proof of absence of leaks. The long-run
+heap measurement window ends before post-run WAL materialization and offline
+recovery so verification structures do not contaminate the resource evidence.
 
 ### D8 — Restart and termination campaigns are explicit
 
@@ -138,6 +143,32 @@ filesystem and fixed single-session workload. It may not claim Production
 Ready, SLA/RTO, guaranteed P99/P999, hardware power-loss safety, exactly-once,
 HA, capacity guarantees or Product Release.
 
+### D17 — Qualification evidence is streamed and bounded
+
+The Full runner aggregates command, transcript and response counters while the
+public Protocol v1 run is active. It retains only the fixed public-probe suffix
+needed for deterministic evidence and never keeps a million-command exchange
+history during the heap measurement window. Persisted WAL scanning, manifest
+materialization and offline recovery occur after that window and are reported
+as post-measurement verification work. For the memory lane, a public-state
+tracker reconstructs active-order quantities from the Protocol v1 command and
+response observations, records maximum/final counts and reconciles the final
+count with the recovered checkpoint. If a continuous run exceeds the minimum
+command prefix, its manifest configuration records the actual persisted prefix
+length rather than falsely retaining the one-million-command minimum.
+
+### D18 — Bounded-state memory evidence is a separate lane
+
+`MEMORY_STEADY_STATE_V1` exercises the same public TCP → Gateway → WAL →
+Pipeline → MatchingEngine path while keeping active order state within a
+versioned bound. It is qualification-only evidence; it does not change
+production code or the existing workload identities, and it does not claim
+absence of memory leaks. A Full run using this lane requires a separate Human
+Full Campaign authorization after remediation Evidence Gate completion. Its
+observation window continues to process the deterministic bounded cycle until
+the duration and command-count gates are satisfied; it may not finish the
+minimum command prefix and then idle while claiming continuous observation.
+
 ## Scope Boundary
 
 Authorized work is limited to the Phase 9 Blueprint and TASK-035 through
@@ -152,6 +183,11 @@ conflating local qualification with production readiness. The cost is that
 full qualification is an explicit long-running campaign and optimization is
 deferred until evidence identifies a bounded hypothesis.
 
+The 2026-08-23 Limited Qualification-Only Amendment authorizes bounded
+streaming aggregation and the separately versioned `MEMORY_STEADY_STATE_V1`
+lane. Existing Full Run #1 and Run #2 artifacts remain preserved and
+non-qualifying; no new Full Campaign is authorized by that amendment.
+
 ## Exception Gate
 
 Stop for Human review on production-source/API changes, semantic or format
@@ -164,3 +200,4 @@ quick/full evidence substitution, or any Product Release/merge/tag action.
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
 | 2026-08-23 | Human Developer | Approved | D1-D16 approved. TASK-20260823-035 through TASK-20260823-040 authorized in strict dependency order. Production optimization, merge, `v0.8.0-engineering-baseline`, Phase 10 and Product Release remain unauthorized. |
+| 2026-08-23 | Human Developer | Limited Amendment Approved | Qualification-only bounded streaming aggregation and `MEMORY_STEADY_STATE_V1` are authorized. Existing workload vectors and preserved failed runs remain unchanged. No new Full Campaign, production change, JVM/GC tuning or threshold change is authorized. |

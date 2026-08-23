@@ -14,7 +14,7 @@
 | Blueprint Branch | `docs/phase9-system-qualification-blueprint` |
 | Implementation Branch | `feature/phase9-system-qualification` |
 | Planned Tasks | `TASK-20260823-035` through `TASK-20260823-040` |
-| Next Gate | `TASK-036 Implementation / Evidence Gate` |
+| Next Gate | `TASK-037 Limited Qualification-Only Remediation Evidence Gate; Human Full Campaign Approval required before any new Full run` |
 
 ## 2. Phase Goal
 
@@ -108,7 +108,7 @@ not bypass their public boundaries.
 | --- | --- | --- | --- | --- |
 | TASK-035 | `qualification/**`, root `pom.xml`, Phase 9 docs/tasks | Contracts, manifest, workload vectors | focused tests, `mvn verify`, Checkstyle, diff, exact-SHA CI | No |
 | TASK-036 | qualification module | Public-boundary quick qualification | 10,000-command/3-cycle smoke | No |
-| TASK-037 | qualification module and evidence docs | 60-minute/1,000,000-command soak and resource evidence | Full lane manifest and guards | No |
+| TASK-037 | qualification module and evidence docs | 60-minute/1,000,000-command soak, bounded streaming evidence and versioned memory-steady-state lane | Full lane manifest, bounded-retention and chronological guards | No |
 | TASK-038 | qualification module and evidence docs | restart/termination campaign | per-cycle convergence | No |
 | TASK-039 | additive benchmark class and evidence docs | JMH/JFR characterization | full matrix, profile and metadata | No |
 | TASK-040 | reports/docs/context | Closure Proposal and synchronized evidence | reviewer PASS and exact-SHA CI | Stop for Closure |
@@ -131,6 +131,20 @@ not bypass their public boundaries.
   at least five cumulative natural post-GC samples.
 - Each run has at least two natural post-GC samples and its own chronological
   early/late heap guard; samples are never concatenated across runs.
+- The approved Limited Qualification-Only Amendment requires streaming command,
+  transcript and response counters plus a bounded public-probe suffix during
+  the heap measurement window. Post-run WAL materialization and offline
+  recovery are outside that window.
+- The amendment adds the separately versioned `MEMORY_STEADY_STATE_V1`
+  qualification lane. Its active order state remains within the declared bound
+  while the complete public Protocol v1 path is exercised; existing golden
+  workload identities remain unchanged. A future Full run continues that
+  bounded cycle through the declared observation window rather than finishing
+  the minimum command prefix and idling.
+- The memory lane records maximum/final active-order counts from a bounded
+  public Protocol v1 state tracker and reconciles its final count with the
+  recovered checkpoint; a continuous run's manifest records its actual
+  persisted command-prefix length.
 - No unexpected terminal state, timeout, mismatch or unexplained exception.
 - Owned threads, locks, listener, temporary files and inventory satisfy D7.
 - JFR/GC and manifest evidence are complete.
@@ -194,6 +208,13 @@ Any change invalidates that run. Run samples may be counted for the campaign
 threshold only after each run independently passes its chronological guard;
 their observations cannot be concatenated into one synthetic time series.
 
+The Limited Qualification-Only Amendment also requires that the runner avoid
+million-command command/exchange retention during the heap measurement window.
+The streaming command/transcript digests and bounded public-probe suffix are
+recorded, and the persisted WAL digest is reconciled only after the measurement
+window closes. `MEMORY_STEADY_STATE_V1` is a new versioned lane; the existing
+`QualificationWorkloadV1` golden semantics remain frozen.
+
 Raw artifacts remain ignored or CI artifacts. Committed reports contain
 commands, environment, hashes, failures, reruns and limitations.
 
@@ -202,7 +223,7 @@ commands, environment, hashes, failures, reruns and limitations.
 | Path | Task | Planned Change | Boundary |
 | --- | --- | --- | --- |
 | `pom.xml` | 035 | add `qualification` module only | no dependency change |
-| `qualification/**` | 035-038 | JDK-only qualification contracts, client, harness and campaign | no production imports beyond public APIs |
+| `qualification/**` | 035-038 | JDK-only qualification contracts, client, bounded harness, memory lane and campaign | no production imports beyond public APIs |
 | `benchmark/src/main/java/.../SystemQualificationBenchmark.java` | 039 | additive JMH benchmark | existing dependency set only |
 | `.github/workflows/qualification.yml` | 036-039 | bounded quick/manual qualification workflow | Full lane not forced on push |
 | `docs/qualification/**` | 040 | manifests and evidence summaries | documentation only |
@@ -279,6 +300,26 @@ Release. Phase 10 remains unauthorized.
 
 ```text
 Blueprint Status: Approved
-Implementation: TASK-036 Evidence Gate PASS; TASK-037 Authorized / Next
+Implementation: TASK-036 Evidence Gate PASS; TASK-037 Limited Qualification-Only Remediation / Evidence Gate pending
 Phase 9 Closure: Not Authorized
 ```
+
+## 18. Limited Qualification-Only Amendment
+
+The Human Developer approved this amendment on 2026-08-23 after read-only
+heap evidence investigation showed that the original full-run trend was
+confounded by harness retention and intentionally growing business state:
+
+- stream command/transcript counters and retain only the fixed public-probe
+  suffix during measurement;
+- keep the original `QualificationWorkloadV1` profile semantics and golden
+  digests unchanged;
+- add `MEMORY_STEADY_STATE_V1` as a qualification-only bounded-state lane over
+  the unchanged public system boundary;
+- preserve Run #1 and Run #2 as non-qualifying evidence;
+- do not start a new Full Campaign until this remediation passes its Evidence
+  Gate and a separate Human approval is recorded.
+
+The amendment does not authorize production source changes, JVM/GC/workload
+tuning, threshold relaxation, artificial GC, retry-until-pass behavior,
+cross-run synthetic heap timelines, or Phase 9 Closure/merge/tag actions.
