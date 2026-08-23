@@ -7,7 +7,7 @@
 | Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability |
 | Task | `TASK-20260823-037` |
 | Stage | Implementation / Verification |
-| Result | In Progress — Full Qualification evidence pending |
+| Result | In Progress — Full Qualification attempt failed; review pending |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Branch | `feature/phase9-system-qualification` |
 | Implementation | `b80e12e` + `0ee094c` + evidence-boundary fix `db18eac` |
@@ -47,9 +47,36 @@ mvn -pl qualification -am -Dsurefire.failIfNoSpecifiedTests=false \
 The short TEST lane reports harness success separately from
 `fullCriteriaPassed`; it never produces a Full Qualification claim.
 
+### Full Qualification Attempt (Preserved Failure Evidence)
+
+The explicit Full lane was executed once with the approved immutable
+configuration. It was not retried or filtered:
+
+```text
+run: qualification-full-5346263e-ad6f-4dee-8798-92fe017311ef
+acceptedCommands: 1,000,000
+elapsed: 1,916,630 ms (31:56.630)
+minimumDuration: 3,600,000 ms (60 minutes)
+naturalPostGcSampleCount: 4 / 5 required
+fullCriteriaPassed: false
+listenerRebound: true
+leaseReacquired: true
+temporaryFileCount: 0
+walFileCount: 612
+walBytes: 40,019,552
+```
+
+Raw artifacts are retained under the ignored `qualification-results/`
+directory. The persisted artifact hash sidecar records the JFR, manifest and
+resource-evidence hashes. This run is valid failure evidence, not a Full
+Qualification claim; no production defect, retry, threshold change or
+configuration drift was introduced.
+
 ## Explicitly Not Implemented
 
-- the real 60-minute / 1,000,000-command campaign in CI;
+- a passing 60-minute / 1,000,000-command campaign (the preserved attempt
+  reached the command threshold but failed the duration and natural-sample
+  gates);
 - restart/forced-termination campaign (TASK-038);
 - JMH/JFR performance characterization beyond required soak capture
   (TASK-039);
@@ -74,7 +101,7 @@ commands, with no retry/filtering and complete raw artifact metadata.
 
 ## Gate
 
-TASK-037 remains in progress until the automated Evidence Gate and read-only
-reviewers pass and one immutable 60-minute/1,000,000-command Full Qualification
-run is recorded. TASK-038, Phase 9 Closure, merge and
-`v0.8.0-engineering-baseline` remain unauthorized until that point.
+TASK-037 remains in progress because the preserved Full lane attempt did not
+meet all gates. TASK-038, Phase 9 Closure, merge and
+`v0.8.0-engineering-baseline` remain unauthorized until a separately approved
+qualification decision produces a passing immutable run.
