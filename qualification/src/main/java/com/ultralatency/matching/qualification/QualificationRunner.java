@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,8 +70,10 @@ public final class QualificationRunner {
                 final RecoverableDurableMatchingEngineTcpServer server = server(
                         walDirectory, snapshotDirectory);
                 server.start();
-                try (ProtocolV1QualificationClient client = new ProtocolV1QualificationClient(
-                        server.localAddress().orElseThrow(), configuration.commandTimeout())) {
+                ProtocolV1QualificationClient client = null;
+                try {
+                    client = new ProtocolV1QualificationClient(
+                            server.localAddress().orElseThrow(), configuration.commandTimeout());
                     for (int index = start; index < end; index++) {
                         final EngineCommand command = workload.commands().get(index);
                         final long requestId = index - start + 1L;
@@ -82,7 +85,7 @@ public final class QualificationRunner {
                         tradeCount += exchange.matches().size();
                     }
                 } finally {
-                    server.shutdown(configuration.commandTimeout());
+                    shutdownBeforeClientClose(server, client, configuration.commandTimeout());
                 }
             }
 
@@ -136,6 +139,20 @@ public final class QualificationRunner {
             final Path walDirectory,
             final Path snapshotDirectory) {
         return server(walDirectory, snapshotDirectory, 0);
+    }
+
+    /** Stops the server before closing the active client session. */
+    private static void shutdownBeforeClientClose(
+            final RecoverableDurableMatchingEngineTcpServer server,
+            final ProtocolV1QualificationClient client,
+            final Duration timeout) throws IOException {
+        try {
+            server.shutdown(timeout);
+        } finally {
+            if (client != null) {
+                client.close();
+            }
+        }
     }
 
     static RecoverableDurableMatchingEngineTcpServer server(

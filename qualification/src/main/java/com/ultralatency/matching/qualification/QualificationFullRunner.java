@@ -78,8 +78,11 @@ public final class QualificationFullRunner {
             final RecoverableDurableMatchingEngineTcpServer server = QualificationRunner.server(
                     walDirectory, snapshotDirectory, port);
             server.start();
-            try (ProtocolV1QualificationClient client = new ProtocolV1QualificationClient(
-                    server.localAddress().orElseThrow(), workloadConfiguration.commandTimeout())) {
+            ProtocolV1QualificationClient client = null;
+            try {
+                client = new ProtocolV1QualificationClient(
+                        server.localAddress().orElseThrow(),
+                        workloadConfiguration.commandTimeout());
                 for (int index = 0; index < workload.commandCount(); index++) {
                     final EngineCommand command = workload.commands().get(index);
                     final QualificationExchange exchange = client.exchange(command, index + 1L);
@@ -91,7 +94,8 @@ public final class QualificationFullRunner {
                 }
                 awaitMinimumDuration(started, configuration);
             } finally {
-                server.shutdown(workloadConfiguration.commandTimeout());
+                shutdownBeforeClientClose(
+                        server, client, workloadConfiguration.commandTimeout());
             }
             requireCleanShutdown(server);
 
@@ -437,6 +441,20 @@ public final class QualificationFullRunner {
         if (server.failureCause().isPresent()) {
             throw new IOException("qualification server entered terminal failure",
                     server.failureCause().orElseThrow());
+        }
+    }
+
+    /** Stops the server before closing the active client session. */
+    private static void shutdownBeforeClientClose(
+            final RecoverableDurableMatchingEngineTcpServer server,
+            final ProtocolV1QualificationClient client,
+            final Duration timeout) throws IOException {
+        try {
+            server.shutdown(timeout);
+        } finally {
+            if (client != null) {
+                client.close();
+            }
         }
     }
 
