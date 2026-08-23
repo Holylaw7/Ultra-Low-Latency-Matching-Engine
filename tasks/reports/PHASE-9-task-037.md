@@ -87,6 +87,31 @@ second run may participate only after chronological guard recalculation from
 its original raw resource CSV passes. Human approval authorizes exactly one
 additional independent Full run after this remediation Evidence Gate passes.
 
+### Run #2 Chronological Re-evaluation
+
+The original Run #2 raw artifact was re-read without changing its bytes or
+manifest flags:
+
+```text
+artifact:
+qualification-full-326c125e-5c4a-45f8-9690-ad736a81ffc3/resource-evidence.csv
+sha256:
+2b2c29606d9b96f09d4d28eb7415662aeec3e1e2809e2f7030c881b4e8ec290a
+natural samples:
+202657720 -> 238773760 -> 270519184 -> 314464104 bytes
+heapGuardAssessed: true
+heapGuardPassed: false
+```
+
+The values are monotonically increasing in timestamp order, so Run #2 cannot
+participate in the qualifying campaign. Its original manifest's
+`heapGuardAssessed=false` remains historical evidence from the former
+single-run five-sample criterion; it was not overwritten. No Full run was
+started after this result. Because neither preserved run currently qualifies,
+the approved single additional run cannot by itself satisfy the campaign's
+minimum of two qualifying runs; any further run authorization requires a new
+Human decision.
+
 ### Full Qualification Attempts (Preserved Failure Evidence)
 
 The first explicit Full lane was executed with the approved immutable
@@ -162,7 +187,9 @@ duration-gate remediation CI          # 32636481415 PASS
 duration-gate quick-lane CI            # 32636481409 PASS
 qualification teardown fix CI          # 32640760008 PASS
 qualification teardown quick lane CI   # 32640759989 PASS
-campaign criterion remediation         # current checkpoint; exact-SHA CI pending
+campaign criterion remediation         # 913022b / CI 32642352145 PASS
+campaign quick lane                    # 913022b / CI 32642352146 PASS
+Run #2 chronological re-evaluation     # FAIL; original raw artifact preserved
 full run #1                            # preserved threshold failure
 full run #2                            # preserved natural-sample failure
 current report checkpoint              # this docs commit; exact-SHA CI required
@@ -195,8 +222,8 @@ evidence, no retry/filtering and complete raw artifact metadata.
 ## Gate
 
 TASK-037 remains in progress because the campaign Evidence Gate is not yet
-complete. Run #1 cannot participate because its duration was short; Run #2
-requires chronological raw-evidence re-evaluation, and one additional
-independent Full run is required. TASK-038, Phase 9 Closure, merge and
-`v0.8.0-engineering-baseline` remain unauthorized until the approved campaign
-criterion produces a passing immutable evidence set.
+complete. Run #1 cannot participate because its duration was short, and Run #2
+fails the corrected chronological heap guard. No new Full run was started;
+further execution requires a new Human decision because the currently approved
+single additional run cannot produce two qualifying runs by itself. TASK-038,
+Phase 9 Closure, merge and `v0.8.0-engineering-baseline` remain unauthorized.

@@ -203,6 +203,15 @@ Phase 10 and Product Release remain locked.
 Reconnect/deduplication,
 multi-session support and Product Release remain outside the proposal.
 
+Human Limited Criterion Amendment is approved for TASK-037: heap stability is
+campaign-level, with at least two independently qualifying Full runs, at least
+two natural post-GC samples and a chronological per-run guard, plus five
+cumulative natural samples. Remediation checkpoint `913022b` passed standard
+CI `32642352145` and Quick Lane `32642352146`; verifier and docs-auditor both
+PASS. Run #2 raw chronological re-evaluation currently fails its heap guard
+(4 increasing samples), so no new Full run has been started and further run
+authorization requires a new Human decision. TASK-038 remains locked.
+
 Current Blueprint:
 [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md).
 
