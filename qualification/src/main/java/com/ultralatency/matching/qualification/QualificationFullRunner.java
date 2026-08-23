@@ -90,6 +90,7 @@ public final class QualificationFullRunner {
             } finally {
                 server.shutdown(workloadConfiguration.commandTimeout());
             }
+            requireCleanShutdown(server);
 
             final List<EngineCommand> persisted = CommandWalReader.read(walConfiguration);
             if (!persisted.equals(workload.commands())) {
@@ -111,6 +112,7 @@ public final class QualificationFullRunner {
             } finally {
                 rebound.shutdown(workloadConfiguration.commandTimeout());
             }
+            requireCleanShutdown(rebound);
             try (RecoveryLease lease = RecoveryLease.acquire(walDirectory)) {
                 recoveryLeaseReacquired = lease.isHeld();
             }
@@ -296,6 +298,7 @@ public final class QualificationFullRunner {
         values.put("gcCollectors", manifest.environment().getOrDefault("gc.collectors", ""));
         values.put("fullCriteriaPassed", Boolean.toString(result.success()));
         values.put("heapGuardPassed", Boolean.toString(resources.heapGuardPassed()));
+        values.put("heapGuardAssessed", Boolean.toString(resources.heapGuardAssessed()));
         values.put("jfrPath", jfrPath.toString());
         values.put("lane", configuration.lane().name());
         values.put("leaseReacquired", Boolean.toString(leaseReacquired));
@@ -305,6 +308,12 @@ public final class QualificationFullRunner {
                 Integer.toString(resources.naturalPostGcHeapBytes().size()));
         values.put("publicProbeDigestHex", result.publicProbeDigestHex());
         values.put("resourceEvidencePath", resourcePath.toString());
+        values.put("baselineThreadCount", Long.toString(resources.baselineThreadCount()));
+        values.put("finalThreadCount", Long.toString(resources.finalThreadCount()));
+        values.put("baselineRuntimeThreads", String.join(
+                "|", resources.baselineRuntimeThreads()));
+        values.put("finalRuntimeThreads", String.join(
+                "|", resources.finalRuntimeThreads()));
         values.put("threadBaselineRestored",
                 Boolean.toString(resources.threadBaselineRestored()));
         values.put("transcriptDigestHex", result.transcriptDigestHex());
@@ -327,6 +336,16 @@ public final class QualificationFullRunner {
             final Path path,
             final QualificationResourceEvidence evidence) throws IOException {
         final StringBuilder output = new StringBuilder();
+        output.append("#baselineThreadCount=").append(evidence.baselineThreadCount()).append('\n');
+        output.append("#finalThreadCount=").append(evidence.finalThreadCount()).append('\n');
+        output.append("#threadBaselineRestored=")
+                .append(evidence.threadBaselineRestored()).append('\n');
+        output.append("#heapGuardAssessed=").append(evidence.heapGuardAssessed()).append('\n');
+        output.append("#heapGuardPassed=").append(evidence.heapGuardPassed()).append('\n');
+        output.append("#baselineRuntimeThreads=")
+                .append(String.join("|", evidence.baselineRuntimeThreads())).append('\n');
+        output.append("#finalRuntimeThreads=")
+                .append(String.join("|", evidence.finalRuntimeThreads())).append('\n');
         output.append("timestamp,threadCount,peakThreadCount,gcCollections,gcTimeMillis,heapUsed,"
                 + "naturalPostGcHeapUsed\n");
         for (final QualificationResourceSample sample : evidence.samples()) {
@@ -341,6 +360,14 @@ public final class QualificationFullRunner {
                     .append('\n');
         }
         Files.writeString(path, output.toString(), StandardCharsets.UTF_8);
+    }
+
+    private static void requireCleanShutdown(
+            final RecoverableDurableMatchingEngineTcpServer server) throws IOException {
+        if (server.failureCause().isPresent()) {
+            throw new IOException("qualification server entered terminal failure",
+                    server.failureCause().orElseThrow());
+        }
     }
 
     private static boolean inventoryStable(final Path walDirectory, final Path snapshotDirectory)
