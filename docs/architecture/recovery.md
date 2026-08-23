@@ -20,8 +20,9 @@ export/restore is complete at `66fc9d2` / exact-SHA CI `32577713667` PASS;
 TASK-030 Snapshot codec/store is complete at `6907391` / exact-SHA CI
 `32579065372` PASS; TASK-031 recovery planner is complete at `eaed8b8` /
 exact-SHA CI `32580018903` PASS; TASK-032 live handoff is complete at
-`22568e6` / exact-SHA CI `32613235358` PASS; TASK-033 is next and later
-implementation remains gated by dependency Evidence Gates.
+`22568e6` / exact-SHA CI `32613235358` PASS; TASK-033 is complete at `eff5955`
+/ exact-SHA CI `32614610701` PASS, and TASK-034 is next under the dependency
+Evidence Gates.
 
 ## Implemented Offline Flow
 
