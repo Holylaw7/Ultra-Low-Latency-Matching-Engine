@@ -4,13 +4,19 @@ import com.ultralatency.matching.engine.CancelOrderCommand;
 import com.ultralatency.matching.engine.EngineCommand;
 import com.ultralatency.matching.engine.SubmitLimitCommand;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /** Package-private canonical command encoding for workload identity. */
 final class QualificationCanonicalizer {
+
+    static final String EMPTY_DIGEST =
+            "0000000000000000000000000000000000000000000000000000000000000000";
 
     private QualificationCanonicalizer() {
     }
@@ -21,6 +27,46 @@ final class QualificationCanonicalizer {
             digest.update(encode(command));
         }
         return HexFormat.of().formatHex(digest.digest());
+    }
+
+    static String digest(final QualificationConfiguration configuration) {
+        Objects.requireNonNull(configuration, "configuration");
+        final MessageDigest digest = sha256();
+        updateText(digest, configuration.profile().name());
+        updateLong(digest, configuration.seed());
+        updateLong(digest, configuration.commandCount());
+        updateLong(digest, configuration.commandTimeout().toNanos());
+        updateText(digest, configuration.outputDirectory().toString());
+        return HexFormat.of().formatHex(digest.digest());
+    }
+
+    static String digest(final QualificationResult result) {
+        Objects.requireNonNull(result, "result");
+        final MessageDigest digest = sha256();
+        digest.update((byte) (result.success() ? 1 : 0));
+        updateLong(digest, result.acceptedCommands());
+        updateLong(digest, result.responseCount());
+        updateLong(digest, result.tradeCount());
+        updateText(digest, result.checkpointDigestHex());
+        updateText(digest, result.transcriptDigestHex());
+        updateText(digest, result.publicProbeDigestHex());
+        result.measurements().entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(entry -> {
+                    updateText(digest, entry.getKey());
+                    updateText(digest, entry.getValue());
+                });
+        return HexFormat.of().formatHex(digest.digest());
+    }
+
+    private static void updateLong(final MessageDigest digest, final long value) {
+        digest.update(ByteBuffer.allocate(Long.BYTES).putLong(value).array());
+    }
+
+    private static void updateText(final MessageDigest digest, final String value) {
+        final byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
+        digest.update(ByteBuffer.allocate(Integer.BYTES).putInt(bytes.length).array());
+        digest.update(bytes);
     }
 
     private static byte[] encode(final EngineCommand command) {

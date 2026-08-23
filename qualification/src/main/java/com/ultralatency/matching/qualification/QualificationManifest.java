@@ -12,8 +12,11 @@ import java.util.Objects;
  * @param gitSha source commit used for the run
  * @param baselineTag engineering baseline used for the run
  * @param workload immutable workload identity
+ * @param configuration immutable run configuration
  * @param outputDirectory reserved artifact directory
  * @param environment recorded host/JVM metadata
+ * @param configurationDigestHex canonical configuration digest
+ * @param resultDigestHex canonical result digest, or the empty placeholder
  * @param createdAt manifest creation time
  */
 public record QualificationManifest(
@@ -21,8 +24,11 @@ public record QualificationManifest(
         String gitSha,
         String baselineTag,
         QualificationWorkload workload,
+        QualificationConfiguration configuration,
         Path outputDirectory,
         Map<String, String> environment,
+        String configurationDigestHex,
+        String resultDigestHex,
         Instant createdAt) {
 
     /** Creates a validated immutable manifest. */
@@ -31,6 +37,7 @@ public record QualificationManifest(
         requireText(gitSha, "gitSha");
         requireText(baselineTag, "baselineTag");
         Objects.requireNonNull(workload, "workload");
+        Objects.requireNonNull(configuration, "configuration");
         Objects.requireNonNull(outputDirectory, "outputDirectory");
         outputDirectory = outputDirectory.toAbsolutePath().normalize();
         environment = Map.copyOf(Objects.requireNonNull(environment, "environment"));
@@ -38,6 +45,8 @@ public record QualificationManifest(
             requireText(entry.getKey(), "environment key");
             requireText(entry.getValue(), "environment value");
         }
+        requireDigest(configurationDigestHex, "configurationDigestHex");
+        requireDigest(resultDigestHex, "resultDigestHex");
         Objects.requireNonNull(createdAt, "createdAt");
     }
 
@@ -55,9 +64,35 @@ public record QualificationManifest(
                 gitSha,
                 baselineTag,
                 workload,
+                configuration,
                 configuration.outputDirectory(),
                 Map.of(),
+                QualificationCanonicalizer.digest(configuration),
+                QualificationCanonicalizer.EMPTY_DIGEST,
                 Instant.now());
+    }
+
+    /** Returns a copy with the canonical digest of a completed result. */
+    public QualificationManifest withResult(final QualificationResult result) {
+        Objects.requireNonNull(result, "result");
+        return new QualificationManifest(
+                runId,
+                gitSha,
+                baselineTag,
+                workload,
+                configuration,
+                outputDirectory,
+                environment,
+                configurationDigestHex,
+                result.digestHex(),
+                createdAt);
+    }
+
+    private static void requireDigest(final String value, final String name) {
+        Objects.requireNonNull(value, name);
+        if (value.length() != 64 || !value.matches("[0-9a-f]{64}")) {
+            throw new IllegalArgumentException(name + " must be a lowercase SHA-256 value");
+        }
     }
 
     private static void requireText(final String value, final String name) {

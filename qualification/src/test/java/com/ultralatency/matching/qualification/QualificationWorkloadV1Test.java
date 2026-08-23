@@ -95,6 +95,18 @@ class QualificationWorkloadV1Test {
     }
 
     @Test
+    void workloadRejectsUnsupportedVersion() {
+        final QualificationWorkload generated = QualificationWorkloadV1.generate(
+                new QualificationConfiguration(
+                        QualificationProfile.LIFECYCLE_MIX, 1, 1,
+                        java.time.Duration.ofSeconds(1), java.nio.file.Path.of("results")));
+
+        assertThrows(IllegalArgumentException.class, () -> new QualificationWorkload(
+                "qualification-workload-v0", generated.profile(), generated.seed(),
+                generated.commands(), generated.digestHex()));
+    }
+
+    @Test
     void generatedProfilesAreApplicableToTheFrozenEngine() {
         for (final QualificationProfile profile : QualificationProfile.values()) {
             final QualificationConfiguration configuration = new QualificationConfiguration(

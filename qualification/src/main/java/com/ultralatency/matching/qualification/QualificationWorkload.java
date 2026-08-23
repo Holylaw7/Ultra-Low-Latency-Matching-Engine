@@ -25,8 +25,8 @@ public record QualificationWorkload(
     /** Creates a validated immutable workload. */
     public QualificationWorkload {
         Objects.requireNonNull(version, "version");
-        if (version.isBlank()) {
-            throw new IllegalArgumentException("version must not be blank");
+        if (!QualificationWorkloadV1.VERSION.equals(version)) {
+            throw new IllegalArgumentException("unsupported workload version: " + version);
         }
         Objects.requireNonNull(profile, "profile");
         if (seed < 0) {

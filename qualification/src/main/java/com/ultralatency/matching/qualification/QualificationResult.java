@@ -36,6 +36,11 @@ public record QualificationResult(
         measurements = Map.copyOf(Objects.requireNonNull(measurements, "measurements"));
     }
 
+    /** Returns the canonical digest of this immutable result contract. */
+    public String digestHex() {
+        return QualificationCanonicalizer.digest(this);
+    }
+
     private static void requireDigest(final String value, final String name) {
         Objects.requireNonNull(value, name);
         if (value.length() != 64 || !value.matches("[0-9a-f]{64}")) {
