@@ -12,9 +12,13 @@ import com.ultralatency.matching.domain.Side;
 import com.ultralatency.matching.engine.EngineCommand;
 import com.ultralatency.matching.engine.EngineResult;
 import com.ultralatency.matching.engine.SubmitLimitCommand;
+import com.ultralatency.matching.integration.durable.DurableConfiguration;
+import com.ultralatency.matching.integration.recovery.RecoverableDurableRuntime;
+import com.ultralatency.matching.integration.recovery.RecoveryRuntimeConfiguration;
 import com.ultralatency.matching.network.netty.durable.DurableNetworkConfiguration;
 import com.ultralatency.matching.network.netty.recovery.RecoverableDurableMatchingEngineTcpServer;
 import com.ultralatency.matching.network.netty.recovery.RecoverableNetworkConfiguration;
+import com.ultralatency.matching.network.protocol.ClientRequestId;
 import com.ultralatency.matching.integration.recovery.RecoveryRuntimeState;
 import com.ultralatency.matching.persistence.snapshot.OfflineSnapshotGenerator;
 import com.ultralatency.matching.persistence.snapshot.Snapshot;
@@ -28,6 +32,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -118,6 +126,48 @@ class Phase8RecoveryVerificationTest {
         server.shutdown();
     }
 
+    @Test
+    void recoveredRuntimeEmitsNoReplayResultsAndFirstLiveCommandUsesNextSequence()
+            throws Exception {
+        final WalConfiguration configuration = configuration("live-handoff-wal");
+        write(configuration, List.of(
+                command(1, 31, Side.SELL, 100, 2),
+                command(2, 32, Side.BUY, 100, 1)));
+        final SnapshotStore store = new SnapshotStore(
+                temporaryDirectory.resolve("live-handoff-snapshots"));
+        new OfflineSnapshotGenerator(configuration, store).generate();
+        append(configuration, List.of(
+                command(3, 33, Side.BUY, 101, 1),
+                command(4, 34, Side.SELL, 101, 1)));
+
+        final CountDownLatch liveResultSeen = new CountDownLatch(1);
+        final AtomicInteger observedResultCount = new AtomicInteger();
+        final AtomicReference<EngineResult> observedResult = new AtomicReference<>();
+        final RecoverableDurableRuntime runtime = new RecoverableDurableRuntime(
+                new RecoveryRuntimeConfiguration(
+                        RecoveryMode.SNAPSHOT_THEN_WAL,
+                        store.directory(),
+                        DurableConfiguration.defaults(configuration.directory())),
+                result -> {
+                    observedResultCount.incrementAndGet();
+                    observedResult.set(result);
+                    liveResultSeen.countDown();
+                });
+
+        runtime.start();
+        try {
+            assertEquals(0, observedResultCount.get());
+            runtime.coordinator().accept(
+                    ClientRequestId.of(1),
+                    sequence -> command(sequence.toSequence(), 35, Side.SELL, 102, 1));
+            assertTrue(liveResultSeen.await(2, TimeUnit.SECONDS));
+            assertEquals(1, observedResultCount.get());
+            assertEquals(5, observedResult.get().commandSequence().value());
+        } finally {
+            runtime.shutdown();
+        }
+    }
+
     private RecoveryPlanner planner(
             final WalConfiguration configuration,
             final SnapshotStore store) {
@@ -157,8 +207,17 @@ class Phase8RecoveryVerificationTest {
             final Side side,
             final long price,
             final long quantity) {
+        return command(Sequence.of(sequence), orderId, side, price, quantity);
+    }
+
+    private static SubmitLimitCommand command(
+            final Sequence sequence,
+            final long orderId,
+            final Side side,
+            final long price,
+            final long quantity) {
         return new SubmitLimitCommand(
-                Sequence.of(sequence),
+                sequence,
                 OrderId.of(orderId),
                 side,
                 Price.of(price),
