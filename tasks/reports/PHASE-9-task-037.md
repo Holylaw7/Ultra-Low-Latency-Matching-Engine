@@ -7,7 +7,7 @@
 | Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability |
 | Task | `TASK-20260823-037` |
 | Stage | Implementation / Verification |
-| Result | In Progress — Full Qualification attempt failed; review pending |
+| Result | In Progress — Full Qualification threshold failure; Human decision pending |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Branch | `feature/phase9-system-qualification` |
 | Implementation | `b80e12e` + `0ee094c` + evidence-boundary fix `db18eac` |
@@ -91,8 +91,8 @@ git diff --check                      # PASS
 frozen-path audit                     # PASS (0 production-path changes)
 standard exact-SHA CI (implementation) # 32630209329 PASS
 quick-lane exact-SHA CI (implementation) # 32630209194 PASS
-final docs checkpoint                # f481433 / 32632130698 PASS
-verifier + docs-auditor               # pending final task review
+final docs checkpoint                # c70ff16 / 32632212555 PASS
+verifier + docs-auditor               # PASS
 ```
 
 The short lane proves harness composition only. A Full Qualification claim
