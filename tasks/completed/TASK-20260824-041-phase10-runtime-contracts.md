@@ -13,7 +13,7 @@
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
 | Dependency | Human Phase 10 Blueprint Approval |
-| Next Gate | TASK-042 Evidence Gate |
+| Next Gate | Completed; Phase 10 continues through TASK-046 |
 
 ## 2. Goal
 

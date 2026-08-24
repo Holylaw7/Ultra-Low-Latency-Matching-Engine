@@ -24,12 +24,18 @@ public final class ReleaseCandidateQualificationMain {
     public static void main(final String[] arguments) {
         if (arguments != null && arguments.length == 3 && "child".equals(arguments[0])
                 && "--config".equals(arguments[1])) {
-            runChild(Path.of(arguments[2]), null);
+            runChild(Path.of(arguments[2]), null, false);
             return;
         }
         if (arguments != null && arguments.length == 5 && "child".equals(arguments[0])
                 && "--config".equals(arguments[1]) && "--evidence".equals(arguments[3])) {
-            runChild(Path.of(arguments[2]), Path.of(arguments[4]));
+            runChild(Path.of(arguments[2]), Path.of(arguments[4]), false);
+            return;
+        }
+        if (arguments != null && arguments.length == 6 && "child".equals(arguments[0])
+                && "--config".equals(arguments[1]) && "--evidence".equals(arguments[3])
+                && "--allocation-sampling".equals(arguments[5])) {
+            runChild(Path.of(arguments[2]), Path.of(arguments[4]), true);
             return;
         }
         if (arguments != null && arguments.length == 3 && "lifecycle".equals(arguments[0])
@@ -43,6 +49,13 @@ public final class ReleaseCandidateQualificationMain {
             runFull(Path.of(arguments[2]), Path.of(arguments[4]), arguments[6], arguments[8]);
             return;
         }
+        if (arguments != null && arguments.length == 9 && "characterize".equals(arguments[0])
+                && "--artifact".equals(arguments[1]) && "--output".equals(arguments[3])
+                && "--git-sha".equals(arguments[5]) && "--baseline-tag".equals(arguments[7])) {
+            runCharacterization(
+                    Path.of(arguments[2]), Path.of(arguments[4]), arguments[6], arguments[8]);
+            return;
+        }
         if (arguments != null && arguments.length == 7 && "campaign".equals(arguments[0])
                 && "--manifest".equals(arguments[1]) && "--manifest".equals(arguments[3])
                 && "--output".equals(arguments[5])) {
@@ -54,6 +67,8 @@ public final class ReleaseCandidateQualificationMain {
             System.err.println("       lifecycle --output <directory>");
             System.err.println("       full --artifact <jar> --output <dir>"
                     + " --git-sha <sha> --baseline-tag <tag>");
+            System.err.println("       characterize --artifact <jar> --output <dir>"
+                    + " --git-sha <sha> --baseline-tag <tag>");
             System.err.println("       campaign --manifest <a> --manifest <b>"
                     + " --output <dir>");
             System.exit(64);
@@ -63,14 +78,19 @@ public final class ReleaseCandidateQualificationMain {
 
     private static void runChild(
             final Path configurationPath,
-            final Path evidenceDirectory) {
+            final Path evidenceDirectory,
+            final boolean allocationSampling) {
         QualificationJfrRecording jfr = null;
         QualificationResourceSampler sampler = null;
         final ReleaseCandidateRuntime runtime;
         try {
             if (evidenceDirectory != null) {
                 Files.createDirectories(evidenceDirectory);
-                jfr = QualificationJfrRecording.start(evidenceDirectory.resolve("qualification.jfr"));
+                jfr = allocationSampling
+                        ? QualificationJfrRecording.startCharacterization(
+                                evidenceDirectory.resolve("qualification.jfr"))
+                        : QualificationJfrRecording.start(
+                                evidenceDirectory.resolve("qualification.jfr"));
                 sampler = new QualificationResourceSampler(
                         java.time.Duration.ofSeconds(5),
                         QualificationFullConfiguration.FULL_MINIMUM_POST_GC_SAMPLES);
@@ -178,6 +198,28 @@ public final class ReleaseCandidateQualificationMain {
             }
         } catch (final Exception failure) {
             System.err.println("FULL_FAILURE " + failure.getClass().getName()
+                    + " " + String.valueOf(failure.getMessage()));
+            System.exit(1);
+        }
+    }
+
+    private static void runCharacterization(
+            final Path artifact,
+            final Path outputDirectory,
+            final String gitSha,
+            final String baselineTag) {
+        try {
+            final ReleaseCandidateCharacterizationResult result =
+                    new ReleaseCandidateCharacterizationRunner().run(
+                            ReleaseCandidateCharacterizationConfiguration.full(
+                                    artifact, outputDirectory, gitSha, baselineTag));
+            System.out.println("CHARACTERIZATION " + (result.success() ? "PASS" : "FAIL")
+                    + " " + result.summaryPath() + " " + result.summarySha256());
+            if (!result.success()) {
+                System.exit(1);
+            }
+        } catch (final Exception failure) {
+            System.err.println("CHARACTERIZATION_FAILURE " + failure.getClass().getName()
                     + " " + String.valueOf(failure.getMessage()));
             System.exit(1);
         }

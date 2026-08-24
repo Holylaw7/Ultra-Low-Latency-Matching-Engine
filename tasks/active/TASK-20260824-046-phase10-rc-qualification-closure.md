@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260824-046` |
 | Title | Release-candidate assembled-runtime qualification and Closure Proposal |
-| Status | `In Progress — Full Campaign Evidence PASS; final Closure/Evidence Review pending` |
+| Status | `In Progress — Characterization Evidence PASS; Sol High delta-only review pending` |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
@@ -30,7 +30,7 @@ Phase 10 Closure Proposal.
   independent Full Runs.
 - [x] Pre-campaign restart/approved termination evidence is deterministic;
   the separately approved Phase 10 Full Campaign completed exactly two runs.
-- [ ] Startup-to-ready, shutdown, live latency and management overhead retain
+- [x] Startup-to-ready, shutdown, live latency and management overhead retain
   full distributions, raw artifacts, hashes and environment metadata.
 - [x] JFR/GC/resource evidence is recorded without filtering or retry-until-pass.
 - [ ] verifier, benchmark-reviewer and docs-auditor final sign-off for the
@@ -49,7 +49,8 @@ bounded WAL disk or hardware power-loss safety.
 
 No production optimization, semantic/default/threshold change, new dependency,
 new feature, evidence filtering, baseline-tag movement, merge, RC tag or Product
-Release is authorized by TASK-046.
+TASK-046 prepares qualification evidence only; Product Release and any RC tag
+remain separately gated by Human Phase 10 Closure Approval.
 
 ## 6. Evidence and Closure Gate
 
@@ -137,9 +138,14 @@ identities and `campaign.result=true`.
 
 The Full Run result artifacts contain counts, digests, resource CSV and JFR
 evidence. The separate live startup/shutdown/response percentile distribution
-and management-overhead evidence required by the Blueprint remains pending
-final Evidence Review; this report makes no claim that those distributions
-were produced by the Full runner.
+and management-overhead evidence is provided by the qualification-only
+characterization remediation. The immutable result directory is
+`qualification-results/phase10-characterization/rc-characterization-41879303-0a74-452d-9cf9-9ab05c565e3b/`.
+It records 30/30 empty-WAL and 30/30 Snapshot-tail lifecycle samples, raw
+response/management samples, 62 JFR files, 62 resource CSV files and the
+following immutable summary SHA-256:
+`9d7bbfad3fe1464b776b34f714054528989e02ff132ddb6b448ddaa02bf9e888`.
+No production performance, RTO, SLA or Production Ready claim is made.
 
 ## 10. Planned Files
 
@@ -182,6 +188,10 @@ java -jar qualification/target/matching-engine-qualification.jar rc-full \
 java -jar qualification/target/matching-engine-qualification.jar rc-campaign \
   --run-manifest <run-a-manifest-v2> --run-manifest <run-b-manifest-v2> \
   --output <new-empty-campaign-dir>
+java -jar qualification/target/matching-engine-qualification.jar characterize \
+  --artifact qualification/target/matching-engine-qualification.jar \
+  --output qualification-results/phase10-characterization \
+  --git-sha <exact-sha> --baseline-tag v0.8.0-engineering-baseline
 ```
 
 The qualification module packages the runner at exactly
@@ -190,7 +200,8 @@ seed, JVM/GC and sampling settings are not CLI-overridable. The Full
 command/manifest must be committed and exact-SHA CI PASS before Human
 authorization to spend the two 60-minute evidence units. TASK-046 requires a
 separate explicit Human Full Campaign approval, matching Phase 9 evidence
-governance.
+governance. The `characterize` command is a separate bounded evidence unit and
+does not start or replace an `RC_ASSEMBLED_RUNTIME_V1` Full Run.
 
 ## 13. ADR / Alternatives / Risks
 
@@ -220,8 +231,9 @@ Planned commits: `test(runtime): qualify release-candidate assembly` and
 - [x] lifecycle matrix PASS — 10 `PURE_WAL` + 10 Snapshot-tail + 10 approved
   post-response forced terminations (30/30)
 - [x] exactly two Full runs and campaign PASS, or preserved failure + STOP
-- [ ] all artifacts/hashes/provenance/reviewers PASS
-- [ ] claim boundaries and Closure input synchronized
+- [x] characterization artifacts/hashes/provenance published; 30/30 + 30/30
+  lifecycle samples and two fixed 10-minute trials PASS
+- [x] claim boundaries and Closure input synchronized
 - [ ] Sol High Closure Review pending after proposal
 - [ ] Human Closure, merge, candidate tag and Product Release not self-authorized
 
@@ -231,3 +243,4 @@ Planned commits: `test(runtime): qualify release-candidate assembly` and
 | 2026-08-24 | Authorized / Next | TASK-045 completed; begin pre-campaign assembled-runtime qualification implementation. | TASK-045 exact-SHA Standard/Quick CI PASS |
 | 2026-08-24 | Pre-Campaign Evidence PASS | Packaged Java 21 lifecycle command passed 30/30 cycles; Full Campaign remains Human-gated. | `0a96593`; Standard CI `32730760419`; Quick Lane `32730760501`; summary SHA `71862f5e49ec554c2344f0836785d6e737e1457fc06083d755c2d98e10564bc6` |
 | 2026-08-24 | Full Campaign Evidence PASS | Exactly two independent assembled-runtime Full Runs passed; campaign evaluator recorded 2/2 qualifying and `campaign.result=true`. Final percentile/profile evidence reconciliation and Closure Review remain pending. | runner `1a02e66`; Standard CI `32734798459`; Quick Lane `32734798461`; manifests `f65a3952...` / `60f24746...`; campaign summary `89799b16...` |
+| 2026-08-25 | Characterization Remediation Evidence PASS | Qualification-only characterization produced 30 empty-WAL + 30 Snapshot-tail lifecycle samples, raw response/management distributions, paired 10-minute management trials, JFR/resource evidence and immutable hashes. | source checkpoint `5dbe95b`; summary `9d7bbfad...`; manifest `6001363d...`; sidecar `264a4fad...`; Sol High delta-only review pending |

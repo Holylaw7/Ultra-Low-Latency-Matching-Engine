@@ -11,7 +11,7 @@
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
 | Dependency | TASK-041 Evidence Gate PASS |
-| Next Gate | TASK-043 Evidence Gate |
+| Next Gate | Completed; Phase 10 continues through TASK-046 |
 
 ## 2. Goal
 
@@ -145,4 +145,4 @@ No storage or protocol migration occurs.
 - [x] legacy behavior compatible
 - [x] focused/full/static gates PASS
 - [x] read-only correctness/evidence audit and exact-SHA CI PASS
-- [x] TASK-043 synchronized as Authorized / Next
+- [x] TASK-043 through TASK-046 synchronized as subsequent Phase 10 work

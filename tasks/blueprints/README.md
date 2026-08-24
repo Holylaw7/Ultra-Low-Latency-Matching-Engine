@@ -61,5 +61,8 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   pre-campaign passed at `0a96593` with Standard `32730760419`, Quick Lane
   `32730760501` and lifecycle 30/30. Human approved exactly two assembled
   Full Runs; both passed and the immutable campaign summary records `2/2`
-  qualifying runs and `campaign.result=true`. Final Evidence/Closure Review,
-  merge, candidate tagging and Product Release remain separately gated.
+  qualifying runs and `campaign.result=true`. Qualification-only
+  characterization then passed 30/30 empty-WAL and 30/30 Snapshot-tail
+  lifecycle samples plus two fixed 10-minute management trials. Final
+  Evidence/Closure Review, merge, candidate tagging and Product Release remain
+  separately gated.

@@ -51,10 +51,20 @@ public final class ReleaseCandidateQualificationProcess implements AutoCloseable
             final Path configuration,
             final Path evidenceDirectory,
             final Duration startupTimeout) throws IOException {
+        return start(packagedArtifact, configuration, evidenceDirectory, startupTimeout, false);
+    }
+
+    /** Starts a child with characterization-only allocation sampling enabled. */
+    public static ReleaseCandidateQualificationProcess start(
+            final Path packagedArtifact,
+            final Path configuration,
+            final Path evidenceDirectory,
+            final Duration startupTimeout,
+            final boolean allocationSampling) throws IOException {
         Objects.requireNonNull(configuration, "configuration");
         final Duration timeout = requireTimeout(startupTimeout, "startupTimeout");
         final Process process = new ProcessBuilder(
-                command(packagedArtifact, configuration, evidenceDirectory))
+                command(packagedArtifact, configuration, evidenceDirectory, allocationSampling))
                 .redirectErrorStream(true)
                 .start();
         final BufferedReader output = new BufferedReader(
@@ -153,7 +163,8 @@ public final class ReleaseCandidateQualificationProcess implements AutoCloseable
     private static String[] command(
             final Path artifact,
             final Path configuration,
-            final Path evidenceDirectory) {
+            final Path evidenceDirectory,
+            final boolean allocationSampling) {
         final String javaExecutable = Path.of(
                 System.getProperty("java.home"),
                 "bin",
@@ -168,6 +179,7 @@ public final class ReleaseCandidateQualificationProcess implements AutoCloseable
                 "--config",
                 configuration.toAbsolutePath().normalize().toString()));
             addEvidenceArgument(command, evidenceDirectory);
+            addAllocationArgument(command, allocationSampling);
             return command.toArray(String[]::new);
         }
         final String classPath = System.getProperty(
@@ -182,6 +194,7 @@ public final class ReleaseCandidateQualificationProcess implements AutoCloseable
             "--config",
             configuration.toAbsolutePath().normalize().toString()));
         addEvidenceArgument(command, evidenceDirectory);
+        addAllocationArgument(command, allocationSampling);
         return command.toArray(String[]::new);
     }
 
@@ -191,6 +204,14 @@ public final class ReleaseCandidateQualificationProcess implements AutoCloseable
         if (evidenceDirectory != null) {
             command.add("--evidence");
             command.add(evidenceDirectory.toAbsolutePath().normalize().toString());
+        }
+    }
+
+    private static void addAllocationArgument(
+            final java.util.List<String> command,
+            final boolean allocationSampling) {
+        if (allocationSampling) {
+            command.add("--allocation-sampling");
         }
     }
 

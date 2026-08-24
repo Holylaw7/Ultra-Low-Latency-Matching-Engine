@@ -95,7 +95,14 @@ Qualification Quick Lane `32734798461`; both independent Full Runs passed the
 60-minute/1M-command gates, and the immutable campaign summary records `2/2`
 qualifying runs, 17 cumulative natural post-GC samples and
 `campaign.result=true`. Final latency/profile evidence reconciliation and Sol
-High Closure Review remain pending. Protocol v1, WAL v1, Snapshot v1,
+High delta-only Closure Review remain pending. The qualification-only
+characterization remediation then produced 30/30 empty-WAL and 30/30
+Snapshot-tail lifecycle samples, raw Protocol response and management samples,
+two fixed 10-minute management-idle/STATUS@1Hz trials, 62 JFR files and 62
+resource CSV files. Its immutable summary is
+`9d7bbfad3fe1464b776b34f714054528989e02ff132ddb6b448ddaa02bf9e888` under
+`qualification-results/phase10-characterization/`; it records no >10%
+throughput or response-P99 regression trigger. Protocol v1, WAL v1, Snapshot v1,
 matching, durability and single-session semantics remain frozen; merge,
 `v0.9.0-rc.1` and Product Release remain unauthorized.
 
