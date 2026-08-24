@@ -15,7 +15,7 @@
 | Planned Implementation Branch | `feature/phase10-release-candidate-runtime` |
 | Planned Tasks | `TASK-20260824-041` through `TASK-20260824-046` |
 | Proposal Evidence | `541ef28`; Standard CI `32716540931` PASS; Quick Lane `32716540939` PASS |
-| Next Gate | `TASK-042 Evidence Gate` |
+| Next Gate | `TASK-043 Evidence Gate` |
 
 ## 2. Phase Objective
 
@@ -107,12 +107,12 @@ Human Blueprint Approval accepts ADR-0018 D1-D16 as one decision set:
 
 | Decision group | Meaning | Approval |
 | --- | --- | --- |
-| D1-D3 | RC assembly, frozen semantics and one lifecycle owner | Pending |
-| D4-D5 | startup/readiness and bounded shutdown order | Pending |
-| D6-D7 | immutable configuration and trusted/loopback network boundary | Pending |
-| D8-D9 | operational observation and stable exit outcomes | Pending |
-| D10-D13 | packaging, assembled qualification and immutable historical evidence | Pending |
-| D14-D16 | deferred lifecycle/session scope and RC tag boundary | Pending |
+| D1-D3 | RC assembly, frozen semantics and one lifecycle owner | Approved |
+| D4-D5 | startup/readiness and bounded shutdown order | Approved |
+| D6-D7 | immutable configuration and trusted/loopback network boundary | Approved |
+| D8-D9 | operational observation and stable exit outcomes | Approved |
+| D10-D13 | packaging, assembled qualification and immutable historical evidence | Approved |
+| D14-D16 | deferred lifecycle/session scope and RC tag boundary | Approved |
 
 ## 7. Target Runtime
 
@@ -506,7 +506,7 @@ Gate requires new Human architecture approval.
 
 ```text
 Blueprint Status: Approved
-Implementation: TASK-041 Authorized / TASK-042 through TASK-046 Dependency Locked
+Implementation: TASK-041 and TASK-042 Completed / Evidence Gate PASS; TASK-043 Authorized / TASK-044 through TASK-046 Dependency Locked
 Merge / v0.9.0-rc.1 / Product Release: Not Authorized
-Next Gate: TASK-042 Evidence Gate
+Next Gate: TASK-043 Evidence Gate
 ```

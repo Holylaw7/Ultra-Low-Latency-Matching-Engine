@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260824-043` |
 | Title | Strict runtime configuration and reproducible packaging |
-| Status | `Dependency Locked` |
+| Status | `Authorized / Next` |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
@@ -54,7 +54,7 @@ removes packaging/config additions without touching data formats.
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
-| 2026-08-24 | Human Developer | Pending | TASK-043 after TASK-042 PASS |
+| 2026-08-24 | Human Developer | Approved / Inherited | TASK-042 Evidence Gate PASS; TASK-043 is now the next authorized task |
 
 ## 8. Current Implementation / Design / ADR Linkage
 
@@ -103,7 +103,7 @@ Shading/manifest mistakes can mask dependencies; inspect artifact contents and
 dependency tree. Absolute-path leakage is prevented by golden sanitized output.
 Rollback reverts build/config artifacts without touching WAL/Snapshot bytes.
 
-- [ ] TASK-042 PASS and approval inherited
+- [x] TASK-042 PASS and approval inherited
 - [ ] all normative config/CLI cases covered
 - [ ] reproducible executable launch recorded
 - [ ] no new dependency or machine-specific artifact

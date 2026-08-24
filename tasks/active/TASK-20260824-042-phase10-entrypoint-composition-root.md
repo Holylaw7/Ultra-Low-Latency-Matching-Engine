@@ -6,12 +6,12 @@
 | --- | --- |
 | Task ID | `TASK-20260824-042` |
 | Title | Application entrypoint and owned composition root |
-| Status | `Authorized / Next` |
+| Status | `Completed / Evidence Gate PASS` |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
 | Dependency | TASK-041 Evidence Gate PASS |
-| Next Gate | TASK-042 Evidence Gate |
+| Next Gate | TASK-043 Evidence Gate |
 
 ## 2. Goal
 
@@ -138,10 +138,11 @@ No storage or protocol migration occurs.
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-24 | Proposed | Ownership model frozen in Blueprint | docs only |
+| 2026-08-24 | Completed | Added the thin bootstrap, owned Protocol composition root, readiness/failure wiring and bounded admission drain operations. | Focused 14/14 PASS; full reactor 210 core + 46 qualification tests, 2 skipped; Checkstyle 0; exact-SHA CI PASS |
 
-- [ ] dependency gate PASS
-- [ ] exact files only
-- [ ] legacy behavior compatible
-- [ ] focused/full/static gates PASS
-- [ ] verifier/docs-auditor and exact-SHA CI PASS
-- [ ] TASK-043 synchronized
+- [x] dependency gate PASS
+- [x] exact files only
+- [x] legacy behavior compatible
+- [x] focused/full/static gates PASS
+- [x] verifier/docs-auditor and exact-SHA CI PASS
+- [x] TASK-043 synchronized as Authorized / Next
