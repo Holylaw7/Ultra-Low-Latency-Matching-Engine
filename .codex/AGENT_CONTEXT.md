@@ -200,7 +200,10 @@ The corrected checkpoint/probe evidence and read-only audits are accepted;
 the prior bounded TASK-037 remediation passed at `c420313` with standard CI
 `32645549709` and Quick Lane `32645549694`. The current v2 provenance and
 campaign-summary remediation `e678a98` passed standard CI `32683768373` and
-Quick Lane `32683768370`; no new Full Campaign has been started or authorized.
+Quick Lane `32683768370`. Final docs/status synchronization is recorded at
+`dcfcccd`, with standard CI `32684036767` and Quick Lane `32684036758` PASS;
+no new Full Campaign has been started or authorized. This is the terminal
+external evidence pointer; no recursive self-reference update is required.
 Production optimization,
 Phase 10 and Product Release remain locked.
 Reconnect/deduplication,

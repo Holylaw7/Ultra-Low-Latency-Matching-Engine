@@ -15,6 +15,7 @@
 | Standard CI | `32683768373` PASS for remediation checkpoint `e678a98` |
 | Quick Lane CI | `32683768370` PASS; Run A/B raw artifacts preserved as ignored evidence |
 | Campaign Evidence | v2 immutable provenance and campaign summary accepted; no new campaign run authorized |
+| Final docs synchronization | `dcfcccd` / standard CI `32684036767` PASS / Quick Lane `32684036758` PASS |
 | Next Gate | Human approval for a new v2 Full Campaign; no new run authorized |
 
 ## Goal
