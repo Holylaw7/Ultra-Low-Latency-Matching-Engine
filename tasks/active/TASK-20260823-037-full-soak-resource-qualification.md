@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260823-037` |
 | Title | Full soak and resource lifecycle qualification |
-| Status | `In Progress / Campaign Evidence CHANGES REQUIRED` |
+| Status | `In Progress / v2 Evidence Gate PASS; Human Campaign Approval Pending` |
 | Owner | Human Developer |
 | Implementer | Main Codex / Luna Max — only writer |
 | Created | `2026-08-23` |
@@ -18,7 +18,7 @@
 | Next Gate | Human approval for a new v2 Full Campaign; no new run authorized |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
-| Remediation checkpoint | Working tree — v2 provenance/identity/summary implementation; commit and CI pending |
+| Remediation checkpoint | `e678a98` / standard CI `32683768373` PASS / Quick Lane `32683768370` PASS |
 
 ## 2. Goal
 
@@ -159,12 +159,13 @@ included in a new campaign. No new Full Run is authorized by this amendment.
 
 ## 8. Evidence Gate
 
-Evidence is incomplete until implementation, focused tests, full regression,
-resource/artifact semantics, frozen-path audit, read-only reviewer PASS and
-exact-SHA CI all agree. Any production defect, unexpected terminal state,
-timeout, digest mismatch, resource leak or configuration drift is retained as
-failure evidence and escalated through the Exception Gate; it is not repaired
-inside this task by changing frozen production code.
+The v2 provenance and campaign-summary Evidence Gate is PASS: implementation,
+focused tests, full regression, resource/artifact semantics, frozen-path audit,
+read-only reviewer PASS and exact-SHA CI all agree. Any production defect,
+unexpected terminal state, timeout, digest mismatch, resource leak or
+configuration drift remains failure evidence and is escalated through the
+Exception Gate; it is not repaired inside this task by changing frozen
+production code. A new Full Campaign still requires separate Human approval.
 
 ## 9. Limited Qualification-Only Amendment Status
 

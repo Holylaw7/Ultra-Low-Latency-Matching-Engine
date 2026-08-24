@@ -7,14 +7,14 @@
 | Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability |
 | Task | `TASK-20260823-037` |
 | Stage | qualification-run-manifest-v2 and immutable campaign-summary remediation |
-| Result | CHANGES REQUIRED — raw Run A/B remain preserved non-qualifying evidence; v2 provenance and campaign-summary evidence remediation is in progress |
+| Result | v2 Evidence Gate PASS — raw Run A/B remain preserved non-qualifying evidence; Human approval for a new campaign is pending |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Branch | `feature/phase9-system-qualification` |
-| Implementation | Prior harness commits plus bounded remediation `82112b2`, continuous-lane fixes `2501c71`/`3b5b451`, public-state/manifest fixes `6fc813b`/`23ca7f0`; v2 provenance/summary remediation is the current working tree |
+| Implementation | Prior harness commits plus bounded remediation `82112b2`, continuous-lane fixes `2501c71`/`3b5b451`, public-state/manifest fixes `6fc813b`/`23ca7f0`; v2 provenance/summary remediation `e678a98` |
 | Duration-gate remediation | `5a3917d` |
-| Standard CI | `32645549709` PASS for remediation checkpoint `c420313` |
-| Quick Lane CI | `32645549694` PASS; Run A/B raw artifacts preserved as ignored evidence |
-| Campaign Evidence | Not accepted until v2 immutable provenance and campaign summary are persisted and audited |
+| Standard CI | `32683768373` PASS for remediation checkpoint `e678a98` |
+| Quick Lane CI | `32683768370` PASS; Run A/B raw artifacts preserved as ignored evidence |
+| Campaign Evidence | v2 immutable provenance and campaign summary accepted; no new campaign run authorized |
 | Next Gate | Human approval for a new v2 Full Campaign; no new run authorized |
 
 ## Goal
@@ -202,8 +202,8 @@ tests, dependencies, workload, thresholds or JVM/GC settings.
 Run A and Run B remain preserved `TECHNICALLY PASS / PRESERVED /
 NON-QUALIFYING` evidence. Their original bytes and classifications are not
 backfilled, re-generated or included in a future campaign. No new Full Run is
-authorized until this remediation passes its Evidence Gate and receives a
-separate Human Full Campaign approval.
+authorized without a separate Human Full Campaign approval after this
+remediation Evidence Gate.
 
 ## Explicitly Not Implemented
 
@@ -230,23 +230,22 @@ campaign quick lane                    # 913022b / CI 32642352146 PASS
 Run #2 chronological re-evaluation     # FAIL; original raw artifact preserved
 full run #1                            # preserved threshold failure
 full run #2                            # preserved natural-sample failure
-current remediation checkpoint         # c420313; standard CI 32645549709 PASS
-Quick Lane                              # 32645549694 PASS
+current v2 remediation checkpoint       # e678a98; standard CI 32683768373 PASS
+Quick Lane                              # 32683768370 PASS
 verifier + docs-auditor               # PASS
 ```
 
 The first standard CI for the preceding report checkpoint `af2eef0`
 (`32639448577`) ended with a generic runner exit and no test annotations; its
 Quick Lane (`32639448552`) passed. The failed standard run is retained as
-transient CI evidence and is not represented as a passing gate. The current
-report checkpoint must obtain its own exact-SHA CI PASS before TASK-037 can
-advance.
+transient CI evidence and is not represented as a passing gate. That preceding
+checkpoint does not supersede the final v2 remediation evidence.
 
-For the current report checkpoint `331dbb4`, standard CI
+For the historical report checkpoint `331dbb4`, standard CI
 `32639589940` also ended with a generic runner exit and no test annotations;
 it is not a passing gate. Its Qualification Quick Lane
-`32639589960` passed. This is retained as transient CI evidence; TASK-037
-still requires a standard exact-SHA CI PASS before it can advance.
+`32639589960` passed. This is retained as transient CI evidence and is not the
+final v2 gate.
 
 The later docs-only checkpoint `03123fa` produced CI run `32632261832` with a
 generic runner exit and no test annotations; it is not used as Evidence Gate
@@ -286,10 +285,9 @@ remediation Evidence Gate passes.
 
 ## Gate
 
-TASK-037 remains `CHANGES REQUIRED` while the v2 provenance and campaign-summary
-Evidence Gate is completed. Run #1 cannot participate because its duration was
+TASK-037 remains `In Progress` pending Human approval for a new v2 Full Campaign.
+The v2 provenance and campaign-summary Evidence Gate is PASS. Run #1 cannot participate because its duration was
 short, and Run #2 fails the corrected chronological heap guard; both are
-preserved non-qualifying evidence. No new Full run was started. After v2
-remediation passes, the next gate is separate Human approval for a new
+preserved non-qualifying evidence. No new Full run was started. The next gate is separate Human approval for a new
 `MEMORY_STEADY_STATE_V1` Full Campaign. TASK-038, Phase 9 Closure, merge and
 `v0.8.0-engineering-baseline` remain unauthorized.

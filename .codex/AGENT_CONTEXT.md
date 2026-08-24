@@ -10,13 +10,13 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
-| Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability (`TASK-037 v2 provenance/campaign-summary remediation in progress; no new Full Run authorized`) |
+| Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability (`TASK-037 v2 Evidence Gate PASS; no new Full Run authorized`) |
 | Latest product task | [`TASK-20260822-034`](../tasks/completed/TASK-20260822-034-phase8-benchmark-docs-closure.md) — Completed / Archived / Baseline Frozen |
 | Latest architecture decision | [`ADR-0017`](../docs/adr/ADR-0017-system-qualification-performance-reliability.md) — Approved |
-| Current planning task | [`TASK-20260823-037`](../tasks/active/TASK-20260823-037-full-soak-resource-qualification.md) — v2 provenance/campaign-summary remediation in progress; Human approval for a new Full Campaign not yet authorized |
+| Current planning task | [`TASK-20260823-037`](../tasks/active/TASK-20260823-037-full-soak-resource-qualification.md) — v2 provenance/campaign-summary Evidence Gate PASS; Human approval for a new Full Campaign pending |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 8 Baseline Frozen at `v0.7.0-engineering-baseline`; Phase 9 qualification in progress; Product Release separately governed |
-| Product approval | Phase 8 Human Closure Approved; merge `87abbc1` / Master CI `32622722649` PASS; `v0.7.0-engineering-baseline` / Tag CI `32622757607` PASS; Phase 9 Blueprint Approved / TASK-037 in progress |
+| Product approval | Phase 8 Human Closure Approved; merge `87abbc1` / Master CI `32622722649` PASS; `v0.7.0-engineering-baseline` / Tag CI `32622757607` PASS; Phase 9 Blueprint Approved / TASK-037 v2 Evidence Gate PASS |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `feature/phase9-system-qualification` |
 | Engineering baseline commit | `87abbc1` (Phase 8 merge) |
@@ -42,7 +42,7 @@
 | Phase 6 — Binary Network Protocol and Single-Session Gateway | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-6-network-protocol-blueprint.md); [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md); [`Closure`](../tasks/reports/PHASE-6-network-protocol-closure.md); `v0.5.0-engineering-baseline` |
 | Phase 7 — Live Durable Command Pipeline Integration | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-7-live-durable-command-pipeline-blueprint.md); [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md); `v0.6.0-engineering-baseline` |
 | Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap | Completed / Human Approved / Baseline Frozen at `v0.7.0-engineering-baseline` | [`Blueprint`](../tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md); [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md); [`TASK-034 report`](../tasks/reports/PHASE-8-task-034.md) |
-| Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability | Blueprint Approved / TASK-035/036 PASS / TASK-037 v2 provenance remediation in progress | [`Blueprint`](../tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md); [`ADR-0017`](../docs/adr/ADR-0017-system-qualification-performance-reliability.md); [`TASK-037`](../tasks/active/TASK-20260823-037-full-soak-resource-qualification.md) |
+| Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability | Blueprint Approved / TASK-035/036 PASS / TASK-037 v2 Evidence Gate PASS | [`Blueprint`](../tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md); [`ADR-0017`](../docs/adr/ADR-0017-system-qualification-performance-reliability.md); [`TASK-037`](../tasks/active/TASK-20260823-037-full-soak-resource-qualification.md) |
 | Phase 10+ — Further recovery evolution and production hardening | Future Work | separately approved future Blueprints |
 
 ## Current Product Gate
@@ -199,9 +199,8 @@ Approval is recorded, TASK-035 Evidence Gate is PASS at `22d13fe` / CI
 The corrected checkpoint/probe evidence and read-only audits are accepted;
 the prior bounded TASK-037 remediation passed at `c420313` with standard CI
 `32645549709` and Quick Lane `32645549694`. The current v2 provenance and
-campaign-summary remediation is in progress; no new Full Campaign has been
-started or authorized. Local tests and Checkstyle are being re-run for the
-current working tree before exact-SHA evidence is recorded.
+campaign-summary remediation `e678a98` passed standard CI `32683768373` and
+Quick Lane `32683768370`; no new Full Campaign has been started or authorized.
 Production optimization,
 Phase 10 and Product Release remain locked.
 Reconnect/deduplication,
