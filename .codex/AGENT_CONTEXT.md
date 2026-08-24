@@ -13,7 +13,7 @@
 | Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability (`TASK-037 Completed/Archived; TASK-038 In Progress`) |
 | Latest product task | [`TASK-20260822-034`](../tasks/completed/TASK-20260822-034-phase8-benchmark-docs-closure.md) — Completed / Archived / Baseline Frozen |
 | Latest architecture decision | [`ADR-0017`](../docs/adr/ADR-0017-system-qualification-performance-reliability.md) — Approved |
-| Current planning task | [`TASK-20260823-038`](../tasks/active/TASK-20260823-038-restart-termination-recovery-convergence.md) — In Progress; Full 20/10 campaign PASS; Evidence Gate pending |
+| Current planning task | [`TASK-20260823-038`](../tasks/active/TASK-20260823-038-restart-termination-recovery-convergence.md) — In Progress; Full 20/10 campaign PASS at `a7a98cb` / CI `32698925401` / Quick `32698925378`; Evidence Gate pending |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 8 Baseline Frozen at `v0.7.0-engineering-baseline`; Phase 9 qualification in progress; Product Release separately governed |
 | Product approval | Phase 8 Human Closure Approved; merge `87abbc1` / Master CI `32622722649` PASS; `v0.7.0-engineering-baseline` / Tag CI `32622757607` PASS; Phase 9 Blueprint Approved / TASK-037 v2 campaign and Human Closure PASS / TASK-038 In Progress |

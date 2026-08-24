@@ -97,6 +97,8 @@ Full campaign evidence:
 - 30/30 cycles reported `convergencePassed=true`;
 - summary SHA-256 `d18850bfdcff51722a7431e2d0679f98687577ed5cca8a574bf5c076072e3576`;
 - 31 artifact sidecar entries and zero independent hash mismatches;
+- technical checkpoint `a7a98cb` / Standard CI `32698925401` PASS /
+  Qualification Quick Lane `32698925378` PASS;
 - TASK-039 remains locked until the campaign Evidence Gate and read-only
   review are complete.
 

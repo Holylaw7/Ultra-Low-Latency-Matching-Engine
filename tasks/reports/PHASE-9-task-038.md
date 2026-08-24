@@ -75,6 +75,11 @@ qualification-results/task038-full-20260824/
   restart-campaign-575e3dec-cfd9-46a2-9ec4-4dee8fb559f8/
 ```
 
+The raw directory is an ignored local qualification evidence root, not a
+tracked source artifact or a CI-generated substitute. It must remain preserved
+for the Evidence Gate; the report records its immutable summary and sidecar
+hashes rather than committing generated files.
+
 The published summary SHA-256 is
 `d18850bfdcff51722a7431e2d0679f98687577ed5cca8a574bf5c076072e3576`.
 The artifact sidecar contains 31 entries (summary plus 30 cycle artifacts),
@@ -82,6 +87,11 @@ and an independent read-only hash check reported zero mismatches. Graceful
 cycles exited with code 0; forced cycles exited with code 1 after the complete
 response acknowledgement boundary. Exactly-once, reconnect and hardware
 power-loss claims remain explicitly `NOT_CLAIMED`.
+
+The campaign evidence checkpoint was `a7a98cb` with exact-SHA Standard CI
+`32698925401` PASS and Qualification Quick Lane `32698925378` PASS. This
+checkpoint is the technical input for the current read-only Evidence Gate;
+any later documentation-only synchronization has its own external CI result.
 
 ## Claim Boundary
 
