@@ -15,7 +15,7 @@
 | Planned Implementation Branch | `feature/phase10-release-candidate-runtime` |
 | Planned Tasks | `TASK-20260824-041` through `TASK-20260824-046` |
 | Proposal Evidence | `541ef28`; Standard CI `32716540931` PASS; Quick Lane `32716540939` PASS |
-| Next Gate | `TASK-041 Evidence Gate` |
+| Next Gate | `TASK-042 Evidence Gate` |
 
 ## 2. Phase Objective
 
@@ -260,11 +260,11 @@ longs. No message, stack trace, order/trade data or filesystem path is exposed.
 | 5 | `TASK-20260824-045` | Prove shutdown and terminal-failure convergence | TASK-044 PASS | `tasks/reports/PHASE-10-task-045.md` |
 | 6 | `TASK-20260824-046` | Run assembled-runtime RC qualification, packaging evidence and Closure Proposal | TASK-045 PASS | `tasks/reports/PHASE-10-task-046.md` |
 
-All tasks are proposed. None inherits implementation authority until Human
-Blueprint Approval is recorded. That approval authorizes TASK-046 harness,
-quick lane and lifecycle matrix work, but the two 60-minute Full runs require a
-separate Human Full Campaign Approval after the pre-campaign exact-SHA Evidence
-Gate passes.
+Human Blueprint Approval is recorded below. TASK-041 through TASK-046 are
+authorized in strict dependency order. TASK-046 harness, quick lane and
+lifecycle matrix work are authorized by that approval, but the two 60-minute
+Full runs require a separate Human Full Campaign Approval after the
+pre-campaign exact-SHA Evidence Gate passes.
 
 ## 10. Stage Authorization Matrix
 
@@ -508,5 +508,5 @@ Gate requires new Human architecture approval.
 Blueprint Status: Approved
 Implementation: TASK-041 Authorized / TASK-042 through TASK-046 Dependency Locked
 Merge / v0.9.0-rc.1 / Product Release: Not Authorized
-Next Gate: TASK-041 Evidence Gate
+Next Gate: TASK-042 Evidence Gate
 ```

@@ -10,12 +10,12 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
-| Phase | Phase 10 — Release-Candidate Runtime Assembly (`Blueprint Approved / TASK-041 In Progress`) |
+| Phase | Phase 10 — Release-Candidate Runtime Assembly (`Blueprint Approved / TASK-041 Evidence Gate`) |
 | Latest product task | [`TASK-20260823-040`](../tasks/completed/TASK-20260823-040-phase9-final-evidence-reconciliation.md) — Completed / Archived / Phase 9 Baseline Frozen |
 | Latest architecture decision | [`ADR-0018`](../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) — Accepted |
-| Current planning task | TASK-20260824-041 — Authorized / In Progress |
+| Current planning task | TASK-20260824-041 — Completed / Evidence Gate pending exact-SHA CI; TASK-042 next |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
-| Product stage | Phase 9 frozen at `v0.8.0-engineering-baseline`; Phase 10 Blueprint approved and TASK-041 in progress; Product Release separately governed |
+| Product stage | Phase 9 frozen at `v0.8.0-engineering-baseline`; Phase 10 TASK-041 contracts implemented and awaiting exact-SHA CI; Product Release separately governed |
 | Product approval | Phase 9 Human Closure Approved; merge `ef73f60` / Master CI `32711512036` PASS; `v0.8.0-engineering-baseline` / Tag CI `32711649980` PASS; Closure Input `8e5d39d` / Standard CI `32709188522` / Quick Lane `32709188327`; remediation `5f3b1c5` / Standard CI `32710712341` / Quick Lane `32710712428` PASS |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `feature/phase10-release-candidate-runtime` |
@@ -43,7 +43,7 @@
 | Phase 7 — Live Durable Command Pipeline Integration | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-7-live-durable-command-pipeline-blueprint.md); [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md); `v0.6.0-engineering-baseline` |
 | Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap | Completed / Human Approved / Baseline Frozen at `v0.7.0-engineering-baseline` | [`Blueprint`](../tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md); [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md); [`TASK-034 report`](../tasks/reports/PHASE-8-task-034.md) |
 | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability | Completed / Human Approved / Baseline Frozen at `v0.8.0-engineering-baseline` | [`Blueprint`](../tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md); [`ADR-0017`](../docs/adr/ADR-0017-system-qualification-performance-reliability.md); [`TASK-040 report`](../tasks/reports/PHASE-9-task-040.md); merge `ef73f60`; Master CI `32711512036`; Tag CI `32711649980` |
-| Phase 10 — Release-Candidate Runtime Assembly | Approved / TASK-041 In Progress | [`Blueprint`](../tasks/blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md); [`ADR-0018`](../docs/adr/ADR-0018-release-candidate-runtime-boundary.md); TASK-041 authorized, TASK-042 through TASK-046 locked |
+| Phase 10 — Release-Candidate Runtime Assembly | Approved / TASK-041 Evidence Gate pending CI; TASK-042 next | [`Blueprint`](../tasks/blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md); [`ADR-0018`](../docs/adr/ADR-0018-release-candidate-runtime-boundary.md); TASK-042 authorized after exact-SHA CI, TASK-043 through TASK-046 locked |
 | Phase 11+ / Product Release | Future Work | separate Discovery, Blueprint and Human Approval required |
 
 ## Current Product Gate
@@ -141,8 +141,9 @@ ADR-0011 Final Approved
   -> Phase 9 [Baseline Frozen]
   -> Phase 10 Discovery / ADR / Complete Blueprint [Prepared]
   -> Human Phase 10 Blueprint Approval [Approved 2026-08-24]
-  -> TASK-041 [Authorized / In Progress]
-  -> TASK-042 through TASK-046 [Dependency Locked]
+  -> TASK-041 [Implemented / Evidence Gate pending exact-SHA CI]
+  -> TASK-042 [Authorized / Next after TASK-041 CI]
+  -> TASK-043 through TASK-046 [Dependency Locked]
   -> Product Release [Not Authorized]
 ```
 
@@ -225,8 +226,10 @@ restart/termination campaign and Evidence Gate. TASK-039 completed its full
 JMH matrix and representative GC/JFR profile with read-only reviewer and
 exact-SHA CI PASS. Phase 9 Closure, merge, baseline tag and final archive
 synchronization are complete. Phase 10 Discovery and Complete Blueprint
-Proposal are prepared; Phase 10 implementation, production optimization and
-Product Release remain locked pending Human Blueprint Approval.
+Proposal are approved. TASK-041 runtime contracts are implemented within the
+additive boundary; exact-SHA CI remains the next evidence gate, TASK-042 is next
+and later tasks remain locked. Production optimization and Product Release
+remain unauthorized.
 Reconnect/deduplication,
 multi-session support and Product Release remain outside the proposal.
 
@@ -247,8 +250,9 @@ is `8e5d39d` with Standard CI `32709188522` PASS and Qualification Quick Lane
 `32709188327` PASS; Sol High and Human Phase 9 Closure Approval are complete.
 Phase 9 is frozen at `v0.8.0-engineering-baseline` from merge `ef73f60`; Master
 CI `32711512036` and Tag CI `32711649980` passed. Phase 10 Discovery and its
-Complete Blueprint Proposal are prepared; implementation and Product Release
-remain unauthorized pending Human Blueprint Approval.
+Complete Blueprint Proposal are approved; TASK-041 is implemented and awaiting
+exact-SHA CI, while TASK-042 is next in the authorized dependency chain.
+Product Release remains unauthorized.
 
 The 2026-08-24 Human Limited Provenance Amendment authorizes only
 `qualification-run-manifest-v2`, runtime-captured provenance,

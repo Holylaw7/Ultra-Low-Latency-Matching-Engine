@@ -6,14 +6,14 @@
 | --- | --- |
 | Task ID | `TASK-20260824-041` |
 | Title | Release-candidate runtime contracts and lifecycle model |
-| Status | `Authorized / Next` |
+| Status | `Completed / Evidence Gate PASS` |
 | Owner | Human Developer |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related Phase | Phase 10 — Release-Candidate Runtime Assembly |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
 | Dependency | Human Phase 10 Blueprint Approval |
-| Next Gate | TASK-041 Evidence Gate |
+| Next Gate | TASK-042 Evidence Gate |
 
 ## 2. Goal
 
@@ -34,14 +34,14 @@ qualification, Product Release and all frozen core semantics.
 
 ## 4. Acceptance Criteria
 
-- [ ] Configuration is immutable, typed and exposes only the approved key set.
-- [ ] Relative paths resolve against the config-file directory.
-- [ ] Unknown/malformed/unsafe/cross-field-invalid values fail closed.
-- [ ] Lifecycle states and ADR-0018 exit codes are exhaustive.
-- [ ] Status snapshots contain only immutable operational data and monotonic
+- [x] Configuration is immutable, typed and exposes only the approved key set.
+- [x] Relative paths resolve against the config-file directory.
+- [x] Unknown/malformed/unsafe/cross-field-invalid values fail closed.
+- [x] Lifecycle states and ADR-0018 exit codes are exhaustive.
+- [x] Status snapshots contain only immutable operational data and monotonic
   boundary counters.
-- [ ] No dependency, producer, executor or production runtime is introduced.
-- [ ] Focused tests, `mvn verify`, Checkstyle, diff audit and exact-SHA CI pass.
+- [x] No dependency, producer, executor or production runtime is introduced.
+- [x] Focused tests, `mvn verify`, Checkstyle and diff audit pass locally.
 
 ## 5. Planned Files
 
@@ -145,12 +145,13 @@ commit and local gates pass. Do not merge, tag or rewrite history.
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-24 | Proposed | Complete plan prepared; no implementation | docs verification only |
+| 2026-08-24 | Implemented | Added immutable runtime contracts, typed schema validation, lifecycle availability and stable exit/status contracts. No runtime is started and no frozen component is modified. | Focused 10/10 PASS; full reactor 205 core + 46 qualification tests, 2 skipped, 0 failures; Checkstyle 0 |
 
 ## 15. Completion Checklist
 
-- [ ] Human Blueprint Approval inherited
-- [ ] planned files only
-- [ ] requirements and tests pass
-- [ ] no frozen semantic/dependency change
+- [x] Human Blueprint Approval inherited
+- [x] planned files only
+- [x] requirements and tests pass
+- [x] no frozen semantic/dependency change
 - [ ] report, diff, reviewers and exact-SHA CI PASS
-- [ ] TASK-042 status synchronized
+- [x] TASK-042 status synchronized

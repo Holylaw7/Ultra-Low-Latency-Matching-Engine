@@ -34,9 +34,10 @@ OpenAI model-selection guidance is linked from `.codex/MASTER_PROMPT.md`.
 
 ## Current Stage
 
-Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap is completed,
-approved and frozen at `v0.7.0-engineering-baseline`. The merge commit is
-`87abbc1`, Master CI is `32622722649`, and tag CI is `32622757607`.
+Phase 10 — Release-Candidate Runtime Assembly is the active approved phase.
+Phase 9 remains completed, approved and frozen at
+`v0.8.0-engineering-baseline` from merge `ef73f60`; Master CI is
+`32711512036` and tag CI is `32711649980`.
 
 Phase 9 Blueprint is approved. [`ADR-0017`](docs/adr/ADR-0017-system-qualification-performance-reliability.md),
 the [Complete Phase 9 Blueprint](tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md)
@@ -68,15 +69,15 @@ Lane `32709188327` PASS. Sol High review and Human Phase 9 Closure Approval are
 complete. Phase 9 merge `ef73f60` passed Master CI `32711512036`; the
 `v0.8.0-engineering-baseline` tag passed Tag CI `32711649980`.
 
-Phase 10 Discovery is complete. [`ADR-0018`](docs/adr/ADR-0018-release-candidate-runtime-boundary.md)
-and the [Complete Phase 10 Blueprint](tasks/blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md)
-propose Release-Candidate Runtime Assembly through TASK-041 to TASK-046. The
-proposal adds a real entrypoint, immutable configuration, owned lifecycle,
-loopback operational status, bounded shutdown, packaging and assembled-process
-qualification while keeping Protocol v1, WAL v1, Snapshot v1, matching,
-durability and single-session semantics frozen. Human Blueprint Approval is
-pending; implementation, merge, `v0.9.0-rc.1` and Product Release remain
-unauthorized.
+Phase 10 Discovery is complete and Human Blueprint Approval is recorded.
+[`ADR-0018`](docs/adr/ADR-0018-release-candidate-runtime-boundary.md) and the
+[Complete Phase 10 Blueprint](tasks/blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md)
+authorize Release-Candidate Runtime Assembly through TASK-041 to TASK-046.
+TASK-041 runtime contracts and lifecycle/status boundaries are implemented and
+await exact-SHA CI evidence; TASK-042 is the next authorized task. The phase
+keeps Protocol v1, WAL v1, Snapshot v1, matching, durability and single-session
+semantics frozen. Implementation continues only in the approved dependency
+chain; merge, `v0.9.0-rc.1` and Product Release remain unauthorized.
 The approved 20/10 restart/termination campaign passed with its
 evidence review and immutable artifact hashes.
 
