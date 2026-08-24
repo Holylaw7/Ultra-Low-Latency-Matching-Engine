@@ -66,8 +66,17 @@ archived and its Evidence Gate PASS is accepted. The current Closure
 Input is `8e5d39d`, Standard CI `32709188522` PASS and Qualification Quick
 Lane `32709188327` PASS. Sol High review and Human Phase 9 Closure Approval are
 complete. Phase 9 merge `ef73f60` passed Master CI `32711512036`; the
-`v0.8.0-engineering-baseline` tag passed Tag CI `32711649980`. Phase 10,
-production optimization and Product Release remain unauthorized.
+`v0.8.0-engineering-baseline` tag passed Tag CI `32711649980`.
+
+Phase 10 Discovery is complete. [`ADR-0018`](docs/adr/ADR-0018-release-candidate-runtime-boundary.md)
+and the [Complete Phase 10 Blueprint](tasks/blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md)
+propose Release-Candidate Runtime Assembly through TASK-041 to TASK-046. The
+proposal adds a real entrypoint, immutable configuration, owned lifecycle,
+loopback operational status, bounded shutdown, packaging and assembled-process
+qualification while keeping Protocol v1, WAL v1, Snapshot v1, matching,
+durability and single-session semantics frozen. Human Blueprint Approval is
+pending; implementation, merge, `v0.9.0-rc.1` and Product Release remain
+unauthorized.
 The approved 20/10 restart/termination campaign passed with its
 evidence review and immutable artifact hashes.
 

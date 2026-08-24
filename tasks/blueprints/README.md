@@ -44,5 +44,11 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   Standard CI `32709188522` / Quick Lane `32709188327`. The Closure Proposal
   Sol High review and Human Phase 9 Closure Approval are complete. Phase 9 is
   frozen at `v0.8.0-engineering-baseline` from merge `ef73f60`; Master CI
-  `32711512036` and Tag CI `32711649980` passed. Phase 10 and Product Release
-  remain unauthorized.
+  `32711512036` and Tag CI `32711649980` passed. Phase 10 implementation and
+  Product Release remain unauthorized.
+- [`PHASE-10-release-candidate-runtime-assembly-blueprint.md`](PHASE-10-release-candidate-runtime-assembly-blueprint.md)
+  — Proposed after Sol High Discovery. ADR-0018 D1-D16 and TASK-041 through
+  TASK-046 define release-candidate runtime assembly, configuration, lifecycle,
+  operations, packaging and qualification. Implementation, merge, candidate
+  tagging and Product Release remain unauthorized pending Human Blueprint
+  Approval.
