@@ -6,15 +6,15 @@
 | --- | --- |
 | Task ID | `TASK-20260823-040` |
 | Title | Phase 9 final qualification evidence reconciliation and Closure Proposal |
-| Status | `In Progress` |
+| Status | `Completed / Evidence Gate PASS; Closure Proposal prepared` |
 | Owner | Human Developer |
 | Implementer | Main Codex / Luna Max — only writer |
 | Related Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability |
 | Related ADR | [`ADR-0017`](../../docs/adr/ADR-0017-system-qualification-performance-reliability.md) |
 | Phase Blueprint | [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md) |
 | Dependency | TASK-039 Evidence Gate PASS |
-| Current Gate | Documentation/evidence reconciliation and Closure Proposal |
-| Next Gate | Sol High Phase 9 Final Closure Review; Human Closure Approval remains required |
+| Current Gate | Sol High Phase 9 Final Closure Review |
+| Next Gate | Human Phase 9 Closure Approval; merge/tag remain locked |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 
@@ -48,19 +48,20 @@ dependency, protocol, WAL, Snapshot or recovery semantics.
 
 ## 5. Acceptance Criteria
 
-- [ ] One authoritative evidence matrix covers TASK-035 through TASK-039.
-- [ ] Final commit/CI/reviewer references are internally consistent and stale
+- [x] One authoritative evidence matrix covers TASK-035 through TASK-039.
+- [x] Final commit/CI/reviewer references are internally consistent and stale
   “TASK-039 next/not started” status text is removed from current documents.
-- [ ] The TASK-039 JMH/JFR matrix and raw artifact hashes are recorded without
+- [x] The TASK-039 JMH/JFR matrix and raw artifact hashes are recorded without
   filtering outliers or upgrading component evidence to a production claim.
-- [ ] TASK-037 A'/B' campaign and TASK-038 20/10 campaign evidence are kept
+- [x] TASK-037 A'/B' campaign and TASK-038 20/10 campaign evidence are kept
   separate and their historical non-qualifying evidence remains preserved.
-- [ ] Known limitations and explicitly unclaimed guarantees remain visible.
-- [ ] Closure Proposal is prepared but clearly marked `NOT AUTHORIZED`.
-- [ ] No production/test/benchmark/dependency diff is introduced.
-- [ ] `git diff --check`, `mvn verify`, approved-path audit, verifier,
+- [x] Known limitations and explicitly unclaimed guarantees remain visible.
+- [x] Closure Proposal is prepared but clearly marked `NOT AUTHORIZED`.
+- [x] No production/test/benchmark/dependency diff is introduced.
+- [x] `git diff --check`, `mvn verify`, approved-path audit, verifier,
   benchmark-reviewer and docs-auditor all pass.
-- [ ] Exact-SHA CI passes for the documentation checkpoint.
+- [x] Exact-SHA CI passes for documentation checkpoint `bc8b11e`:
+  Standard `32709001419` PASS and Qualification Quick Lane `32709001388` PASS.
 
 ## 6. Evidence Gate
 
@@ -86,4 +87,3 @@ Stop and request Sol High review if reconciliation requires changing a
 technical acceptance criterion, production/runtime semantics, benchmark
 methodology, frozen format, workload/threshold, dependency or any scope not
 listed above.
-
