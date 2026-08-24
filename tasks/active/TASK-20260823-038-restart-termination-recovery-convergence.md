@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260823-038` |
 | Title | Restart, forced termination and recovery convergence qualification |
-| Status | `Authorized / Next — Not Started` |
+| Status | `In Progress` |
 | Owner | Human Developer |
 | Implementer | Main Codex / Luna Max — only writer |
 | Created | `2026-08-23` |
@@ -14,8 +14,8 @@
 | Related ADR | [`ADR-0017`](../../docs/adr/ADR-0017-system-qualification-performance-reliability.md) |
 | Phase Blueprint | [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md) |
 | Authorization Mode | `Blueprint` |
-| Current Stage | `TASK-037 Human Closure Approved; TASK-038 authorized / not started` |
-| Next Gate | `TASK-038 Evidence Gate; TASK-039 remains locked` |
+| Current Stage | `Child-process lifecycle controller and per-cycle convergence evidence implemented; local verification passed` |
+| Next Gate | `Exact-SHA CI / Full campaign evidence; TASK-039 remains locked` |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Dependency | `TASK-037 Completed / Archived / Human Closure Approved` |
@@ -39,6 +39,15 @@ recovery convergence without changing production runtime semantics.
 - immutable per-cycle manifests and aggregate evidence with SHA-256 references;
 - focused tests and Phase 9 evidence documentation.
 
+Implemented in the current checkpoint:
+
+- qualification-only child JVM entry point with explicit `READY`/`SHUTDOWN`
+  control channel;
+- graceful restart and acknowledged-boundary forced-termination orchestration;
+- strict WAL-prefix and offline recovery convergence after every cycle;
+- immutable cycle artifacts, aggregate summary and artifact-hash sidecar;
+- deterministic repeated-campaign digest comparison in focused tests.
+
 ## 4. Out of Scope
 
 - production source, API, protocol, WAL, Snapshot or recovery semantic changes;
@@ -51,9 +60,10 @@ recovery convergence without changing production runtime semantics.
 
 ## 5. Acceptance Criteria
 
-- [ ] 20 graceful restart cycles complete with deterministic convergence.
+- [ ] 20 graceful restart cycles complete with deterministic convergence in the
+  approved Full campaign.
 - [ ] 10 acknowledged-boundary forced-termination cycles complete with
-  deterministic convergence.
+  deterministic convergence in the approved Full campaign.
 - [ ] Every cycle validates strict WAL scan, recovery mode, checkpoint digest,
   Command Sequence, TradeId/EventSequence and fixed public-probe suffix.
 - [ ] Listener remains unbound until recovery and runtime handoff succeed.
@@ -65,6 +75,21 @@ recovery convergence without changing production runtime semantics.
 - [ ] No retry-until-pass behavior, sample filtering or threshold changes.
 - [ ] `mvn verify`, Checkstyle 0, `git diff --check`, frozen-path audit,
   verifier/docs-auditor review and exact-SHA CI pass.
+
+Focused implementation evidence:
+
+- [x] A bounded 2-graceful/2-forced child-process campaign passes through the
+  public Protocol v1 boundary.
+- [x] Repeated bounded campaigns converge on checkpoint, transcript, probe and
+  WAL command digests.
+- [x] No Full 20/10 campaign has been started automatically.
+
+Local verification checkpoint:
+
+- `QualificationRestartCampaignRunnerTest`: 1 passed;
+- core regression: 195 passed;
+- qualification suite: 46 tests, 0 failures, 2 explicitly skipped;
+- `mvn verify`: PASS; Checkstyle 0; `git diff --check`: PASS.
 
 ## 6. Frozen Boundary
 
