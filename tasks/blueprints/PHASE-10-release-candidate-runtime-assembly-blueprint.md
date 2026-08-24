@@ -15,7 +15,7 @@
 | Planned Implementation Branch | `feature/phase10-release-candidate-runtime` |
 | Planned Tasks | `TASK-20260824-041` through `TASK-20260824-046` |
 | Proposal Evidence | `541ef28`; Standard CI `32716540931` PASS; Quick Lane `32716540939` PASS |
-| Next Gate | `TASK-045 Evidence Gate` |
+| Next Gate | `TASK-046 pre-campaign Evidence Gate` |
 
 ## 2. Phase Objective
 
@@ -289,9 +289,9 @@ pre-campaign exact-SHA Evidence Gate passes.
   listeners are bound.
 - [ ] The Protocol listener uses the shared availability predicate; the legacy
   server constructor remains admission-open compatible.
-- [ ] Clean shutdown closes admission before bounded drain and resource close.
-- [ ] Startup rollback and shutdown are idempotent and preserve the first cause.
-- [ ] Exit codes match ADR-0018 D9.
+- [x] Clean shutdown closes admission before bounded drain and resource close.
+- [x] Startup rollback and shutdown are idempotent and preserve the first cause.
+- [x] Exit codes match ADR-0018 D9.
 
 ### Configuration and operations
 
@@ -316,7 +316,7 @@ pre-campaign exact-SHA Evidence Gate passes.
 
 - [ ] Invalid config, recovery corruption, lease contention, WAL failure and
   listener-bind failure remain fail-closed with readiness false.
-- [ ] Shutdown timeout produces the defined non-clean outcome and does not
+- [x] Shutdown timeout produces the defined non-clean outcome and does not
   invent rollback, deduplication or client-receipt guarantees.
 - [ ] Restart after clean and approved forced termination converges through the
   existing recovery boundary.
@@ -506,7 +506,7 @@ Gate requires new Human architecture approval.
 
 ```text
 Blueprint Status: Approved
-Implementation: TASK-041 through TASK-044 Completed / Evidence Gate PASS; TASK-045 Authorized / TASK-046 Dependency Locked
+Implementation: TASK-041 through TASK-045 Completed / Evidence Gate PASS; TASK-046 Authorized / Next
 Merge / v0.9.0-rc.1 / Product Release: Not Authorized
-Next Gate: TASK-045 Evidence Gate
+Next Gate: TASK-046 pre-campaign Evidence Gate
 ```

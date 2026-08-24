@@ -56,7 +56,7 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   TASK-043 is complete at `247d526` with Standard CI `32724123762` and
   Qualification Quick Lane `32724123745` PASS. TASK-044 is complete at
   `c3f0883` with Standard CI `32726203105` and Qualification Quick Lane
-  `32726203076` PASS. TASK-045 is now authorized / next and TASK-046 remains
-  dependency locked.
-  Full Campaign,
-  merge, candidate tagging and Product Release remain separately gated.
+  `32726203076` PASS. TASK-045 completed at `f024aef` with Standard CI
+  `32728038236` and Qualification Quick Lane `32728038263` PASS. TASK-046 is
+  now authorized / next. Full Campaign, merge, candidate tagging and Product
+  Release remain separately gated.

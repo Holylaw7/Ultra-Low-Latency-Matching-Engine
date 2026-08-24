@@ -6,11 +6,11 @@
 | --- | --- |
 | Task ID | `TASK-20260824-046` |
 | Title | Release-candidate assembled-runtime qualification and Closure Proposal |
-| Status | `Dependency Locked` |
+| Status | `Authorized / Next` |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
-| Dependency | TASK-045 Evidence Gate PASS |
+| Dependency | TASK-045 Evidence Gate PASS (`f024aef`; Standard CI `32728038236`; Quick Lane `32728038263`) |
 | Final Gate | Sol High Closure Review, then Human Phase 10 Closure Approval |
 
 ## 2. Goal
@@ -75,7 +75,7 @@ changes can be reverted while `v0.8.0-engineering-baseline` remains frozen.
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
-| 2026-08-24 | Human Developer | Pending | TASK-046 after TASK-045 PASS; Closure separate |
+| 2026-08-24 | Human Developer | Authorized / Inherited | TASK-045 Evidence Gate PASS; pre-campaign implementation is authorized; the two Full Runs remain separately Human-gated |
 
 ## 9. Current Implementation and Frozen Qualification Manifest
 
@@ -172,7 +172,7 @@ Planned commits: `test(runtime): qualify release-candidate assembly` and
 
 ## 15. Completion Checklist / Log
 
-- [ ] TASK-045 PASS and inherited approval
+- [x] TASK-045 PASS and inherited approval (`f024aef` / Standard `32728038236` / Quick `32728038263`)
 - [ ] pre-campaign implementation/CI and explicit Full authorization
 - [ ] lifecycle matrix PASS
 - [ ] exactly two Full runs and campaign PASS, or preserved failure + STOP
@@ -184,3 +184,4 @@ Planned commits: `test(runtime): qualify release-candidate assembly` and
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-24 | Proposed | Qualification manifest and stop gates frozen | docs only |
+| 2026-08-24 | Authorized / Next | TASK-045 completed; begin pre-campaign assembled-runtime qualification implementation. | TASK-045 exact-SHA Standard/Quick CI PASS |

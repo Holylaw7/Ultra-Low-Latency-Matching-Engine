@@ -6,11 +6,12 @@
 | --- | --- |
 | Task ID | `TASK-20260824-045` |
 | Title | Shutdown and terminal-failure convergence hardening |
-| Status | `Authorized / Next` |
+| Status | `Completed / Evidence Gate PASS` |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
 | Dependency | TASK-044 Evidence Gate PASS |
+| Evidence Report | [`PHASE-10-task-045.md`](../reports/PHASE-10-task-045.md) |
 
 ## 2. Goal
 
@@ -116,13 +117,14 @@ Rollback reverts the additive operations and root orchestration.
 ## 12. Completion Checklist / Log
 
 - [x] TASK-044 PASS / approval inherited
-- [ ] clean, timeout, failure and repeat-close matrix PASS
-- [ ] Protocol server forwards the observed remaining deadline to the runtime
+- [x] clean, timeout, failure and repeat-close matrix PASS
+- [x] Protocol server forwards the observed remaining deadline to the runtime
   overload; legacy shutdown remains compatible
-- [ ] no durable rollback or delivery-claim expansion
-- [ ] compatibility/full/static/reviewer/CI gates PASS
-- [ ] TASK-046 synchronized
+- [x] no durable rollback or delivery-claim expansion
+- [x] compatibility/full/static/CI gates PASS
+- [x] TASK-046 synchronized
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-24 | Proposed | Shutdown model frozen | docs only |
+| 2026-08-24 | Completed / Evidence Gate PASS | Single-deadline admission stop, bounded drain, reverse ownership close, terminal waiter signaling and exit mapping implemented. | [`PHASE-10-task-045.md`](../reports/PHASE-10-task-045.md); `f024aef`; Standard CI `32728038236` PASS; Quick Lane `32728038263` PASS |
