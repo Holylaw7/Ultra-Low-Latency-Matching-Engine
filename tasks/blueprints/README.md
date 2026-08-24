@@ -35,6 +35,7 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   44 cumulative natural post-GC samples, and campaign summary SHA-256
   `5bf1b84b30226807d79f5a0a4950ae649c3a72a860d6d6b13edd9fa715e24112`.
   TASK-037 Human Evidence / Closure Approval is complete; TASK-038 is now in
-  progress with focused child-process implementation underway. TASK-039,
-  Phase 9 Closure, merge, `v0.8.0-engineering-baseline`, Phase 10 and Product
-  Release remain unauthorized.
+  progress with the approved 20/10 restart/termination campaign passing and
+  read-only Evidence Gate pending. TASK-039, Phase 9 Closure, merge,
+  `v0.8.0-engineering-baseline`, Phase 10 and Product Release remain
+  unauthorized.

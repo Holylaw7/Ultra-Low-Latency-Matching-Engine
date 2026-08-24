@@ -60,11 +60,11 @@ Implemented in the current checkpoint:
 
 ## 5. Acceptance Criteria
 
-- [ ] 20 graceful restart cycles complete with deterministic convergence in the
+- [x] 20 graceful restart cycles complete with deterministic convergence in the
   approved Full campaign.
-- [ ] 10 acknowledged-boundary forced-termination cycles complete with
+- [x] 10 acknowledged-boundary forced-termination cycles complete with
   deterministic convergence in the approved Full campaign.
-- [ ] Every cycle validates strict WAL scan, recovery mode, checkpoint digest,
+- [x] Every cycle validates strict WAL scan, recovery mode, checkpoint digest,
   Command Sequence, TradeId/EventSequence and fixed public-probe suffix.
 - [ ] Listener remains unbound until recovery and runtime handoff succeed.
 - [ ] Recovery lease ownership and release are verified for every cycle.
@@ -90,6 +90,15 @@ Local verification checkpoint:
 - core regression: 195 passed;
 - qualification suite: 46 tests, 0 failures, 2 explicitly skipped;
 - `mvn verify`: PASS; Checkstyle 0; `git diff --check`: PASS.
+
+Full campaign evidence:
+
+- 20 graceful and 10 acknowledged-boundary forced cycles passed;
+- 30/30 cycles reported `convergencePassed=true`;
+- summary SHA-256 `d18850bfdcff51722a7431e2d0679f98687577ed5cca8a574bf5c076072e3576`;
+- 31 artifact sidecar entries and zero independent hash mismatches;
+- TASK-039 remains locked until the campaign Evidence Gate and read-only
+  review are complete.
 
 ## 6. Frozen Boundary
 

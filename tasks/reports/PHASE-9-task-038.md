@@ -5,11 +5,11 @@
 | Field | Value |
 | --- | --- |
 | Task | `TASK-20260823-038` |
-| Result | `In Progress — focused child-process implementation complete; Full campaign pending` |
+| Result | `In Progress — Full 20/10 campaign PASS; Evidence Gate pending read-only review` |
 | Dependency | TASK-037 Human Closure Approved |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
-| Next Gate | Focused Evidence Gate / exact-SHA CI; TASK-039 remains locked |
+| Next Gate | Read-only campaign evidence review / exact-SHA CI; TASK-039 remains locked |
 
 ## Implemented Scope
 
@@ -47,9 +47,41 @@ The approved Full campaign remains a separate evidence unit requiring 20
 graceful restart cycles and 10 acknowledged-boundary forced terminations. It
 has not been started automatically by this implementation checkpoint.
 
-The local Evidence Gate is therefore limited to the bounded implementation
-proof above. The 20/10 campaign remains pending and is not represented as a
-passing qualification result.
+The local implementation Evidence Gate is supported by the bounded proof
+above. The separately authorized Full campaign is recorded below as an
+independent evidence unit; it does not by itself authorize TASK-039 or Phase 9
+Closure.
+
+## Full Restart/Termination Campaign Evidence
+
+The separately authorized Full campaign completed once, without retry or
+configuration change, using `CROSSING_MULTI_MATCH`, seed `20260824`, 10,000
+commands and the JDK 21 runtime configuration used by the focused harness:
+
+```text
+20 graceful restart cycles: PASS
+10 acknowledged-boundary forced terminations: PASS
+30/30 cycles: convergencePassed=true
+acceptedCommands: 10,000
+responseCount: 16,667
+tradeCount: 6,667
+campaign.result: true
+```
+
+The immutable local evidence directory is:
+
+```text
+qualification-results/task038-full-20260824/
+  restart-campaign-575e3dec-cfd9-46a2-9ec4-4dee8fb559f8/
+```
+
+The published summary SHA-256 is
+`d18850bfdcff51722a7431e2d0679f98687577ed5cca8a574bf5c076072e3576`.
+The artifact sidecar contains 31 entries (summary plus 30 cycle artifacts),
+and an independent read-only hash check reported zero mismatches. Graceful
+cycles exited with code 0; forced cycles exited with code 1 after the complete
+response acknowledgement boundary. Exactly-once, reconnect and hardware
+power-loss claims remain explicitly `NOT_CLAIMED`.
 
 ## Claim Boundary
 

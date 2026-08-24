@@ -311,7 +311,7 @@ Release. Phase 10 remains unauthorized.
 Blueprint Status: Approved
 Implementation: TASK-035, TASK-036 and TASK-037 Evidence Gates PASS; TASK-037 v2 Full Campaign Evidence PASS (two qualifying runs; summary SHA-256 `5bf1b84b30226807d79f5a0a4950ae649c3a72a860d6d6b13edd9fa715e24112`); Sol High Final Campaign Closure Review PASS; Human TASK-037 Evidence / Closure Approval recorded
 TASK-037: Completed / Archived
-TASK-038: In Progress — focused implementation complete; Evidence Gate pending
+TASK-038: In Progress — Full 20/10 restart/termination campaign PASS; Evidence Gate pending
 Phase 9 Closure: Not Authorized
 ```
 
