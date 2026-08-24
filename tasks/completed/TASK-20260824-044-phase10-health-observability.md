@@ -115,7 +115,7 @@ Rollback removes the independent adapter; Protocol v1 remains untouched.
 - [x] exact management wire/schema tests PASS
 - [x] bounded concurrency/timeout evidence PASS
 - [x] no new dependency, engine access or hidden executor
-- [x] full/static/reviewer/exact-SHA CI PASS
+- [x] full/static/read-only implementation audit/exact-SHA CI PASS
 - [x] TASK-045 synchronized
 
 | Date | Status | Summary | Verification |
