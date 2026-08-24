@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260824-045` |
 | Title | Shutdown and terminal-failure convergence hardening |
-| Status | `Dependency Locked` |
+| Status | `Authorized / Next` |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
@@ -54,7 +54,7 @@ task commit; existing abrupt-close behavior remains the baseline limitation.
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
-| 2026-08-24 | Human Developer | Pending | TASK-045 after TASK-044 PASS |
+| 2026-08-24 | Human Developer | Approved / Inherited | TASK-044 Evidence Gate PASS; TASK-045 is now the next authorized task |
 
 ## 8. Current Implementation and Detailed Design
 
@@ -115,7 +115,7 @@ Rollback reverts the additive operations and root orchestration.
 
 ## 12. Completion Checklist / Log
 
-- [ ] TASK-044 PASS / approval inherited
+- [x] TASK-044 PASS / approval inherited
 - [ ] clean, timeout, failure and repeat-close matrix PASS
 - [ ] Protocol server forwards the observed remaining deadline to the runtime
   overload; legacy shutdown remains compatible

@@ -79,8 +79,10 @@ TASK-041 runtime contracts and lifecycle/status boundaries are implemented at
 `1eba2c5`; Standard CI `32720292382` and Qualification Quick Lane
 `32720292393` both pass. TASK-043 strict configuration and reproducible
 packaging is complete at `247d526`; Standard CI `32724123762` and
-Qualification Quick Lane `32724123745` both pass. TASK-044 is now the next
-authorized task. The phase
+Qualification Quick Lane `32724123745` both pass. TASK-044 bounded health,
+readiness and operational status is complete at `c3f0883`; Standard CI
+`32726203105` and Qualification Quick Lane `32726203076` both pass. TASK-045
+is now the next authorized task. The phase
 keeps Protocol v1, WAL v1, Snapshot v1, matching, durability and single-session
 semantics frozen. Implementation continues only in the approved dependency
 chain; merge, `v0.9.0-rc.1` and Product Release remain unauthorized.
