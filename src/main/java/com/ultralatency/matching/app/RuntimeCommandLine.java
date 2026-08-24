@@ -65,9 +65,7 @@ public final class RuntimeCommandLine {
                 configuration);
         try {
             runtime.start();
-            if (!configuration.managementEnabled()) {
-                runtime.publishReady();
-            }
+            runtime.publishReady();
         } catch (final RuntimeException failure) {
             final RuntimeExitCode code = startupCode(failure);
             try {

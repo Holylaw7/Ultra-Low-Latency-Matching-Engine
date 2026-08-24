@@ -28,6 +28,7 @@ class ReleaseCandidateRuntimeTest {
         try {
             assertEquals(RuntimeLifecycleState.STARTING, runtime.status().state());
             assertFalse(runtime.status().ready());
+            assertTrue(runtime.status().protocolBound());
             assertEquals(RecoveryRuntimeState.RUNNING, runtime.protocolServer().state());
             assertTrue(runtime.protocolServer().localAddress().isPresent());
 
@@ -61,15 +62,17 @@ class ReleaseCandidateRuntimeTest {
     }
 
     @Test
-    void readinessCannotBypassRequiredManagementChild() throws Exception {
+    void readinessRequiresTheBoundManagementChild() throws Exception {
         final ReleaseCandidateRuntime runtime = ReleaseCandidateRuntime.create(
                 configuration(RecoveryMode.PURE_WAL, true));
 
         runtime.start();
         try {
-            assertThrows(IllegalStateException.class, runtime::publishReady);
             assertEquals(RuntimeLifecycleState.STARTING, runtime.status().state());
             assertFalse(runtime.status().ready());
+            assertTrue(runtime.managementServer().isBound());
+            runtime.publishReady();
+            assertTrue(runtime.status().ready());
         } finally {
             runtime.shutdown();
         }

@@ -35,13 +35,25 @@ public final class RuntimeAvailability {
         transition(RuntimeLifecycleState.STARTING, RuntimeFailureCode.NONE, false);
     }
 
+    /** Records that the Protocol listener is bound while readiness remains closed. */
+    public void markProtocolBound() {
+        synchronized (monitor) {
+            if (state != RuntimeLifecycleState.STARTING) {
+                throw new IllegalStateException("Protocol can bind only while runtime is starting");
+            }
+            protocolBound = true;
+        }
+    }
+
     /** Publishes the only state in which admission is allowed. */
     public void publishReady(final String recoveryMode) {
         Objects.requireNonNull(recoveryMode, "recoveryMode");
         synchronized (monitor) {
             requireTransition(RuntimeLifecycleState.READY);
             this.recoveryMode = recoveryMode;
-            this.protocolBound = true;
+            if (!protocolBound) {
+                throw new IllegalStateException("Protocol listener must be bound before ready");
+            }
             this.state = RuntimeLifecycleState.READY;
         }
     }

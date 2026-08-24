@@ -18,6 +18,7 @@ class RuntimeAvailabilityTest {
         assertFalse(availability.isReady());
         availability.markConfigurationValidated();
         availability.markStarting();
+        availability.markProtocolBound();
         availability.publishReady("PURE_WAL");
         availability.recordAcceptedCommand();
 
@@ -46,6 +47,7 @@ class RuntimeAvailabilityTest {
         final RuntimeAvailability availability = new RuntimeAvailability();
         availability.markConfigurationValidated();
         availability.markStarting();
+        availability.markProtocolBound();
         availability.publishReady("SNAPSHOT_THEN_WAL");
         availability.beginStopping();
         availability.markStopped();

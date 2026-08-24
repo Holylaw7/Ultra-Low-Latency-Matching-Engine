@@ -6,6 +6,7 @@ import com.ultralatency.matching.network.netty.recovery.RecoverableDurableMatchi
 import com.ultralatency.matching.network.netty.recovery.RecoverableNetworkConfiguration;
 import com.ultralatency.matching.persistence.wal.WalConfiguration;
 import com.ultralatency.matching.pipeline.PipelineConfiguration;
+import com.ultralatency.matching.operations.ManagementServer;
 import com.ultralatency.matching.operations.RuntimeAvailability;
 import java.util.Objects;
 
@@ -24,15 +25,18 @@ public final class ReleaseCandidateRuntime implements AutoCloseable {
     private final RuntimeConfiguration configuration;
     private final RuntimeAvailability availability;
     private final RecoverableDurableMatchingEngineTcpServer protocolServer;
+    private final ManagementServer managementServer;
     private boolean shutdownRequested;
 
     private ReleaseCandidateRuntime(
             final RuntimeConfiguration configuration,
             final RuntimeAvailability availability,
-            final RecoverableDurableMatchingEngineTcpServer protocolServer) {
+            final RecoverableDurableMatchingEngineTcpServer protocolServer,
+            final ManagementServer managementServer) {
         this.configuration = Objects.requireNonNull(configuration, "configuration");
         this.availability = Objects.requireNonNull(availability, "availability");
         this.protocolServer = Objects.requireNonNull(protocolServer, "protocolServer");
+        this.managementServer = Objects.requireNonNull(managementServer, "managementServer");
     }
 
     /**
@@ -50,7 +54,15 @@ public final class ReleaseCandidateRuntime implements AutoCloseable {
                         network,
                         availability::isReady,
                         failure -> availability.fail(RuntimeFailureCode.RUNTIME));
-        return new ReleaseCandidateRuntime(configuration, availability, protocolServer);
+        final ManagementServer managementServer = new ManagementServer(
+                configuration,
+                availability::snapshot,
+                failure -> availability.fail(
+                        failure instanceof ManagementServer.ManagementBindFailure
+                                ? RuntimeFailureCode.MANAGEMENT_BIND
+                                : RuntimeFailureCode.RUNTIME));
+        return new ReleaseCandidateRuntime(
+                configuration, availability, protocolServer, managementServer);
     }
 
     /** Starts recovery, sequence convergence and Protocol binding before readiness publication. */
@@ -64,9 +76,14 @@ public final class ReleaseCandidateRuntime implements AutoCloseable {
         }
         try {
             protocolServer.start();
+            availability.markProtocolBound();
+            managementServer.start();
         } catch (final Throwable failure) {
-            availability.fail(RuntimeFailureCode.RUNTIME);
+            availability.fail(failure instanceof ManagementServer.ManagementBindFailure
+                    ? RuntimeFailureCode.MANAGEMENT_BIND
+                    : RuntimeFailureCode.RUNTIME);
             try {
+                managementServer.shutdown(configuration.shutdownTimeout());
                 shutdownProtocol();
             } catch (final Throwable cleanupFailure) {
                 failure.addSuppressed(cleanupFailure);
@@ -88,8 +105,10 @@ public final class ReleaseCandidateRuntime implements AutoCloseable {
                 throw new IllegalStateException("Runtime is not starting");
             }
             if (configuration.managementEnabled()) {
-                throw new IllegalStateException(
-                        "Management listener must be bound before readiness publication");
+                if (!managementServer.isBound()) {
+                    throw new IllegalStateException(
+                            "Management listener must be bound before readiness publication");
+                }
             }
             if (protocolServer.state()
                     != com.ultralatency.matching.integration.recovery.RecoveryRuntimeState.RUNNING) {
@@ -122,6 +141,7 @@ public final class ReleaseCandidateRuntime implements AutoCloseable {
                 || current == RuntimeLifecycleState.CONFIG_VALIDATED) {
             availability.beginStopping();
         }
+        managementServer.shutdown(configuration.shutdownTimeout());
         shutdownProtocol();
         final RuntimeLifecycleState after = availability.snapshot().state();
         if (after == RuntimeLifecycleState.STOPPING || after == RuntimeLifecycleState.FAILED) {
@@ -142,6 +162,11 @@ public final class ReleaseCandidateRuntime implements AutoCloseable {
     /** @return the directly owned Protocol server */
     public RecoverableDurableMatchingEngineTcpServer protocolServer() {
         return protocolServer;
+    }
+
+    /** @return the directly owned bounded management child */
+    public ManagementServer managementServer() {
+        return managementServer;
     }
 
     /** @return the current immutable operational status */
