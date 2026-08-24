@@ -6,24 +6,24 @@
 | --- | --- |
 | Task ID | `TASK-20260823-040` |
 | Title | Phase 9 final qualification evidence reconciliation and Closure Proposal |
-| Status | `Completed / Evidence Gate PASS; Closure Proposal prepared` |
+| Status | `Completed / Archived / Evidence Gate PASS; Phase 9 Closure Approved` |
 | Owner | Human Developer |
 | Implementer | Main Codex / Luna Max — only writer |
 | Related Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability |
 | Related ADR | [`ADR-0017`](../../docs/adr/ADR-0017-system-qualification-performance-reliability.md) |
 | Phase Blueprint | [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md) |
 | Dependency | TASK-039 Evidence Gate PASS |
-| Current Gate | Sol High Phase 9 Final Closure Review |
-| Next Gate | Human Phase 9 Closure Approval; merge/tag remain locked |
-| Branch | `feature/phase9-system-qualification` |
-| Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
+| Current Gate | Phase 9 baseline frozen |
+| Next Gate | Phase 10 / Product Release require separate authorization |
+| Branch | `master` |
+| Baseline | `v0.8.0-engineering-baseline` / `ef73f60` |
 
 ## 2. Objective
 
 Reconcile the final Phase 9 qualification evidence across TASK-035 through
 TASK-039, record the approved claim boundaries and known limitations, and
-prepare (but do not approve) the Phase 9 Closure Proposal. This task is
-documentation/evidence-only. It must not change production, test, benchmark,
+prepare the Phase 9 Closure Proposal. This task is documentation/evidence-only.
+It must not change production, test, benchmark,
 dependency, protocol, WAL, Snapshot or recovery semantics.
 
 ## 3. Authorized Scope
@@ -56,7 +56,7 @@ dependency, protocol, WAL, Snapshot or recovery semantics.
 - [x] TASK-037 A'/B' campaign and TASK-038 20/10 campaign evidence are kept
   separate and their historical non-qualifying evidence remains preserved.
 - [x] Known limitations and explicitly unclaimed guarantees remain visible.
-- [x] Closure Proposal is prepared but clearly marked `NOT AUTHORIZED`.
+- [x] Closure Proposal was prepared and accepted by Sol High and Human review.
 - [x] No production/test/benchmark/dependency diff is introduced.
 - [x] `git diff --check`, `mvn verify`, approved-path audit, verifier,
   benchmark-reviewer and docs-auditor all pass.
@@ -78,7 +78,15 @@ verifier + benchmark-reviewer + docs-auditor (read-only) PASS
         ↓
 exact-SHA CI PASS
         ↓
-STOP — Sol High Phase 9 Final Closure Review
+Sol High Phase 9 Final Closure Review — APPROVED
+        ↓
+Human Phase 9 Closure Approval — APPROVED
+        ↓
+merge `ef73f60` / Master CI `32711512036` PASS
+        ↓
+`v0.8.0-engineering-baseline` / Tag CI `32711649980` PASS
+        ↓
+Phase 9 baseline frozen
 ```
 
 ## 7. Exception Gate

@@ -42,6 +42,7 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   Standard CI `32707393196` and Quick Lane `32707393200`. TASK-039 is archived
   and TASK-040 Evidence Gate is PASS with current Closure Input `8e5d39d` /
   Standard CI `32709188522` / Quick Lane `32709188327`. The Closure Proposal
-  is prepared and Sol High review is pending. Phase 9 Closure, merge,
-  `v0.8.0-engineering-baseline`, Phase 10 and Product Release remain
-  unauthorized.
+  Sol High review and Human Phase 9 Closure Approval are complete. Phase 9 is
+  frozen at `v0.8.0-engineering-baseline` from merge `ef73f60`; Master CI
+  `32711512036` and Tag CI `32711649980` passed. Phase 10 and Product Release
+  remain unauthorized.

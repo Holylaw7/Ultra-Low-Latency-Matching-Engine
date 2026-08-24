@@ -61,12 +61,14 @@ Human TASK-037 Evidence / Closure Approval are complete. Phase 9 is an
 engineering qualification phase: production source, runtime semantics and
 existing formats remain frozen; TASK-038 Evidence Gate is now complete. TASK-
 039 is completed and archived with its full JMH/JFR evidence, read-only
-reviewer PASS and final status synchronization. TASK-040 is completed with
-its Evidence Gate PASS and prepared Closure Proposal. The current Closure
+reviewer PASS and final status synchronization. TASK-040 is completed,
+archived and its Evidence Gate PASS is accepted. The current Closure
 Input is `8e5d39d`, Standard CI `32709188522` PASS and Qualification Quick
-Lane `32709188327` PASS. Sol High Phase 9 Closure Review is pending; Phase 9
-Closure, production optimization, Phase 10 and Product Release remain
-unauthorized. The approved 20/10 restart/termination campaign passed with its
+Lane `32709188327` PASS. Sol High review and Human Phase 9 Closure Approval are
+complete. Phase 9 merge `ef73f60` passed Master CI `32711512036`; the
+`v0.8.0-engineering-baseline` tag passed Tag CI `32711649980`. Phase 10,
+production optimization and Product Release remain unauthorized.
+The approved 20/10 restart/termination campaign passed with its
 evidence review and immutable artifact hashes.
 
 Phase 8 remains documented by [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),

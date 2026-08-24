@@ -15,9 +15,9 @@
 | Phase Blueprint | [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md) |
 | Authorization Mode | `Blueprint` |
 | Current Stage | `Full 20/10 restart/termination campaign and read-only evidence review passed` |
-| Next Gate | `TASK-040 Evidence Gate PASS; Sol High Closure Review pending; Phase 9 Closure remains unauthorized` |
-| Branch | `feature/phase9-system-qualification` |
-| Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
+| Next Gate | `Phase 9 Closure Approved; baseline frozen at v0.8.0-engineering-baseline` |
+| Branch | `master` |
+| Baseline | `v0.8.0-engineering-baseline` / `ef73f60` |
 | Dependency | `TASK-037 Completed / Archived / Human Closure Approved` |
 
 ## 2. Goal

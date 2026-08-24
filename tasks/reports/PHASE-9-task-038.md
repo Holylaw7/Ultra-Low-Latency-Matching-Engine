@@ -7,9 +7,9 @@
 | Task | `TASK-20260823-038` |
 | Result | `Completed — Full 20/10 campaign PASS; Evidence Gate PASS` |
 | Dependency | TASK-037 Human Closure Approved |
-| Branch | `feature/phase9-system-qualification` |
-| Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
-| Next Gate | `TASK-040 Evidence Gate PASS; Sol High Closure Review pending; Phase 9 Closure remains unauthorized` |
+| Branch | `master` |
+| Baseline | `v0.8.0-engineering-baseline` / `ef73f60` |
+| Next Gate | `Phase 9 Closure Approved; baseline frozen` |
 
 ## Implemented Scope
 
@@ -98,7 +98,8 @@ The evidence synchronization checkpoint `da5ac1f` passed Standard CI
 docs-auditor both returned `PASS`; the task is complete for its approved
 restart/termination scope. TASK-039 subsequently completed its JMH/JFR
 Evidence Gate, and TASK-040 has completed the final Phase 9 evidence
-reconciliation. Sol High Closure Review remains pending.
+reconciliation. Sol High review and Human Phase 9 Closure Approval are complete;
+merge `ef73f60` and baseline tag `v0.8.0-engineering-baseline` are CI-verified.
 
 ## Claim Boundary
 
@@ -112,8 +113,8 @@ in-flight outcome remains ambiguous.
 
 No production source, production tests, dependency, Protocol v1, WAL v1,
 Snapshot v1 or recovery semantic files were modified. `.vscode/` remains
-untouched and untracked. Phase 9 Closure, merge and baseline tagging remain
-unauthorized.
+untouched and untracked. Phase 9 Closure is approved; Phase 9 is frozen at
+`v0.8.0-engineering-baseline`.
 
 ## Evidence Gate
 
@@ -122,4 +123,6 @@ semantic change, new dependency, workload/threshold tuning, or weakened
 ambiguous-outcome claim in later work triggers the Exception Gate. TASK-039 is
 complete and TASK-040 Evidence Gate is PASS; current Closure Input is
 `8e5d39d` / Standard CI `32709188522` PASS / Quick Lane `32709188327` PASS.
-Phase 9 Closure, merge and baseline tagging remain unauthorized.
+Human Phase 9 Closure Approval is complete; merge `ef73f60` / Master CI
+`32711512036` and baseline tag `v0.8.0-engineering-baseline` / Tag CI
+`32711649980` are PASS.

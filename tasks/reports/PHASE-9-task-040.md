@@ -6,15 +6,15 @@
 | --- | --- |
 | Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability |
 | Task | `TASK-20260823-040` |
-| Result | `Completed / Evidence Gate PASS — Closure Proposal prepared; Sol High review pending` |
-| Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
-| Branch | `feature/phase9-system-qualification` |
+| Result | `Completed / Archived / Evidence Gate PASS — Phase 9 Closure Approved` |
+| Baseline | `v0.8.0-engineering-baseline` / `ef73f60` |
+| Branch | `master` |
 | Scope | Documentation/evidence reconciliation only |
 | Technical input | TASK-039 checkpoint `d003266` / Standard CI `32707393196` PASS / Quick Lane `32707393200` PASS |
 | Latest TASK-039 status sync | `440915d` / Standard CI `32707877619` PASS / Quick Lane `32707877630` PASS |
 | Closure Input | `8e5d39d` / Standard CI `32709188522` PASS / Quick Lane `32709188327` PASS |
-| Next Gate | Sol High Phase 9 Final Closure Review; Human Phase 9 Closure Approval required |
-| Merge / Tag | Not authorized |
+| Next Gate | Phase 10 / Product Release require separate authorization |
+| Merge / Tag | `ef73f60` / Master CI `32711512036` PASS; `v0.8.0-engineering-baseline` / Tag CI `32711649980` PASS |
 
 ## 1. Purpose and Boundary
 
@@ -164,11 +164,10 @@ The prior interrupted/non-evidence profiler invocation and preflight run remain
 historical execution notes in TASK-039 and are not counted as accepted results.
 Ignored raw evidence is not silently deleted or regenerated.
 
-## 5. Closure Proposal (Prepared, Not Authorized)
+## 5. Closure Proposal (Approved)
 
-Subject to Sol High Final Closure Review and a separate Human Closure Approval,
-the proposed Phase 9 closure would accept TASK-035 through TASK-040 as an
-engineering qualification record. It would not create a product release or
+The approved Phase 9 closure accepts TASK-035 through TASK-040 as an
+engineering qualification record. It does not create a product release or
 authorize production optimization.
 
 ```text
@@ -182,17 +181,17 @@ Human Phase 9 Closure Approval
         ↓
 --no-ff merge → master verification/CI
         ↓
-annotated v0.8.0-engineering-baseline (candidate only)
+annotated v0.8.0-engineering-baseline
         ↓
 tag CI and final archive synchronization
 ```
 
-Until those gates complete:
+The approved final state is:
 
 ```text
-Phase 9 Closure: NOT AUTHORIZED
-Merge: NOT AUTHORIZED
-v0.8.0-engineering-baseline: NOT AUTHORIZED
+Phase 9 Closure: APPROVED
+Merge: `ef73f60` / Master CI `32711512036` PASS
+v0.8.0-engineering-baseline: TAG CI `32711649980` PASS
 Phase 10: NOT AUTHORIZED
 Product Release: NOT AUTHORIZED
 ```
@@ -211,6 +210,6 @@ Product Release: NOT AUTHORIZED
 
 ## 7. Current Gate
 
-TASK-040 Evidence Gate is PASS. This report is the prepared Closure Proposal,
-not a Closure approval. Execution must now stop for Sol High Phase 9 Final
-Closure Review and then Human Closure Approval.
+TASK-040 Evidence Gate is PASS. Sol High Phase 9 Final Closure Review and Human
+Phase 9 Closure Approval are complete. Phase 9 is frozen at
+`v0.8.0-engineering-baseline`; Phase 10 and Product Release remain unauthorized.

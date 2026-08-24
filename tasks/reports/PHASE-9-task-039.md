@@ -9,7 +9,7 @@
 | Authorization | Phase 9 Blueprint approval; TASK-038 Evidence Gate PASS |
 | Implementation | Additive `SystemQualificationBenchmark` under the existing benchmark module |
 | Production source | Unchanged; frozen-path diff must remain `0` |
-| Closure state | Completed / Archived / Evidence Gate PASS; TASK-040 Evidence Gate PASS; Sol High Closure Review pending |
+| Closure state | Completed / Archived / Evidence Gate PASS; Phase 9 Human Closure Approved; v0.8.0-engineering-baseline frozen |
 | Raw benchmark output | Local ignored `benchmark-results/` |
 | Raw JFR output | Local ignored `profiler-results/` |
 | Working tree policy | Pre-existing `.vscode/` remains untouched and untracked |

@@ -14,7 +14,7 @@
 | Blueprint Branch | `docs/phase9-system-qualification-blueprint` |
 | Implementation Branch | `feature/phase9-system-qualification` |
 | Planned Tasks | `TASK-20260823-035` through `TASK-20260823-040` |
-| Next Gate | `TASK-040 Evidence Gate PASS; Sol High Final Closure Review pending; Phase 9 Closure remains unauthorized` |
+| Next Gate | `Phase 9 Closure Approved; v0.8.0-engineering-baseline frozen at merge ef73f60; Phase 10 remains unauthorized` |
 
 ## 2. Phase Goal
 
@@ -237,7 +237,7 @@ commands, environment, hashes, failures, reruns and limitations.
 | `.github/workflows/qualification.yml` | 036-039 | bounded quick/manual qualification workflow | Full lane not forced on push |
 | `docs/qualification/**` | 040 | manifests and evidence summaries | documentation only |
 | `docs/adr/ADR-0017-*` | 035 | decision record | approved scope |
-| `tasks/active/TASK-20260823-035..040*` | 035-040 | task plans | governance records |
+| `tasks/completed/TASK-20260823-035..040*` | 035-040 | archived task plans | governance records |
 | `tasks/reports/PHASE-9-*` | 035-040 | evidence reports | status/evidence only |
 | `README.md`, `.codex/AGENT_CONTEXT.md`, blueprint index | 040 | final synchronization | no runtime semantics |
 
@@ -280,7 +280,7 @@ Protocol or runtime compatibility. The `v0.7.0-engineering-baseline` tag is
 never moved. Qualification temporary directories may only be cleaned when
 explicitly created by the harness.
 
-## 16. Closure Plan
+## 16. Closure Plan and Completion
 
 ```text
 TASK-040 Evidence Gate PASS
@@ -298,23 +298,26 @@ v0.8.0-engineering-baseline → tag CI
 archive/final synchronization
 ```
 
-The candidate tag is an engineering qualification baseline, not a Product
-Release. Phase 10 remains unauthorized.
+The tag is an engineering qualification baseline, not a Product Release. The
+merge and tag were verified as `ef73f60` / Master CI `32711512036` PASS and
+`v0.8.0-engineering-baseline` / Tag CI `32711649980` PASS. Phase 10 remains
+unauthorized.
 
 ## 17. Human Phase 9 Blueprint Approval
 
 | Date | Reviewer | Decision | Approved ADRs/Tasks | Constraints |
 | --- | --- | --- | --- | --- |
 | 2026-08-23 | Human Developer | Approved | ADR-0017 D1-D16; TASK-20260823-035..040 | Strict dependency order; existing runtime frozen; production optimization, merge/tag, Phase 10 and Product Release unauthorized |
+| 2026-08-24 | Human Developer | Closure Approved | Phase 9 TASK-035..040 evidence and Closure Proposal | Merge `ef73f60` / Master CI `32711512036` PASS; tag `v0.8.0-engineering-baseline` / Tag CI `32711649980` PASS; Phase 10 and Product Release remain unauthorized |
 
 ```text
-Blueprint Status: Approved
-Implementation: TASK-035 through TASK-040 Evidence Gates PASS; TASK-037 v2 Full Campaign Evidence PASS (two qualifying runs; summary SHA-256 `5bf1b84b30226807d79f5a0a4950ae649c3a72a860d6d6b13edd9fa715e24112`); TASK-038 20/10 restart/termination campaign PASS; TASK-039 full JMH/JFR evidence PASS; TASK-040 final evidence reconciliation PASS. Current Closure Input: `8e5d39d` / Standard CI `32709188522` PASS / Qualification Quick Lane `32709188327` PASS.
+Blueprint Status: Approved / Phase 9 Closed
+Implementation: TASK-035 through TASK-040 Evidence Gates PASS; TASK-037 v2 Full Campaign Evidence PASS (two qualifying runs; summary SHA-256 `5bf1b84b30226807d79f5a0a4950ae649c3a72a860d6d6b13edd9fa715e24112`); TASK-038 20/10 restart/termination campaign PASS; TASK-039 full JMH/JFR evidence PASS; TASK-040 final evidence reconciliation PASS. Current Closure Input: `8e5d39d` / Standard CI `32709188522` PASS / Qualification Quick Lane `32709188327` PASS. Merge `ef73f60` / Master CI `32711512036` PASS; `v0.8.0-engineering-baseline` / Tag CI `32711649980` PASS.
 TASK-037: Completed / Archived
 TASK-038: Completed — Full 20/10 restart/termination campaign PASS; Evidence Gate PASS
 TASK-039: Completed / Archived — JMH/JFR matrix and profile evidence PASS
-TASK-040: Completed / Evidence Gate PASS — Closure Proposal prepared
-Phase 9 Closure: Not Authorized
+TASK-040: Completed / Archived / Evidence Gate PASS
+Phase 9 Closure: Approved / Baseline Frozen
 ```
 
 ## 18. Limited Qualification-Only Amendment
