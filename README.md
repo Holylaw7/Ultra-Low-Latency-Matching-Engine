@@ -34,18 +34,42 @@ OpenAI model-selection guidance is linked from `.codex/MASTER_PROMPT.md`.
 
 ## Current Stage
 
-Phase 7 — Live Durable Command Pipeline Integration is completed, approved and
-frozen at `v0.6.0-engineering-baseline`. TASK-024 through TASK-028 passed their
-focused evidence gates; TASK-028 benchmark/docs evidence is at `9fed6b2` / CI
-`32574274905`, with verifier, benchmark-reviewer and docs-auditor PASS. The
-Phase 7 merge commit is `6473365`, master CI is `32574891113`, and tag CI is
-`32574958017`. Phase 8 closure/merge/tag,
-reconnect/deduplication, multi-session support and Product Release remain
-unauthorized. The
-frozen `v0.6.0-engineering-baseline` continues to protect the Phase 2–6
-production paths.
+Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap is completed,
+approved and frozen at `v0.7.0-engineering-baseline`. The merge commit is
+`87abbc1`, Master CI is `32622722649`, and tag CI is `32622757607`.
 
-Phase 8 Blueprint is approved. [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
+Phase 9 Blueprint is approved. [`ADR-0017`](docs/adr/ADR-0017-system-qualification-performance-reliability.md),
+the [Complete Phase 9 Blueprint](tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md)
+and TASK-035 through TASK-040 are authorized in strict dependency order.
+TASK-035 qualification foundation is complete at `22d13fe` with exact-SHA CI
+`32625554518` PASS; TASK-036 Evidence Gate is complete after remediation at
+`f90e42c` with standard CI `32627744868` and quick-lane CI `32627744878` PASS;
+TASK-037 is completed and archived on the `feature/phase9-system-qualification` branch;
+its Limited Qualification-Only Remediation Evidence Gate is PASS at `c420313`
+with standard CI `32645549709` and Quick Lane `32645549694` PASS. The approved
+v2 `MEMORY_STEADY_STATE_V1` Full Campaign then completed as exactly two
+independent qualifying runs: A' (`1,784,601` accepted commands, `3,619,093 ms`,
+22 natural samples, chronological heap guard PASS) and B' (`1,741,681`,
+`3,620,413 ms`, 22 natural samples, heap guard PASS). Their immutable campaign
+summary is at
+`qualification/qualification-results-v2-campaign-20260824/qualification-campaign-summary-v1.txt`
+with SHA-256
+`5bf1b84b30226807d79f5a0a4950ae649c3a72a860d6d6b13edd9fa715e24112` and records
+`campaign.result=true` with 44 cumulative natural samples. Historical Run A/B
+remain preserved/non-qualifying. Sol High Final Campaign Closure Review and
+Human TASK-037 Evidence / Closure Approval are complete. Phase 9 is an
+engineering qualification phase: production source, runtime semantics and
+existing formats remain frozen; TASK-038 Evidence Gate is now complete. TASK-
+039 is completed and archived with its full JMH/JFR evidence, read-only
+reviewer PASS and final status synchronization. TASK-040 is completed with
+its Evidence Gate PASS and prepared Closure Proposal. The current Closure
+Input is `8e5d39d`, Standard CI `32709188522` PASS and Qualification Quick
+Lane `32709188327` PASS. Sol High Phase 9 Closure Review is pending; Phase 9
+Closure, production optimization, Phase 10 and Product Release remain
+unauthorized. The approved 20/10 restart/termination campaign passed with its
+evidence review and immutable artifact hashes.
+
+Phase 8 remains documented by [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
 the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)
 and TASK-029 through TASK-034 are authorized in dependency order. TASK-029
 canonical checkpoint export/restore is complete at `66fc9d2` with exact-SHA CI
@@ -67,8 +91,9 @@ path, and makes listener-last recovery a required invariant. Closure and Sol
 High delta review are approved. Human Phase 8 Closure Approval was followed by
 merge `87abbc1`, Master CI `32622722649`, and annotated
 `v0.7.0-engineering-baseline` tag CI `32622757607`. TASK-029 through TASK-034
-are archived and Phase 8 is frozen. Phase 9 and Product Release remain
-unauthorized until separately governed.
+are archived and Phase 8 is frozen. Phase 9 qualification is now authorized in
+strict dependency order; production optimization and Product Release remain
+separately governed.
 
 The Phase 3 MatchingEngine baseline is completed, approved and frozen at
 `v0.2.0-engineering-baseline`. It contains the Domain Model, frozen Phase 2
