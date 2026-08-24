@@ -10,12 +10,17 @@ import java.util.Objects;
 public final class MatchingEngineApplication {
 
     private static final String APPLICATION_NAME = "Ultra-Low-Latency Matching Engine";
+    private static final String APPLICATION_VERSION = "0.1.0-SNAPSHOT";
 
     private MatchingEngineApplication() {
     }
 
     public static void main(final String[] args) {
-        System.out.println(APPLICATION_NAME);
+        final int exitCode = com.ultralatency.matching.app.RuntimeCommandLine.execute(
+                args, System.out, System.err);
+        if (exitCode != 0) {
+            System.exit(exitCode);
+        }
     }
 
     /**
@@ -48,5 +53,10 @@ public final class MatchingEngineApplication {
 
     public static String applicationName() {
         return APPLICATION_NAME;
+    }
+
+    /** @return reproducible application version exposed by the packaged entrypoint */
+    public static String applicationVersion() {
+        return APPLICATION_VERSION;
     }
 }
