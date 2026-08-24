@@ -10,19 +10,19 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
-| Phase | Phase 10 — Release-Candidate Runtime Assembly (`Blueprint Approved / TASK-043 Next`) |
+| Phase | Phase 10 — Release-Candidate Runtime Assembly (`Blueprint Approved / TASK-044 Next`) |
 | Latest product task | [`TASK-20260823-040`](../tasks/completed/TASK-20260823-040-phase9-final-evidence-reconciliation.md) — Completed / Archived / Phase 9 Baseline Frozen |
 | Latest architecture decision | [`ADR-0018`](../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) — Accepted |
-| Current planning task | TASK-20260824-043 — Authorized / Next; TASK-042 completed with exact-SHA CI PASS |
+| Current planning task | TASK-20260824-044 — Authorized / Next; TASK-043 completed with exact-SHA CI PASS |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
-| Product stage | Phase 9 frozen at `v0.8.0-engineering-baseline`; Phase 10 TASK-041 and TASK-042 completed, TASK-043 next; Product Release separately governed |
+| Product stage | Phase 9 frozen at `v0.8.0-engineering-baseline`; Phase 10 TASK-041 through TASK-043 completed, TASK-044 next; Product Release separately governed |
 | Product approval | Phase 9 Human Closure Approved; merge `ef73f60` / Master CI `32711512036` PASS; `v0.8.0-engineering-baseline` / Tag CI `32711649980` PASS; Closure Input `8e5d39d` / Standard CI `32709188522` / Quick Lane `32709188327`; remediation `5f3b1c5` / Standard CI `32710712341` / Quick Lane `32710712428` PASS |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `feature/phase10-release-candidate-runtime` |
 | Engineering baseline commit | `ef73f60` (Phase 9 merge) |
 | Engineering baseline tag | `v0.8.0-engineering-baseline` |
 | Remote | `origin` — `https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | implementation branch `feature/phase10-release-candidate-runtime` at docs sync `b67d0bf` (technical checkpoint `1eba2c5`), Standard CI `32720687289` and Quick Lane `32720687259` PASS; `origin/master` remains at `3383a63`; `v0.8.0-engineering-baseline` remains frozen at `ef73f60`; `.vscode/` remains untouched |
+| Remote sync | implementation branch `feature/phase10-release-candidate-runtime` at technical checkpoint `247d526`; Standard CI `32724123762` and Quick Lane `32724123745` PASS; `origin/master` remains at `3383a63`; `v0.8.0-engineering-baseline` remains frozen at `ef73f60`; `.vscode/` remains untouched |
 | Latest Phase 7 CI | Master merge `6473365` — [32574891113](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574891113) PASS; tag `v0.6.0-engineering-baseline` — [32574958017](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574958017) PASS |
 | Latest Phase 7 docs CI | TASK-028 evidence checkpoint `9fed6b2` — [32574274905](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574274905) PASS; final docs sync commits are included in merge `6473365` |
 | Latest Phase 8 CI | Technical Closure input `c59d7c0` — [32616802595](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32616802595) PASS; remediation `4bdfb97` — [32620164524](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32620164524) PASS; merge `87abbc1` — [32622722649](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32622722649) PASS; tag — [32622757607](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32622757607) PASS |
@@ -43,7 +43,7 @@
 | Phase 7 — Live Durable Command Pipeline Integration | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-7-live-durable-command-pipeline-blueprint.md); [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md); `v0.6.0-engineering-baseline` |
 | Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap | Completed / Human Approved / Baseline Frozen at `v0.7.0-engineering-baseline` | [`Blueprint`](../tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md); [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md); [`TASK-034 report`](../tasks/reports/PHASE-8-task-034.md) |
 | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability | Completed / Human Approved / Baseline Frozen at `v0.8.0-engineering-baseline` | [`Blueprint`](../tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md); [`ADR-0017`](../docs/adr/ADR-0017-system-qualification-performance-reliability.md); [`TASK-040 report`](../tasks/reports/PHASE-9-task-040.md); merge `ef73f60`; Master CI `32711512036`; Tag CI `32711649980` |
-| Phase 10 — Release-Candidate Runtime Assembly | Approved / TASK-041~042 PASS; TASK-043 Next | [`Blueprint`](../tasks/blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md); [`ADR-0018`](../docs/adr/ADR-0018-release-candidate-runtime-boundary.md); TASK-043 authorized, TASK-044 through TASK-046 locked |
+| Phase 10 — Release-Candidate Runtime Assembly | Approved / TASK-041~043 PASS; TASK-044 Next | [`Blueprint`](../tasks/blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md); [`ADR-0018`](../docs/adr/ADR-0018-release-candidate-runtime-boundary.md); TASK-043 completed, TASK-044 authorized, TASK-045~046 locked |
 | Phase 11+ / Product Release | Future Work | separate Discovery, Blueprint and Human Approval required |
 
 ## Current Product Gate
@@ -143,8 +143,9 @@ ADR-0011 Final Approved
   -> Human Phase 10 Blueprint Approval [Approved 2026-08-24]
   -> TASK-041 [Completed / Evidence Gate PASS; `cc9a957` / CI `32718394177` / Quick `32718394269`]
   -> TASK-042 [Completed / Evidence Gate PASS; `1eba2c5` / CI `32720292382` / Quick `32720292393`]
-  -> TASK-043 [Authorized / Next]
-  -> TASK-044 through TASK-046 [Dependency Locked]
+  -> TASK-043 [Completed / Evidence Gate PASS; `247d526` / CI `32724123762` / Quick `32724123745`]
+  -> TASK-044 [Authorized / Next]
+  -> TASK-045 through TASK-046 [Dependency Locked]
   -> Product Release [Not Authorized]
 ```
 
@@ -230,7 +231,8 @@ synchronization are complete. Phase 10 Discovery and Complete Blueprint
 Proposal are approved. TASK-041 runtime contracts are implemented within the
 additive boundary and passed exact-SHA CI at `cc9a957`. TASK-042 composition
 assembly is complete at `1eba2c5` with Standard CI `32720292382` and Quick Lane
-`32720292393` PASS; TASK-043 is next and later tasks remain locked. Production
+`32720292393` PASS; TASK-043 completed at `247d526` with Standard CI
+`32724123762` and Quick Lane `32724123745` PASS; TASK-044 is next and later tasks remain locked. Production
 optimization and Product Release remain unauthorized.
 Reconnect/deduplication,
 multi-session support and Product Release remain outside the proposal.
@@ -254,7 +256,9 @@ Phase 9 is frozen at `v0.8.0-engineering-baseline` from merge `ef73f60`; Master
 CI `32711512036` and Tag CI `32711649980` passed. Phase 10 Discovery and its
 Complete Blueprint Proposal are approved; TASK-041 passed its Evidence Gate at
 `cc9a957`, TASK-042 passed at `1eba2c5` with Standard CI `32720292382` and Quick
-Lane `32720292393`, and TASK-043 is next in the authorized dependency chain.
+Lane `32720292393`, TASK-043 completed at `247d526` with Standard CI
+`32724123762` and Quick Lane `32724123745`, and TASK-044 is next in the
+authorized dependency chain.
 Product Release remains unauthorized.
 
 The 2026-08-24 Human Limited Provenance Amendment authorizes only

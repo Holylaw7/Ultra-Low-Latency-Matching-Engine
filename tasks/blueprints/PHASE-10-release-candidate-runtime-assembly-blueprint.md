@@ -15,7 +15,7 @@
 | Planned Implementation Branch | `feature/phase10-release-candidate-runtime` |
 | Planned Tasks | `TASK-20260824-041` through `TASK-20260824-046` |
 | Proposal Evidence | `541ef28`; Standard CI `32716540931` PASS; Quick Lane `32716540939` PASS |
-| Next Gate | `TASK-043 Evidence Gate` |
+| Next Gate | `TASK-044 Evidence Gate` |
 
 ## 2. Phase Objective
 
@@ -506,7 +506,7 @@ Gate requires new Human architecture approval.
 
 ```text
 Blueprint Status: Approved
-Implementation: TASK-041 and TASK-042 Completed / Evidence Gate PASS; TASK-043 Authorized / TASK-044 through TASK-046 Dependency Locked
+Implementation: TASK-041, TASK-042 and TASK-043 Completed / Evidence Gate PASS; TASK-044 Authorized / TASK-045 through TASK-046 Dependency Locked
 Merge / v0.9.0-rc.1 / Product Release: Not Authorized
-Next Gate: TASK-043 Evidence Gate
+Next Gate: TASK-044 Evidence Gate
 ```

@@ -6,11 +6,12 @@
 | --- | --- |
 | Task ID | `TASK-20260824-043` |
 | Title | Strict runtime configuration and reproducible packaging |
-| Status | `Authorized / Next` |
+| Status | `Completed / Evidence Gate PASS` |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
 | Dependency | TASK-042 Evidence Gate PASS |
+| Evidence report | [`PHASE-10-task-043.md`](../reports/PHASE-10-task-043.md) |
 
 ## 2. Goal
 
@@ -27,16 +28,16 @@ installer/container/service-manager integration.
 
 ## 4. Acceptance Criteria
 
-- [ ] CLI grammar and exit codes match ADR-0018.
-- [ ] Missing, unknown, duplicate-semantic and invalid configuration is rejected
+- [x] CLI grammar and exit codes match ADR-0018.
+- [x] Missing, unknown, duplicate-semantic and invalid configuration is rejected
   before storage/recovery/listener work.
-- [ ] Safe example config is loopback-only and `SYNC_EACH_APPEND`.
-- [ ] Effective config output is deterministic and contains no unsafe secrets or
+- [x] Safe example config is loopback-only and `SYNC_EACH_APPEND`.
+- [x] Effective config output is deterministic and contains no unsafe secrets or
   accidental absolute-path disclosure beyond explicitly requested values.
-- [ ] Built artifact is exactly `core/target/matching-engine-rc.jar`, declares
+- [x] Built artifact is exactly `core/target/matching-engine-rc.jar`, declares
   `MatchingEngineApplication` and launches on Java 21 with the recorded command.
-- [ ] Artifact content/hash and build metadata are recorded reproducibly.
-- [ ] Full regression, Checkstyle, diff/reviewer and exact-SHA CI pass.
+- [x] Artifact content/hash and build metadata are recorded reproducibly.
+- [x] Full regression, Checkstyle, diff/reviewer and exact-SHA CI pass.
 
 ## 5. Tests and Evidence
 
@@ -54,7 +55,7 @@ removes packaging/config additions without touching data formats.
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
-| 2026-08-24 | Human Developer | Approved / Inherited | TASK-042 Evidence Gate PASS; TASK-043 is now the next authorized task |
+| 2026-08-24 | Human Developer | Approved / Inherited | TASK-042 Evidence Gate PASS; execution authorized in the Phase 10 dependency chain |
 
 ## 8. Current Implementation / Design / ADR Linkage
 
@@ -104,14 +105,16 @@ dependency tree. Absolute-path leakage is prevented by golden sanitized output.
 Rollback reverts build/config artifacts without touching WAL/Snapshot bytes.
 
 - [x] TASK-042 PASS and approval inherited
-- [ ] all normative config/CLI cases covered
-- [ ] reproducible executable launch recorded
-- [ ] no new dependency or machine-specific artifact
-- [ ] report/review/exact-SHA CI PASS
-- [ ] TASK-044 synchronized
+- [x] all normative config/CLI cases covered
+- [x] reproducible executable launch recorded
+- [x] no new dependency or machine-specific artifact
+- [x] report/review/exact-SHA CI PASS
+- [x] TASK-044 synchronized as Authorized / Next
 
 ## 13. Implementation Log
 
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-24 | Proposed | Packaging/config plan frozen | docs only |
+| 2026-08-24 | Implemented | Added strict UTF-8 properties-v1 loader, CLI actions/exit mapping, safe loopback example and Java 21 shaded executable packaging. | Focused 12/12 PASS; Java 21 artifact smoke PASS |
+| 2026-08-24 | Evidence Gate PASS | Technical checkpoint `247d526`; Standard CI `32724123762` and Qualification Quick Lane `32724123745` PASS. | Full reactor, Checkstyle, diff audit and artifact metadata PASS |

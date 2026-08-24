@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260824-044` |
 | Title | Bounded health, readiness and operational status boundary |
-| Status | `Dependency Locked` |
+| Status | `Authorized / Next` |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
@@ -53,7 +53,7 @@ disable/remove the management adapter without changing Protocol v1.
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
-| 2026-08-24 | Human Developer | Pending | TASK-044 after TASK-043 PASS |
+| 2026-08-24 | Human Developer | Approved / Inherited | TASK-043 Evidence Gate PASS; TASK-044 is now the next authorized task |
 
 ## 8. Current Implementation and Selected Protocol
 
