@@ -14,6 +14,7 @@
 | Proposal Branch | `docs/phase10-release-candidate-runtime-blueprint` |
 | Planned Implementation Branch | `feature/phase10-release-candidate-runtime` |
 | Planned Tasks | `TASK-20260824-041` through `TASK-20260824-046` |
+| Proposal Evidence | `541ef28`; Standard CI `32716540931` PASS; Quick Lane `32716540939` PASS |
 | Next Gate | `Human Phase 10 Blueprint Approval` |
 
 ## 2. Phase Objective

@@ -10,6 +10,9 @@
 | ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`PHASE-10-release-candidate-runtime-assembly-blueprint.md`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
 | Tasks | `TASK-20260824-041` through `TASK-20260824-046` — Proposed |
+| Proposal checkpoint | `541ef28` |
+| Standard CI | `32716540931` — PASS |
+| Qualification Quick Lane | `32716540939` — PASS |
 | Implementation | Not authorized |
 | Product Release | Not authorized |
 
@@ -78,3 +81,7 @@ Implementation: Not Authorized
 Existing v0.8.0 tag: Frozen / Unchanged
 Next: Human Phase 10 Blueprint Approval
 ```
+
+`541ef28` and its two passing workflows are the fixed technical proposal input.
+Any later docs-only synchronization SHA is external validation and does not
+replace that input.
