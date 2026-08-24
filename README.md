@@ -84,13 +84,15 @@ readiness and operational status is complete at `c3f0883`; Standard CI
 `32726203105` and Qualification Quick Lane `32726203076` both pass. TASK-045
 shutdown and terminal-failure hardening is complete at `f024aef`; Standard CI
 `32728038236` and Qualification Quick Lane `32728038263` both pass. TASK-046
-is now the next authorized task. The phase
-keeps Protocol v1, WAL v1, Snapshot v1, matching, durability and single-session
-semantics frozen. Implementation continues only in the approved dependency
-chain; merge, `v0.9.0-rc.1` and Product Release remain unauthorized.
-TASK-046 pre-campaign qualification is authorized, while its two Full Runs
-remain separately Human-gated. The approved 20/10 restart/termination campaign
-passed with its evidence review and immutable artifact hashes.
+pre-campaign qualification is complete at `0a96593`; Standard CI
+`32730760419` and Qualification Quick Lane `32730760501` both pass. The
+packaged Java 21 lifecycle matrix passed 30/30 cycles (10 empty/PURE_WAL, 10
+Snapshot-tail and 10 approved post-response forced terminations), with immutable
+summary/hash evidence recorded in [`TASK-046 report`](tasks/reports/PHASE-10-task-046.md).
+The two `RC_ASSEMBLED_RUNTIME_V1` 60-minute Full Runs remain separately
+Human-gated and were not started. Protocol v1, WAL v1, Snapshot v1, matching,
+durability and single-session semantics remain frozen; merge, `v0.9.0-rc.1` and
+Product Release remain unauthorized.
 
 Phase 8 remains documented by [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
 the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)

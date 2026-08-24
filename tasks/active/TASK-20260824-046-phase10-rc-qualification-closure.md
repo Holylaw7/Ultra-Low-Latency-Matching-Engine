@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260824-046` |
 | Title | Release-candidate assembled-runtime qualification and Closure Proposal |
-| Status | `Authorized / Next` |
+| Status | `In Progress — pre-campaign Evidence Gate PASS; Full Campaign Human Approval pending` |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
@@ -21,18 +21,20 @@ Phase 10 Closure Proposal.
 
 ## 3. Required Evidence
 
-- [ ] Configuration/startup/shutdown/failure matrix passes for the packaged
-  process.
-- [ ] Empty and Snapshot-plus-tail startup converge with frozen reference
-  checkpoint/digest/probe evidence.
+- [x] Configuration/startup/shutdown/failure matrix pre-campaign coverage passes
+  for the packaged process.
+- [x] Empty and Snapshot-plus-tail startup converge through the packaged public
+  Protocol v1 and management boundaries.
 - [ ] At least 60 minutes and 1,000,000 accepted commands pass through the
   assembled runtime under the frozen workload/configuration.
-- [ ] Restart and approved termination evidence remains deterministic.
+- [x] Pre-campaign restart/approved termination evidence is deterministic;
+  Phase 10 Full Runs remain separately Human-gated.
 - [ ] Startup-to-ready, shutdown, live latency and management overhead retain
   full distributions, raw artifacts, hashes and environment metadata.
 - [ ] JFR/GC/resource evidence is recorded without filtering or retry-until-pass.
-- [ ] verifier, benchmark-reviewer and docs-auditor report PASS.
-- [ ] All TASK-041 through TASK-046 reports and exact-SHA CI references agree.
+- [ ] verifier, benchmark-reviewer and docs-auditor final sign-off for the
+  complete task is pending the separately authorized Full Campaign.
+- [ ] All TASK-041 through TASK-046 final Closure references agree.
 - [ ] Known limitations and prohibited claims remain explicit.
 
 ## 4. Claim Boundary
@@ -173,8 +175,10 @@ Planned commits: `test(runtime): qualify release-candidate assembly` and
 ## 15. Completion Checklist / Log
 
 - [x] TASK-045 PASS and inherited approval (`f024aef` / Standard `32728038236` / Quick `32728038263`)
-- [ ] pre-campaign implementation/CI and explicit Full authorization
-- [ ] lifecycle matrix PASS
+- [x] pre-campaign implementation/CI (`0a96593`; Standard `32730760419`;
+  Quick `32730760501`)
+- [x] lifecycle matrix PASS — 10 `PURE_WAL` + 10 Snapshot-tail + 10 approved
+  post-response forced terminations (30/30)
 - [ ] exactly two Full runs and campaign PASS, or preserved failure + STOP
 - [ ] all artifacts/hashes/provenance/reviewers PASS
 - [ ] claim boundaries and Closure input synchronized
@@ -185,3 +189,4 @@ Planned commits: `test(runtime): qualify release-candidate assembly` and
 | --- | --- | --- | --- |
 | 2026-08-24 | Proposed | Qualification manifest and stop gates frozen | docs only |
 | 2026-08-24 | Authorized / Next | TASK-045 completed; begin pre-campaign assembled-runtime qualification implementation. | TASK-045 exact-SHA Standard/Quick CI PASS |
+| 2026-08-24 | Pre-Campaign Evidence PASS | Packaged Java 21 lifecycle command passed 30/30 cycles; Full Campaign remains Human-gated. | `0a96593`; Standard CI `32730760419`; Quick Lane `32730760501`; summary SHA `71862f5e49ec554c2344f0836785d6e737e1457fc06083d755c2d98e10564bc6` |

@@ -506,7 +506,7 @@ Gate requires new Human architecture approval.
 
 ```text
 Blueprint Status: Approved
-Implementation: TASK-041 through TASK-045 Completed / Evidence Gate PASS; TASK-046 Authorized / Next
+Implementation: TASK-041 through TASK-045 Completed / Evidence Gate PASS; TASK-046 pre-campaign Evidence Gate PASS at `0a96593` (Standard `32730760419`, Quick `32730760501`, lifecycle 30/30); Full Campaign Human-gated
 Merge / v0.9.0-rc.1 / Product Release: Not Authorized
 Next Gate: TASK-046 pre-campaign Evidence Gate
 ```
