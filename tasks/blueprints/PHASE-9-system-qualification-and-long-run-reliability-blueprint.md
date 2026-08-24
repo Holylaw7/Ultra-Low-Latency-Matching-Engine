@@ -14,7 +14,7 @@
 | Blueprint Branch | `docs/phase9-system-qualification-blueprint` |
 | Implementation Branch | `feature/phase9-system-qualification` |
 | Planned Tasks | `TASK-20260823-035` through `TASK-20260823-040` |
-| Next Gate | `Phase 9 Evidence/Closure Review; TASK-038 remains locked` |
+| Next Gate | `TASK-038 Authorized / Next; Phase 9 Closure remains unauthorized` |
 
 ## 2. Phase Goal
 
@@ -309,7 +309,9 @@ Release. Phase 10 remains unauthorized.
 
 ```text
 Blueprint Status: Approved
-Implementation: TASK-036 Evidence Gate PASS; TASK-037 v2 Full Campaign Evidence PASS (two qualifying runs; summary SHA-256 `5bf1b84b30226807d79f5a0a4950ae649c3a72a860d6d6b13edd9fa715e24112`)
+Implementation: TASK-035, TASK-036 and TASK-037 Evidence Gates PASS; TASK-037 v2 Full Campaign Evidence PASS (two qualifying runs; summary SHA-256 `5bf1b84b30226807d79f5a0a4950ae649c3a72a860d6d6b13edd9fa715e24112`); Sol High Final Campaign Closure Review PASS; Human TASK-037 Evidence / Closure Approval recorded
+TASK-037: Completed / Archived
+TASK-038: Authorized / Next
 Phase 9 Closure: Not Authorized
 ```
 
@@ -354,5 +356,6 @@ NON-QUALIFYING` evidence. Their original artifacts are never backfilled or
 repackaged. A separate Human approval subsequently authorized exactly two new
 v2 runs; both passed and are recorded by the immutable campaign summary above.
 Production code/tests, dependencies, workload/thresholds and JVM/GC settings
-remain frozen. Phase 9 Closure remains separately authorized only after final
-Evidence/Closure Review.
+remain frozen. TASK-038 is authorized next in dependency order. Phase 9
+Closure remains separately authorized only after TASK-038 through TASK-040 and
+the final Evidence/Closure Review.

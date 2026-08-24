@@ -10,13 +10,13 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
-| Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability (`TASK-037 v2 Full Campaign PASS; Closure Review pending`) |
+| Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability (`TASK-037 Completed/Archived; TASK-038 Authorized / Next`) |
 | Latest product task | [`TASK-20260822-034`](../tasks/completed/TASK-20260822-034-phase8-benchmark-docs-closure.md) — Completed / Archived / Baseline Frozen |
 | Latest architecture decision | [`ADR-0017`](../docs/adr/ADR-0017-system-qualification-performance-reliability.md) — Approved |
-| Current planning task | [`TASK-20260823-037`](../tasks/active/TASK-20260823-037-full-soak-resource-qualification.md) — v2 Full Campaign PASS; Phase 9 Evidence/Closure Review pending |
+| Current planning task | [`TASK-20260823-038`](../tasks/active/TASK-20260823-038-restart-termination-recovery-convergence.md) — Authorized / Next; TASK-037 Human Closure Approved |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 8 Baseline Frozen at `v0.7.0-engineering-baseline`; Phase 9 qualification in progress; Product Release separately governed |
-| Product approval | Phase 8 Human Closure Approved; merge `87abbc1` / Master CI `32622722649` PASS; `v0.7.0-engineering-baseline` / Tag CI `32622757607` PASS; Phase 9 Blueprint Approved / TASK-037 v2 campaign PASS |
+| Product approval | Phase 8 Human Closure Approved; merge `87abbc1` / Master CI `32622722649` PASS; `v0.7.0-engineering-baseline` / Tag CI `32622757607` PASS; Phase 9 Blueprint Approved / TASK-037 v2 campaign and Human Closure PASS / TASK-038 authorized next |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `feature/phase9-system-qualification` |
 | Engineering baseline commit | `87abbc1` (Phase 8 merge) |
@@ -42,7 +42,7 @@
 | Phase 6 — Binary Network Protocol and Single-Session Gateway | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-6-network-protocol-blueprint.md); [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md); [`Closure`](../tasks/reports/PHASE-6-network-protocol-closure.md); `v0.5.0-engineering-baseline` |
 | Phase 7 — Live Durable Command Pipeline Integration | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-7-live-durable-command-pipeline-blueprint.md); [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md); `v0.6.0-engineering-baseline` |
 | Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap | Completed / Human Approved / Baseline Frozen at `v0.7.0-engineering-baseline` | [`Blueprint`](../tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md); [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md); [`TASK-034 report`](../tasks/reports/PHASE-8-task-034.md) |
-| Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability | Blueprint Approved / TASK-035/036 PASS / TASK-037 v2 Full Campaign PASS | [`Blueprint`](../tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md); [`ADR-0017`](../docs/adr/ADR-0017-system-qualification-performance-reliability.md); [`TASK-037`](../tasks/active/TASK-20260823-037-full-soak-resource-qualification.md) |
+| Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability | Blueprint Approved / TASK-035/036/037 PASS / TASK-037 Archived / TASK-038 Authorized | [`Blueprint`](../tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md); [`ADR-0017`](../docs/adr/ADR-0017-system-qualification-performance-reliability.md); [`TASK-037`](../tasks/completed/TASK-20260823-037-full-soak-resource-qualification.md); [`TASK-038`](../tasks/active/TASK-20260823-038-restart-termination-recovery-convergence.md) |
 | Phase 10+ — Further recovery evolution and production hardening | Future Work | separately approved future Blueprints |
 
 ## Current Product Gate
@@ -131,7 +131,8 @@ ADR-0011 Final Approved
   -> Phase 9 Blueprint [Approved]
   -> TASK-20260823-035 [Completed / Evidence Gate PASS at `22d13fe` / CI `32625554518`]
   -> TASK-20260823-036 [Completed / Evidence Gate PASS at `f90e42c` / standard CI `32627744868` and quick CI `32627744878`]
-   -> TASK-20260823-037 [v2 Full Campaign Evidence PASS; Phase 9 Closure Review pending]
+  -> TASK-20260823-037 [Completed / Archived; Human Closure Approved]
+  -> TASK-20260823-038 [Authorized / Next]
 ```
 
 Stage 1 Domain/API Foundation and Stage 2 MatchingEngine Core are completed and
@@ -207,8 +208,9 @@ Full Runs; both passed all run gates. The controlled ignored evidence root
 `qualification/qualification-results-v2-campaign-20260824/` contains the
 immutable manifests and atomic campaign summary SHA-256
 `5bf1b84b30226807d79f5a0a4950ae649c3a72a860d6d6b13edd9fa715e24112`, recording
-two qualifying runs and 44 cumulative natural samples. Phase 9 Closure,
-TASK-038, merge/tag and Product Release remain unauthorized.
+two qualifying runs and 44 cumulative natural samples. TASK-037 Human Evidence /
+Closure Approval is complete; TASK-038 is authorized next. Phase 9 Closure,
+merge/tag and Product Release remain unauthorized.
 Production optimization,
 Phase 10 and Product Release remain locked.
 Reconnect/deduplication,
@@ -224,7 +226,8 @@ streaming/bounded aggregation, the separately versioned
 `MEMORY_STEADY_STATE_V1` lane, and v2 immutable provenance/campaign-summary
 evidence while preserving the existing workload vectors. Historical Run #1 and
 Run #2 remain preserved non-qualifying evidence; the new A'/B' campaign is
-separate. TASK-038 remains locked pending Phase 9 Closure.
+separate. TASK-037 is archived after Human Closure Approval and TASK-038 is
+authorized next; Phase 9 Closure remains unauthorized.
 
 The 2026-08-24 Human Limited Provenance Amendment authorizes only
 `qualification-run-manifest-v2`, runtime-captured provenance,
@@ -234,7 +237,8 @@ focused tests and evidence documentation. The configuration identity excludes
 run ID, timestamps, PID, paths and outcomes; comparability identity records the
 approved JDK/JVM/GC/heap/OS/filesystem/Netty/Disruptor/JFR dimensions. Existing
 Run A/B artifacts are never backfilled or repackaged. The next gate after the
-approved campaign evidence is Phase 9 Evidence/Closure Review.
+approved campaign evidence was Sol High Final Campaign Closure Review followed
+by Human TASK-037 Evidence / Closure Approval; TASK-038 is now authorized next.
 
 Current TASK-037 v2 campaign evidence:
 

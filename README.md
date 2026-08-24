@@ -44,7 +44,7 @@ and TASK-035 through TASK-040 are authorized in strict dependency order.
 TASK-035 qualification foundation is complete at `22d13fe` with exact-SHA CI
 `32625554518` PASS; TASK-036 Evidence Gate is complete after remediation at
 `f90e42c` with standard CI `32627744868` and quick-lane CI `32627744878` PASS;
-TASK-037 is in progress on the `feature/phase9-system-qualification` branch;
+TASK-037 is completed and archived on the `feature/phase9-system-qualification` branch;
 its Limited Qualification-Only Remediation Evidence Gate is PASS at `c420313`
 with standard CI `32645549709` and Quick Lane `32645549694` PASS. The approved
 v2 `MEMORY_STEADY_STATE_V1` Full Campaign then completed as exactly two
@@ -56,10 +56,12 @@ summary is at
 with SHA-256
 `5bf1b84b30226807d79f5a0a4950ae649c3a72a860d6d6b13edd9fa715e24112` and records
 `campaign.result=true` with 44 cumulative natural samples. Historical Run A/B
-remain preserved/non-qualifying. Phase 9 is an engineering qualification
-phase: production source, runtime semantics and existing formats remain
-frozen; TASK-038, Phase 9 Closure, production optimization, Phase 10 and
-Product Release remain unauthorized.
+remain preserved/non-qualifying. Sol High Final Campaign Closure Review and
+Human TASK-037 Evidence / Closure Approval are complete. Phase 9 is an
+engineering qualification phase: production source, runtime semantics and
+existing formats remain frozen; TASK-038 is authorized next, while Phase 9
+Closure, production optimization, Phase 10 and Product Release remain
+unauthorized.
 
 Phase 8 remains documented by [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
 the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)

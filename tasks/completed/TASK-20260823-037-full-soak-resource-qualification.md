@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260823-037` |
 | Title | Full soak and resource lifecycle qualification |
-| Status | `In Progress / v2 Full Campaign Evidence PASS; Closure Review Pending` |
+| Status | `Completed / Archived / Human Closure Approved` |
 | Owner | Human Developer |
 | Implementer | Main Codex / Luna Max — only writer |
 | Created | `2026-08-23` |
@@ -14,12 +14,12 @@
 | Related ADR | [`ADR-0017`](../../docs/adr/ADR-0017-system-qualification-performance-reliability.md) |
 | Phase Blueprint | [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md) |
 | Authorization Mode | `Blueprint` |
-| Current Stage | `v2 MEMORY_STEADY_STATE_V1 Full Campaign complete` |
-| Next Gate | Human Phase 9 Evidence/Closure Review; TASK-038 remains locked |
+| Current Stage | `v2 MEMORY_STEADY_STATE_V1 Full Campaign complete; Human TASK-037 Closure Approved` |
+| Next Gate | `TASK-038 Authorized / Next; Phase 9 Closure remains unauthorized` |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Remediation checkpoint | `e678a98` / standard CI `32683768373` PASS / Quick Lane `32683768370` PASS |
-| Final pre-campaign docs synchronization | `dcfcccd` / standard CI `32684036767` PASS / Quick Lane `32684036758` PASS |
+| Final evidence/status synchronization | `de3fae9` / standard CI `32692294939` PASS / Quick Lane `32692294954` PASS |
 
 ## 2. Goal
 
@@ -105,7 +105,7 @@ must never be reported as Full Qualification.
 - [ ] campaign summary publication is atomic, immutable, read-back validated
   and references member manifest SHA-256 values without copying run evidence.
 - [x] verifier and docs-auditor return PASS after the approved v2 Full Campaign;
-  TASK-038 remains locked pending Phase 9 Closure.
+  Human TASK-037 Closure Approval is recorded and TASK-038 is authorized next.
 
 Remediation Evidence Gate is PASS at `c420313`: `mvn -pl qualification -am test`
 passes 36 qualification tests (2 intentionally skipped) and 195 core tests;
@@ -167,8 +167,9 @@ read-only reviewer PASS and exact-SHA CI all agree. Any production defect,
 unexpected terminal state, timeout, digest mismatch, resource leak or
 configuration drift remains failure evidence and is escalated through the
 Exception Gate; it is not repaired inside this task by changing frozen
-production code. The separate Human v2 Full Campaign approval has now been
-recorded; TASK-038 remains locked until this task reaches Phase 9 Closure.
+production code. The separate Human v2 Full Campaign approval and Human
+TASK-037 Closure Approval have now been recorded; TASK-038 is authorized next,
+while Phase 9 Closure remains separately unauthorized.
 
 ## 9. Limited Qualification-Only Amendment Status
 
@@ -210,6 +211,14 @@ directory is intentionally ignored by `.gitignore`; raw artifacts remain
 immutable and are not committed into the source baseline. Historical Run A/B
 artifacts remain untouched and excluded from this campaign.
 
-The campaign evidence is accepted pending the separate Phase 9 Closure Review.
-TASK-038, Phase 9 Closure, merge, `v0.8.0-engineering-baseline` and Product
-Release remain unauthorized.
+The campaign evidence was accepted by Sol High Final Campaign Closure Review
+and Human TASK-037 Evidence / Closure Approval. TASK-037 is completed and
+archived. TASK-038 is authorized as the next dependency-ordered task. Phase 9
+Closure, merge, `v0.8.0-engineering-baseline` and Product Release remain
+unauthorized.
+
+## Human TASK-037 Closure Approval
+
+| Date | Reviewer | Decision | Notes |
+| --- | --- | --- | --- |
+| 2026-08-24 | Human Developer | Approved | Campaign evidence, Sol High final review and known claim limitations accepted; TASK-038 authorized next. Phase 9 Closure, merge, tag and Product Release remain unauthorized. |

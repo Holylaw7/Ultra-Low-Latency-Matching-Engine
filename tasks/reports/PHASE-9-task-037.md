@@ -7,7 +7,7 @@
 | Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability |
 | Task | `TASK-20260823-037` |
 | Stage | qualification-run-manifest-v2 and immutable campaign-summary remediation |
-| Result | v2 Full Campaign Evidence PASS — two new qualifying runs; Phase 9 Closure Review pending |
+| Result | Completed / Archived — v2 Full Campaign Evidence PASS; Sol High Review PASS; Human TASK-037 Closure Approved |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Branch | `feature/phase9-system-qualification` |
 | Implementation | Prior harness commits plus bounded remediation `82112b2`, continuous-lane fixes `2501c71`/`3b5b451`, public-state/manifest fixes `6fc813b`/`23ca7f0`; v2 provenance/summary remediation `e678a98` |
@@ -15,8 +15,8 @@
 | Standard CI | `32683768373` PASS for remediation checkpoint `e678a98` |
 | Quick Lane CI | `32683768370` PASS; Run A/B raw artifacts preserved as ignored evidence |
 | Campaign Evidence | A'/B' PASS; immutable summary SHA-256 `5bf1b84b30226807d79f5a0a4950ae649c3a72a860d6d6b13edd9fa715e24112`; cumulative natural samples `44` |
-| Final docs synchronization | `dcfcccd` / standard CI `32684036767` PASS / Quick Lane `32684036758` PASS |
-| Next Gate | Human Phase 9 Evidence/Closure Review; TASK-038 remains locked |
+| Final evidence/status synchronization | `de3fae9` / standard CI `32692294939` PASS / Quick Lane `32692294954` PASS |
+| Next Gate | TASK-038 Authorized / Next; Phase 9 Closure remains unauthorized |
 
 ## Goal
 
@@ -315,9 +315,17 @@ subsequently granted and the resulting A'/B' campaign is recorded above.
 
 ## Gate
 
-TASK-037 remains `In Progress` with the approved v2 Full Campaign evidence
-complete and pending final Phase 9 Evidence/Closure Review. Historical Run #1
-and Run #2 remain preserved non-qualifying evidence. The new A'/B' campaign is
-the only qualifying campaign and is recorded by the immutable summary above.
-TASK-038, Phase 9 Closure, merge and `v0.8.0-engineering-baseline` remain
-unauthorized.
+TASK-037 is `Completed / Archived` after the approved v2 Full Campaign
+evidence, Sol High Final Campaign Closure Review and Human TASK-037 Evidence /
+Closure Approval. Historical Run #1 and Run #2 remain preserved
+non-qualifying evidence. The new A'/B' campaign is the only qualifying campaign
+and is recorded by the immutable summary above.
+
+TASK-038 is authorized as the next dependency-ordered task. Phase 9 Closure,
+merge and `v0.8.0-engineering-baseline` remain unauthorized.
+
+## Human TASK-037 Closure Approval
+
+| Date | Reviewer | Decision | Notes |
+| --- | --- | --- | --- |
+| 2026-08-24 | Human Developer | Approved | TASK-037 campaign evidence, Sol High final review and known claim limitations accepted; TASK-038 authorized next. Phase 9 Closure, merge, tag and Product Release remain unauthorized. |
