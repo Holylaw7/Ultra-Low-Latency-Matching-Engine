@@ -15,7 +15,7 @@
 | Phase Blueprint | [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md) |
 | Authorization Mode | `Blueprint` |
 | Current Stage | `Full 20/10 restart/termination campaign and read-only evidence review passed` |
-| Next Gate | `TASK-039 Authorized / Next; Phase 9 Closure remains unauthorized` |
+| Next Gate | `TASK-040 In Progress; Phase 9 Closure remains unauthorized` |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Dependency | `TASK-037 Completed / Archived / Human Closure Approved` |
@@ -104,8 +104,9 @@ Full campaign evidence:
   Qualification Quick Lane `32698925378` PASS;
 - evidence synchronization checkpoint `da5ac1f` / Standard CI `32699178851`
   PASS / Qualification Quick Lane `32699178800` PASS;
-- verifier PASS and docs-auditor PASS; TASK-039 is now authorized as the next
-  dependency-ordered task.
+- verifier PASS and docs-auditor PASS; TASK-039 subsequently completed its
+  JMH/JFR Evidence Gate and TASK-040 is now the active dependency-ordered
+  evidence-reconciliation task.
 
 ## 6. Frozen Boundary
 
@@ -133,10 +134,11 @@ git status --short --branch
 
 ## 9. Gate
 
-TASK-038 may proceed because TASK-037 has completed its campaign Evidence Gate,
-Sol High Final Campaign Closure Review and Human Evidence / Closure Approval.
-TASK-039 and TASK-040 remain dependency-locked. Phase 9 Closure, merge,
-baseline tagging and Product Release remain unauthorized.
+TASK-038 completed because TASK-037 passed its campaign Evidence Gate, Sol High
+Final Campaign Closure Review and Human Evidence / Closure Approval. TASK-039
+subsequently completed its JMH/JFR Evidence Gate. TASK-040 is now the active
+final evidence-reconciliation task. Phase 9 Closure, merge, baseline tagging
+and Product Release remain unauthorized.
 
 ## 10. Exception Gate
 

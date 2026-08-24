@@ -14,7 +14,7 @@
 | Blueprint Branch | `docs/phase9-system-qualification-blueprint` |
 | Implementation Branch | `feature/phase9-system-qualification` |
 | Planned Tasks | `TASK-20260823-035` through `TASK-20260823-040` |
-| Next Gate | `TASK-039 Authorized / Next; Phase 9 Closure remains unauthorized` |
+| Next Gate | `TASK-040 In Progress; Closure Proposal pending; Phase 9 Closure remains unauthorized` |
 
 ## 2. Phase Goal
 
@@ -309,10 +309,11 @@ Release. Phase 10 remains unauthorized.
 
 ```text
 Blueprint Status: Approved
-Implementation: TASK-035, TASK-036 and TASK-037 Evidence Gates PASS; TASK-037 v2 Full Campaign Evidence PASS (two qualifying runs; summary SHA-256 `5bf1b84b30226807d79f5a0a4950ae649c3a72a860d6d6b13edd9fa715e24112`); Sol High Final Campaign Closure Review PASS; Human TASK-037 Evidence / Closure Approval recorded
+Implementation: TASK-035 through TASK-039 Evidence Gates PASS; TASK-037 v2 Full Campaign Evidence PASS (two qualifying runs; summary SHA-256 `5bf1b84b30226807d79f5a0a4950ae649c3a72a860d6d6b13edd9fa715e24112`); TASK-038 20/10 restart/termination campaign PASS; TASK-039 full JMH/JFR evidence PASS with final status synchronization; TASK-040 Closure Proposal in progress
 TASK-037: Completed / Archived
 TASK-038: Completed — Full 20/10 restart/termination campaign PASS; Evidence Gate PASS
-TASK-039: Authorized / Next
+TASK-039: Completed / Archived — JMH/JFR matrix and profile evidence PASS
+TASK-040: In Progress — final evidence reconciliation and Closure Proposal
 Phase 9 Closure: Not Authorized
 ```
 

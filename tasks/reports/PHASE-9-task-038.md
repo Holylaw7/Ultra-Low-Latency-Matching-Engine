@@ -9,7 +9,7 @@
 | Dependency | TASK-037 Human Closure Approved |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
-| Next Gate | `TASK-039 Authorized / Next; Phase 9 Closure remains unauthorized` |
+| Next Gate | `TASK-040 In Progress; Phase 9 Closure remains unauthorized` |
 
 ## Implemented Scope
 
@@ -95,8 +95,9 @@ any later documentation-only synchronization has its own external CI result.
 
 The evidence synchronization checkpoint `da5ac1f` passed Standard CI
 `32699178851` and Qualification Quick Lane `32699178800`. The verifier and
-docs-auditor both returned `PASS`; the task is now complete for its approved
-restart/termination scope and TASK-039 is authorized next.
+docs-auditor both returned `PASS`; the task is complete for its approved
+restart/termination scope. TASK-039 subsequently completed its JMH/JFR
+Evidence Gate, and TASK-040 is now reconciling the final Phase 9 evidence.
 
 ## Claim Boundary
 
@@ -110,13 +111,13 @@ in-flight outcome remains ambiguous.
 
 No production source, production tests, dependency, Protocol v1, WAL v1,
 Snapshot v1 or recovery semantic files were modified. `.vscode/` remains
-untouched and untracked. TASK-039, Phase 9 Closure, merge and baseline tagging
-remain unauthorized.
+untouched and untracked. Phase 9 Closure, merge and baseline tagging remain
+unauthorized.
 
 ## Evidence Gate
 
 The TASK-038 Evidence Gate is PASS. Any production boundary change, recovery
 semantic change, new dependency, workload/threshold tuning, or weakened
 ambiguous-outcome claim in later work triggers the Exception Gate. TASK-039 is
-authorized next; Phase 9 Closure, merge and baseline tagging remain
-unauthorized.
+complete and TASK-040 is the active final evidence-reconciliation task; Phase 9
+Closure, merge and baseline tagging remain unauthorized.
