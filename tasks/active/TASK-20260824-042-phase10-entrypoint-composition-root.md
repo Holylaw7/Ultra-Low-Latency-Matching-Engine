@@ -71,7 +71,7 @@ retain `v0.8.0` as the runnable component baseline.
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
-| 2026-08-24 | Human Developer | Pending | TASK-042 only after Blueprint + TASK-041 PASS |
+| 2026-08-24 | Human Developer | Approved / Inherited | Phase 10 Blueprint approval plus TASK-041 Evidence Gate PASS; TASK-042 implementation now authorized |
 
 ## 9. Current Implementation and Detailed Design
 
