@@ -5,11 +5,11 @@
 | Field | Value |
 | --- | --- |
 | Task | `TASK-20260823-038` |
-| Result | `In Progress — Full 20/10 campaign PASS; Evidence Gate pending read-only review` |
+| Result | `Completed — Full 20/10 campaign PASS; Evidence Gate PASS` |
 | Dependency | TASK-037 Human Closure Approved |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
-| Next Gate | Read-only campaign evidence review / exact-SHA CI; TASK-039 remains locked |
+| Next Gate | `TASK-039 Authorized / Next; Phase 9 Closure remains unauthorized` |
 
 ## Implemented Scope
 
@@ -93,6 +93,11 @@ The campaign evidence checkpoint was `a7a98cb` with exact-SHA Standard CI
 checkpoint is the technical input for the current read-only Evidence Gate;
 any later documentation-only synchronization has its own external CI result.
 
+The evidence synchronization checkpoint `da5ac1f` passed Standard CI
+`32699178851` and Qualification Quick Lane `32699178800`. The verifier and
+docs-auditor both returned `PASS`; the task is now complete for its approved
+restart/termination scope and TASK-039 is authorized next.
+
 ## Claim Boundary
 
 This task does not claim hardware power-loss safety, reconnect/deduplication,
@@ -110,8 +115,8 @@ remain unauthorized.
 
 ## Evidence Gate
 
-Before TASK-039 can unlock, run focused and full verification, frozen-path
-audit, `git diff --check`, verifier/docs-auditor read-only review and exact-SHA
-CI. Any production boundary change, recovery semantic change, new dependency,
-workload/threshold tuning, or weakened ambiguous-outcome claim triggers the
-Exception Gate.
+The TASK-038 Evidence Gate is PASS. Any production boundary change, recovery
+semantic change, new dependency, workload/threshold tuning, or weakened
+ambiguous-outcome claim in later work triggers the Exception Gate. TASK-039 is
+authorized next; Phase 9 Closure, merge and baseline tagging remain
+unauthorized.

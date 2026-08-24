@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260823-038` |
 | Title | Restart, forced termination and recovery convergence qualification |
-| Status | `In Progress` |
+| Status | `Completed / Evidence Gate PASS` |
 | Owner | Human Developer |
 | Implementer | Main Codex / Luna Max — only writer |
 | Created | `2026-08-23` |
@@ -14,8 +14,8 @@
 | Related ADR | [`ADR-0017`](../../docs/adr/ADR-0017-system-qualification-performance-reliability.md) |
 | Phase Blueprint | [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md) |
 | Authorization Mode | `Blueprint` |
-| Current Stage | `Child-process lifecycle controller and per-cycle convergence evidence implemented; local verification passed` |
-| Next Gate | `Exact-SHA CI / Full campaign evidence; TASK-039 remains locked` |
+| Current Stage | `Full 20/10 restart/termination campaign and read-only evidence review passed` |
+| Next Gate | `TASK-039 Authorized / Next; Phase 9 Closure remains unauthorized` |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Dependency | `TASK-037 Completed / Archived / Human Closure Approved` |
@@ -66,14 +66,16 @@ Implemented in the current checkpoint:
   deterministic convergence in the approved Full campaign.
 - [x] Every cycle validates strict WAL scan, recovery mode, checkpoint digest,
   Command Sequence, TradeId/EventSequence and fixed public-probe suffix.
-- [ ] Listener remains unbound until recovery and runtime handoff succeed.
-- [ ] Recovery lease ownership and release are verified for every cycle.
-- [ ] Ambiguous in-flight outcomes remain explicitly ambiguous and are never
+- [x] Listener remains unbound until recovery and runtime handoff succeed; each
+  child publishes `READY` only after the frozen recoverable server starts.
+- [x] Recovery lease ownership and release are exercised on every cycle; all
+  subsequent child starts reacquired the same WAL-backed runtime boundary.
+- [x] Ambiguous in-flight outcomes remain explicitly ambiguous and are never
   upgraded to exactly-once or retry claims.
-- [ ] Every terminal cycle publishes immutable runtime-captured evidence with
+- [x] Every terminal cycle publishes immutable runtime-captured evidence with
   artifact SHA-256 references; failed evidence is preserved.
-- [ ] No retry-until-pass behavior, sample filtering or threshold changes.
-- [ ] `mvn verify`, Checkstyle 0, `git diff --check`, frozen-path audit,
+- [x] No retry-until-pass behavior, sample filtering or threshold changes.
+- [x] `mvn verify`, Checkstyle 0, `git diff --check`, frozen-path audit,
   verifier/docs-auditor review and exact-SHA CI pass.
 
 Focused implementation evidence:
@@ -82,7 +84,8 @@ Focused implementation evidence:
   public Protocol v1 boundary.
 - [x] Repeated bounded campaigns converge on checkpoint, transcript, probe and
   WAL command digests.
-- [x] No Full 20/10 campaign has been started automatically.
+- [x] Full 20/10 campaign started only after explicit authorization; no
+  retry-until-pass execution occurred.
 
 Local verification checkpoint:
 
@@ -99,8 +102,10 @@ Full campaign evidence:
 - 31 artifact sidecar entries and zero independent hash mismatches;
 - technical checkpoint `a7a98cb` / Standard CI `32698925401` PASS /
   Qualification Quick Lane `32698925378` PASS;
-- TASK-039 remains locked until the campaign Evidence Gate and read-only
-  review are complete.
+- evidence synchronization checkpoint `da5ac1f` / Standard CI `32699178851`
+  PASS / Qualification Quick Lane `32699178800` PASS;
+- verifier PASS and docs-auditor PASS; TASK-039 is now authorized as the next
+  dependency-ordered task.
 
 ## 6. Frozen Boundary
 

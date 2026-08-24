@@ -59,11 +59,11 @@ with SHA-256
 remain preserved/non-qualifying. Sol High Final Campaign Closure Review and
 Human TASK-037 Evidence / Closure Approval are complete. Phase 9 is an
 engineering qualification phase: production source, runtime semantics and
-existing formats remain frozen; TASK-038 is authorized next, while Phase 9
-Closure, production optimization, Phase 10 and Product Release remain
-unauthorized. TASK-038 is now in progress; its approved 20/10
-restart/termination campaign has passed, while the Evidence Gate and
-read-only review remain pending.
+existing formats remain frozen; TASK-038 Evidence Gate is now complete. TASK-
+039 is authorized next but implementation has not started; Phase 9 Closure,
+production optimization, Phase 10 and Product Release remain unauthorized.
+The approved 20/10 restart/termination campaign passed with its evidence
+review and immutable artifact hashes.
 
 Phase 8 remains documented by [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
 the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)

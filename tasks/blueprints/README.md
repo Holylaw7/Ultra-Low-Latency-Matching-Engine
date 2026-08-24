@@ -34,8 +34,8 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   TASK-036 Evidence Gate PASS at `f90e42c` / standard CI `32627744868` and Quick Lane `32627744878`; TASK-037 Limited Qualification-Only Remediation Evidence Gate PASS at `c420313` / standard CI `32645549709` and Quick Lane `32645549694`. The remediation adds bounded streaming evidence and a separately versioned `MEMORY_STEADY_STATE_V1` lane. The separately approved v2 Full Campaign is now PASS: two immutable runs,
   44 cumulative natural post-GC samples, and campaign summary SHA-256
   `5bf1b84b30226807d79f5a0a4950ae649c3a72a860d6d6b13edd9fa715e24112`.
-  TASK-037 Human Evidence / Closure Approval is complete; TASK-038 is now in
-  progress with the approved 20/10 restart/termination campaign passing and
-  read-only Evidence Gate pending. TASK-039, Phase 9 Closure, merge,
-  `v0.8.0-engineering-baseline`, Phase 10 and Product Release remain
-  unauthorized.
+  TASK-037 Human Evidence / Closure Approval is complete; TASK-038 Evidence
+  Gate is PASS after the approved 20/10 restart/termination campaign and
+  read-only review. TASK-039 is authorized next but implementation has not
+  started. Phase 9 Closure, merge, `v0.8.0-engineering-baseline`, Phase 10 and
+  Product Release remain unauthorized.
