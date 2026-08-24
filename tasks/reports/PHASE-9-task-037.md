@@ -6,15 +6,16 @@
 | --- | --- |
 | Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability |
 | Task | `TASK-20260823-037` |
-| Stage | Limited Qualification-Only Remediation / Evidence Gate |
-| Result | Remediation Evidence Gate PASS — Human Full Campaign approval pending; no new Full Campaign authorized |
+| Stage | qualification-run-manifest-v2 and immutable campaign-summary remediation |
+| Result | CHANGES REQUIRED — raw Run A/B remain preserved non-qualifying evidence; v2 provenance and campaign-summary evidence remediation is in progress |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Branch | `feature/phase9-system-qualification` |
-| Implementation | Prior harness commits plus bounded remediation `82112b2`, continuous-lane fixes `2501c71`/`3b5b451`, public-state/manifest fixes `6fc813b`/`23ca7f0` |
+| Implementation | Prior harness commits plus bounded remediation `82112b2`, continuous-lane fixes `2501c71`/`3b5b451`, public-state/manifest fixes `6fc813b`/`23ca7f0`; v2 provenance/summary remediation is the current working tree |
 | Duration-gate remediation | `5a3917d` |
 | Standard CI | `32645549709` PASS for remediation checkpoint `c420313` |
-| Quick Lane CI | `32645549694` PASS; no new Full Campaign started |
-| Next Gate | Separate Human Full Campaign decision |
+| Quick Lane CI | `32645549694` PASS; Run A/B raw artifacts preserved as ignored evidence |
+| Campaign Evidence | Not accepted until v2 immutable provenance and campaign summary are persisted and audited |
+| Next Gate | Human approval for a new v2 Full Campaign; no new run authorized |
 
 ## Goal
 
@@ -181,6 +182,29 @@ filtering, JVM/GC tuning, threshold relaxation, production change or
 workload/configuration drift was introduced. Both raw runs remain valid
 failure evidence; no production/runtime failure was observed.
 
+## Current v2 Provenance / Campaign-Summary Remediation
+
+The Human-approved qualification-only amendment is limited to evidence
+publication and validation. The current implementation adds the canonical
+`qualification-run-manifest-v2` schema, runtime-captured provenance, separate
+`configurationIdentitySha256` and `comparabilityIdentitySha256` values, strict
+artifact-reference validation, and an immutable
+`qualification-campaign-summary-v1` publisher. Summary members are referenced by
+manifest SHA-256 and artifact-sidecar SHA-256; run evidence is not copied into a
+synthetic timeline.
+
+The v2 gate covers canonical golden bytes/hashes, malformed and legacy-v1
+rejection, PASS/FAIL/ABORTED status handling, volatile identity exclusion,
+artifact sidecar validation, immutable atomic publication and read-back. The
+implementation remains qualification-only and does not alter production code,
+tests, dependencies, workload, thresholds or JVM/GC settings.
+
+Run A and Run B remain preserved `TECHNICALLY PASS / PRESERVED /
+NON-QUALIFYING` evidence. Their original bytes and classifications are not
+backfilled, re-generated or included in a future campaign. No new Full Run is
+authorized until this remediation passes its Evidence Gate and receives a
+separate Human Full Campaign approval.
+
 ## Explicitly Not Implemented
 
 - a passing campaign (Run #2 chronological re-evaluation and any new qualifying
@@ -262,8 +286,10 @@ remediation Evidence Gate passes.
 
 ## Gate
 
-TASK-037 remediation Evidence Gate is PASS. Run #1 cannot participate because
-its duration was short, and Run #2 fails the corrected chronological heap guard.
-No new Full run was started. The next gate is separate Human approval for a
-new `MEMORY_STEADY_STATE_V1` Full Campaign. TASK-038, Phase 9 Closure, merge and
+TASK-037 remains `CHANGES REQUIRED` while the v2 provenance and campaign-summary
+Evidence Gate is completed. Run #1 cannot participate because its duration was
+short, and Run #2 fails the corrected chronological heap guard; both are
+preserved non-qualifying evidence. No new Full run was started. After v2
+remediation passes, the next gate is separate Human approval for a new
+`MEMORY_STEADY_STATE_V1` Full Campaign. TASK-038, Phase 9 Closure, merge and
 `v0.8.0-engineering-baseline` remain unauthorized.

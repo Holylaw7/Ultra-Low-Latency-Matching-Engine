@@ -9,12 +9,12 @@
 | Owner | Human Developer |
 | Architect | Codex / Sol High |
 | Created | `2026-08-23` |
-| Updated | `2026-08-23` |
+| Updated | `2026-08-24` |
 | Baseline | `v0.7.0-engineering-baseline` |
 | Blueprint Branch | `docs/phase9-system-qualification-blueprint` |
 | Implementation Branch | `feature/phase9-system-qualification` |
 | Planned Tasks | `TASK-20260823-035` through `TASK-20260823-040` |
-| Next Gate | `Human approval for a new MEMORY_STEADY_STATE_V1 Full Campaign; no new run is authorized yet` |
+| Next Gate | `Human approval for a new v2 MEMORY_STEADY_STATE_V1 Full Campaign; no new run is authorized yet` |
 
 ## 2. Phase Goal
 
@@ -65,7 +65,7 @@ Governing decision: [`ADR-0017`](../../docs/adr/ADR-0017-system-qualification-pe
 
 | Decision | ADR | Approved Decision | Scope |
 | --- | --- | --- | --- |
-| D1-D16 | [`ADR-0017`](../../docs/adr/ADR-0017-system-qualification-performance-reliability.md) | Qualification-only system harness, fixed workload, long-run/restart evidence, JMH/JFR characterization and bounded claims | No production semantic or format changes; optimization requires a separate gate |
+| D1-D19 | [`ADR-0017`](../../docs/adr/ADR-0017-system-qualification-performance-reliability.md) | Qualification-only system harness, fixed workload, long-run/restart evidence, JMH/JFR characterization, bounded claims and immutable v2 provenance/summary evidence | No production semantic or format changes; optimization requires a separate gate |
 
 ## 6. Target Architecture
 
@@ -148,6 +148,15 @@ not bypass their public boundaries.
 - No unexpected terminal state, timeout, mismatch or unexplained exception.
 - Owned threads, locks, listener, temporary files and inventory satisfy D7.
 - JFR/GC and manifest evidence are complete.
+- Every terminal run publishes one canonical
+  `qualification-run-manifest-v2` with runtime-captured provenance and a
+  separated `configurationIdentitySha256` / `comparabilityIdentitySha256`.
+- v2 manifests accept only `PASS`, `FAIL` or `ABORTED`, reject malformed or
+  legacy-v1 bytes, validate relative artifact references and publish immutable
+  artifact hash sidecars.
+- A canonical `qualification-campaign-summary-v1` is published atomically,
+  read-back validated and references member manifest and artifact-sidecar
+  SHA-256 values without copying evidence or merging timelines.
 
 ### Restart Reliability
 
@@ -300,7 +309,7 @@ Release. Phase 10 remains unauthorized.
 
 ```text
 Blueprint Status: Approved
-Implementation: TASK-036 Evidence Gate PASS; TASK-037 Limited Qualification-Only Remediation / Evidence Gate PASS at `c420313`
+Implementation: TASK-036 Evidence Gate PASS; TASK-037 v2 provenance/campaign-summary Limited Remediation in progress; no new Full run authorized
 Phase 9 Closure: Not Authorized
 ```
 
@@ -323,3 +332,24 @@ confounded by harness retention and intentionally growing business state:
 The amendment does not authorize production source changes, JVM/GC/workload
 tuning, threshold relaxation, artificial GC, retry-until-pass behavior,
 cross-run synthetic heap timelines, or Phase 9 Closure/merge/tag actions.
+
+## 19. Limited Provenance / Campaign-Summary Amendment
+
+Human approval on 2026-08-24 authorizes a qualification-only evidence
+remediation. The implementation may add `qualification-run-manifest-v2`,
+runtime-captured provenance, separated configuration/comparability identities,
+strict artifact-reference validation and an immutable
+`qualification-campaign-summary-v1` publisher under `qualification/**`, plus
+focused tests and evidence/status documentation.
+
+The configuration identity excludes run ID, timestamps, PID, paths and
+outcomes. The comparability identity includes approved JDK/JVM/GC/heap/OS/
+filesystem/Netty/Disruptor/JFR dimensions. Campaign summaries reference
+immutable member manifest and artifact-sidecar SHA-256 values and are published
+once with atomic move, force, read-back validation and no overwrite.
+
+Run A and Run B remain preserved `TECHNICALLY PASS / PRESERVED /
+NON-QUALIFYING` evidence. Their original artifacts are never backfilled or
+repackaged. No new Full Campaign is authorized by this amendment; after its
+Evidence Gate, a separate Human approval is required. Production code/tests,
+dependencies, workload/thresholds and JVM/GC settings remain frozen.

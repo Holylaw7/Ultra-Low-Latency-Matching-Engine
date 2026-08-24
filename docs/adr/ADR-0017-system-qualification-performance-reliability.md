@@ -123,13 +123,16 @@ and cannot contribute samples to another run's chronological heap series.
 
 ### D14 — Every Full run has a qualification manifest
 
-The manifest records run ID, Git SHA, baseline tag, workload/version/seed,
-environment, counts, inventories, restart/termination counts, digests,
-resource samples, per-run heap guard result, artifact hashes, result and
-limitations. A campaign summary additionally records participating run IDs,
-configuration identity, cumulative natural sample count and per-run guard
-results. Raw artifacts stay local or in CI artifacts; summaries and hashes are
-committed.
+The canonical `qualification-run-manifest-v2` records run ID, Git SHA, baseline
+tag, workload/version/seed, runtime provenance captured during the run, counts,
+inventories, restart/termination counts, digests, resource samples, per-run
+heap guard result, artifact references, result and limitations. Its canonical
+bytes are immutable and hashed. A `qualification-campaign-summary-v1`
+additionally records participating run IDs, immutable member manifest SHA-256
+values, separated configuration/comparability identities, cumulative natural
+sample count and per-run guard results. The summary is atomically published,
+read-back validated and cannot overwrite an existing summary. Raw artifacts
+stay local or in CI artifacts; summaries and hashes are committed.
 
 ### D15 — No new critical dependency
 
@@ -172,6 +175,18 @@ qualification-only five-million-command safety bound is fail-closed: exhausting
 it invalidates the run rather than lowering either the 60-minute or
 one-million-accepted-command gate.
 
+### D19 — Provenance identities are captured and separated
+
+Every v2 manifest records a `configurationIdentitySha256` over the approved
+qualification definition and source/baseline identity, excluding run ID,
+timestamps, PID, paths and outcomes. It records a separate
+`comparabilityIdentitySha256` over approved runtime dimensions including
+JDK/JVM arguments, GC, heap, OS, filesystem, Netty, Disruptor and JFR
+configuration. Runtime provenance is captured while the run is executing and
+cannot be reconstructed after completion to upgrade old evidence. PASS, FAIL
+and ABORTED terminal outcomes are valid manifest statuses. The v2 amendment is
+qualification-only and does not authorize a new Full run.
+
 ## Scope Boundary
 
 Authorized work is limited to the Phase 9 Blueprint and TASK-035 through
@@ -204,3 +219,4 @@ quick/full evidence substitution, or any Product Release/merge/tag action.
 | --- | --- | --- | --- |
 | 2026-08-23 | Human Developer | Approved | D1-D16 approved. TASK-20260823-035 through TASK-20260823-040 authorized in strict dependency order. Production optimization, merge, `v0.8.0-engineering-baseline`, Phase 10 and Product Release remain unauthorized. |
 | 2026-08-23 | Human Developer | Limited Amendment Approved | Qualification-only bounded streaming aggregation and `MEMORY_STEADY_STATE_V1` are authorized. Existing workload vectors and preserved failed runs remain unchanged. No new Full Campaign, production change, JVM/GC tuning or threshold change is authorized. |
+| 2026-08-24 | Human Developer | Limited Provenance Amendment Approved | `qualification-run-manifest-v2`, separated configuration/comparability identities and immutable `qualification-campaign-summary-v1` are authorized in `qualification/**` only. Run A/B remain preserved non-qualifying evidence; no new Full run is authorized before the next Human gate. |

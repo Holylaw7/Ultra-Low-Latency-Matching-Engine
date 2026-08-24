@@ -47,10 +47,14 @@ public final class QualificationFullRunner {
         final Path snapshotDirectory = artifactDirectory.resolve("snapshots");
         final Path jfrPath = artifactDirectory.resolve("qualification.jfr");
         final Path manifestPath = artifactDirectory.resolve("qualification-manifest.txt");
+        final Path manifestV2Path = artifactDirectory.resolve("qualification-manifest-v2.txt");
         final Path resourcePath = artifactDirectory.resolve("resource-evidence.csv");
         final Path artifactHashesPath = artifactDirectory.resolve("artifact-hashes.txt");
+        final Path artifactHashesV2Path = artifactDirectory.resolve("artifact-hashes-v2.txt");
         Files.createDirectories(walDirectory);
         Files.createDirectories(snapshotDirectory);
+        final Map<String, String> runtimeProvenance =
+                QualificationIdentity.runtimeProvenance(walDirectory);
         final WalConfiguration walConfiguration = WalConfiguration.defaults(walDirectory);
         final int port = freeLoopbackPort();
         final Instant started = Instant.now();
@@ -205,6 +209,35 @@ public final class QualificationFullRunner {
                     resourcePath, resourceDigest);
             final String artifactHashesDigest =
                     QualificationArtifactHasher.sha256(artifactHashesPath);
+            final Map<String, QualificationManifestV2Factory.ArtifactReference> artifacts = Map.of(
+                    "jfr", artifactReference(artifactDirectory, jfrPath, jfrDigest),
+                    "resourceEvidence", artifactReference(artifactDirectory, resourcePath, resourceDigest),
+                    "legacyManifest", artifactReference(artifactDirectory, manifestPath, manifestDigest),
+                    "artifactHashes", artifactReference(artifactDirectory, artifactHashesPath,
+                            artifactHashesDigest));
+            final QualificationManifestV2 manifestV2 = QualificationManifestV2Factory.create(
+                    configuration,
+                    manifest,
+                    result,
+                    resources,
+                    elapsed,
+                    Instant.now(),
+                    listenerRebound,
+                    recoveryLeaseReacquired,
+                    inventoryStable,
+                    storageInventory,
+                    runtimeProvenance,
+                    artifacts,
+                    fullCriteria ? "PASS" : "FAIL");
+            QualificationManifestV2Store.publish(manifestV2Path, manifestV2);
+            QualificationManifestV2Store.publishArtifactHashes(
+                    artifactHashesV2Path,
+                    Map.of(
+                            "qualification-manifest-v2.txt", manifestV2Path,
+                            "qualification-manifest.txt", manifestPath,
+                            "artifact-hashes.txt", artifactHashesPath,
+                            "resource-evidence.csv", resourcePath,
+                            "qualification.jfr", jfrPath));
             final QualificationRun run = new QualificationRun(manifest, result, 1);
             return new QualificationFullRun(
                     run,
@@ -223,6 +256,12 @@ public final class QualificationFullRunner {
                     artifactHashesDigest);
         } catch (final IOException | RuntimeException exception) {
             writeFailure(artifactDirectory, started, exception);
+            try {
+                writeAbortedManifestV2(configuration, runId, artifactDirectory,
+                        started, runtimeProvenance, exception);
+            } catch (final IOException | RuntimeException abortEvidenceFailure) {
+                exception.addSuppressed(abortEvidenceFailure);
+            }
             throw exception;
         } finally {
             if (!jfrClosed && jfr != null) {
@@ -568,6 +607,78 @@ public final class QualificationFullRunner {
                 + "resourceEvidence=" + resourcePath.getFileName() + "\t" + resourceDigest
                 + "\n";
         Files.writeString(path, output, StandardCharsets.UTF_8);
+    }
+
+    private static QualificationManifestV2Factory.ArtifactReference artifactReference(
+            final Path artifactDirectory,
+            final Path path,
+            final String digest) throws IOException {
+        final String relativePath = artifactDirectory.relativize(path).toString().replace('\\', '/');
+        return new QualificationManifestV2Factory.ArtifactReference(
+                relativePath, Files.size(path), digest);
+    }
+
+    private static void writeAbortedManifestV2(
+            final QualificationFullConfiguration configuration,
+            final String runId,
+            final Path artifactDirectory,
+            final Instant started,
+            final Map<String, String> runtimeProvenance,
+            final Throwable failure) throws IOException {
+        final Path failureReport = artifactDirectory.resolve("failure-report.txt");
+        final Path failureReportHash = artifactDirectory.resolve("failure-report.sha256");
+        if (!Files.isRegularFile(failureReport) || !Files.isRegularFile(failureReportHash)) {
+            throw new IOException("aborted run failure artifacts are incomplete");
+        }
+        final String gitSha = System.getProperty("qualification.git.sha", "working-tree");
+        final String baseline = System.getProperty(
+                "qualification.baseline", "v0.7.0-engineering-baseline");
+        final QualificationIdentity.Pair identity = QualificationIdentity.forRun(
+                configuration, runtimeProvenance, gitSha, baseline);
+        final Map<String, String> values = new java.util.LinkedHashMap<>();
+        values.put("schemaVersion", QualificationV2CanonicalCodec.MANIFEST_SCHEMA);
+        values.put("canonicalizationVersion",
+                QualificationV2CanonicalCodec.CANONICALIZATION_VERSION);
+        values.put("source.runId", runId);
+        values.put("source.gitSha", gitSha);
+        values.put("source.baselineTag", baseline);
+        values.put("source.startedAtUtc", started.toString());
+        values.put("source.completedAtUtc", Instant.now().toString());
+        values.put("identity.configurationIdentitySha256",
+                identity.configurationIdentitySha256());
+        values.put("identity.comparabilityIdentitySha256",
+                identity.comparabilityIdentitySha256());
+        values.put("configuration.lane", configuration.lane().name());
+        values.put("configuration.profile", configuration.profile().name());
+        values.put("configuration.workloadVersion",
+                QualificationWorkloadV1.version(configuration.profile()));
+        values.put("configuration.seed", Long.toString(configuration.seed()));
+        values.put("configuration.commandCount", Integer.toString(configuration.commandCount()));
+        runtimeProvenance.forEach(values::put);
+        values.put("result.status", "ABORTED");
+        values.put("result.failureType", failure.getClass().getName());
+        values.put("result.failureMessage", String.valueOf(failure.getMessage()));
+        values.put("claims.qualificationOnly", "true");
+        values.put("claims.hardwarePowerLossGuarantee", "NOT_CLAIMED");
+        values.put("claims.productionRtoOrAvailability", "NOT_CLAIMED");
+        values.put("claims.memoryLeakFreedom", "NOT_CLAIMED");
+        values.put("artifact.failureReport.relativePath", "failure-report.txt");
+        values.put("artifact.failureReport.size", Long.toString(Files.size(failureReport)));
+        values.put("artifact.failureReport.sha256",
+                QualificationArtifactHasher.sha256(failureReport));
+        values.put("artifact.failureReportHash.relativePath", "failure-report.sha256");
+        values.put("artifact.failureReportHash.size", Long.toString(Files.size(failureReportHash)));
+        values.put("artifact.failureReportHash.sha256",
+                QualificationArtifactHasher.sha256(failureReportHash));
+        final Path manifestPath = artifactDirectory.resolve("qualification-manifest-v2.txt");
+        final QualificationManifestV2 manifest = QualificationManifestV2.of(values);
+        QualificationManifestV2Store.publish(manifestPath, manifest);
+        QualificationManifestV2Store.publishArtifactHashes(
+                artifactDirectory.resolve("artifact-hashes-v2.txt"),
+                Map.of(
+                        "qualification-manifest-v2.txt", manifestPath,
+                        "failure-report.txt", failureReport,
+                        "failure-report.sha256", failureReportHash));
     }
 
     private static int freeLoopbackPort() throws IOException {

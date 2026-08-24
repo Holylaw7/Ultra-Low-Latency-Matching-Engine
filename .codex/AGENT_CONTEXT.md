@@ -10,10 +10,10 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
-| Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability (`TASK-037 remediation Evidence Gate PASS; Human Full Campaign approval pending`) |
+| Phase | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability (`TASK-037 v2 provenance/campaign-summary remediation in progress; no new Full Run authorized`) |
 | Latest product task | [`TASK-20260822-034`](../tasks/completed/TASK-20260822-034-phase8-benchmark-docs-closure.md) — Completed / Archived / Baseline Frozen |
 | Latest architecture decision | [`ADR-0017`](../docs/adr/ADR-0017-system-qualification-performance-reliability.md) — Approved |
-| Current planning task | [`TASK-20260823-037`](../tasks/active/TASK-20260823-037-full-soak-resource-qualification.md) — Remediation Evidence Gate PASS at `c420313` / CI `32645549709`; Human Full Campaign approval pending |
+| Current planning task | [`TASK-20260823-037`](../tasks/active/TASK-20260823-037-full-soak-resource-qualification.md) — v2 provenance/campaign-summary remediation in progress; Human approval for a new Full Campaign not yet authorized |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 8 Baseline Frozen at `v0.7.0-engineering-baseline`; Phase 9 qualification in progress; Product Release separately governed |
 | Product approval | Phase 8 Human Closure Approved; merge `87abbc1` / Master CI `32622722649` PASS; `v0.7.0-engineering-baseline` / Tag CI `32622757607` PASS; Phase 9 Blueprint Approved / TASK-037 in progress |
@@ -42,7 +42,7 @@
 | Phase 6 — Binary Network Protocol and Single-Session Gateway | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-6-network-protocol-blueprint.md); [`ADR-0014`](../docs/adr/ADR-0014-network-protocol-and-single-session-gateway.md); [`Closure`](../tasks/reports/PHASE-6-network-protocol-closure.md); `v0.5.0-engineering-baseline` |
 | Phase 7 — Live Durable Command Pipeline Integration | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-7-live-durable-command-pipeline-blueprint.md); [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md); `v0.6.0-engineering-baseline` |
 | Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap | Completed / Human Approved / Baseline Frozen at `v0.7.0-engineering-baseline` | [`Blueprint`](../tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md); [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md); [`TASK-034 report`](../tasks/reports/PHASE-8-task-034.md) |
-| Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability | Blueprint Approved / TASK-035/036 PASS / TASK-037 In Progress | [`Blueprint`](../tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md); [`ADR-0017`](../docs/adr/ADR-0017-system-qualification-performance-reliability.md); [`TASK-037`](../tasks/active/TASK-20260823-037-full-soak-resource-qualification.md) |
+| Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability | Blueprint Approved / TASK-035/036 PASS / TASK-037 v2 provenance remediation in progress | [`Blueprint`](../tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md); [`ADR-0017`](../docs/adr/ADR-0017-system-qualification-performance-reliability.md); [`TASK-037`](../tasks/active/TASK-20260823-037-full-soak-resource-qualification.md) |
 | Phase 10+ — Further recovery evolution and production hardening | Future Work | separately approved future Blueprints |
 
 ## Current Product Gate
@@ -197,10 +197,11 @@ Approval is recorded, TASK-035 Evidence Gate is PASS at `22d13fe` / CI
 `32625554518`, and TASK-036 Evidence Gate is PASS after remediation at
 `f90e42c` with standard CI `32627744868` and Quick Lane `32627744878` PASS.
 The corrected checkpoint/probe evidence and read-only audits are accepted;
-TASK-037 remediation Evidence Gate is PASS at `c420313` with standard CI
-`32645549709` and Quick Lane `32645549694` PASS. Local tests, Checkstyle,
-verifier and docs-auditor pass. A new Full Campaign still requires separate
-Human approval and has not been started.
+the prior bounded TASK-037 remediation passed at `c420313` with standard CI
+`32645549709` and Quick Lane `32645549694`. The current v2 provenance and
+campaign-summary remediation is in progress; no new Full Campaign has been
+started or authorized. Local tests and Checkstyle are being re-run for the
+current working tree before exact-SHA evidence is recorded.
 Production optimization,
 Phase 10 and Product Release remain locked.
 Reconnect/deduplication,
@@ -212,10 +213,21 @@ two natural post-GC samples and a chronological per-run guard, plus five
 cumulative natural samples. Read-only investigation found the prior raw heap
 trend confounded by harness retention and intentionally growing business state.
 The current Limited Qualification-Only Remediation is authorized to add
-streaming/bounded aggregation and the separately versioned
-`MEMORY_STEADY_STATE_V1` lane while preserving the existing workload vectors.
-Run #1 and Run #2 remain preserved non-qualifying evidence; no new Full run has
-been authorized. TASK-038 remains locked.
+streaming/bounded aggregation, the separately versioned
+`MEMORY_STEADY_STATE_V1` lane, and v2 immutable provenance/campaign-summary
+evidence while preserving the existing workload vectors. Run #1 and Run #2
+remain preserved non-qualifying evidence; no new Full run has been authorized.
+TASK-038 remains locked.
+
+The 2026-08-24 Human Limited Provenance Amendment authorizes only
+`qualification-run-manifest-v2`, runtime-captured provenance,
+`configurationIdentitySha256` / `comparabilityIdentitySha256`, and an
+immutable `qualification-campaign-summary-v1` under `qualification/**`, plus
+focused tests and evidence documentation. The configuration identity excludes
+run ID, timestamps, PID, paths and outcomes; comparability identity records the
+approved JDK/JVM/GC/heap/OS/filesystem/Netty/Disruptor/JFR dimensions. Existing
+Run A/B artifacts are never backfilled or repackaged. The next gate after the
+remediation Evidence Gate is Human approval for a new v2 Full Campaign.
 
 Current Blueprint:
 [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md).

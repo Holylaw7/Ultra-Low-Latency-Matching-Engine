@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260823-037` |
 | Title | Full soak and resource lifecycle qualification |
-| Status | `In Progress` |
+| Status | `In Progress / Campaign Evidence CHANGES REQUIRED` |
 | Owner | Human Developer |
 | Implementer | Main Codex / Luna Max — only writer |
 | Created | `2026-08-23` |
@@ -14,11 +14,11 @@
 | Related ADR | [`ADR-0017`](../../docs/adr/ADR-0017-system-qualification-performance-reliability.md) |
 | Phase Blueprint | [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md) |
 | Authorization Mode | `Blueprint` |
-| Current Stage | `Limited Qualification-Only Remediation / Evidence Gate PASS` |
-| Next Gate | Human approval for a new Memory Steady-State Full Campaign |
+| Current Stage | `qualification-run-manifest-v2 and immutable campaign-summary remediation` |
+| Next Gate | Human approval for a new v2 Full Campaign; no new run authorized |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
-| Remediation checkpoint | `23ca7f0` — bounded streaming, continuous memory lane and public-state evidence |
+| Remediation checkpoint | Working tree — v2 provenance/identity/summary implementation; commit and CI pending |
 
 ## 2. Goal
 
@@ -45,6 +45,10 @@ must never be reported as Full Qualification.
 - manifest configuration records the actual persisted continuous prefix length;
 - listener rebind, recovery lease and WAL inventory evidence;
 - raw JFR, resource CSV, manifest and failure artifacts with SHA-256 hashes;
+- immutable `qualification-run-manifest-v2` records with runtime provenance,
+  separated configuration/comparability identities and artifact references;
+- immutable `qualification-campaign-summary-v1` records referencing member
+  manifest and artifact-sidecar SHA-256 values;
 - focused short-lane tests for the full-run composition and threshold guards.
 
 ## 4. Out of Scope
@@ -53,7 +57,8 @@ must never be reported as Full Qualification.
 - restart/forced-termination campaign (TASK-038);
 - JMH/profile optimization work (TASK-039);
 - retries, filtering, deletion of failed evidence or threshold changes after a run;
-- any new Full Campaign before a separate Human approval;
+- any additional Full Campaign beyond the separately approved Run A/B pair or
+  before provenance remediation is approved;
 - direct coordinator, pipeline or MatchingEngine calls from the harness;
 - reconnect, deduplication, multiple sessions or request pipelining;
 - WAL/Snapshot/Protocol/recovery semantic changes;
@@ -93,7 +98,14 @@ must never be reported as Full Qualification.
   correctness or production-only test seams.
 - [ ] `mvn verify`, Checkstyle, `git diff --check`, frozen-path audit and
   exact-SHA CI pass.
-- [ ] verifier and docs-auditor return PASS before TASK-038 unlocks.
+- [ ] v2 canonical golden bytes, malformed-input and legacy-v1 rejection tests
+  pass.
+- [ ] PASS, FAIL and ABORTED manifests, artifact references and identity
+  include/exclude behavior are tested.
+- [ ] campaign summary publication is atomic, immutable, read-back validated
+  and references member manifest SHA-256 values without copying run evidence.
+- [ ] verifier and docs-auditor return PASS before a new Full Campaign can be
+  considered; TASK-038 remains locked.
 
 Remediation Evidence Gate is PASS at `c420313`: `mvn -pl qualification -am test`
 passes 36 qualification tests (2 intentionally skipped) and 195 core tests;
@@ -124,6 +136,26 @@ short test.
 The Human-approved Limited Qualification-Only Amendment does not authorize a
 new Full run. After bounded-streaming and memory-lane remediation passes its
 Evidence Gate, execution must stop for a separate Human Full Campaign decision.
+
+## 10. Current Provenance / Campaign-Summary Amendment
+
+Human approval authorizes a qualification-only evidence amendment for
+`qualification-run-manifest-v2`, separated `configurationIdentitySha256` and
+`comparabilityIdentitySha256`, and `qualification-campaign-summary-v1`.
+Runtime provenance is captured while the run is executing; it is not reconstructed
+after completion from host state. Configuration identity excludes run ID,
+timestamps, PID, paths and outcomes. Comparability identity records the approved
+JDK/JVM/GC/heap/OS/filesystem/Netty/Disruptor/JFR environment dimensions.
+
+Each v2 manifest is canonical UTF-8/LF evidence, published once with atomic
+move, forced write, read-back validation and an artifact-hash sidecar. Terminal
+`PASS`, `FAIL` and `ABORTED` outcomes are representable. The campaign summary
+references immutable member manifest SHA-256 values and artifact-sidecar hashes,
+is published once, and cannot overwrite an existing summary.
+
+Run A and Run B remain preserved `TECHNICALLY PASS / PRESERVED /
+NON-QUALIFYING` evidence. They are not backfilled with v2 fields, repackaged or
+included in a new campaign. No new Full Run is authorized by this amendment.
 
 ## 8. Evidence Gate
 
