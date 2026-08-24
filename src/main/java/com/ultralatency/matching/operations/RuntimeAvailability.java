@@ -117,11 +117,14 @@ public final class RuntimeAvailability {
     private void requireTransition(final RuntimeLifecycleState next) {
         final boolean valid = switch (state) {
             case NEW -> next == RuntimeLifecycleState.CONFIG_VALIDATED
-                    || next == RuntimeLifecycleState.FAILED;
+                    || next == RuntimeLifecycleState.FAILED
+                    || next == RuntimeLifecycleState.STOPPED;
             case CONFIG_VALIDATED -> next == RuntimeLifecycleState.STARTING
-                    || next == RuntimeLifecycleState.FAILED;
+                    || next == RuntimeLifecycleState.FAILED
+                    || next == RuntimeLifecycleState.STOPPING;
             case STARTING -> next == RuntimeLifecycleState.READY
-                    || next == RuntimeLifecycleState.FAILED;
+                    || next == RuntimeLifecycleState.FAILED
+                    || next == RuntimeLifecycleState.STOPPING;
             case READY -> next == RuntimeLifecycleState.STOPPING
                     || next == RuntimeLifecycleState.FAILED;
             case STOPPING -> next == RuntimeLifecycleState.STOPPED

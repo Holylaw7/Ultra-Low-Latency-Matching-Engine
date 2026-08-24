@@ -42,4 +42,21 @@ class RuntimeStatusSnapshotTest {
                 0,
                 0));
     }
+
+    @Test
+    void retainsTerminalFailureAfterResourcesReachStopped() {
+        final RuntimeStatusSnapshot snapshot = new RuntimeStatusSnapshot(
+                1,
+                RuntimeLifecycleState.STOPPED,
+                false,
+                false,
+                RuntimeFailureCode.RECOVERY,
+                false,
+                "PURE_WAL",
+                0,
+                1,
+                12);
+
+        assertEquals(RuntimeFailureCode.RECOVERY, snapshot.failureCode());
+    }
 }

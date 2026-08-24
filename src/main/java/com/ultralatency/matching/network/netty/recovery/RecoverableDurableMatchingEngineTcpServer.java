@@ -49,6 +49,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 /**
  * Listener-last Netty adapter for a recovered durable runtime.
@@ -61,6 +63,8 @@ public final class RecoverableDurableMatchingEngineTcpServer {
 
     private final Object lifecycleMonitor = new Object();
     private final RecoverableNetworkConfiguration configuration;
+    private final BooleanSupplier admissionPredicate;
+    private final Consumer<Throwable> failureObserver;
     private volatile RecoveryRuntimeState state = RecoveryRuntimeState.NEW;
     private volatile Throwable failureCause;
     private volatile Channel serverChannel;
@@ -69,13 +73,34 @@ public final class RecoverableDurableMatchingEngineTcpServer {
     private EventLoopGroup workerGroup;
     private RecoverableDurableRuntime runtime;
     private boolean sessionClaimed;
+    private boolean admissionOpen;
     private long expectedRequestId = 1;
     private InFlight inFlight;
 
     /** Creates a recovered server with the supplied transport/recovery settings. */
     public RecoverableDurableMatchingEngineTcpServer(
             final RecoverableNetworkConfiguration configuration) {
+        this(configuration, () -> true, failure -> { });
+    }
+
+    /**
+     * Creates a server with an externally owned admission predicate and first-failure observer.
+     *
+     * <p>The legacy constructor remains always-admission-open compatible. The predicate is
+     * sampled only at session activation/request admission and never becomes an engine producer.
+     * The observer is notified once, after the server retains its first terminal cause.</p>
+     *
+     * @param configuration transport/recovery settings
+     * @param admissionPredicate shared readiness/admission predicate
+     * @param failureObserver first terminal failure observer
+     */
+    public RecoverableDurableMatchingEngineTcpServer(
+            final RecoverableNetworkConfiguration configuration,
+            final BooleanSupplier admissionPredicate,
+            final Consumer<Throwable> failureObserver) {
         this.configuration = Objects.requireNonNull(configuration, "configuration");
+        this.admissionPredicate = Objects.requireNonNull(admissionPredicate, "admissionPredicate");
+        this.failureObserver = Objects.requireNonNull(failureObserver, "failureObserver");
     }
 
     /** Starts recovery and live resources before binding the listener last. */
@@ -83,6 +108,7 @@ public final class RecoverableDurableMatchingEngineTcpServer {
         synchronized (lifecycleMonitor) {
             requireState(RecoveryRuntimeState.NEW, "start");
             state = RecoveryRuntimeState.RECOVERING;
+            admissionOpen = false;
         }
         try {
             runtime = new RecoverableDurableRuntime(
@@ -121,6 +147,7 @@ public final class RecoverableDurableMatchingEngineTcpServer {
                     .channel();
             synchronized (lifecycleMonitor) {
                 state = RecoveryRuntimeState.RUNNING;
+                admissionOpen = true;
             }
         } catch (final Throwable failure) {
             failTerminal(failure);
@@ -135,12 +162,15 @@ public final class RecoverableDurableMatchingEngineTcpServer {
         final long deadline = deadline(timeoutNanos);
         synchronized (lifecycleMonitor) {
             if (state == RecoveryRuntimeState.NEW || state == RecoveryRuntimeState.STOPPED) {
+                admissionOpen = false;
                 state = RecoveryRuntimeState.STOPPED;
                 return state;
             }
+            admissionOpen = false;
             if (state != RecoveryRuntimeState.FAILED) {
                 state = RecoveryRuntimeState.STOPPED;
             }
+            lifecycleMonitor.notifyAll();
         }
         close(activeChannel);
         close(serverChannel);
@@ -153,6 +183,49 @@ public final class RecoverableDurableMatchingEngineTcpServer {
     /** Shuts down using the configured durable timeout. */
     public RecoveryRuntimeState shutdown() {
         return shutdown(configuration.durableConfiguration().shutdownTimeout());
+    }
+
+    /**
+     * Closes the listener and prevents new sessions while allowing the active request to finish.
+     *
+     * <p>This operation is idempotent and does not close transitive runtime resources.</p>
+     */
+    public void stopAdmission() {
+        final Channel listener;
+        synchronized (lifecycleMonitor) {
+            admissionOpen = false;
+            listener = serverChannel;
+            lifecycleMonitor.notifyAll();
+        }
+        close(listener);
+    }
+
+    /**
+     * Waits for the current in-flight request to reach a terminal boundary.
+     *
+     * @param timeout cooperative wait bound
+     * @return {@code true} when no request remains in flight, otherwise {@code false}
+     */
+    public boolean awaitInFlight(final Duration timeout) {
+        final long timeoutNanos = timeoutNanos(timeout);
+        final long deadline = deadline(timeoutNanos);
+        synchronized (lifecycleMonitor) {
+            while (inFlight != null && state != RecoveryRuntimeState.STOPPED) {
+                final long remaining = deadline - System.nanoTime();
+                if (remaining <= 0) {
+                    return false;
+                }
+                try {
+                    final long millis = remaining / 1_000_000;
+                    final int nanos = (int) (remaining % 1_000_000);
+                    lifecycleMonitor.wait(Math.max(0, millis), nanos);
+                } catch (final InterruptedException interrupted) {
+                    Thread.currentThread().interrupt();
+                    return false;
+                }
+            }
+            return inFlight == null;
+        }
     }
 
     /** @return current recovery/live lifecycle state */
@@ -186,7 +259,7 @@ public final class RecoverableDurableMatchingEngineTcpServer {
     void onSessionActive(final ChannelHandlerContext context) {
         final Channel channel = context.channel();
         synchronized (lifecycleMonitor) {
-            if (state != RecoveryRuntimeState.RUNNING || sessionClaimed) {
+            if (state != RecoveryRuntimeState.RUNNING || !admissionAllowed() || sessionClaimed) {
                 writeAndClose(channel, new ErrorResponse(0, ProtocolErrorCode.SERVER_BUSY));
                 return;
             }
@@ -204,27 +277,46 @@ public final class RecoverableDurableMatchingEngineTcpServer {
     }
 
     void onRequest(final ChannelHandlerContext context, final ProtocolRequest request) {
-        if (state != RecoveryRuntimeState.RUNNING || context.channel() != activeChannel) {
+        if (state != RecoveryRuntimeState.RUNNING
+                || context.channel() != activeChannel) {
             return;
         }
-        if (inFlight != null) {
+        if (!admissionAllowed()) {
             writeAndClose(
                     context.channel(),
-                    new ErrorResponse(request.requestId().value(), ProtocolErrorCode.INVALID_FIELD));
+                    new ErrorResponse(request.requestId().value(), ProtocolErrorCode.SERVER_BUSY));
             return;
         }
-        if (request.requestId().value() != expectedRequestId) {
-            writeAndClose(
-                    context.channel(),
-                    new ErrorResponse(
-                            request.requestId().value(), ProtocolErrorCode.UNEXPECTED_REQUEST_ID));
-            return;
+        synchronized (lifecycleMonitor) {
+            if (state != RecoveryRuntimeState.RUNNING
+                    || context.channel() != activeChannel
+                    || !admissionAllowed()) {
+                writeAndClose(
+                        context.channel(),
+                        new ErrorResponse(request.requestId().value(), ProtocolErrorCode.SERVER_BUSY));
+                return;
+            }
+            if (inFlight != null) {
+                writeAndClose(
+                        context.channel(),
+                        new ErrorResponse(request.requestId().value(), ProtocolErrorCode.INVALID_FIELD));
+                return;
+            }
+            if (request.requestId().value() != expectedRequestId) {
+                writeAndClose(
+                        context.channel(),
+                        new ErrorResponse(
+                                request.requestId().value(), ProtocolErrorCode.UNEXPECTED_REQUEST_ID));
+                return;
+            }
+            final DurableCommandCoordinator coordinator = runtime().coordinator();
+            final DurableCommandIdentity identity = new DurableCommandIdentity(
+                    request.requestId(), coordinator.nextCommandSequence());
+            inFlight = new InFlight(identity);
         }
-        final DurableCommandCoordinator coordinator = runtime().coordinator();
-        final DurableCommandIdentity identity = new DurableCommandIdentity(
-                request.requestId(), coordinator.nextCommandSequence());
-        inFlight = new InFlight(identity);
         try {
+            final DurableCommandCoordinator coordinator = runtime().coordinator();
+            final DurableCommandIdentity identity = inFlightIdentity();
             final com.ultralatency.matching.integration.durable.LiveAcceptedOutcome outcome =
                     coordinator.accept(
                             request.requestId(),
@@ -232,10 +324,28 @@ public final class RecoverableDurableMatchingEngineTcpServer {
             if (!identity.equals(outcome.identity())) {
                 throw new IllegalStateException("Recovered command identity changed during admission");
             }
-            expectedRequestId = Math.addExact(expectedRequestId, 1);
+            synchronized (lifecycleMonitor) {
+                expectedRequestId = Math.addExact(expectedRequestId, 1);
+            }
         } catch (final Throwable failure) {
-            inFlight = null;
+            clearInFlight();
             failRuntime(DurableFailureStage.ENGINE, failure);
+        }
+    }
+
+    private DurableCommandIdentity inFlightIdentity() {
+        synchronized (lifecycleMonitor) {
+            if (inFlight == null) {
+                throw new IllegalStateException("No in-flight request is available");
+            }
+            return inFlight.identity();
+        }
+    }
+
+    private void clearInFlight() {
+        synchronized (lifecycleMonitor) {
+            inFlight = null;
+            lifecycleMonitor.notifyAll();
         }
     }
 
@@ -249,8 +359,12 @@ public final class RecoverableDurableMatchingEngineTcpServer {
     }
 
     private void onEngineResult(final EngineResult result) {
-        final Channel channel = activeChannel;
-        final InFlight current = inFlight;
+        final Channel channel;
+        final InFlight current;
+        synchronized (lifecycleMonitor) {
+            channel = activeChannel;
+            current = inFlight;
+        }
         if (channel == null || !channel.isOpen() || current == null
                 || !current.identity().domainCommandSequence().equals(result.commandSequence())) {
             failRuntime(DurableFailureStage.ENGINE,
@@ -268,10 +382,12 @@ public final class RecoverableDurableMatchingEngineTcpServer {
             final Channel channel,
             final InFlight current,
             final EngineResult result) {
-        if (state != RecoveryRuntimeState.RUNNING || inFlight != current) {
-            failRuntime(DurableFailureStage.ENGINE,
-                    new IllegalStateException("Recovered result arrived without in-flight request"));
-            return;
+        synchronized (lifecycleMonitor) {
+            if (state != RecoveryRuntimeState.RUNNING || inFlight != current) {
+                failRuntime(DurableFailureStage.ENGINE,
+                        new IllegalStateException("Recovered result arrived without in-flight request"));
+                return;
+            }
         }
         final List<ProtocolResponse> responses = new ArrayList<>(1 + result.matches().size());
         responses.add(new CommandResultResponse(
@@ -298,8 +414,14 @@ public final class RecoverableDurableMatchingEngineTcpServer {
             completion.addListener(future -> {
                 if (!future.isSuccess()) {
                     failRuntime(DurableFailureStage.OUTBOUND_WRITE, future.cause());
-                } else if (inFlight == current && state == RecoveryRuntimeState.RUNNING) {
-                    inFlight = null;
+                } else {
+                    synchronized (lifecycleMonitor) {
+                        if (inFlight != current || state != RecoveryRuntimeState.RUNNING) {
+                            return;
+                        }
+                        inFlight = null;
+                        lifecycleMonitor.notifyAll();
+                    }
                     channel.read();
                 }
             });
@@ -323,17 +445,27 @@ public final class RecoverableDurableMatchingEngineTcpServer {
         final Throwable nonNullFailure = Objects.requireNonNull(failure, "failure");
         final Channel currentSession;
         final Channel currentServer;
+        final Consumer<Throwable> observer;
         synchronized (lifecycleMonitor) {
             if (failureCause != null || state == RecoveryRuntimeState.STOPPED) {
                 return;
             }
             failureCause = nonNullFailure;
             state = RecoveryRuntimeState.FAILED;
+            admissionOpen = false;
+            inFlight = null;
+            lifecycleMonitor.notifyAll();
             currentSession = activeChannel;
             currentServer = serverChannel;
+            observer = failureObserver;
         }
         close(currentSession);
         close(currentServer);
+        try {
+            observer.accept(nonNullFailure);
+        } catch (final Throwable ignored) {
+            // An observer cannot replace the retained first terminal failure.
+        }
     }
 
     private void closeResources(final Duration timeout) {
@@ -413,6 +545,10 @@ public final class RecoverableDurableMatchingEngineTcpServer {
             throw new IllegalStateException(
                     "Cannot " + operation + " while recovered server is " + state);
         }
+    }
+
+    private boolean admissionAllowed() {
+        return admissionOpen && admissionPredicate.getAsBoolean();
     }
 
     private static Throwable unwrap(final Throwable failure) {

@@ -55,4 +55,18 @@ class RuntimeAvailabilityTest {
         assertFalse(availability.snapshot().ready());
         assertFalse(availability.snapshot().protocolBound());
     }
+
+    @Test
+    void supportsStoppingBeforeReadyAndCloseBeforeStart() {
+        final RuntimeAvailability unstarted = new RuntimeAvailability();
+        unstarted.markStopped();
+        assertEquals(RuntimeLifecycleState.STOPPED, unstarted.snapshot().state());
+
+        final RuntimeAvailability starting = new RuntimeAvailability();
+        starting.markConfigurationValidated();
+        starting.markStarting();
+        starting.beginStopping();
+        starting.markStopped();
+        assertEquals(RuntimeLifecycleState.STOPPED, starting.snapshot().state());
+    }
 }

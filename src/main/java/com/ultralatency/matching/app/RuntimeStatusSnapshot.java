@@ -35,8 +35,10 @@ public record RuntimeStatusSnapshot(
         if (ready && (!live || !protocolBound || state != RuntimeLifecycleState.READY)) {
             throw new IllegalArgumentException("Ready status requires a live bound Protocol");
         }
-        if (failureCode != RuntimeFailureCode.NONE && state != RuntimeLifecycleState.FAILED) {
-            throw new IllegalArgumentException("Failure code requires FAILED state");
+        if (failureCode != RuntimeFailureCode.NONE
+                && state != RuntimeLifecycleState.FAILED
+                && state != RuntimeLifecycleState.STOPPED) {
+            throw new IllegalArgumentException("Failure code requires FAILED or STOPPED state");
         }
         if (state == RuntimeLifecycleState.FAILED && failureCode == RuntimeFailureCode.NONE) {
             throw new IllegalArgumentException("FAILED state requires a failure code");
