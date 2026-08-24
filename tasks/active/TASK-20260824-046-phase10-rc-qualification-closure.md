@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260824-046` |
 | Title | Release-candidate assembled-runtime qualification and Closure Proposal |
-| Status | `In Progress — pre-campaign Evidence Gate PASS; Full Campaign Human Approval pending` |
+| Status | `In Progress — Full Campaign Evidence PASS; final Closure/Evidence Review pending` |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
@@ -25,15 +25,16 @@ Phase 10 Closure Proposal.
   for the packaged process.
 - [x] Empty and Snapshot-plus-tail startup converge through the packaged public
   Protocol v1 and management boundaries.
-- [ ] At least 60 minutes and 1,000,000 accepted commands pass through the
-  assembled runtime under the frozen workload/configuration.
+- [x] At least 60 minutes and 1,000,000 accepted commands pass through the
+  assembled runtime under the frozen workload/configuration in both authorized
+  independent Full Runs.
 - [x] Pre-campaign restart/approved termination evidence is deterministic;
-  Phase 10 Full Runs remain separately Human-gated.
+  the separately approved Phase 10 Full Campaign completed exactly two runs.
 - [ ] Startup-to-ready, shutdown, live latency and management overhead retain
   full distributions, raw artifacts, hashes and environment metadata.
-- [ ] JFR/GC/resource evidence is recorded without filtering or retry-until-pass.
+- [x] JFR/GC/resource evidence is recorded without filtering or retry-until-pass.
 - [ ] verifier, benchmark-reviewer and docs-auditor final sign-off for the
-  complete task is pending the separately authorized Full Campaign.
+  complete task is pending the final read-only Evidence Gate.
 - [ ] All TASK-041 through TASK-046 final Closure references agree.
 - [ ] Known limitations and prohibited claims remain explicit.
 
@@ -78,6 +79,7 @@ changes can be reverted while `v0.8.0-engineering-baseline` remains frozen.
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
 | 2026-08-24 | Human Developer | Authorized / Inherited | TASK-045 Evidence Gate PASS; pre-campaign implementation is authorized; the two Full Runs remain separately Human-gated |
+| 2026-08-24 | Human Developer | Full Campaign Approved | Exactly two independent `RC_ASSEMBLED_RUNTIME_V1` Full Runs authorized with frozen implementation/configuration; no replacement run permitted |
 
 ## 9. Current Implementation and Frozen Qualification Manifest
 
@@ -98,8 +100,46 @@ orchestration; it does not modify accepted Phase 9 artifacts.
 - run-manifest-v2 identity/provenance plus artifact/config hashes and atomic
   campaign-summary-v1 references.
 
-Exactly two runs are authorized by the task. Any FAIL/ABORTED/invalid run stops
-without a replacement. Phase 9 runs cannot participate.
+Exactly two runs were authorized and completed. Any FAIL/ABORTED/invalid run
+would have stopped the campaign without a replacement. Phase 9 runs cannot
+participate.
+
+## 10A. Full Campaign Evidence
+
+The two immutable local evidence directories are ignored artifacts under
+`qualification-results/phase10-rc-full/`:
+
+| Run | Directory | Manifest SHA-256 | Status | Elapsed | Accepted | Natural GC | Heap guard |
+| --- | --- | --- | --- | ---: | ---: | ---: | --- |
+| A | `rc-assembled-full-e9503064-52b5-4659-b8ef-806a4514b679` | `f65a395256a919fe5a576c8858c2c5a6cd8f8c996bd5a9c2af367a51a33a1fcc` | PASS | `3,601,045 ms` | `1,799,401` | `8` | PASS |
+| B | `rc-assembled-full-e0cc3192-bdbe-4ea9-a98f-c9e7fa9b69f5` | `60f24746c23222fa23209117eee1300bc0c0aac1a3a497f8aa23d756ce83a596` | PASS | `3,601,029 ms` | `1,848,908` | `9` | PASS |
+
+Both manifests report listener rebound, recovery lease reacquired, stable WAL
+inventory, restored thread baseline and zero temporary files. Their
+`configurationIdentitySha256` is
+`7367f0cf2b3543f591f24abe3adb386f457ad6433cd8105ede08ad3bd3c5710d`; their
+`comparabilityIdentitySha256` is
+`ea09a2676ff21fc5350404dbf15eb2613384265d95881edf17fa1941c2766cbe`.
+Manifest-declared artifact relative paths and SHA-256 values were verified
+against the preserved files.
+
+The immutable campaign summary is under
+`qualification-results/phase10-rc-campaign/rc-assembled-campaign-72ea9c3f-0619-41b5-9d90-3dbb3ec9eaf6/`:
+
+| Artifact | SHA-256 |
+| --- | --- |
+| `qualification-campaign-summary-v1.txt` | `89799b16f317f0cb083821368dcfe005dbbe508964adf8de234a1be61db78ae6` |
+| `artifact-hashes-v1.txt` | `b422e1f680a5007ef858528ab277674651b536d3a1dbe7352e43726a79e6a10d` |
+
+The summary records `requiredRunCount=2`, `qualifyingRunCount=2`,
+`cumulativeNaturalPostGcSamples=17`, equal configuration/comparability
+identities and `campaign.result=true`.
+
+The Full Run result artifacts contain counts, digests, resource CSV and JFR
+evidence. The separate live startup/shutdown/response percentile distribution
+and management-overhead evidence required by the Blueprint remains pending
+final Evidence Review; this report makes no claim that those distributions
+were produced by the Full runner.
 
 ## 10. Planned Files
 
@@ -179,7 +219,7 @@ Planned commits: `test(runtime): qualify release-candidate assembly` and
   Quick `32730760501`)
 - [x] lifecycle matrix PASS — 10 `PURE_WAL` + 10 Snapshot-tail + 10 approved
   post-response forced terminations (30/30)
-- [ ] exactly two Full runs and campaign PASS, or preserved failure + STOP
+- [x] exactly two Full runs and campaign PASS, or preserved failure + STOP
 - [ ] all artifacts/hashes/provenance/reviewers PASS
 - [ ] claim boundaries and Closure input synchronized
 - [ ] Sol High Closure Review pending after proposal
@@ -190,3 +230,4 @@ Planned commits: `test(runtime): qualify release-candidate assembly` and
 | 2026-08-24 | Proposed | Qualification manifest and stop gates frozen | docs only |
 | 2026-08-24 | Authorized / Next | TASK-045 completed; begin pre-campaign assembled-runtime qualification implementation. | TASK-045 exact-SHA Standard/Quick CI PASS |
 | 2026-08-24 | Pre-Campaign Evidence PASS | Packaged Java 21 lifecycle command passed 30/30 cycles; Full Campaign remains Human-gated. | `0a96593`; Standard CI `32730760419`; Quick Lane `32730760501`; summary SHA `71862f5e49ec554c2344f0836785d6e737e1457fc06083d755c2d98e10564bc6` |
+| 2026-08-24 | Full Campaign Evidence PASS | Exactly two independent assembled-runtime Full Runs passed; campaign evaluator recorded 2/2 qualifying and `campaign.result=true`. Final percentile/profile evidence reconciliation and Closure Review remain pending. | runner `1a02e66`; Standard CI `32734798459`; Quick Lane `32734798461`; manifests `f65a3952...` / `60f24746...`; campaign summary `89799b16...` |

@@ -15,7 +15,7 @@
 | Planned Implementation Branch | `feature/phase10-release-candidate-runtime` |
 | Planned Tasks | `TASK-20260824-041` through `TASK-20260824-046` |
 | Proposal Evidence | `541ef28`; Standard CI `32716540931` PASS; Quick Lane `32716540939` PASS |
-| Next Gate | `TASK-046 pre-campaign Evidence Gate` |
+| Next Gate | `TASK-046 final Evidence/Closure Review` |
 
 ## 2. Phase Objective
 
@@ -506,7 +506,7 @@ Gate requires new Human architecture approval.
 
 ```text
 Blueprint Status: Approved
-Implementation: TASK-041 through TASK-045 Completed / Evidence Gate PASS; TASK-046 pre-campaign Evidence Gate PASS at `0a96593` (Standard `32730760419`, Quick `32730760501`, lifecycle 30/30); Full Campaign Human-gated
+Implementation: TASK-041 through TASK-045 Completed / Evidence Gate PASS; TASK-046 pre-campaign Evidence Gate PASS at `0a96593` (Standard `32730760419`, Quick `32730760501`, lifecycle 30/30); assembled Full runner `1a02e66` (Standard `32734798459`, Quick `32734798461`) produced two PASS runs and campaign `campaign.result=true`; final latency/profile evidence review remains pending
 Merge / v0.9.0-rc.1 / Product Release: Not Authorized
-Next Gate: TASK-046 pre-campaign Evidence Gate
+Next Gate: Sol High Phase 10 Final Closure Review after final Evidence Gate
 ```

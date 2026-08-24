@@ -89,10 +89,15 @@ pre-campaign qualification is complete at `0a96593`; Standard CI
 packaged Java 21 lifecycle matrix passed 30/30 cycles (10 empty/PURE_WAL, 10
 Snapshot-tail and 10 approved post-response forced terminations), with immutable
 summary/hash evidence recorded in [`TASK-046 report`](tasks/reports/PHASE-10-task-046.md).
-The two `RC_ASSEMBLED_RUNTIME_V1` 60-minute Full Runs remain separately
-Human-gated and were not started. Protocol v1, WAL v1, Snapshot v1, matching,
-durability and single-session semantics remain frozen; merge, `v0.9.0-rc.1` and
-Product Release remain unauthorized.
+Human then authorized exactly two `RC_ASSEMBLED_RUNTIME_V1` Full Runs. The
+assembled runner checkpoint `1a02e66` passed Standard CI `32734798459` and
+Qualification Quick Lane `32734798461`; both independent Full Runs passed the
+60-minute/1M-command gates, and the immutable campaign summary records `2/2`
+qualifying runs, 17 cumulative natural post-GC samples and
+`campaign.result=true`. Final latency/profile evidence reconciliation and Sol
+High Closure Review remain pending. Protocol v1, WAL v1, Snapshot v1,
+matching, durability and single-session semantics remain frozen; merge,
+`v0.9.0-rc.1` and Product Release remain unauthorized.
 
 Phase 8 remains documented by [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
 the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)

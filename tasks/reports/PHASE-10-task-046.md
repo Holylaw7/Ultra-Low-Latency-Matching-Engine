@@ -1,18 +1,24 @@
-# Phase 10 — TASK-046 Pre-Campaign Evidence Report
+# Phase 10 — TASK-046 Full Campaign Evidence Report
 
 ## Status
 
-`TASK-046` pre-campaign implementation and lifecycle Evidence Gate passed. The two `RC_ASSEMBLED_RUNTIME_V1` 60-minute Full Runs remain separately Human-gated and were not started.
+`TASK-046` pre-campaign and lifecycle Evidence Gates passed. Human approval then
+authorized exactly two independent `RC_ASSEMBLED_RUNTIME_V1` Full Runs. Both
+completed with PASS and the immutable campaign evaluator returned PASS. Final
+TASK-046 Closure and Sol High review remain pending.
 
 | Item | Evidence |
 | --- | --- |
 | Implementation | `0a96593` — `test(runtime): qualify release-candidate assembly` |
+| Assembled Full runner | `1a02e66` — `test(runtime): add assembled full campaign runner` |
+| Standard CI for Full runner | [32734798459](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32734798459) — PASS |
+| Qualification Quick Lane for Full runner | [32734798461](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32734798461) — PASS |
 | Standard CI | [32730760419](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32730760419) — PASS |
 | Qualification Quick Lane | [32730760501](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32730760501) — PASS |
 | Local regression | 225 core + 48 qualification tests; 0 failures/errors; 2 expected skips |
 | Checkstyle | 0 violations |
 | Package | `qualification/target/matching-engine-qualification.jar` |
-| Package SHA-256 | `3fa56c55988344421660e06571bcc5ab3a157bd81012734fed3c016361aa6a5a` |
+| Package SHA-256 | `af4c270cfe550ab9166dee09752f12d03b8730aa1ea50cfb23835080c4146b39` |
 
 ## Authorized Scope Implemented
 
@@ -78,33 +84,54 @@ Pre-campaign implementation:
 Pre-campaign lifecycle matrix:
 ✅ 30/30
 
+Human Full Campaign Approval:
+✅ Recorded
+
 RC_ASSEMBLED_RUNTIME_V1 Full Run A:
-⏳ Human approval required
+✅ PASS — `3,601,045 ms`, `1,799,401` accepted, 8 natural GC samples
 
 RC_ASSEMBLED_RUNTIME_V1 Full Run B:
-⏳ Human approval required
+✅ PASS — `3,601,029 ms`, `1,848,908` accepted, 9 natural GC samples
 
-Phase 10 Closure / merge / v0.9.0-rc.1 / Product Release:
-NOT AUTHORIZED
+Campaign evaluator:
+✅ `2/2 qualifying`, `17` cumulative natural samples, `campaign.result=true`
+
+Immutable manifest SHA-256 values:
+- Run A: `f65a395256a919fe5a576c8858c2c5a6cd8f8c996bd5a9c2af367a51a33a1fcc`
+- Run B: `60f24746c23222fa23209117eee1300bc0c0aac1a3a497f8aa23d756ce83a596`
+
+Campaign summary:
+`qualification-results/phase10-rc-campaign/rc-assembled-campaign-72ea9c3f-0619-41b5-9d90-3dbb3ec9eaf6/qualification-campaign-summary-v1.txt`
+SHA-256 `89799b16f317f0cb083821368dcfe005dbbe508964adf8de234a1be61db78ae6`.
+
+The manifests' declared artifact relative paths and SHA-256 values were
+verified against the preserved local artifacts. The Full result artifacts
+include counts, digests, resource CSV and JFR evidence. The Blueprint's
+separate live latency percentile/management-overhead distribution evidence is
+not produced by this runner and remains an explicit final Evidence Review
+item; no unsupported completion or performance claim is made here.
 ```
 
-No 60-minute Full Run was started. A separate Human Full Campaign Approval is required before exactly two independent Full Runs may be executed. Any failed, aborted or provenance-invalid Full Run must be preserved and stop the campaign; no replacement run is implicit.
+The two authorized Full Runs completed without failure. Any failed, aborted or
+provenance-invalid Full Run would have been preserved and stopped the campaign;
+no replacement run was started.
 
 ## Claim Boundary
 
-This report supports only a reproducible, single-node, local-host release-candidate assembly pre-campaign. It is not a Product Release, Production Ready, SLA/RTO, exactly-once, HA, bounded-WAL-retention or hardware-power-loss claim.
+This report supports only reproducible, single-node, local-host release-candidate
+assembly qualification evidence. It is not a Product Release, Production
+Ready, SLA/RTO, exactly-once, HA, bounded-WAL-retention or hardware-power-loss
+claim. The Full Run result artifacts do not by themselves satisfy the separate
+live latency percentile and management-overhead distribution requirement.
 
 ## Next Gate
 
 ```text
-TASK-046 pre-campaign Evidence Gate
+TASK-046 Full Campaign Evidence PASS
         ↓
-Human Full Campaign Approval
-        ↓
-exactly two independent RC_ASSEMBLED_RUNTIME_V1 Full Runs
-        ↓
-campaign Evidence Gate
+final read-only Evidence/claim review (including latency/profile criterion)
         ↓
 Sol High Phase 10 Closure Review
+        ↓
+Human Phase 10 Closure Approval
 ```
-
