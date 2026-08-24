@@ -24,7 +24,12 @@ public final class ReleaseCandidateQualificationMain {
     public static void main(final String[] arguments) {
         if (arguments != null && arguments.length == 3 && "child".equals(arguments[0])
                 && "--config".equals(arguments[1])) {
-            runChild(Path.of(arguments[2]));
+            runChild(Path.of(arguments[2]), null);
+            return;
+        }
+        if (arguments != null && arguments.length == 5 && "child".equals(arguments[0])
+                && "--config".equals(arguments[1]) && "--evidence".equals(arguments[3])) {
+            runChild(Path.of(arguments[2]), Path.of(arguments[4]));
             return;
         }
         if (arguments != null && arguments.length == 3 && "lifecycle".equals(arguments[0])
@@ -32,23 +37,51 @@ public final class ReleaseCandidateQualificationMain {
             runLifecycle(Path.of(arguments[2]));
             return;
         }
+        if (arguments != null && arguments.length == 9 && "full".equals(arguments[0])
+                && "--artifact".equals(arguments[1]) && "--output".equals(arguments[3])
+                && "--git-sha".equals(arguments[5]) && "--baseline-tag".equals(arguments[7])) {
+            runFull(Path.of(arguments[2]), Path.of(arguments[4]), arguments[6], arguments[8]);
+            return;
+        }
+        if (arguments != null && arguments.length == 7 && "campaign".equals(arguments[0])
+                && "--manifest".equals(arguments[1]) && "--manifest".equals(arguments[3])
+                && "--output".equals(arguments[5])) {
+            runCampaign(Path.of(arguments[2]), Path.of(arguments[4]), Path.of(arguments[6]));
+            return;
+        }
         {
             System.err.println("usage: child --config <path>");
             System.err.println("       lifecycle --output <directory>");
+            System.err.println("       full --artifact <jar> --output <dir>"
+                    + " --git-sha <sha> --baseline-tag <tag>");
+            System.err.println("       campaign --manifest <a> --manifest <b>"
+                    + " --output <dir>");
             System.exit(64);
             return;
         }
     }
 
-    private static void runChild(final Path configurationPath) {
+    private static void runChild(
+            final Path configurationPath,
+            final Path evidenceDirectory) {
+        QualificationJfrRecording jfr = null;
+        QualificationResourceSampler sampler = null;
         final ReleaseCandidateRuntime runtime;
         try {
+            if (evidenceDirectory != null) {
+                Files.createDirectories(evidenceDirectory);
+                jfr = QualificationJfrRecording.start(evidenceDirectory.resolve("qualification.jfr"));
+                sampler = new QualificationResourceSampler(
+                        java.time.Duration.ofSeconds(5),
+                        QualificationFullConfiguration.FULL_MINIMUM_POST_GC_SAMPLES);
+            }
             final RuntimeConfiguration configuration = RuntimeConfigurationLoader.load(
                     configurationPath);
             runtime = MatchingEngineApplication.createRuntime(configuration);
             runtime.start();
             runtime.publishReady();
         } catch (final Throwable failure) {
+            closeEvidence(evidenceDirectory, sampler, jfr, failure);
             System.err.println("CHILD_FAILURE " + failure.getClass().getName()
                     + " " + String.valueOf(failure.getMessage()));
             System.exit(1);
@@ -65,6 +98,7 @@ public final class ReleaseCandidateQualificationMain {
             while ((command = input.readLine()) != null) {
                 if ("SHUTDOWN".equals(command)) {
                     runtime.shutdown();
+                    closeEvidence(evidenceDirectory, sampler, jfr, null);
                     output.println("STOPPED " + runtime.status().state() + " "
                             + RuntimeExitCode.forFailure(runtime.status().failureCode()).code());
                     return;
@@ -72,15 +106,40 @@ public final class ReleaseCandidateQualificationMain {
                 output.println("IGNORED " + command);
             }
             runtime.shutdown();
+            closeEvidence(evidenceDirectory, sampler, jfr, null);
         } catch (final IOException | RuntimeException failure) {
             try {
                 runtime.shutdown();
             } catch (final RuntimeException cleanupFailure) {
                 failure.addSuppressed(cleanupFailure);
             }
+            closeEvidence(evidenceDirectory, sampler, jfr, failure);
             System.err.println("CHILD_FAILURE " + failure.getClass().getName()
                     + " " + String.valueOf(failure.getMessage()));
             System.exit(RuntimeExitCode.forFailure(runtime.status().failureCode()).code());
+        }
+    }
+
+    private static void closeEvidence(
+            final Path evidenceDirectory,
+            final QualificationResourceSampler sampler,
+            final QualificationJfrRecording jfr,
+            final Throwable primaryFailure) {
+        try {
+            if (sampler != null) {
+                sampler.close();
+                QualificationResourceEvidenceWriter.write(
+                        evidenceDirectory.resolve("resource-evidence.csv"), sampler.evidence());
+            }
+            if (jfr != null) {
+                jfr.close();
+            }
+        } catch (final IOException evidenceFailure) {
+            if (primaryFailure != null) {
+                primaryFailure.addSuppressed(evidenceFailure);
+            } else {
+                System.err.println("CHILD_EVIDENCE_FAILURE " + evidenceFailure.getMessage());
+            }
         }
     }
 
@@ -98,6 +157,44 @@ public final class ReleaseCandidateQualificationMain {
             }
         } catch (final Exception failure) {
             System.err.println("LIFECYCLE_FAILURE " + failure.getClass().getName()
+                    + " " + String.valueOf(failure.getMessage()));
+            System.exit(1);
+        }
+    }
+
+    private static void runFull(
+            final Path artifact,
+            final Path outputDirectory,
+            final String gitSha,
+            final String baselineTag) {
+        try {
+            final ReleaseCandidateAssembledFullRun run =
+                    new ReleaseCandidateAssembledFullRunner().run(
+                            artifact, outputDirectory, gitSha, baselineTag);
+            System.out.println("FULL " + (run.fullCriteriaPassed() ? "PASS" : "FAIL")
+                    + " " + run.manifestPath() + " " + run.manifestSha256());
+            if (!run.fullCriteriaPassed()) {
+                System.exit(1);
+            }
+        } catch (final Exception failure) {
+            System.err.println("FULL_FAILURE " + failure.getClass().getName()
+                    + " " + String.valueOf(failure.getMessage()));
+            System.exit(1);
+        }
+    }
+
+    private static void runCampaign(
+            final Path firstManifest,
+            final Path secondManifest,
+            final Path outputDirectory) {
+        try {
+            final ReleaseCandidateAssembledCampaignResult result =
+                    new ReleaseCandidateAssembledCampaignEvaluator().evaluate(
+                            firstManifest, secondManifest, outputDirectory);
+            System.out.println("CAMPAIGN PASS " + result.summaryPath()
+                    + " " + result.summarySha256());
+        } catch (final Exception failure) {
+            System.err.println("CAMPAIGN_FAILURE " + failure.getClass().getName()
                     + " " + String.valueOf(failure.getMessage()));
             System.exit(1);
         }

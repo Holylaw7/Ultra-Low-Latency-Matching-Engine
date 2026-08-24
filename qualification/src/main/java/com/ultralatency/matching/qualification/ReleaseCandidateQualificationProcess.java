@@ -42,9 +42,19 @@ public final class ReleaseCandidateQualificationProcess implements AutoCloseable
             final Path packagedArtifact,
             final Path configuration,
             final Duration startupTimeout) throws IOException {
+        return start(packagedArtifact, configuration, null, startupTimeout);
+    }
+
+    /** Starts a child with an optional qualification-process evidence directory. */
+    public static ReleaseCandidateQualificationProcess start(
+            final Path packagedArtifact,
+            final Path configuration,
+            final Path evidenceDirectory,
+            final Duration startupTimeout) throws IOException {
         Objects.requireNonNull(configuration, "configuration");
         final Duration timeout = requireTimeout(startupTimeout, "startupTimeout");
-        final Process process = new ProcessBuilder(command(packagedArtifact, configuration))
+        final Process process = new ProcessBuilder(
+                command(packagedArtifact, configuration, evidenceDirectory))
                 .redirectErrorStream(true)
                 .start();
         final BufferedReader output = new BufferedReader(
@@ -140,34 +150,48 @@ public final class ReleaseCandidateQualificationProcess implements AutoCloseable
         }
     }
 
-    private static String[] command(final Path artifact, final Path configuration) {
+    private static String[] command(
+            final Path artifact,
+            final Path configuration,
+            final Path evidenceDirectory) {
         final String javaExecutable = Path.of(
                 System.getProperty("java.home"),
                 "bin",
                 System.getProperty("os.name", "").toLowerCase().contains("win")
                         ? "java.exe" : "java").toString();
         if (artifact != null) {
-            return new String[] {
+            final java.util.List<String> command = new java.util.ArrayList<>(java.util.List.of(
                 javaExecutable,
                 "-jar",
                 artifact.toAbsolutePath().normalize().toString(),
                 "child",
                 "--config",
-                configuration.toAbsolutePath().normalize().toString()
-            };
+                configuration.toAbsolutePath().normalize().toString()));
+            addEvidenceArgument(command, evidenceDirectory);
+            return command.toArray(String[]::new);
         }
         final String classPath = System.getProperty(
                 "surefire.test.class.path",
                 System.getProperty("java.class.path"));
-        return new String[] {
+        final java.util.List<String> command = new java.util.ArrayList<>(java.util.List.of(
             javaExecutable,
             "-cp",
             classPath,
             ReleaseCandidateQualificationMain.class.getName(),
             "child",
             "--config",
-            configuration.toAbsolutePath().normalize().toString()
-        };
+            configuration.toAbsolutePath().normalize().toString()));
+        addEvidenceArgument(command, evidenceDirectory);
+        return command.toArray(String[]::new);
+    }
+
+    private static void addEvidenceArgument(
+            final java.util.List<String> command,
+            final Path evidenceDirectory) {
+        if (evidenceDirectory != null) {
+            command.add("--evidence");
+            command.add(evidenceDirectory.toAbsolutePath().normalize().toString());
+        }
     }
 
     private static int[] parseReady(final String line) throws IOException {
