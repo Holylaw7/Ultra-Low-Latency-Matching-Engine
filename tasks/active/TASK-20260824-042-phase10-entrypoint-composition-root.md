@@ -138,11 +138,11 @@ No storage or protocol migration occurs.
 | Date | Status | Summary | Verification |
 | --- | --- | --- | --- |
 | 2026-08-24 | Proposed | Ownership model frozen in Blueprint | docs only |
-| 2026-08-24 | Completed | Added the thin bootstrap, owned Protocol composition root, readiness/failure wiring and bounded admission drain operations. | Focused 14/14 PASS; full reactor 210 core + 46 qualification tests, 2 skipped; Checkstyle 0; exact-SHA CI PASS |
+| 2026-08-24 | Completed | Added the thin bootstrap, owned Protocol composition root, readiness/failure wiring and bounded admission drain operations. | Focused 14/14 PASS; full reactor 210 core + 46 qualification tests, 2 skipped; Checkstyle 0; read-only evidence audit; exact-SHA CI PASS |
 
 - [x] dependency gate PASS
 - [x] exact files only
 - [x] legacy behavior compatible
 - [x] focused/full/static gates PASS
-- [x] verifier/docs-auditor and exact-SHA CI PASS
+- [x] read-only correctness/evidence audit and exact-SHA CI PASS
 - [x] TASK-043 synchronized as Authorized / Next

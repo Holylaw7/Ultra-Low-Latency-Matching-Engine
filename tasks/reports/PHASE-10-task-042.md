@@ -83,7 +83,7 @@ Frozen core audit relative to v0.8.0:
   Protocol model production diff = 0
 ```
 
-Read-only verifier and documentation/evidence review passed. The feature
+The read-only correctness and documentation/evidence audit passed. The feature
 branch push and exact-SHA CI passed at `1eba2c5`: Standard CI
 `32720292382` and Qualification Quick Lane `32720292393`.
 
@@ -128,5 +128,5 @@ Product Release: Not Authorized
 - [x] legacy constructor compatibility preserved
 - [x] no frozen semantic/dependency change
 - [x] focused/full/static/diff gates PASS
-- [x] verifier/docs-auditor and exact-SHA CI PASS
+- [x] read-only correctness/evidence audit and exact-SHA CI PASS
 - [x] TASK-043 synchronized as Authorized / Next
