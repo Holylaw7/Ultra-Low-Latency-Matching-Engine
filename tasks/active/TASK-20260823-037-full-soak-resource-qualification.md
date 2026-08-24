@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260823-037` |
 | Title | Full soak and resource lifecycle qualification |
-| Status | `In Progress / v2 Evidence Gate PASS; Human Campaign Approval Pending` |
+| Status | `In Progress / v2 Full Campaign Evidence PASS; Closure Review Pending` |
 | Owner | Human Developer |
 | Implementer | Main Codex / Luna Max — only writer |
 | Created | `2026-08-23` |
@@ -14,12 +14,12 @@
 | Related ADR | [`ADR-0017`](../../docs/adr/ADR-0017-system-qualification-performance-reliability.md) |
 | Phase Blueprint | [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md) |
 | Authorization Mode | `Blueprint` |
-| Current Stage | `qualification-run-manifest-v2 and immutable campaign-summary remediation` |
-| Next Gate | Human approval for a new v2 Full Campaign; no new run authorized |
+| Current Stage | `v2 MEMORY_STEADY_STATE_V1 Full Campaign complete` |
+| Next Gate | Human Phase 9 Evidence/Closure Review; TASK-038 remains locked |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Remediation checkpoint | `e678a98` / standard CI `32683768373` PASS / Quick Lane `32683768370` PASS |
-| Final docs synchronization | `dcfcccd` / standard CI `32684036767` PASS / Quick Lane `32684036758` PASS |
+| Final pre-campaign docs synchronization | `dcfcccd` / standard CI `32684036767` PASS / Quick Lane `32684036758` PASS |
 
 ## 2. Goal
 
@@ -58,8 +58,7 @@ must never be reported as Full Qualification.
 - restart/forced-termination campaign (TASK-038);
 - JMH/profile optimization work (TASK-039);
 - retries, filtering, deletion of failed evidence or threshold changes after a run;
-- any additional Full Campaign beyond the separately approved Run A/B pair or
-  before provenance remediation is approved;
+- any additional Full Campaign beyond the separately approved v2 A'/B' pair;
 - direct coordinator, pipeline or MatchingEngine calls from the harness;
 - reconnect, deduplication, multiple sessions or request pipelining;
 - WAL/Snapshot/Protocol/recovery semantic changes;
@@ -105,14 +104,14 @@ must never be reported as Full Qualification.
   include/exclude behavior are tested.
 - [ ] campaign summary publication is atomic, immutable, read-back validated
   and references member manifest SHA-256 values without copying run evidence.
-- [ ] verifier and docs-auditor return PASS before a new Full Campaign can be
-  considered; TASK-038 remains locked.
+- [x] verifier and docs-auditor return PASS after the approved v2 Full Campaign;
+  TASK-038 remains locked pending Phase 9 Closure.
 
 Remediation Evidence Gate is PASS at `c420313`: `mvn -pl qualification -am test`
 passes 36 qualification tests (2 intentionally skipped) and 195 core tests;
 `mvn verify`, Checkstyle, verifier and docs-auditor pass. Standard exact-SHA CI
-`32645549709` and Quick Lane `32645549694` both pass. No new Full Campaign has
-been started.
+`32645549709` and Quick Lane `32645549694` both pass. The subsequently
+approved v2 Full Campaign is recorded below.
 
 ## 6. Frozen Boundary
 
@@ -134,9 +133,10 @@ The short `QualificationFullRunnerTest` exercises composition quickly. A real
 Full lane run remains a manual evidence unit and must not be replaced by the
 short test.
 
-The Human-approved Limited Qualification-Only Amendment does not authorize a
-new Full run. After bounded-streaming and memory-lane remediation passes its
-Evidence Gate, execution must stop for a separate Human Full Campaign decision.
+At the time of the Human-approved Limited Qualification-Only Amendment, it did
+not authorize a new Full run. After bounded-streaming and memory-lane
+remediation passed its Evidence Gate, the separately approved campaign was
+executed and is recorded below.
 
 ## 10. Current Provenance / Campaign-Summary Amendment
 
@@ -155,8 +155,9 @@ references immutable member manifest SHA-256 values and artifact-sidecar hashes,
 is published once, and cannot overwrite an existing summary.
 
 Run A and Run B remain preserved `TECHNICALLY PASS / PRESERVED /
-NON-QUALIFYING` evidence. They are not backfilled with v2 fields, repackaged or
-included in a new campaign. No new Full Run is authorized by this amendment.
+NON-QUALIFYING` evidence. They were not backfilled with v2 fields, repackaged or
+included in the approved campaign. The campaign below consists only of the two
+new v2 runs.
 
 ## 8. Evidence Gate
 
@@ -166,7 +167,8 @@ read-only reviewer PASS and exact-SHA CI all agree. Any production defect,
 unexpected terminal state, timeout, digest mismatch, resource leak or
 configuration drift remains failure evidence and is escalated through the
 Exception Gate; it is not repaired inside this task by changing frozen
-production code. A new Full Campaign still requires separate Human approval.
+production code. The separate Human v2 Full Campaign approval has now been
+recorded; TASK-038 remains locked until this task reaches Phase 9 Closure.
 
 ## 9. Limited Qualification-Only Amendment Status
 
@@ -174,5 +176,40 @@ Human approval on 2026-08-23 authorizes only `qualification/**`, qualification
 workflow lane/metadata changes if required, and evidence/status documentation.
 The remediation implements streaming/bounded aggregation and the versioned
 `MEMORY_STEADY_STATE_V1` lane. It does not authorize production code, JVM/GC or
-workload tuning, threshold relaxation, artificial GC, retry-until-pass, or a
-new Full Campaign. Run #1 and Run #2 remain preserved non-qualifying evidence.
+workload tuning, threshold relaxation, artificial GC, retry-until-pass, or an
+unapproved Full Campaign. Run #1 and Run #2 remain preserved non-qualifying
+evidence.
+
+## 11. Human-Approved v2 Full Campaign Evidence
+
+The Human Full Campaign Approval authorized exactly two new independent
+`MEMORY_STEADY_STATE_V1` runs under the frozen configuration. Both runs completed
+without retry, filtering, tuning or production changes and published immutable
+`qualification-run-manifest-v2` plus artifact-hash sidecars at runtime.
+
+| Run | Status | Elapsed | Accepted commands | Natural post-GC samples | Heap guard | Run ID |
+| --- | --- | ---: | ---: | ---: | --- | --- |
+| A' | PASS | `3,619,093 ms` | `1,784,601` | `22` | `true` | `qualification-full-bfeb2a65-aa89-42bc-a1c3-f473979d79cb` |
+| B' | PASS | `3,620,413 ms` | `1,741,681` | `22` | `true` | `qualification-full-934f9d5d-d972-456f-941c-93d1cbdc5bd3` |
+
+Both manifests also report listener rebound, recovery lease reacquisition,
+thread-baseline restoration, stable WAL inventory and zero temporary files.
+Their `configurationIdentitySha256` is
+`dcec0edae1b407aa1ebef21514cb9de7ad3b95b8cb840969e00ca8ca2b262e29`; their
+`comparabilityIdentitySha256` is
+`a14d43165e967eb2b8890a6882dea1cacaaf51cfd5602b0b0fb15d2bedfbd643`.
+
+The atomically published campaign summary is the local controlled evidence
+artifact
+`qualification/qualification-results-v2-campaign-20260824/qualification-campaign-summary-v1.txt`
+with SHA-256
+`5bf1b84b30226807d79f5a0a4950ae649c3a72a860d6d6b13edd9fa715e24112`.
+It records `qualifyingRunCount=2`, `campaign.result=true` and
+`cumulativeNaturalPostGcSamples=44` (required minimum `5`). The campaign
+directory is intentionally ignored by `.gitignore`; raw artifacts remain
+immutable and are not committed into the source baseline. Historical Run A/B
+artifacts remain untouched and excluded from this campaign.
+
+The campaign evidence is accepted pending the separate Phase 9 Closure Review.
+TASK-038, Phase 9 Closure, merge, `v0.8.0-engineering-baseline` and Product
+Release remain unauthorized.

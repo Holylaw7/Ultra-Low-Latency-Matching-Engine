@@ -14,7 +14,7 @@
 | Blueprint Branch | `docs/phase9-system-qualification-blueprint` |
 | Implementation Branch | `feature/phase9-system-qualification` |
 | Planned Tasks | `TASK-20260823-035` through `TASK-20260823-040` |
-| Next Gate | `Human approval for a new v2 MEMORY_STEADY_STATE_V1 Full Campaign; no new run is authorized yet` |
+| Next Gate | `Phase 9 Evidence/Closure Review; TASK-038 remains locked` |
 
 ## 2. Phase Goal
 
@@ -309,7 +309,7 @@ Release. Phase 10 remains unauthorized.
 
 ```text
 Blueprint Status: Approved
-Implementation: TASK-036 Evidence Gate PASS; TASK-037 v2 provenance/campaign-summary Evidence Gate PASS; Human approval for a new Full run pending
+Implementation: TASK-036 Evidence Gate PASS; TASK-037 v2 Full Campaign Evidence PASS (two qualifying runs; summary SHA-256 `5bf1b84b30226807d79f5a0a4950ae649c3a72a860d6d6b13edd9fa715e24112`)
 Phase 9 Closure: Not Authorized
 ```
 
@@ -326,8 +326,9 @@ confounded by harness retention and intentionally growing business state:
 - add `MEMORY_STEADY_STATE_V1` as a qualification-only bounded-state lane over
   the unchanged public system boundary;
 - preserve Run #1 and Run #2 as non-qualifying evidence;
-- do not start a new Full Campaign until this remediation Evidence Gate has
-  passed and a separate Human approval is recorded.
+- at amendment approval time, do not start a new Full Campaign until this
+  remediation Evidence Gate has passed and a separate Human approval is
+  recorded; that subsequent approval and campaign evidence are recorded below.
 
 The amendment does not authorize production source changes, JVM/GC/workload
 tuning, threshold relaxation, artificial GC, retry-until-pass behavior,
@@ -350,6 +351,8 @@ once with atomic move, force, read-back validation and no overwrite.
 
 Run A and Run B remain preserved `TECHNICALLY PASS / PRESERVED /
 NON-QUALIFYING` evidence. Their original artifacts are never backfilled or
-repackaged. No new Full Campaign is authorized by this amendment; after its
-Evidence Gate, a separate Human approval is required. Production code/tests,
-dependencies, workload/thresholds and JVM/GC settings remain frozen.
+repackaged. A separate Human approval subsequently authorized exactly two new
+v2 runs; both passed and are recorded by the immutable campaign summary above.
+Production code/tests, dependencies, workload/thresholds and JVM/GC settings
+remain frozen. Phase 9 Closure remains separately authorized only after final
+Evidence/Closure Review.

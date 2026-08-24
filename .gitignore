@@ -23,6 +23,7 @@ Thumbs.db
 benchmark-results/
 profiler-results/
 qualification-results/
+qualification-results-v2-campaign-*/
 
 # Local environment and secrets
 .env

@@ -46,13 +46,20 @@ TASK-035 qualification foundation is complete at `22d13fe` with exact-SHA CI
 `f90e42c` with standard CI `32627744868` and quick-lane CI `32627744878` PASS;
 TASK-037 is in progress on the `feature/phase9-system-qualification` branch;
 its Limited Qualification-Only Remediation Evidence Gate is PASS at `c420313`
-with standard CI `32645549709` and Quick Lane `32645549694` PASS. The
-amendment adds bounded streaming evidence and a separately versioned
-`MEMORY_STEADY_STATE_V1` lane; implementation checkpoint `23ca7f0` is locally
-verified, but no new Full Campaign is authorized yet. Phase 9 is an engineering
-qualification phase: production source, runtime semantics and existing formats
-remain frozen; production optimization, Phase 10 and Product Release remain
-unauthorized.
+with standard CI `32645549709` and Quick Lane `32645549694` PASS. The approved
+v2 `MEMORY_STEADY_STATE_V1` Full Campaign then completed as exactly two
+independent qualifying runs: A' (`1,784,601` accepted commands, `3,619,093 ms`,
+22 natural samples, chronological heap guard PASS) and B' (`1,741,681`,
+`3,620,413 ms`, 22 natural samples, heap guard PASS). Their immutable campaign
+summary is at
+`qualification/qualification-results-v2-campaign-20260824/qualification-campaign-summary-v1.txt`
+with SHA-256
+`5bf1b84b30226807d79f5a0a4950ae649c3a72a860d6d6b13edd9fa715e24112` and records
+`campaign.result=true` with 44 cumulative natural samples. Historical Run A/B
+remain preserved/non-qualifying. Phase 9 is an engineering qualification
+phase: production source, runtime semantics and existing formats remain
+frozen; TASK-038, Phase 9 Closure, production optimization, Phase 10 and
+Product Release remain unauthorized.
 
 Phase 8 remains documented by [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
 the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)
