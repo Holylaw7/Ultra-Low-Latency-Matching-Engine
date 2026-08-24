@@ -49,8 +49,8 @@ dependency, protocol, WAL, Snapshot or recovery semantics.
 ## 5. Acceptance Criteria
 
 - [x] One authoritative evidence matrix covers TASK-035 through TASK-039.
-- [x] Final commit/CI/reviewer references are internally consistent and stale
-  “TASK-039 next/not started” status text is removed from current documents.
+- [x] Final commit/CI/reviewer references are internally consistent and no
+  superseded TASK-039 pending-status text remains in current documents.
 - [x] The TASK-039 JMH/JFR matrix and raw artifact hashes are recorded without
   filtering outliers or upgrading component evidence to a production claim.
 - [x] TASK-037 A'/B' campaign and TASK-038 20/10 campaign evidence are kept
@@ -60,8 +60,8 @@ dependency, protocol, WAL, Snapshot or recovery semantics.
 - [x] No production/test/benchmark/dependency diff is introduced.
 - [x] `git diff --check`, `mvn verify`, approved-path audit, verifier,
   benchmark-reviewer and docs-auditor all pass.
-- [x] Exact-SHA CI passes for documentation checkpoint `bc8b11e`:
-  Standard `32709001419` PASS and Qualification Quick Lane `32709001388` PASS.
+- [x] Exact-SHA CI passes for the Closure Input `8e5d39d`:
+  Standard `32709188522` PASS and Qualification Quick Lane `32709188327` PASS.
 
 ## 6. Evidence Gate
 

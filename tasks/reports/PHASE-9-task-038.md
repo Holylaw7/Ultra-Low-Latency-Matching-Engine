@@ -9,7 +9,7 @@
 | Dependency | TASK-037 Human Closure Approved |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
-| Next Gate | `TASK-040 In Progress; Phase 9 Closure remains unauthorized` |
+| Next Gate | `TASK-040 Evidence Gate PASS; Sol High Closure Review pending; Phase 9 Closure remains unauthorized` |
 
 ## Implemented Scope
 
@@ -97,7 +97,8 @@ The evidence synchronization checkpoint `da5ac1f` passed Standard CI
 `32699178851` and Qualification Quick Lane `32699178800`. The verifier and
 docs-auditor both returned `PASS`; the task is complete for its approved
 restart/termination scope. TASK-039 subsequently completed its JMH/JFR
-Evidence Gate, and TASK-040 is now reconciling the final Phase 9 evidence.
+Evidence Gate, and TASK-040 has completed the final Phase 9 evidence
+reconciliation. Sol High Closure Review remains pending.
 
 ## Claim Boundary
 
@@ -119,5 +120,6 @@ unauthorized.
 The TASK-038 Evidence Gate is PASS. Any production boundary change, recovery
 semantic change, new dependency, workload/threshold tuning, or weakened
 ambiguous-outcome claim in later work triggers the Exception Gate. TASK-039 is
-complete and TASK-040 is the active final evidence-reconciliation task; Phase 9
-Closure, merge and baseline tagging remain unauthorized.
+complete and TASK-040 Evidence Gate is PASS; current Closure Input is
+`8e5d39d` / Standard CI `32709188522` PASS / Quick Lane `32709188327` PASS.
+Phase 9 Closure, merge and baseline tagging remain unauthorized.

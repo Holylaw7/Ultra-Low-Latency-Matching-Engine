@@ -12,7 +12,7 @@
 | Scope | Documentation/evidence reconciliation only |
 | Technical input | TASK-039 checkpoint `d003266` / Standard CI `32707393196` PASS / Quick Lane `32707393200` PASS |
 | Latest TASK-039 status sync | `440915d` / Standard CI `32707877619` PASS / Quick Lane `32707877630` PASS |
-| Evidence checkpoint | `bc8b11e` / Standard CI `32709001419` PASS / Quick Lane `32709001388` PASS |
+| Closure Input | `8e5d39d` / Standard CI `32709188522` PASS / Quick Lane `32709188327` PASS |
 | Next Gate | Sol High Phase 9 Final Closure Review; Human Phase 9 Closure Approval required |
 | Merge / Tag | Not authorized |
 
@@ -199,7 +199,7 @@ Product Release: NOT AUTHORIZED
 
 ## 6. Evidence Gate
 
-- [x] Current documents contain no stale “TASK-039 authorized / not started”
+- [x] Current documents contain no superseded TASK-039 pending-status
   statement.
 - [x] TASK-035 through TASK-039 evidence and claim boundaries are reconciled.
 - [x] Verifier PASS.
@@ -207,7 +207,7 @@ Product Release: NOT AUTHORIZED
 - [x] Docs-auditor PASS.
 - [x] `mvn verify` PASS; Checkstyle 0; `git diff --check` PASS.
 - [x] Production, test, benchmark and dependency diff = 0.
-- [x] Exact-SHA CI PASS for TASK-040 documentation checkpoint `bc8b11e`.
+- [x] Exact-SHA CI PASS for Closure Input `8e5d39d`.
 
 ## 7. Current Gate
 

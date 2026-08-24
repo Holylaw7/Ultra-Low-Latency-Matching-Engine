@@ -40,7 +40,8 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   representative GC/JFR profile are complete; verifier, benchmark-reviewer and
   docs-auditor have reported PASS; technical checkpoint `d003266` passed
   Standard CI `32707393196` and Quick Lane `32707393200`. TASK-039 is archived
-  and TASK-040 is in progress for final evidence reconciliation and the
-  prepared Closure Proposal. Phase 9 Closure, merge,
+  and TASK-040 Evidence Gate is PASS with current Closure Input `8e5d39d` /
+  Standard CI `32709188522` / Quick Lane `32709188327`. The Closure Proposal
+  is prepared and Sol High review is pending. Phase 9 Closure, merge,
   `v0.8.0-engineering-baseline`, Phase 10 and Product Release remain
   unauthorized.
