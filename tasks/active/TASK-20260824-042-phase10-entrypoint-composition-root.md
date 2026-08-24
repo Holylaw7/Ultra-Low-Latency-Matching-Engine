@@ -6,12 +6,12 @@
 | --- | --- |
 | Task ID | `TASK-20260824-042` |
 | Title | Application entrypoint and owned composition root |
-| Status | `Dependency Locked` |
+| Status | `Authorized / Next` |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
 | Dependency | TASK-041 Evidence Gate PASS |
-| Next Gate | Human Phase 10 Blueprint Approval, then dependency gate |
+| Next Gate | TASK-042 Evidence Gate |
 
 ## 2. Goal
 
