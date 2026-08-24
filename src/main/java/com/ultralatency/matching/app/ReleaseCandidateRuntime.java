@@ -8,7 +8,9 @@ import com.ultralatency.matching.persistence.wal.WalConfiguration;
 import com.ultralatency.matching.pipeline.PipelineConfiguration;
 import com.ultralatency.matching.operations.ManagementServer;
 import com.ultralatency.matching.operations.RuntimeAvailability;
+import java.time.Duration;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Composition root for the Phase 10 release-candidate runtime.
@@ -26,17 +28,20 @@ public final class ReleaseCandidateRuntime implements AutoCloseable {
     private final RuntimeAvailability availability;
     private final RecoverableDurableMatchingEngineTcpServer protocolServer;
     private final ManagementServer managementServer;
+    private final CountDownLatch terminationSignal;
     private boolean shutdownRequested;
 
     private ReleaseCandidateRuntime(
             final RuntimeConfiguration configuration,
             final RuntimeAvailability availability,
             final RecoverableDurableMatchingEngineTcpServer protocolServer,
-            final ManagementServer managementServer) {
+            final ManagementServer managementServer,
+            final CountDownLatch terminationSignal) {
         this.configuration = Objects.requireNonNull(configuration, "configuration");
         this.availability = Objects.requireNonNull(availability, "availability");
         this.protocolServer = Objects.requireNonNull(protocolServer, "protocolServer");
         this.managementServer = Objects.requireNonNull(managementServer, "managementServer");
+        this.terminationSignal = Objects.requireNonNull(terminationSignal, "terminationSignal");
     }
 
     /**
@@ -48,21 +53,28 @@ public final class ReleaseCandidateRuntime implements AutoCloseable {
     public static ReleaseCandidateRuntime create(final RuntimeConfiguration configuration) {
         Objects.requireNonNull(configuration, "configuration");
         final RuntimeAvailability availability = new RuntimeAvailability();
+        final CountDownLatch terminationSignal = new CountDownLatch(1);
         final RecoverableNetworkConfiguration network = networkConfiguration(configuration);
         final RecoverableDurableMatchingEngineTcpServer protocolServer =
                 new RecoverableDurableMatchingEngineTcpServer(
                         network,
                         availability::isReady,
-                        failure -> availability.fail(RuntimeFailureCode.RUNTIME));
+                        failure -> {
+                            availability.fail(RuntimeFailureCode.RUNTIME);
+                            terminationSignal.countDown();
+                        });
         final ManagementServer managementServer = new ManagementServer(
                 configuration,
                 availability::snapshot,
-                failure -> availability.fail(
-                        failure instanceof ManagementServer.ManagementBindFailure
-                                ? RuntimeFailureCode.MANAGEMENT_BIND
-                                : RuntimeFailureCode.RUNTIME));
+                failure -> {
+                    availability.fail(
+                            failure instanceof ManagementServer.ManagementBindFailure
+                                    ? RuntimeFailureCode.MANAGEMENT_BIND
+                                    : RuntimeFailureCode.RUNTIME);
+                    terminationSignal.countDown();
+                });
         return new ReleaseCandidateRuntime(
-                configuration, availability, protocolServer, managementServer);
+                configuration, availability, protocolServer, managementServer, terminationSignal);
     }
 
     /** Starts recovery, sequence convergence and Protocol binding before readiness publication. */
@@ -83,11 +95,13 @@ public final class ReleaseCandidateRuntime implements AutoCloseable {
                     ? RuntimeFailureCode.MANAGEMENT_BIND
                     : RuntimeFailureCode.RUNTIME);
             try {
-                managementServer.shutdown(configuration.shutdownTimeout());
-                shutdownProtocol();
+                final long rollbackDeadline = deadline(timeoutNanos(configuration.shutdownTimeout()));
+                managementServer.shutdown(remainingDuration(rollbackDeadline));
+                shutdownProtocol(rollbackDeadline);
             } catch (final Throwable cleanupFailure) {
                 failure.addSuppressed(cleanupFailure);
             }
+            terminationSignal.countDown();
             throw rethrow(failure, "Release-candidate runtime failed to start");
         }
     }
@@ -95,9 +109,9 @@ public final class ReleaseCandidateRuntime implements AutoCloseable {
     /**
      * Publishes READY after the composition root has bound every required direct child.
      *
-     * <p>TASK-042 has only the Protocol child. TASK-044 will call this operation after the
-     * ManagementServer is bound; calling it earlier is rejected, so Protocol admission cannot
-     * open before the complete composition is ready.</p>
+     * <p>The operation is valid only after the Protocol and configured ManagementServer children
+     * are bound; calling it earlier is rejected, so Protocol admission cannot open before the
+     * complete composition is ready.</p>
      */
     public void publishReady() {
         synchronized (lifecycleMonitor) {
@@ -134,6 +148,7 @@ public final class ReleaseCandidateRuntime implements AutoCloseable {
         final RuntimeLifecycleState current = availability.snapshot().state();
         if (current == RuntimeLifecycleState.NEW) {
             availability.markStopped();
+            terminationSignal.countDown();
             return;
         }
         if (current == RuntimeLifecycleState.READY
@@ -141,12 +156,23 @@ public final class ReleaseCandidateRuntime implements AutoCloseable {
                 || current == RuntimeLifecycleState.CONFIG_VALIDATED) {
             availability.beginStopping();
         }
-        managementServer.shutdown(configuration.shutdownTimeout());
-        shutdownProtocol();
-        final RuntimeLifecycleState after = availability.snapshot().state();
-        if (after == RuntimeLifecycleState.STOPPING || after == RuntimeLifecycleState.FAILED) {
-            availability.markStopped();
+        final long deadline = deadline(timeoutNanos(configuration.shutdownTimeout()));
+        try {
+            managementServer.shutdown(remainingDuration(deadline));
+            shutdownProtocol(deadline);
+            final RuntimeLifecycleState after = availability.snapshot().state();
+            if (after == RuntimeLifecycleState.STOPPING
+                    || after == RuntimeLifecycleState.FAILED) {
+                availability.markStopped();
+            }
+        } catch (final Throwable failure) {
+            if (availability.snapshot().failureCode() == RuntimeFailureCode.NONE) {
+                availability.fail(RuntimeFailureCode.SHUTDOWN_TIMEOUT);
+            }
+            terminationSignal.countDown();
+            throw rethrow(failure, "Release-candidate runtime shutdown failed");
         }
+        terminationSignal.countDown();
     }
 
     /** @return immutable application configuration */
@@ -179,15 +205,55 @@ public final class ReleaseCandidateRuntime implements AutoCloseable {
         shutdown();
     }
 
-    private void shutdownProtocol() {
+    /** Waits for a terminal failure or completed shutdown signal. */
+    public void awaitTermination() throws InterruptedException {
+        terminationSignal.await();
+    }
+
+    private void shutdownProtocol(final long deadline) {
         try {
             protocolServer.stopAdmission();
-            protocolServer.awaitInFlight(configuration.shutdownTimeout());
-            protocolServer.shutdown(configuration.shutdownTimeout());
+            final boolean drained = protocolServer.awaitInFlight(remainingDuration(deadline));
+            if (!drained) {
+                availability.fail(RuntimeFailureCode.SHUTDOWN_TIMEOUT);
+            }
+            protocolServer.shutdown(remainingDuration(deadline));
+            if (protocolServer.state()
+                    == com.ultralatency.matching.integration.recovery.RecoveryRuntimeState.FAILED
+                    && availability.snapshot().failureCode() == RuntimeFailureCode.NONE) {
+                availability.fail(RuntimeFailureCode.RUNTIME);
+            }
+            if (!drained) {
+                throw new IllegalStateException("Protocol shutdown drain timed out");
+            }
         } catch (final Throwable failure) {
             availability.fail(RuntimeFailureCode.SHUTDOWN_TIMEOUT);
             throw rethrow(failure, "Release-candidate runtime shutdown failed");
         }
+    }
+
+    private static long timeoutNanos(final Duration timeout) {
+        Objects.requireNonNull(timeout, "timeout");
+        if (timeout.isNegative() || timeout.isZero()) {
+            throw new IllegalArgumentException("Shutdown timeout must be positive");
+        }
+        try {
+            return timeout.toNanos();
+        } catch (final ArithmeticException exception) {
+            throw new IllegalArgumentException("Shutdown timeout is too large", exception);
+        }
+    }
+
+    private static long deadline(final long timeoutNanos) {
+        try {
+            return Math.addExact(System.nanoTime(), timeoutNanos);
+        } catch (final ArithmeticException exception) {
+            return Long.MAX_VALUE;
+        }
+    }
+
+    private static Duration remainingDuration(final long deadline) {
+        return Duration.ofNanos(Math.max(1, deadline - System.nanoTime()));
     }
 
     private static RuntimeException rethrow(final Throwable failure, final String message) {

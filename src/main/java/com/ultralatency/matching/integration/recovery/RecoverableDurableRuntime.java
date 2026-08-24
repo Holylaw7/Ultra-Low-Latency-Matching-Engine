@@ -14,6 +14,7 @@ import com.ultralatency.matching.pipeline.PipelineState;
 import com.ultralatency.matching.recovery.online.RecoveryPlanner;
 import com.ultralatency.matching.recovery.online.RecoveryResult;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -114,13 +115,27 @@ public final class RecoverableDurableRuntime implements AutoCloseable {
 
     /** Stops the runtime and releases its lease and owned resources. */
     public RecoveryRuntimeState shutdown() {
+        return shutdown(configuration.durableConfiguration().shutdownTimeout());
+    }
+
+    /**
+     * Stops the runtime using one cooperative deadline for Pipeline, storage and lease close.
+     *
+     * @param timeout maximum total shutdown duration
+     * @return final runtime lifecycle state
+     */
+    public RecoveryRuntimeState shutdown(final Duration timeout) {
+        final long deadline = deadline(timeoutNanos(timeout));
         MatchingEnginePipeline currentPipeline = null;
         DurableCommandCoordinator currentCoordinator = null;
         CommandWalWriter currentWriter = null;
         RecoveryLease currentLease = null;
-        RecoveryRuntimeState result;
+        boolean terminal = false;
         synchronized (lifecycleMonitor) {
-            if (state == RecoveryRuntimeState.STOPPED || state == RecoveryRuntimeState.FAILED) {
+            if (state == RecoveryRuntimeState.STOPPED) {
+                return state;
+            }
+            if (state == RecoveryRuntimeState.FAILED) {
                 currentPipeline = pipeline;
                 currentCoordinator = coordinator;
                 currentWriter = walWriter;
@@ -129,10 +144,10 @@ public final class RecoverableDurableRuntime implements AutoCloseable {
                 coordinator = null;
                 walWriter = null;
                 recoveryLease = null;
-                result = state;
+                terminal = true;
             } else if (state == RecoveryRuntimeState.NEW) {
                 state = RecoveryRuntimeState.STOPPED;
-                result = state;
+                return state;
             } else {
                 currentPipeline = pipeline;
                 currentCoordinator = coordinator;
@@ -143,11 +158,21 @@ public final class RecoverableDurableRuntime implements AutoCloseable {
                 walWriter = null;
                 recoveryLease = null;
                 state = RecoveryRuntimeState.STOPPED;
-                result = state;
             }
         }
-        closeResources(currentPipeline, currentCoordinator, currentWriter, currentLease);
-        return result;
+        final boolean closed = closeResources(
+                currentPipeline, currentCoordinator, currentWriter, currentLease, deadline);
+        if (!closed && !terminal) {
+            synchronized (lifecycleMonitor) {
+                if (failureCause == null) {
+                    failureCause = new IllegalStateException("Recovered runtime shutdown failed");
+                }
+                state = RecoveryRuntimeState.FAILED;
+            }
+        }
+        synchronized (lifecycleMonitor) {
+            return state;
+        }
     }
 
     /** @return current runtime lifecycle state */
@@ -251,27 +276,39 @@ public final class RecoverableDurableRuntime implements AutoCloseable {
             walWriter = null;
             recoveryLease = null;
         }
-        closeResources(currentPipeline, currentCoordinator, currentWriter, currentLease);
+        closeResources(
+                currentPipeline,
+                currentCoordinator,
+                currentWriter,
+                currentLease,
+                deadline(configuration.durableConfiguration().shutdownTimeout()));
     }
 
-    private static void closeResources(
+    private static boolean closeResources(
             final MatchingEnginePipeline pipeline,
             final DurableCommandCoordinator coordinator,
             final CommandWalWriter writer,
-            final RecoveryLease lease) {
+            final RecoveryLease lease,
+            final long deadline) {
+        boolean clean = true;
         if (coordinator != null && coordinator.state() == DurableLifecycleState.RUNNING) {
-            coordinator.shutdown();
+            if (coordinator.shutdown() != DurableLifecycleState.STOPPED) {
+                clean = false;
+            }
         }
         if (pipeline != null
                 && (pipeline.state() == PipelineState.RUNNING
                 || pipeline.state() == PipelineState.DRAINING)) {
-            pipeline.shutdown(java.time.Duration.ofSeconds(2));
+            if (pipeline.shutdown(Duration.ofNanos(remaining(deadline))) != PipelineState.STOPPED) {
+                clean = false;
+            }
         }
         if (writer != null) {
             try {
                 writer.close();
             } catch (final IOException ignored) {
                 // The first runtime failure remains authoritative.
+                clean = false;
             }
         }
         if (lease != null) {
@@ -279,8 +316,38 @@ public final class RecoverableDurableRuntime implements AutoCloseable {
                 lease.close();
             } catch (final IOException ignored) {
                 // The first runtime failure remains authoritative.
+                clean = false;
             }
         }
+        return clean;
+    }
+
+    private static long timeoutNanos(final Duration timeout) {
+        Objects.requireNonNull(timeout, "timeout");
+        if (timeout.isNegative() || timeout.isZero()) {
+            throw new IllegalArgumentException("Shutdown timeout must be positive");
+        }
+        try {
+            return timeout.toNanos();
+        } catch (final ArithmeticException exception) {
+            throw new IllegalArgumentException("Shutdown timeout is too large", exception);
+        }
+    }
+
+    private static long deadline(final Duration timeout) {
+        return deadline(timeoutNanos(timeout));
+    }
+
+    private static long deadline(final long timeoutNanos) {
+        try {
+            return Math.addExact(System.nanoTime(), timeoutNanos);
+        } catch (final ArithmeticException exception) {
+            return Long.MAX_VALUE;
+        }
+    }
+
+    private static long remaining(final long deadline) {
+        return Math.max(1, deadline - System.nanoTime());
     }
 
     private void requireState(final RecoveryRuntimeState expected, final String operation) {

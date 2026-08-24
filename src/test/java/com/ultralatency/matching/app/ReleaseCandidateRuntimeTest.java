@@ -5,12 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.ultralatency.matching.integration.durable.DurableFailureStage;
 import com.ultralatency.matching.integration.recovery.RecoveryRuntimeState;
 import com.ultralatency.matching.recovery.online.RecoveryMode;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.nio.file.Path;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -75,6 +78,62 @@ class ReleaseCandidateRuntimeTest {
             assertTrue(runtime.status().ready());
         } finally {
             runtime.shutdown();
+        }
+    }
+
+    @Test
+    void programmaticShutdownSignalsTheMainWaiterAfterCleanup() throws Exception {
+        final ReleaseCandidateRuntime runtime =
+                ReleaseCandidateRuntime.create(configuration(RecoveryMode.PURE_WAL));
+        runtime.start();
+        runtime.publishReady();
+        final CountDownLatch waiterFinished = new CountDownLatch(1);
+        final Thread waiter = new Thread(() -> {
+            try {
+                runtime.awaitTermination();
+                waiterFinished.countDown();
+            } catch (final InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+            }
+        }, "task045-runtime-waiter");
+        waiter.start();
+        try {
+            assertTrue(runtime.protocolServer().state() == RecoveryRuntimeState.RUNNING);
+            assertFalse(waiterFinished.await(50, TimeUnit.MILLISECONDS));
+            runtime.shutdown();
+            assertTrue(waiterFinished.await(2, TimeUnit.SECONDS));
+            assertEquals(RuntimeLifecycleState.STOPPED, runtime.status().state());
+        } finally {
+            runtime.shutdown();
+            waiter.join(2_000);
+        }
+    }
+
+    @Test
+    void firstTerminalFailureSignalsWaiterAndPreservesRuntimeFailureCode() throws Exception {
+        final ReleaseCandidateRuntime runtime =
+                ReleaseCandidateRuntime.create(configuration(RecoveryMode.PURE_WAL));
+        runtime.start();
+        runtime.publishReady();
+        final CountDownLatch waiterFinished = new CountDownLatch(1);
+        final Thread waiter = new Thread(() -> {
+            try {
+                runtime.awaitTermination();
+                waiterFinished.countDown();
+            } catch (final InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+            }
+        }, "task045-failure-waiter");
+        waiter.start();
+        try {
+            runtime.protocolServer().runtime().fail(
+                    DurableFailureStage.ENGINE,
+                    new IllegalStateException("synthetic terminal failure"));
+            assertTrue(waiterFinished.await(2, TimeUnit.SECONDS));
+            assertEquals(RuntimeFailureCode.RUNTIME, runtime.status().failureCode());
+        } finally {
+            runtime.shutdown();
+            waiter.join(2_000);
         }
     }
 

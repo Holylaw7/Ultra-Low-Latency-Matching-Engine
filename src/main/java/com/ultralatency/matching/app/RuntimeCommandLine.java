@@ -5,7 +5,6 @@ import java.io.PrintStream;
 import java.net.BindException;
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 
 /** Strict command-line boundary for the release-candidate application. */
 public final class RuntimeCommandLine {
@@ -77,22 +76,30 @@ public final class RuntimeCommandLine {
             return code.code();
         }
 
-        final CountDownLatch termination = new CountDownLatch(1);
         final Thread shutdownHook = new Thread(() -> {
             try {
                 runtime.shutdown();
-            } finally {
-                termination.countDown();
+            } catch (final RuntimeException ignored) {
+                // The runtime retains the first failure and stable exit mapping.
             }
         }, "matching-engine-runtime-shutdown");
         Runtime.getRuntime().addShutdownHook(shutdownHook);
         try {
-            termination.await();
-            return RuntimeExitCode.CLEAN.code();
+            runtime.awaitTermination();
+            try {
+                runtime.shutdown();
+            } catch (final RuntimeException cleanupFailure) {
+                error.println("Runtime shutdown failed: " + safeMessage(cleanupFailure));
+            }
+            return RuntimeExitCode.forFailure(runtime.status().failureCode()).code();
         } catch (final InterruptedException interrupted) {
             Thread.currentThread().interrupt();
-            runtime.shutdown();
-            return RuntimeExitCode.CLEAN.code();
+            try {
+                runtime.shutdown();
+            } catch (final RuntimeException cleanupFailure) {
+                error.println("Runtime shutdown failed: " + safeMessage(cleanupFailure));
+            }
+            return RuntimeExitCode.forFailure(runtime.status().failureCode()).code();
         }
     }
 

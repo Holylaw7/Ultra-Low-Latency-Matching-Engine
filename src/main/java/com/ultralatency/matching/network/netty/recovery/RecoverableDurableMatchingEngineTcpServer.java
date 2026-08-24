@@ -74,6 +74,7 @@ public final class RecoverableDurableMatchingEngineTcpServer {
     private RecoverableDurableRuntime runtime;
     private boolean sessionClaimed;
     private boolean admissionOpen;
+    private boolean shutdownInProgress;
     private long expectedRequestId = 1;
     private InFlight inFlight;
 
@@ -160,24 +161,42 @@ public final class RecoverableDurableMatchingEngineTcpServer {
     public RecoveryRuntimeState shutdown(final Duration timeout) {
         final long timeoutNanos = timeoutNanos(timeout);
         final long deadline = deadline(timeoutNanos);
+        final Channel listener;
         synchronized (lifecycleMonitor) {
             if (state == RecoveryRuntimeState.NEW || state == RecoveryRuntimeState.STOPPED) {
                 admissionOpen = false;
                 state = RecoveryRuntimeState.STOPPED;
                 return state;
             }
+            if (shutdownInProgress) {
+                return state;
+            }
+            shutdownInProgress = true;
             admissionOpen = false;
+            listener = serverChannel;
+            lifecycleMonitor.notifyAll();
+        }
+        close(listener);
+        awaitInFlight(Duration.ofNanos(remaining(deadline)));
+        close(activeChannel);
+        final RecoveryRuntimeState runtimeState = closeRuntime(remaining(deadline));
+        shutdownGroup(bossGroup, remaining(deadline));
+        shutdownGroup(workerGroup, remaining(deadline));
+        synchronized (lifecycleMonitor) {
+            if (runtimeState == RecoveryRuntimeState.FAILED && state != RecoveryRuntimeState.FAILED) {
+                state = RecoveryRuntimeState.FAILED;
+                failureCause = runtime == null
+                        ? new IllegalStateException("Recovered runtime shutdown failed")
+                        : runtime.failureCause().orElse(
+                                new IllegalStateException("Recovered runtime shutdown failed"));
+            }
             if (state != RecoveryRuntimeState.FAILED) {
                 state = RecoveryRuntimeState.STOPPED;
             }
+            shutdownInProgress = false;
             lifecycleMonitor.notifyAll();
+            return state;
         }
-        close(activeChannel);
-        close(serverChannel);
-        closeRuntime(remaining(deadline));
-        shutdownGroup(bossGroup, remaining(deadline));
-        shutdownGroup(workerGroup, remaining(deadline));
-        return state;
     }
 
     /** Shuts down using the configured durable timeout. */
@@ -270,7 +289,9 @@ public final class RecoverableDurableMatchingEngineTcpServer {
     }
 
     void onSessionInactive(final Channel channel) {
-        if (channel == activeChannel && state == RecoveryRuntimeState.RUNNING) {
+        if (channel == activeChannel
+                && state == RecoveryRuntimeState.RUNNING
+                && !shutdownInProgress) {
             failRuntime(DurableFailureStage.DISCONNECT,
                     new IllegalStateException("Active recovered session disconnected"));
         }
@@ -469,15 +490,17 @@ public final class RecoverableDurableMatchingEngineTcpServer {
     }
 
     private void closeResources(final Duration timeout) {
-        closeRuntime(timeout.toNanos());
-        shutdownGroup(bossGroup, timeout.toNanos());
-        shutdownGroup(workerGroup, timeout.toNanos());
+        final long deadline = deadline(timeoutNanos(timeout));
+        closeRuntime(remaining(deadline));
+        shutdownGroup(bossGroup, remaining(deadline));
+        shutdownGroup(workerGroup, remaining(deadline));
     }
 
-    private void closeRuntime(final long timeoutNanos) {
+    private RecoveryRuntimeState closeRuntime(final long timeoutNanos) {
         if (runtime != null) {
-            runtime.shutdown();
+            return runtime.shutdown(Duration.ofNanos(Math.max(1, timeoutNanos)));
         }
+        return RecoveryRuntimeState.STOPPED;
     }
 
     private static EngineCommand toCommand(
