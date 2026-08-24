@@ -73,8 +73,9 @@ Phase 10 Discovery is complete and Human Blueprint Approval is recorded.
 [`ADR-0018`](docs/adr/ADR-0018-release-candidate-runtime-boundary.md) and the
 [Complete Phase 10 Blueprint](tasks/blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md)
 authorize Release-Candidate Runtime Assembly through TASK-041 to TASK-046.
-TASK-041 runtime contracts and lifecycle/status boundaries are implemented and
-await exact-SHA CI evidence; TASK-042 is the next authorized task. The phase
+TASK-041 runtime contracts and lifecycle/status boundaries are implemented at
+`cc9a957`; Standard CI `32718394177` and Qualification Quick Lane
+`32718394269` both pass. TASK-042 is the next authorized task. The phase
 keeps Protocol v1, WAL v1, Snapshot v1, matching, durability and single-session
 semantics frozen. Implementation continues only in the approved dependency
 chain; merge, `v0.9.0-rc.1` and Product Release remain unauthorized.

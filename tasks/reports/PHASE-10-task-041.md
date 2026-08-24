@@ -6,10 +6,11 @@
 | --- | --- |
 | Phase | Phase 10 — Release-Candidate Runtime Assembly |
 | Task | `TASK-20260824-041` |
-| Result | `Completed / Evidence Gate PASS pending exact-SHA CI record` |
+| Result | `Completed / Evidence Gate PASS` |
 | Baseline | `v0.8.0-engineering-baseline` / `ef73f60` |
 | Branch | `feature/phase10-release-candidate-runtime` |
 | Scope | Additive runtime contracts and lifecycle/status validation only |
+| Evidence checkpoint | `cc9a957` / Standard CI `32718394177` PASS / Quick Lane `32718394269` PASS |
 | Next Gate | TASK-042 Evidence Gate |
 | Product Release | Not Authorized |
 
@@ -88,15 +89,16 @@ file-sharing read race in one local reactor invocation; the same test passed in
 the immediate focused rerun and the subsequent complete `mvn verify` passed.
 This did not change source, test, workload or qualification configuration.
 
-Remaining evidence gate actions are `git diff --check`, the approved-path
-audit after staging, verifier/docs-auditor read-only review, feature-branch
-push and exact-SHA CI. No merge, tag or Product Release action is authorized.
+The approved-path audit and read-only evidence review passed. The feature
+branch push and exact-SHA CI passed at `cc9a957`: Standard CI
+`32718394177` and Qualification Quick Lane `32718394269`. No merge, tag or
+Product Release action is authorized.
 
 ## 5. Governance State
 
 ```text
-TASK-041: Completed / Evidence Gate PASS pending exact-SHA CI
-TASK-042: Authorized / Next after TASK-041 exact-SHA CI PASS
+TASK-041: Completed / Evidence Gate PASS
+TASK-042: Authorized / Next
 TASK-043~046: Dependency Locked
 Phase 10 Closure: Not Authorized
 Merge / v0.9.0-rc.1: Not Authorized

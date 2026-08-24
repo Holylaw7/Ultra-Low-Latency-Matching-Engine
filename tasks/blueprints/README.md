@@ -50,6 +50,7 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   — Approved by Human Blueprint Approval on 2026-08-24. ADR-0018 D1-D16 and
   TASK-041 through TASK-046 define release-candidate runtime assembly,
   configuration, lifecycle, operations, packaging and qualification. TASK-041
-  contracts are implemented and its Evidence Gate is pending exact-SHA CI;
-  TASK-042 is next and later tasks remain dependency locked. Full Campaign,
+  contracts are implemented and its Evidence Gate passed at `cc9a957` with
+  Standard CI `32718394177` and Quick Lane `32718394269`; TASK-042 is next and
+  later tasks remain dependency locked. Full Campaign,
   merge, candidate tagging and Product Release remain separately gated.

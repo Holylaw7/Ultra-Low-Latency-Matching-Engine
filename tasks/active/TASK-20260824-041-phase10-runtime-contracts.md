@@ -41,7 +41,7 @@ qualification, Product Release and all frozen core semantics.
 - [x] Status snapshots contain only immutable operational data and monotonic
   boundary counters.
 - [x] No dependency, producer, executor or production runtime is introduced.
-- [x] Focused tests, `mvn verify`, Checkstyle and diff audit pass locally.
+- [x] Focused tests, `mvn verify`, Checkstyle, diff audit and exact-SHA CI pass.
 
 ## 5. Planned Files
 
@@ -153,5 +153,5 @@ commit and local gates pass. Do not merge, tag or rewrite history.
 - [x] planned files only
 - [x] requirements and tests pass
 - [x] no frozen semantic/dependency change
-- [ ] report, diff, reviewers and exact-SHA CI PASS
+- [x] report, diff, reviewers and exact-SHA CI PASS
 - [x] TASK-042 status synchronized
