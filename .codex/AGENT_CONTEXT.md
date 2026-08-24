@@ -211,8 +211,10 @@ Full Runs; both passed all run gates. The controlled ignored evidence root
 immutable manifests and atomic campaign summary SHA-256
 `5bf1b84b30226807d79f5a0a4950ae649c3a72a860d6d6b13edd9fa715e24112`, recording
 two qualifying runs and 44 cumulative natural samples. TASK-037 Human Evidence /
-Closure Approval is complete; TASK-038 is in progress and its Full 20/10
-restart/termination campaign has passed. Phase 9 Closure,
+Closure Approval is complete; TASK-038 completed its Full 20/10
+restart/termination campaign and Evidence Gate. TASK-039 completed its full
+JMH matrix and representative GC/JFR profile with read-only reviewer and
+exact-SHA CI PASS. Phase 9 Closure,
 merge/tag and Product Release remain unauthorized.
 Production optimization,
 Phase 10 and Product Release remain locked.
