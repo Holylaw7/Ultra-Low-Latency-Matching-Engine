@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260824-046` |
 | Title | Release-candidate assembled-runtime qualification and Closure Proposal |
-| Status | `Proposed — Dependency Locked` |
+| Status | `Dependency Locked` |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |

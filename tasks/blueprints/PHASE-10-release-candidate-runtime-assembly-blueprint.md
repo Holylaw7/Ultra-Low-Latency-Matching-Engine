@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Phase | `Phase 10 — Release-Candidate Runtime Assembly` |
-| Blueprint Status | `Proposed — Pending Human Approval` |
+| Blueprint Status | `Approved — Human Phase 10 Blueprint Approval, 2026-08-24` |
 | Owner | Human Developer |
 | Architect | Codex / Sol High |
 | Created | `2026-08-24` |
@@ -15,7 +15,7 @@
 | Planned Implementation Branch | `feature/phase10-release-candidate-runtime` |
 | Planned Tasks | `TASK-20260824-041` through `TASK-20260824-046` |
 | Proposal Evidence | `541ef28`; Standard CI `32716540931` PASS; Quick Lane `32716540939` PASS |
-| Next Gate | `Human Phase 10 Blueprint Approval` |
+| Next Gate | `TASK-041 Evidence Gate` |
 
 ## 2. Phase Objective
 
@@ -492,7 +492,7 @@ created.
 
 | Date | Reviewer | Decision | Approved scope | Constraints |
 | --- | --- | --- | --- | --- |
-| 2026-08-24 | Human Developer | Pending | ADR-0018 D1-D16; TASK-041 through TASK-046 | No implementation until approved; Product Release remains unauthorized |
+| 2026-08-24 | Human Developer | Approved | ADR-0018 D1-D16; TASK-041 through TASK-046 | Strict dependency order; TASK-046 Full Campaign separately Human-gated; Product Release unauthorized |
 
 Suggested approval text:
 
@@ -505,8 +505,8 @@ Gate requires new Human architecture approval.
 ```
 
 ```text
-Blueprint Status: Proposed
-Implementation: Not Authorized
+Blueprint Status: Approved
+Implementation: TASK-041 Authorized / TASK-042 through TASK-046 Dependency Locked
 Merge / v0.9.0-rc.1 / Product Release: Not Authorized
-Next Gate: Human Phase 10 Blueprint Approval
+Next Gate: TASK-041 Evidence Gate
 ```

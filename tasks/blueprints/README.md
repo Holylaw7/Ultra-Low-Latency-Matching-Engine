@@ -47,8 +47,8 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   `32711512036` and Tag CI `32711649980` passed. Phase 10 implementation and
   Product Release remain unauthorized.
 - [`PHASE-10-release-candidate-runtime-assembly-blueprint.md`](PHASE-10-release-candidate-runtime-assembly-blueprint.md)
-  — Proposed after Sol High Discovery. ADR-0018 D1-D16 and TASK-041 through
-  TASK-046 define release-candidate runtime assembly, configuration, lifecycle,
-  operations, packaging and qualification. Implementation, merge, candidate
-  tagging and Product Release remain unauthorized pending Human Blueprint
-  Approval.
+  — Approved by Human Blueprint Approval on 2026-08-24. ADR-0018 D1-D16 and
+  TASK-041 through TASK-046 define release-candidate runtime assembly,
+  configuration, lifecycle, operations, packaging and qualification. TASK-041
+  is authorized; later tasks remain dependency locked. Full Campaign, merge,
+  candidate tagging and Product Release remain separately gated.

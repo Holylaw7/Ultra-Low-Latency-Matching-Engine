@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Phase | Phase 10 |
-| Decision | `Proposed — Human Blueprint Approval Pending` |
+| Decision | `Human Blueprint Approval — Approved, 2026-08-24` |
 | Baseline | `v0.8.0-engineering-baseline` → `ef73f60` |
 | ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`PHASE-10-release-candidate-runtime-assembly-blueprint.md`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
@@ -13,7 +13,7 @@
 | Proposal checkpoint | `541ef28` |
 | Standard CI | `32716540931` — PASS |
 | Qualification Quick Lane | `32716540939` — PASS |
-| Implementation | Not authorized |
+| Implementation | TASK-041 authorized / TASK-042 through TASK-046 dependency locked |
 | Product Release | Not authorized |
 
 ## Discovery Result
@@ -75,11 +75,12 @@ multi-session, HA, bounded disk, hardware power-loss safety, SLA or RTO.
 
 ```text
 ADR-0018: Proposed
-Phase 10 Blueprint: Proposed
-TASK-041 through TASK-046: Proposed
-Implementation: Not Authorized
+Phase 10 Blueprint: Approved
+TASK-041: Authorized / Next
+TASK-042 through TASK-046: Dependency Locked
+Implementation: TASK-041 Authorized
 Existing v0.8.0 tag: Frozen / Unchanged
-Next: Human Phase 10 Blueprint Approval
+Next: TASK-041 Evidence Gate
 ```
 
 `541ef28` and its two passing workflows are the fixed technical proposal input.

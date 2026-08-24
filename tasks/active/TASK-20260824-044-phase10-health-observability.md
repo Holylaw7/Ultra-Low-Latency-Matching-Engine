@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260824-044` |
 | Title | Bounded health, readiness and operational status boundary |
-| Status | `Proposed — Dependency Locked` |
+| Status | `Dependency Locked` |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |

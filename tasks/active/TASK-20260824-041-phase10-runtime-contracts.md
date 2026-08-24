@@ -6,14 +6,14 @@
 | --- | --- |
 | Task ID | `TASK-20260824-041` |
 | Title | Release-candidate runtime contracts and lifecycle model |
-| Status | `Proposed — Not Authorized` |
+| Status | `Authorized / Next` |
 | Owner | Human Developer |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related Phase | Phase 10 — Release-Candidate Runtime Assembly |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
 | Dependency | Human Phase 10 Blueprint Approval |
-| Next Gate | Human Phase 10 Blueprint Approval |
+| Next Gate | TASK-041 Evidence Gate |
 
 ## 2. Goal
 
@@ -79,7 +79,7 @@ Phase 10 Blueprint Approval.
 
 | Date | Reviewer | Decision | Notes |
 | --- | --- | --- | --- |
-| 2026-08-24 | Human Developer | Pending | ADR-0018 D1-D16 and TASK-041 boundary |
+| 2026-08-24 | Human Developer | Approved / Inherited | ADR-0018 D1-D16 and TASK-041 exact boundary; no runtime start/listener/WAL/Pipeline |
 
 ## 9. Current Implementation and Design
 
@@ -100,7 +100,7 @@ they leave validation/ownership ambiguous.
 | Field | Value |
 | --- | --- |
 | ADR decisions | ADR-0018 D1-D9 |
-| Blueprint status | Proposed / pending Human approval |
+| Blueprint status | Approved / Human Approval 2026-08-24 |
 | Authorized stages after approval | contracts -> focused verification -> evidence sync |
 | Architecture impact | additive runtime boundary; frozen component semantics |
 

@@ -2,7 +2,7 @@
 
 ## Status
 
-**Proposed — Pending Human Phase 10 Blueprint Approval**
+**Accepted — Human Phase 10 Blueprint Approval, 2026-08-24**
 
 No Phase 10 implementation, merge, release-candidate tag or Product Release is
 authorized by this proposal.
@@ -245,4 +245,4 @@ Stop and return for Human review if implementation requires:
 
 | Date | Reviewer | Decision | Scope |
 | --- | --- | --- | --- |
-| 2026-08-24 | Human Developer | Pending | ADR-0018 D1-D16 and Phase 10 Blueprint |
+| 2026-08-24 | Human Developer | Approved | ADR-0018 D1-D16; TASK-041 through TASK-046 in strict dependency order. TASK-046 Full Campaign remains separately Human-gated. |
