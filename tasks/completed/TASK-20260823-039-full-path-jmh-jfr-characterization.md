@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260823-039` |
 | Title | Full-path JMH baseline and JFR profile |
-| Status | `In Progress` |
+| Status | `Completed / Evidence Gate PASS / Ready for archive` |
 | Owner | Human Developer |
 | Implementer | Main Codex / Luna Max — only writer |
 | Created | `2026-08-24` |
@@ -14,8 +14,8 @@
 | Related ADR | [`ADR-0017`](../../docs/adr/ADR-0017-system-qualification-performance-reliability.md) |
 | Phase Blueprint | [`PHASE-9-system-qualification-and-long-run-reliability-blueprint.md`](../blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md) |
 | Authorization Mode | `Blueprint` |
-| Current Stage | Additive benchmark implementation and evidence characterization |
-| Next Gate | TASK-039 Evidence Gate; TASK-040 remains locked |
+| Current Stage | Full matrix/profile evidence, reviewer audit and exact-SHA CI complete |
+| Next Gate | TASK-040 authorized / next; Phase 9 Closure remains locked |
 | Branch | `feature/phase9-system-qualification` |
 | Baseline | `v0.7.0-engineering-baseline` / `87abbc1` |
 | Dependency | `TASK-038 Completed / Evidence Gate PASS` |
@@ -49,13 +49,13 @@ characterization only.
 
 ## 5. Acceptance Criteria
 
-- [ ] `SystemQualificationBenchmark` compiles with the existing JMH 1.37 setup.
-- [ ] Full-path durable round-trip and recovery bootstrap boundaries are
+- [x] `SystemQualificationBenchmark` compiles with the existing JMH 1.37 setup.
+- [x] Full-path durable round-trip and recovery bootstrap boundaries are
   measured through public runtime composition; fixture setup/cleanup is outside
   measured operations.
-- [ ] Deterministic workload and segment-size parameters are declared and
+- [x] Deterministic workload and segment-size parameters are declared and
   documented; no result-dependent parameter changes occur.
-- [ ] JMH uses three forks, five two-second warmups, five five-second
+- [x] JMH uses three forks, five two-second warmups, five five-second
   measurements and one thread.
 - [x] Full declared matrix completes without omitted failures; SampleTime
   P50/P95/P99/P999/max, throughput and sample counts are retained.

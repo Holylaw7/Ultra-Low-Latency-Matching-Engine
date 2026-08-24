@@ -38,6 +38,8 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   Gate is PASS after the approved 20/10 restart/termination campaign and
   read-only review. TASK-039 implementation, full JMH matrix and
   representative GC/JFR profile are complete; verifier, benchmark-reviewer and
-  docs-auditor have reported PASS, with exact-SHA CI pending. TASK-040 remains
-  locked. Phase 9 Closure, merge, `v0.8.0-engineering-baseline`, Phase 10 and
-  Product Release remain unauthorized.
+  docs-auditor have reported PASS; technical checkpoint `d003266` passed
+  Standard CI `32707393196` and Quick Lane `32707393200`. TASK-039 is ready
+  for archive and TASK-040 is authorized / next. Phase 9 Closure, merge,
+  `v0.8.0-engineering-baseline`, Phase 10 and Product Release remain
+  unauthorized.

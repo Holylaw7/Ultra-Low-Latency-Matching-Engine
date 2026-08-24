@@ -9,7 +9,7 @@
 | Authorization | Phase 9 Blueprint approval; TASK-038 Evidence Gate PASS |
 | Implementation | Additive `SystemQualificationBenchmark` under the existing benchmark module |
 | Production source | Unchanged; frozen-path diff must remain `0` |
-| Closure state | In Progress; TASK-040 remains locked |
+| Closure state | Completed / Evidence Gate PASS; TASK-040 is the next authorized task |
 | Raw benchmark output | Local ignored `benchmark-results/` |
 | Raw JFR output | Local ignored `profiler-results/` |
 | Working tree policy | Pre-existing `.vscode/` remains untouched and untracked |
@@ -229,11 +229,16 @@ not authorize production optimization or a default/configuration change.
 - [x] `mvn verify` and Checkstyle 0 pass.
 - [x] `git diff --check` and frozen production-path audit pass.
 - [x] `verifier`, `benchmark-reviewer` and `docs-auditor` report PASS.
-- [ ] Exact-SHA CI passes for the final evidence checkpoint.
+- [x] Exact-SHA CI passes for the final evidence checkpoint.
 
 Read-only reviewer results: `verifier PASS`, `benchmark-reviewer PASS` and
-`docs-auditor PASS`. The task remains open only for the exact-SHA CI and final
-status synchronization gate.
+`docs-auditor PASS`.
+
+The technical evidence checkpoint is commit `d003266` with Standard CI
+`32707393196` PASS and Qualification Quick Lane `32707393200` PASS. The final
+status/archive synchronization is documentation-only and must retain this
+checkpoint as the benchmark evidence input; it does not move the baseline tag
+or authorize Phase 9 Closure.
 
 ## Known Limitations
 
