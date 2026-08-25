@@ -22,7 +22,7 @@
 | Engineering baseline commit | `ef73f60` (Phase 9 merge) |
 | Engineering baseline tag | `v0.8.0-engineering-baseline` |
 | Remote | `origin` — `https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | implementation branch `feature/phase10-release-candidate-runtime` at qualification correction `7566814`; Standard CI `32811578976` and Quick Lane `32811578978` PASS; v4 characterization evidence is local/ignored and v3 remains preserved non-final; read-only Evidence Gate pending; `origin/master` remains at `3383a63`; `v0.8.0-engineering-baseline` remains frozen at `ef73f60`; `.vscode/` remains untouched |
+| Remote sync | implementation branch `feature/phase10-release-candidate-runtime` at docs/status checkpoint `b7530f6`; v4 correction `7566814` Standard CI `32811578976` and Quick Lane `32811578978` PASS; fixed docs/evidence input `dfe1f7d` Standard CI `32813393216` and Quick Lane `32813393127` PASS; status validation `b7530f6` Standard CI `32813640675` and Quick Lane `32813640754` PASS; v4 characterization evidence is local/ignored and v3 remains preserved non-final; read-only Evidence Gate pending; `origin/master` remains at `3383a63`; `v0.8.0-engineering-baseline` remains frozen at `ef73f60`; `.vscode/` remains untouched |
 | Latest Phase 7 CI | Master merge `6473365` — [32574891113](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574891113) PASS; tag `v0.6.0-engineering-baseline` — [32574958017](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574958017) PASS |
 | Latest Phase 7 docs CI | TASK-028 evidence checkpoint `9fed6b2` — [32574274905](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574274905) PASS; final docs sync commits are included in merge `6473365` |
 | Latest Phase 8 CI | Technical Closure input `c59d7c0` — [32616802595](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32616802595) PASS; remediation `4bdfb97` — [32620164524](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32620164524) PASS; merge `87abbc1` — [32622722649](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32622722649) PASS; tag — [32622757607](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32622757607) PASS |
@@ -249,13 +249,14 @@ resource CSV files. Summary SHA-256 is
 manifest SHA-256 is `3b093b39dc765172ac8b97ee22beda5798f7e96d0bd7da694608318915508212`;
 the recursive 919-entry sidecar is `fd8432ccd7b4f064b7766cb5397e32741405a7a043267612caf5efc17c46d7b1`.
 The source checkpoint's initial Standard CI `32754918129` exposed an
-unrelated flaky core-test assertion; final docs/evidence sync `241485c`
-passed Standard CI `32802512908` and Quick Lane `32802512953` (earlier syncs
-`a0747bb` / `32802089849` and `a6a623b` / `32802326848` also passed).
-Benchmark review found the v3 timer included Protocol connection setup; the
-qualification-only measurement-boundary correction was completed at `7566814`
-and v4 evidence is PASS. Verifier, benchmark-reviewer and docs-auditor sign-off
-plus Sol High delta-only Closure Review remain pending.
+unrelated flaky core-test assertion. Fixed technical docs/evidence input
+`dfe1f7d` passed Standard CI `32813393216` and Quick Lane `32813393127`; the
+docs-only status correction `b7530f6` passed Standard CI `32813640675` and Quick
+Lane `32813640754` as external validation. Benchmark review found the v3 timer
+included Protocol connection setup; the qualification-only measurement-boundary
+correction was completed at `7566814` and v4 evidence is PASS. Verifier,
+benchmark-reviewer and docs-auditor sign-off plus Sol High delta-only Closure
+Review remain pending.
 Production optimization
 and Product Release remain unauthorized.
 Reconnect/deduplication,

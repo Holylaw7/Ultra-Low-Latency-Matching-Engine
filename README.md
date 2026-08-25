@@ -110,11 +110,13 @@ evidence with the corrected boundary and execution-model metadata: summary
 lifecycle samples and two fixed 10-minute trials. The v3 artifacts remain
 preserved as non-final; no new 60-minute Full Run was authorized. The recursive
 v4 sidecar contains 903 verified file hashes. Standard CI for source checkpoint
-`7ba7ed0` exposed an unrelated flaky core-test assertion; prior docs syncs
-`241485c` (`32802512908` / `32802512953`), `a0747bb` (`32802089849`) and
-`a6a623b` (`32802326848`) passed, and no production source was changed. Protocol v1, WAL v1,
-Snapshot v1, matching, durability and single-session semantics remain frozen;
-merge, `v0.9.0-rc.1` and Product Release remain unauthorized.
+`7ba7ed0` exposed an unrelated flaky core-test assertion. The fixed technical
+docs/evidence input is `dfe1f7d` with Standard CI `32813393216` and Quick Lane
+`32813393127` PASS; the subsequent docs-only status correction `b7530f6`
+passed Standard CI `32813640675` and Quick Lane `32813640754` as external
+validation. No production source was changed. Protocol v1, WAL v1, Snapshot
+v1, matching, durability and single-session semantics remain frozen; merge,
+`v0.9.0-rc.1` and Product Release remain unauthorized.
 
 Phase 8 remains documented by [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
 the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)
