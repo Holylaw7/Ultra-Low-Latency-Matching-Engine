@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260824-046` |
 | Title | Release-candidate assembled-runtime qualification and Closure Proposal |
-| Status | `In Progress — v4 characterization PASS; read-only Evidence Gate pending` |
+| Status | `In Progress — v4 characterization PASS; read-only Evidence Gate PASS; Sol High Closure Review pending` |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
@@ -33,10 +33,10 @@ Phase 10 Closure Proposal.
 - [x] Startup-to-ready, shutdown, live latency and management overhead retain
   full distributions, raw artifacts, hashes and environment metadata.
 - [x] JFR/GC/resource evidence is recorded without filtering or retry-until-pass.
-- [ ] verifier, benchmark-reviewer and docs-auditor final sign-off for the
-  corrected characterization evidence is pending.
-- [ ] All TASK-041 through TASK-046 final Closure references agree.
-- [ ] Known limitations and prohibited claims remain explicit.
+- [x] verifier, benchmark-reviewer and docs-auditor final sign-off for the
+  corrected characterization evidence is complete.
+- [x] All TASK-041 through TASK-046 final Closure references agree.
+- [x] Known limitations and prohibited claims remain explicit.
 
 ## 4. Claim Boundary
 
@@ -246,4 +246,5 @@ Planned commits: `test(runtime): qualify release-candidate assembly` and
 | 2026-08-24 | Pre-Campaign Evidence PASS | Packaged Java 21 lifecycle command passed 30/30 cycles; Full Campaign remains Human-gated. | `0a96593`; Standard CI `32730760419`; Quick Lane `32730760501`; summary SHA `71862f5e49ec554c2344f0836785d6e737e1457fc06083d755c2d98e10564bc6` |
 | 2026-08-24 | Full Campaign Evidence PASS | Exactly two independent assembled-runtime Full Runs passed; campaign evaluator recorded 2/2 qualifying and `campaign.result=true`. Final percentile/profile evidence reconciliation and Closure Review remain pending. | runner `1a02e66`; Standard CI `32734798459`; Quick Lane `32734798461`; manifests `f65a3952...` / `60f24746...`; campaign summary `89799b16...` |
 | 2026-08-25 | Characterization Evidence Preserved / Review Pending | Qualification-only characterization produced 30 empty-WAL + 30 Snapshot-tail lifecycle samples, raw response/management distributions, paired 10-minute management trials, 62 JFR/resource/allocation artifacts and immutable hashes. | source checkpoint `7ba7ed0`; summary `6204f190...`; manifest `3b093b39...`; sidecar `fd8432cc...`; v3 timer-boundary issue requires corrected rerun |
-| 2026-08-25 | Corrected Characterization Evidence PASS | v3 evidence remains preserved as non-final; qualification-only correction committed and verified, then v4 characterization regenerated with the corrected boundary and execution-model metadata. | correction `7566814`; Standard `32811578976` PASS; Quick `32811578978` PASS; v4 summary `60608026...`; sidecar `da3cbb89...`; final read-only sign-off pending |
+| 2026-08-25 | Corrected Characterization Evidence PASS | v3 evidence remains preserved as non-final; qualification-only correction committed and verified, then v4 characterization regenerated with the corrected boundary and execution-model metadata. | correction `7566814`; Standard `32811578976` PASS; Quick `32811578978` PASS; v4 summary `60608026...`; sidecar `da3cbb89...` |
+| 2026-08-25 | Read-only Evidence Gate PASS | verifier, benchmark-reviewer and docs-auditor independently accepted v4 evidence, provenance, hashes, claim boundaries and documentation synchronization. Sol High delta-only Closure Review remains pending. | fixed Closure Input `dfe1f7d`; external validations `b7530f6` / `eb9a4ab`; current status-sync CI Standard `32814259327` and Quick `32814259338` PASS |

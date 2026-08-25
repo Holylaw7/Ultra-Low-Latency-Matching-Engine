@@ -11,9 +11,10 @@ qualification-only correction has now produced a new v4 PASS with the timer
 starting after the connection is established and fixed execution-model metadata
 in the manifest. No new 60-minute Full Run was authorized. The first
 source-checkpoint CI run exposed one unrelated flaky core-test assertion; the
-same Standard verification passed on the synchronization commits. The remaining
-gate is read-only audit of v4, then Sol High delta-only review, followed by
-Human Phase 10 Closure.
+same Standard verification passed on the synchronization commits. The
+verifier, benchmark-reviewer and docs-auditor read-only Evidence Gate is now
+PASS; the remaining gate is Sol High delta-only review, followed by Human
+Phase 10 Closure.
 
 | Item | Evidence |
 | --- | --- |
@@ -254,7 +255,7 @@ TASK-046 Full Campaign Evidence PASS
         ↓
 corrected v4 characterization Evidence PASS
         ↓
-verifier + benchmark-reviewer + docs-auditor read-only Evidence Gate
+verifier + benchmark-reviewer + docs-auditor read-only Evidence Gate PASS
         ↓
 Sol High Phase 10 Closure Review
         ↓
