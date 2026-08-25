@@ -2,10 +2,7 @@
 
 ## Status
 
-`In Progress — Human-approved B3 environment-isolation remediation in progress;
-G9 remains qualifying/frozen, G11 remains preserved non-qualifying, and no new
-G11 execution is authorized; final TASK-048 evidence review remains CHANGES
-REQUIRED.`
+`In Progress — Human-approved B3 environment-isolation remediation Evidence Gate PASS at bdceeb5; G9 remains qualifying/frozen, G11 remains preserved non-qualifying, and no new G11 execution is authorized; final TASK-048 evidence review and the separate Human G11 Replacement Execution Gate remain pending.`
 
 TASK-048 implements the approved qualification-only reproducibility and
 security preflight boundary. It does not qualify the candidate, authorize a
@@ -18,7 +15,7 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
 | Candidate tag | `v0.9.0-rc.1` |
 | Annotated tag object | `dfd38c08e80aed9035bf1c2d7c8faf8bae99c356` |
 | Peeled production SHA | `e2828f563ee41316c062385c0244ac1336731359` |
-| Approved toolchain policy | `ga-security-toolchain-v1.properties` (B3 environment-isolation remediation in progress) |
+| Approved toolchain policy | `ga-security-toolchain-v1.properties` (B3 environment-isolation remediation Evidence Gate PASS) |
 | Policy SHA-256 | `e042d191c63ee6f397d6756761f0fc969c3e97a9f5e9357c1c769f43aa2bdff5`; G9/G11 run results are recorded below; no new execution authorized |
 | JDK archive | `microsoft-jdk-21.0.12-linux-x64.tar.gz` / `linux-x64` |
 | JDK archive SHA-256 | `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f` |
@@ -89,6 +86,8 @@ tag, production source, existing workflow, dependency or runtime input changed.
 | `git diff --check` | PASS |
 | Frozen production/existing-workflow audit | PASS — no production, POM or existing workflow change |
 | B2/B3 remediation static verification | PASS — YAML/Bash validation, G9 packager simulation, secret-leak scan and docs/evidence audit |
+| Current B3 remediation Standard CI | [32862255686](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32862255686) — PASS at `bdceeb588f163465040b315da2ae1fa4a444bc31` |
+| Current B3 remediation Quick Lane | [32862256047](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32862256047) — PASS at `bdceeb588f163465040b315da2ae1fa4a444bc31` |
 | Standard exact-SHA CI | [32831047004](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32831047004) — PASS |
 | Qualification Quick Lane | [32831046928](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32831046928) — PASS |
 | Final remediation Standard CI | [32845529323](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32845529323) — PASS |
@@ -106,10 +105,11 @@ none may be converted to PASS by omission or tool substitution.
 The first B2/B3 remediation Evidence Gate at `b44fc4d` was PASS, and the fresh
 G9 run `32856372581` is qualifying/frozen. G11 run `32856384325` remains
 FAIL/B3/non-qualifying because the anonymous scanner inherited an empty
-`NVD_API_KEY`; the current environment-isolation remediation is authorized but
-not yet evidenced. TASK-049 is dependency-locked because replacement evidence
-is not yet accepted. Full campaigns, `v1.0.0`, GitHub Release and GA remain
-unauthorized.
+`NVD_API_KEY`; the current environment-isolation remediation reached its
+Evidence Gate PASS at `bdceeb588f163465040b315da2ae1fa4a444bc31`, verified by
+Standard CI `32862255686` and Quick Lane `32862256047`. TASK-049 is
+dependency-locked because replacement evidence is not yet accepted. Full
+campaigns, `v1.0.0`, GitHub Release and GA remain unauthorized.
 
 ## G9/G11 execution attempt
 
@@ -257,3 +257,4 @@ G9/G11 run.
 | 2026-08-25 | Human Limited B2/B3 remediation (historical / superseded) | Authorized G9 publication contract and repository-level `NVD_API_KEY` provisioning; later superseded by the optional-key amendment; replacement execution was not authorized |
 | 2026-08-25 | Human Limited optional-NVD-key amendment (current) | `NVD_API_KEY` optional; authenticated/anonymous mode and 3500/8000 ms delays frozen; Dependency-Check/freshness/policy unchanged; no G9/G11 execution |
 | 2026-08-25 | Human Limited B3 environment-isolation remediation | Authorized to remove `NVD_API_KEY` from the anonymous scanner process environment; G9 `32856372581` remains PASS/qualifying, G11 `32856384325` remains FAIL/B3; no G11 rerun |
+| 2026-08-25 | B3 remediation Evidence Gate | PASS — commit `bdceeb588f163465040b315da2ae1fa4a444bc31`; Standard `32862255686` PASS; Quick `32862256047` PASS; G9 remains frozen qualifying evidence; G11 replacement remains separately Human-gated |
