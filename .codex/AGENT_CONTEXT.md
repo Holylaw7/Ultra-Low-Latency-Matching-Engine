@@ -11,18 +11,18 @@
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
 | Phase | Phase 11 — GA Qualification (`Blueprint Approved; TASK-048 remediation in progress`) |
-| Latest product task | [`TASK-20260825-048`](../tasks/active/TASK-20260825-048-phase11-reproducibility-security-preflight.md) — In Progress; Human-approved optional-NVD-key security-toolchain amendment; replacement execution not authorized |
+| Latest product task | [`TASK-20260825-048`](../tasks/active/TASK-20260825-048-phase11-reproducibility-security-preflight.md) — In Progress; B3 environment-isolation remediation authorized; G9 `32856372581` PASS/qualifying/frozen; G11 `32856384325` FAIL/B3/preserved; replacement G11 not authorized |
 | Latest architecture decision | [`ADR-0019`](../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) — Accepted |
-| Current planning task | TASK-20260825-048 — In Progress; Human-approved optional-NVD-key security-toolchain amendment; old failures preserved; no G9/G11 execution |
+| Current planning task | TASK-20260825-048 — In Progress; Human-approved B3 environment-isolation remediation; G9/G11 latest evidence preserved; no G11 rerun |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 9 frozen at `v0.8.0-engineering-baseline`; Phase 10 frozen at `v0.9.0-rc.1`; Phase 11 GA qualification in progress; Product Release separately governed |
 | Product approval | Phase 9 Human Closure Approved; merge `ef73f60` / Master CI `32711512036` PASS; `v0.8.0-engineering-baseline` / Tag CI `32711649980` PASS; Closure Input `8e5d39d` / Standard CI `32709188522` / Quick Lane `32709188327`; remediation `5f3b1c5` / Standard CI `32710712341` / Quick Lane `32710712428` PASS |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
-| Branch | `master` |
+| Branch | `docs/phase11-ga-qualification-blueprint` |
 | Engineering baseline commit | `e2828f5` (Phase 10 merge; Master CI `32816928409` PASS) |
 | Engineering baseline tag | `v0.9.0-rc.1` (Tag CI `32817075147` / Quick `32817075152` PASS) |
 | Remote | `origin` — `https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/master` is at merge `e2828f5`; Master CI `32816928409` and Quick Lane `32816928383` PASS; annotated `v0.9.0-rc.1` points to the merge and Tag CI `32817075147` / Quick Lane `32817075152` PASS; final post-tag archive is documentation-only; `.vscode/` remains untouched |
+| Remote sync | `origin/master` remains at workflow-installation merge `0575c76`; the Phase 11 controller branch carries the immutable candidate references and current B3 remediation; `v0.9.0-rc.1` remains unchanged; `.vscode/` remains untouched |
 | Latest Phase 7 CI | Master merge `6473365` — [32574891113](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574891113) PASS; tag `v0.6.0-engineering-baseline` — [32574958017](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574958017) PASS |
 | Latest Phase 7 docs CI | TASK-028 evidence checkpoint `9fed6b2` — [32574274905](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574274905) PASS; final docs sync commits are included in merge `6473365` |
 | Latest Phase 8 CI | Technical Closure input `c59d7c0` — [32616802595](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32616802595) PASS; remediation `4bdfb97` — [32620164524](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32620164524) PASS; merge `87abbc1` — [32622722649](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32622722649) PASS; tag — [32622757607](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32622757607) PASS |
@@ -155,7 +155,7 @@ ADR-0011 Final Approved
   -> Apache-2.0 repository policy [Human accepted]
   -> GitHub binary distribution without Maven Central [Human accepted]
   -> TASK-047 [Completed / Evidence Gate PASS; implementation `d25eac6`, status `2521500`; CI `32828844611` / Quick `32828844541`]
-  -> TASK-048 [In Progress; Human-approved optional-NVD-key amendment: authenticated/anonymous Dependency-Check modes; replacement G9 `32847427690` and G11 `32847442506` remain preserved non-qualifying evidence; no new execution]
+  -> TASK-048 [In Progress; G9 `32856372581` PASS/qualifying/frozen; G11 `32856384325` FAIL/B3/preserved; Human-approved B3 environment-isolation remediation in progress; no G11 rerun]
   -> TASK-049 through TASK-056 [Dependency ordered; locked]
   -> Phase 11 Full Campaigns / Closure / v1.0.0 / GitHub Release / GA [Not Authorized]
   -> Product Release [Not Authorized]

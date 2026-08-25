@@ -467,11 +467,11 @@ explicit Human Phase 11 Closure Approval. Phase Closure does not create
 
 ```text
 Blueprint Status: Approved — Human Phase 11 Blueprint Approval 2026-08-25
-Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 optional-NVD-key security-toolchain amendment in progress after final evidence CHANGES REQUIRED; TASK-049..056 dependency ordered and locked
+Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 B3 environment-isolation remediation in progress after G11 `32856384325` FAIL/B3; G9 `32856372581` PASS/qualifying/frozen; TASK-049..056 dependency ordered and locked
 Qualification Campaigns: Not Authorized
 RC mutation: Not Authorized
 v1.0.0 / GitHub Release / GA: Not Authorized
-Next Gate: Optional-key remediation Evidence Gate, then Human Replacement Execution Gate; no automatic third run
+Next Gate: B3 environment-isolation remediation Evidence Gate, then separate Human G11 Replacement Execution Gate; no automatic retry
 ```
 
 ## 23. Execution Checkpoints
@@ -488,7 +488,8 @@ Next Gate: Optional-key remediation Evidence Gate, then Human Replacement Execut
 | 2026-08-25 | B2/B3 remediation Evidence Gate | PASS | implementation `b44fc4d`; final docs/status `c01977a`; Standard `32845529323`; Quick `32845529342`; G9 `32842119210` and G11 `32842122498` preserved FAIL/non-qualifying | Human replacement G9/G11 execution approval required |
 | 2026-08-25 | Human-authorized replacement execution | CHANGES REQUIRED | G9 `32847427690` technical workflow PASS but zero persisted artifacts; G11 `32847442506` FAIL/B3 because protected `NVD_API_KEY` was absent; old failures preserved; no third run | Sol High B2/B3 final evidence review |
 | 2026-08-25 | Human Limited B2/B3 remediation (historical / superseded) | COMPLETED / SUPERSEDED | Added the pinned `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` publication contract; repository-level `NVD_API_KEY` provisioning was later superseded by the optional-key amendment; no replacement execution | Optional-key remediation Evidence Gate |
-| 2026-08-25 | Human Limited optional-NVD-key amendment (current) | AUTHORIZED / IN PROGRESS | `NVD_API_KEY` optional; authenticated/anonymous mode with 3500/8000 ms delays; Dependency-Check/freshness/policies unchanged; no G9/G11 execution | Remediation Evidence Gate |
+| 2026-08-25 | Human Limited optional-NVD-key amendment (current) | COMPLETED / SUPERSEDED BY ENVIRONMENT REMEDIATION | `NVD_API_KEY` optional; authenticated/anonymous mode with 3500/8000 ms delays; Dependency-Check/freshness/policies unchanged | B3 environment-isolation remediation Evidence Gate |
+| 2026-08-25 | Human Limited B3 environment-isolation remediation | AUTHORIZED / IN PROGRESS | Anonymous scanner step must not declare `NVD_API_KEY`; `env -u NVD_API_KEY` defense-in-depth; G9 `32856372581` PASS/frozen; G11 `32856384325` preserved FAIL; no G11 rerun | Limited remediation Evidence Gate |
 
 ## 24. Phase Closure Checklist
 

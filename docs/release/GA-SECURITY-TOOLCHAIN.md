@@ -276,7 +276,11 @@ Actions secret `NVD_API_KEY` is non-empty, the workflow uses authenticated mode
 through `nvdApiKeyEnvironmentVariable=NVD_API_KEY` with the frozen 3500 ms NVD
 request delay. When the secret is absent or empty, the workflow omits the API
 key property entirely and uses anonymous NVD access with the frozen 8000 ms
-request delay. An empty value is never passed as an API key.
+request delay. A non-scanner mode-selection step may inspect the protected
+secret through a temporary input name, but only the authenticated scanner step
+declares `NVD_API_KEY`. The anonymous scanner step has no such environment entry
+and invokes Maven with `env -u NVD_API_KEY`; the scanner process must observe
+the variable as absent, never as an empty value.
 
 Both modes must complete the same Dependency-Check `13.0.0` scan, obtain usable
 NVD data no older than 24 hours, produce the required JSON/SARIF reports and

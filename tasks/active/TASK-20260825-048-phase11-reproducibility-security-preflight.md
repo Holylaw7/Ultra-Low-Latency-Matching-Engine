@@ -5,11 +5,11 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-048` — Reproducibility and Security Preflight |
-| Status | `In Progress — Human-approved optional-NVD-key amendment in progress; no G9/G11 replacement execution authorized` |
+| Status | `In Progress — Human-approved B3 environment-isolation remediation in progress; G9 32856372581 PASS/qualifying/frozen; G11 32856384325 FAIL/B3/preserved; no G11 replacement execution authorized` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Depends On | TASK-047 Evidence Gate PASS after Human Blueprint Approval |
-| Next Gate | Optional-key remediation Evidence Gate, then a separate Human Replacement Execution Gate; no automatic third run |
+| Next Gate | B3 environment-isolation remediation Evidence Gate, then a separate Human G11 Replacement Execution Gate; no automatic retry |
 
 ## 2. Goal
 
@@ -119,7 +119,7 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | --- | --- | --- |
 | Blueprint | Approved | Human Phase 11 Blueprint Approval |
 | Implementation | In Progress | TASK-047 Evidence Gate PASS |
-| Preflight | Optional-NVD-key amendment in progress; final evidence CHANGES REQUIRED | G9 `32847427690` technical PASS but no persisted artifacts; G11 `32847442506` FAIL/B3 at missing protected secret; no third run |
+| Preflight | B3 environment-isolation remediation in progress; final evidence CHANGES REQUIRED | G9 `32856372581` PASS/qualifying/frozen; G11 `32856384325` FAIL/B3/preserved; no G11 rerun |
 
 | Date | Reviewer | Decision / log |
 | --- | --- | --- |
@@ -135,6 +135,7 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | 2026-08-25 | B2/B3 Remediation Evidence Gate | Implementation `b44fc4d`; final docs/status `c01977a`; Standard `32845529323` PASS; Quick `32845529342` PASS; replacement G9/G11 execution requires new Human approval |
 | 2026-08-25 | Human-authorized replacement execution | G9 `32847427690` workflow PASS but artifact publication incomplete; G11 `32847442506` FAIL/B3 due absent `NVD_API_KEY`; final Evidence Gate CHANGES REQUIRED; no third run |
 | 2026-08-25 | Human Limited optional-NVD-key amendment (current) | API key made optional; authenticated mode uses 3500 ms delay and anonymous mode omits the key property and uses 8000 ms delay; Dependency-Check/freshness/policies unchanged; no replacement execution |
+| 2026-08-25 | Human Limited B3 environment-isolation remediation | Authorized to keep the secret out of the anonymous scanner step and invoke it with `env -u NVD_API_KEY`; G9 `32856372581` PASS/frozen; G11 `32856384325` preserved FAIL; no G11 rerun |
 
 ### Implementation Log
 
@@ -147,9 +148,12 @@ approved authenticated/anonymous mode contract and still requires a separate
 Human gate.
 
 The Human-approved optional-NVD-key amendment now permits either authenticated
-or anonymous NVD API access. Authenticated mode uses the protected secret only
-through environment-variable indirection and a 3500 ms request delay.
-Anonymous mode omits the API-key property and uses an 8000 ms request delay.
+or anonymous NVD API access. A non-scanner mode-selection step reads the
+protected secret through a temporary input name; only the authenticated scanner
+step declares `NVD_API_KEY`, uses environment-variable indirection and a 3500 ms
+request delay. The anonymous scanner step declares no such environment entry,
+asserts absence and invokes Maven with `env -u NVD_API_KEY`, using an 8000 ms
+request delay.
 Both modes require a real Dependency-Check 13.0.0 scan, usable NVD data no
 older than 24 hours, JSON/SARIF reports, provenance and unchanged CVSS 7.0,
 license, SBOM and secret policies. This remediation does not execute G9/G11,

@@ -2,8 +2,9 @@
 
 ## Status
 
-`In Progress — Human-approved optional-NVD-key amendment in progress; no new
-G9/G11 execution authorized; final G9/G11 evidence review remains CHANGES
+`In Progress — Human-approved B3 environment-isolation remediation in progress;
+G9 remains qualifying/frozen, G11 remains preserved non-qualifying, and no new
+G11 execution is authorized; final TASK-048 evidence review remains CHANGES
 REQUIRED.`
 
 TASK-048 implements the approved qualification-only reproducibility and
@@ -17,8 +18,8 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
 | Candidate tag | `v0.9.0-rc.1` |
 | Annotated tag object | `dfd38c08e80aed9035bf1c2d7c8faf8bae99c356` |
 | Peeled production SHA | `e2828f563ee41316c062385c0244ac1336731359` |
-| Approved toolchain policy | `ga-security-toolchain-v1.properties` (optional-NVD-key amendment in progress) |
-| Policy SHA-256 | Updated by this amendment Evidence Gate; no G9/G11 execution yet |
+| Approved toolchain policy | `ga-security-toolchain-v1.properties` (B3 environment-isolation remediation in progress) |
+| Policy SHA-256 | `e042d191c63ee6f397d6756761f0fc969c3e97a9f5e9357c1c769f43aa2bdff5`; G9/G11 run results are recorded below; no new execution authorized |
 | JDK archive | `microsoft-jdk-21.0.12-linux-x64.tar.gz` / `linux-x64` |
 | JDK archive SHA-256 | `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f` |
 | Artifact publication action | `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` (v7.0.1) |
@@ -50,14 +51,17 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
   fail-closed filesystem checks and complete inventory validation. The current
   optional-NVD-key amendment makes `NVD_API_KEY` optional: authenticated mode
   binds it only to Dependency-Check with a 3500 ms delay; anonymous mode omits
-  the key property and uses an 8000 ms delay. Both modes still require a real
-  Dependency-Check 13.0.0 scan, <=24h usable data, reports and provenance.
+  the key property, does not declare the variable in the scanner step, removes
+  it defensively with `env -u NVD_API_KEY`, and uses an 8000 ms delay. Both
+  modes still require a real Dependency-Check 13.0.0 scan, <=24h usable data,
+  reports and provenance.
   Reproducibility, scanner, threshold, freshness, policy and candidate inputs
   remain unchanged.
 
 Existing workflows, POMs, dependencies, candidate source and production paths
-were not modified. No scanner, full-history build or campaign was executed on
-the Windows development host; therefore no G9/G11 PASS is claimed here.
+were not modified. The Windows development host did not execute the pinned
+scanner or a full-history qualification campaign; the GitHub G9/G11 results
+and their immutable artifacts are recorded below.
 
 The approved default-branch workflow installation was deliberately narrow: the
 master merge `0575c76` contains only the two new Phase 11 workflow files. Their
@@ -76,7 +80,7 @@ tag, production source, existing workflow, dependency or runtime input changed.
 | Focused security/reproducibility tests | PASS — 6 tests |
 | `mvn -pl qualification -am test "-Dtest=*GaSecurity*,*Reproducib*"` | PASS |
 | Checkstyle during focused build | 0 violations |
-| G9/G11 scanner execution | One Human-authorized replacement run each; G9 workflow PASS but no persisted artifact, G11 FAIL/B3 at missing NVD secret |
+| G9/G11 scanner execution | G9 `32856372581` PASS/qualifying/frozen; G11 `32856384325` FAIL/B3/preserved; no new execution authorized |
 | Full `mvn verify` | PASS — 225 core + 62 qualification tests; 2 expected skips |
 | Workflow YAML parse | PASS — both new workflows parse successfully |
 | Workflow Bash syntax | PASS — all workflow `run` blocks parse with Bash 5.3 |
@@ -99,10 +103,13 @@ identity mismatch, non-reproducible JAR, vulnerability, verified secret or
 prohibited runtime license remains `ABORTED`/blocker according to ADR-0019;
 none may be converted to PASS by omission or tool substitution.
 
-The first B2/B3 remediation Evidence Gate at `b44fc4d` was PASS, but the
-current publication/secret remediation Evidence Gate remains pending. TASK-049
-is dependency-locked because replacement evidence is not yet accepted. Full
-campaigns, `v1.0.0`, GitHub Release and GA remain unauthorized.
+The first B2/B3 remediation Evidence Gate at `b44fc4d` was PASS, and the fresh
+G9 run `32856372581` is qualifying/frozen. G11 run `32856384325` remains
+FAIL/B3/non-qualifying because the anonymous scanner inherited an empty
+`NVD_API_KEY`; the current environment-isolation remediation is authorized but
+not yet evidenced. TASK-049 is dependency-locked because replacement evidence
+is not yet accepted. Full campaigns, `v1.0.0`, GitHub Release and GA remain
+unauthorized.
 
 ## G9/G11 execution attempt
 
@@ -216,6 +223,13 @@ production code, POM/dependency graph, scanner, thresholds or prior evidence.
 The G11 workflow also emits a non-secret configuration identity digest whose
 canonical input includes the selected mode and approved delay, never the
 credential value or any derived form.
+
+The current B3 remediation separates mode selection from scanner invocation.
+Only the authenticated scanner step declares `NVD_API_KEY`; the anonymous
+scanner step must have no such environment entry and invokes Maven through
+`env -u NVD_API_KEY`. This closes the distinction between an absent variable
+and an empty variable. Remediation evidence is required before another G11
+execution can be considered.
 No G9/G11 execution is performed here; replacement execution remains a
 separate Human gate and TASK-049 remains locked.
 
@@ -242,3 +256,4 @@ G9/G11 run.
 | 2026-08-25 | Human-authorized replacement execution | G9 `32847427690` technical workflow PASS but zero persisted artifacts / B2 evidence incomplete; G11 `32847442506` FAIL/B3 because protected `NVD_API_KEY` was absent; no third run |
 | 2026-08-25 | Human Limited B2/B3 remediation (historical / superseded) | Authorized G9 publication contract and repository-level `NVD_API_KEY` provisioning; later superseded by the optional-key amendment; replacement execution was not authorized |
 | 2026-08-25 | Human Limited optional-NVD-key amendment (current) | `NVD_API_KEY` optional; authenticated/anonymous mode and 3500/8000 ms delays frozen; Dependency-Check/freshness/policy unchanged; no G9/G11 execution |
+| 2026-08-25 | Human Limited B3 environment-isolation remediation | Authorized to remove `NVD_API_KEY` from the anonymous scanner process environment; G9 `32856372581` remains PASS/qualifying, G11 `32856384325` remains FAIL/B3; no G11 rerun |
