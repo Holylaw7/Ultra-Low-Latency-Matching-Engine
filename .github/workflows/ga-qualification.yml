@@ -131,4 +131,47 @@ jobs:
             cd "$GA_BUILD_B/m2"
             find . -type f -printf '%P\n' | sort | while IFS= read -r item; do sha256sum "$item"; done
           ) > "$RUNNER_TEMP/ga-evidence/maven-b-inventory"
-          sha256sum "$RUNNER_TEMP/ga-evidence"/* > "$RUNNER_TEMP/ga-evidence/SHA256SUMS"
+          export GA_EVIDENCE_FILE_LIST="$RUNNER_TEMP/ga-evidence-files.list"
+          export GA_EVIDENCE_FILE_LIST_UNIQUE="$RUNNER_TEMP/ga-evidence-files.unique.list"
+          export GA_EVIDENCE_SUMS_TMP="$RUNNER_TEMP/ga-evidence/SHA256SUMS.tmp"
+          test -z "$(find "$RUNNER_TEMP/ga-evidence" -mindepth 1 -type l -print -quit)"
+          test -z "$(find "$RUNNER_TEMP/ga-evidence" -mindepth 1 ! -type f ! -type d -print -quit)"
+          find "$RUNNER_TEMP/ga-evidence" -type f -print0 |
+            while IFS= read -r -d '' item; do
+              rel="${item#"$RUNNER_TEMP/ga-evidence/"}"
+              case "$rel" in
+                ""|SHA256SUMS|SHA256SUMS.tmp|*.tmp|*/../*|../*|/*)
+                  continue
+                  ;;
+              esac
+              case "$rel" in
+                *$'\n'*|*$'\r'*)
+                  echo "invalid newline in evidence path" >&2
+                  exit 1
+                  ;;
+              esac
+              printf '%s\0' "$rel"
+            done | LC_ALL=C sort -z > "$GA_EVIDENCE_FILE_LIST"
+          test -s "$GA_EVIDENCE_FILE_LIST"
+          LC_ALL=C sort -z -u "$GA_EVIDENCE_FILE_LIST" > "$GA_EVIDENCE_FILE_LIST_UNIQUE"
+          cmp --silent "$GA_EVIDENCE_FILE_LIST" "$GA_EVIDENCE_FILE_LIST_UNIQUE"
+          : > "$GA_EVIDENCE_SUMS_TMP"
+          expected_count=0
+          while IFS= read -r -d '' rel; do
+            file="$RUNNER_TEMP/ga-evidence/$rel"
+            test -f "$file" && test ! -L "$file"
+            digest="$(sha256sum "$file" | cut -d' ' -f1)"
+            printf '%s  %s\n' "$digest" "$rel" >> "$GA_EVIDENCE_SUMS_TMP"
+            expected_count=$((expected_count + 1))
+          done < "$GA_EVIDENCE_FILE_LIST"
+          actual_count="$(wc -l < "$GA_EVIDENCE_SUMS_TMP")"
+          test "$expected_count" = "$actual_count"
+          (
+            cd "$RUNNER_TEMP/ga-evidence"
+            sha256sum --check --strict SHA256SUMS.tmp
+          )
+          mv -f "$GA_EVIDENCE_SUMS_TMP" "$RUNNER_TEMP/ga-evidence/SHA256SUMS"
+          (
+            cd "$RUNNER_TEMP/ga-evidence"
+            sha256sum --check --strict SHA256SUMS
+          )

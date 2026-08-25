@@ -41,6 +41,13 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
   verify the Microsoft 21.0.12 archive sidecar and archive SHA-256 before a
   fresh extraction, then record Java/Maven runtime identity. Candidate,
   production and existing workflows remain outside this change.
+- The Human-approved limited B2/B3 remediation repairs only the G9 final
+  evidence packager and G11 protected NVD credential binding. G9 now performs
+  recursive regular-file enumeration with normalized deterministic paths,
+  fail-closed filesystem checks and complete inventory validation. G11 binds
+  `NVD_API_KEY` only to the Dependency-Check step and records non-secret NVD
+  update/database provenance. Reproducibility, scanner, threshold, freshness,
+  policy and candidate inputs remain unchanged.
 
 Existing workflows, POMs, dependencies, candidate source and production paths
 were not modified. No scanner, full-history build or campaign was executed on
@@ -125,6 +132,16 @@ beyond exit code 1, so this remains an unresolved CI observation rather than a
 qualification PASS. No retry, production change or toolchain substitution is
 claimed here.
 
+The first Human-authorized replacement execution was then performed exactly
+once for each workflow. G9 run `32842119210` completed both detached builds,
+225 tests per build and identical JAR SHA-256 values, but failed its final
+evidence package because the old glob passed `build-a/` and `build-b/`
+directories to `sha256sum`; it remains immutable `FAIL / B2 / NON-QUALIFYING`.
+G11 run `32842122498` completed JDK, candidate, policy, scanner-entry and SBOM
+steps, but Dependency-Check received no valid NVD API key/data and failed with
+`Invalid API Key` / `NoDataException`; it remains immutable
+`FAIL / B3 / NON-QUALIFYING`. No third run was started.
+
 ## Completion log
 
 | Date | Stage | Result |
@@ -137,3 +154,4 @@ claimed here.
 | 2026-08-25 | G9/G11 execution | Runs `32835408168` / `32835411241` ABORTED/B3 at pinned JDK setup; no artifacts; no retry |
 | 2026-08-25 | Controller docs checkpoint | `1ca088f`; Quick `32835630967` PASS; Standard `32835631051` failed at `Verify`; clean local rerun PASS |
 | 2026-08-25 | Limited B3 toolchain amendment | Official Microsoft archive SHA-256 frozen; amended policy digest `6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397`; replacement run remains separately locked |
+| 2026-08-25 | Human Limited B2/B3 remediation | G9 packager and G11 protected NVD binding repaired; replacement runs `32842119210` / `32842122498` remain preserved failures; remediation Evidence Gate pending |

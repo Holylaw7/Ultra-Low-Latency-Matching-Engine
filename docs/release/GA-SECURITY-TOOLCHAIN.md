@@ -256,6 +256,15 @@ evidence-affecting arguments during TASK-048.
 - Suppression requires a separate Human-approved file naming CVE, dependency,
   evidence, scope and expiry. No inline/ad-hoc suppression is permitted.
 
+The workflow binds the NVD API credential only for the Dependency-Check step
+from the protected GitHub Actions secret `NVD_API_KEY` through
+`nvdApiKeyEnvironmentVariable=NVD_API_KEY`. The secret value, length, digest,
+fingerprint and any transformed form are never recorded in logs, command lines,
+caches, manifests or artifacts. Evidence may record only the logical secret
+name, protected-secret source and `present`/`used` booleans. A missing or
+invalid credential remains `ABORTED / B3`; it cannot be converted to a scan
+PASS or replaced with a prebuilt database.
+
 ## Secret policy
 
 Gitleaks scans the complete reachable history (`--all`) and current working

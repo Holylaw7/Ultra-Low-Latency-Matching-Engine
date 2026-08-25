@@ -100,7 +100,7 @@ jobs:
           done
           find "$REPO" -type f -printf '%P\n' | sort > "$RUNNER_TEMP/ga-security-evidence/maven-repository-inventory"
 
-      - name: Generate approved SBOM and vulnerability evidence
+      - name: Generate approved SBOM evidence
         shell: bash
         run: |
           set -euo pipefail
@@ -118,15 +118,109 @@ jobs:
             -DincludeLicenseText=false -DoutputFormat=json -DoutputName=bom \
             -DoutputDirectory="$GA_EVIDENCE_DIR/sbom" -DoutputTimestamp="$(git show -s --format=%ct e2828f563ee41316c062385c0244ac1336731359)" \
             -Dcyclonedx.skipAttach=true
+
+      - name: Generate approved vulnerability evidence
+        shell: bash
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: |
+          set -euo pipefail
+          export MAVEN_OPTS='-Dfile.encoding=UTF-8 -Duser.language=en -Duser.country=US -Duser.timezone=UTC'
+          export REPO="$RUNNER_TEMP/ga-security-cache/m2"
+          export GA_EVIDENCE_DIR="$RUNNER_TEMP/ga-security-evidence"
+          export GA_CACHE_DIR="$RUNNER_TEMP/ga-security-cache"
+          export NVD_DATA_DIR="$GA_CACHE_DIR/dependency-check-data"
+          export CREDENTIAL_PROVENANCE_TMP="$GA_EVIDENCE_DIR/nvd-credential-provenance.tmp"
+          export CREDENTIAL_PROVENANCE="$GA_EVIDENCE_DIR/nvd-credential-provenance.txt"
+          export NVD_PROVENANCE_TMP="$GA_EVIDENCE_DIR/nvd-update-provenance.tmp"
+          export NVD_PROVENANCE="$GA_EVIDENCE_DIR/nvd-update-provenance.txt"
+          credential_present=false
+          if [ -n "${NVD_API_KEY:-}" ]; then
+            credential_present=true
+          fi
+          {
+            printf 'credential.logicalName=NVD_API_KEY\n'
+            printf 'credential.source=GitHub Actions protected secret\n'
+            printf 'credential.present=%s\n' "$credential_present"
+            printf 'credential.used=false\n'
+          } > "$CREDENTIAL_PROVENANCE_TMP"
+          mv -f "$CREDENTIAL_PROVENANCE_TMP" "$CREDENTIAL_PROVENANCE"
+          if [ "$credential_present" != true ]; then
+            echo 'NVD credential is absent; refusing to run Dependency-Check.' >&2
+            exit 1
+          fi
+          {
+            printf 'credential.logicalName=NVD_API_KEY\n'
+            printf 'credential.source=GitHub Actions protected secret\n'
+            printf 'credential.present=true\n'
+            printf 'credential.used=true\n'
+          } > "$CREDENTIAL_PROVENANCE_TMP"
+          mv -f "$CREDENTIAL_PROVENANCE_TMP" "$CREDENTIAL_PROVENANCE"
+          export NVD_UPDATE_STARTED="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          cd "$RUNNER_TEMP/ga-security-candidate"
+          set +e
           mvn -B -ntp -f core/pom.xml \
             org.owasp:dependency-check-maven:13.0.0:check \
-            -Dmaven.repo.local="$REPO" -DautoUpdate=true -DdataDirectory="$GA_CACHE_DIR/dependency-check-data" \
+            -Dmaven.repo.local="$REPO" -DautoUpdate=true -DdataDirectory="$NVD_DATA_DIR" \
+            -DnvdApiKeyEnvironmentVariable=NVD_API_KEY \
             -Dformats=JSON,SARIF -DfailBuildOnCVSS=7.0 -DfailOnError=true \
             -DskipTestScope=true -DskipProvidedScope=true -DskipRuntimeScope=false \
             -DskipSystemScope=true -DskipDependencyManagement=true -DscanDependencies=true \
             -DscanPlugins=false -DenableExperimental=false -DenableRetired=false \
             -DversionCheckEnabled=false -DfailBuildOnUnusedSuppressionRule=true
-          cp core/target/dependency-check-report.* "$GA_EVIDENCE_DIR/"
+          scan_status=$?
+          set -e
+          export NVD_UPDATE_FINISHED="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          for report in core/target/dependency-check-report.*; do
+            if [ -f "$report" ]; then
+              cp "$report" "$GA_EVIDENCE_DIR/"
+            fi
+          done
+          data_directory_present=false
+          if [ -d "$NVD_DATA_DIR" ]; then
+            data_directory_present=true
+          fi
+          {
+            printf 'nvd.updateStarted=%s\n' "$NVD_UPDATE_STARTED"
+            printf 'nvd.updateFinished=%s\n' "$NVD_UPDATE_FINISHED"
+            printf 'nvd.dataDirectory=dependency-check-data\n'
+            printf 'nvd.dataDirectoryPresent=%s\n' "$data_directory_present"
+            printf 'nvd.dataFreshnessLimitSeconds=86400\n'
+            printf 'nvd.scanner=org.owasp:dependency-check-maven:13.0.0\n'
+            printf 'nvd.apiKeyEnvironmentVariable=NVD_API_KEY\n'
+            printf 'nvd.scanExitCode=%s\n' "$scan_status"
+          } > "$NVD_PROVENANCE_TMP"
+          mv -f "$NVD_PROVENANCE_TMP" "$NVD_PROVENANCE"
+          if [ "$scan_status" -ne 0 ]; then
+            exit "$scan_status"
+          fi
+          test "$data_directory_present" = true
+          test -z "$(find "$NVD_DATA_DIR" -mindepth 1 -type l -print -quit)"
+          test -z "$(find "$NVD_DATA_DIR" -mindepth 1 ! -type f ! -type d -print -quit)"
+          find "$NVD_DATA_DIR" -type f -printf '%P\n' | LC_ALL=C sort > "$GA_EVIDENCE_DIR/nvd-data-inventory"
+          test -s "$GA_EVIDENCE_DIR/nvd-data-inventory"
+          while IFS= read -r item; do
+            sha256sum "$NVD_DATA_DIR/$item"
+          done < "$GA_EVIDENCE_DIR/nvd-data-inventory" > "$GA_EVIDENCE_DIR/nvd-data-sha256sums"
+          latest_data_epoch="$(find "$NVD_DATA_DIR" -type f -printf '%T@\n' | LC_ALL=C sort -nr | head -n1 | cut -d. -f1)"
+          now_epoch="$(date -u +%s)"
+          test -n "$latest_data_epoch"
+          data_age_seconds=$((now_epoch - latest_data_epoch))
+          test "$data_age_seconds" -ge 0
+          test "$data_age_seconds" -le 86400
+          {
+            printf 'nvd.updateStarted=%s\n' "$NVD_UPDATE_STARTED"
+            printf 'nvd.updateFinished=%s\n' "$NVD_UPDATE_FINISHED"
+            printf 'nvd.dataDirectory=dependency-check-data\n'
+            printf 'nvd.dataDirectoryPresent=true\n'
+            printf 'nvd.dataLatestFileAgeSeconds=%s\n' "$data_age_seconds"
+            printf 'nvd.dataFreshnessLimitSeconds=86400\n'
+            printf 'nvd.scanner=org.owasp:dependency-check-maven:13.0.0\n'
+            printf 'nvd.apiKeyEnvironmentVariable=NVD_API_KEY\n'
+            printf 'nvd.dataFileCount=%s\n' "$(wc -l < "$GA_EVIDENCE_DIR/nvd-data-inventory")"
+            printf 'nvd.scanExitCode=%s\n' "$scan_status"
+          } > "$NVD_PROVENANCE_TMP"
+          mv -f "$NVD_PROVENANCE_TMP" "$NVD_PROVENANCE"
 
       - name: Generate approved license inventory
         shell: bash
