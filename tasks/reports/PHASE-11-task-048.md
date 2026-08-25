@@ -16,8 +16,10 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
 | Candidate tag | `v0.9.0-rc.1` |
 | Annotated tag object | `dfd38c08e80aed9035bf1c2d7c8faf8bae99c356` |
 | Peeled production SHA | `e2828f563ee41316c062385c0244ac1336731359` |
-| Approved toolchain policy | `ga-security-toolchain-v1.properties` |
-| Policy SHA-256 | `7c6e36e0bc045fad38255be65a519ee8db19b877d786a5be26d399efbf4e5554` |
+| Approved toolchain policy | `ga-security-toolchain-v1.properties` (amended) |
+| Policy SHA-256 | `6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397` |
+| JDK archive | `microsoft-jdk-21.0.12-linux-x64.tar.gz` / `linux-x64` |
+| JDK archive SHA-256 | `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f` |
 
 ## Implementation
 
@@ -35,6 +37,10 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
   resolves and verifies pinned scanner entry JARs, invokes the normative
   CycloneDX/Dependency-Check/license/Gitleaks commands, and records output
   hashes. It is `workflow_dispatch` only and has `contents: read` permission.
+- The approved B3 amendment replaces only JDK provisioning: both new workflows
+  verify the Microsoft 21.0.12 archive sidecar and archive SHA-256 before a
+  fresh extraction, then record Java/Maven runtime identity. Candidate,
+  production and existing workflows remain outside this change.
 
 Existing workflows, POMs, dependencies, candidate source and production paths
 were not modified. No scanner, full-history build or campaign was executed on
@@ -101,8 +107,16 @@ The controller ref was `docs/phase11-ga-qualification-blueprint` at
 available; the catalog exposed `21.0.11` as the newest Java 21 version. No
 scanner, build, or evidence artifact was produced. The approved workflow and
 toolchain were not changed to substitute `21.0.11`, and no automatic retry was
-performed. A Human/Sol decision is required for an approved environment or a
-toolchain amendment before another run.
+performed.
+
+Human then approved a Limited B3 Environment / Security Toolchain Amendment.
+The exact Microsoft archive identity is now frozen as
+`microsoft-jdk-21.0.12-linux-x64.tar.gz` with archive SHA-256
+`f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f`; the
+canonical properties digest is amended to
+`6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397`. The
+workflow change remains qualification-only. Replacement G9/G11 execution is
+still a separate Human gate and has not been authorized.
 
 The later controller documentation checkpoint `1ca088f` had Quick Lane PASS,
 but Standard CI `32835631051` failed in the generic `Verify` step. A clean local
@@ -121,4 +135,5 @@ claimed here.
 | 2026-08-25 | Approved workflow installation | master merge `0575c76`; CI `32835193395` / Quick `32835193084` PASS; only the two new workflow files installed |
 | 2026-08-25 | G9/G11 dispatch attempt | HTTP 404: workflows are not installed on the default branch; no run/artifact created |
 | 2026-08-25 | G9/G11 execution | Runs `32835408168` / `32835411241` ABORTED/B3 at pinned JDK setup; no artifacts; no retry |
-| 2026-08-25 | Controller docs checkpoint | `1ca088f`; Quick `32835630967` PASS; Standard `32835631051` failed at `Verify`; clean local rerun PASS, CI diagnosis pending |
+| 2026-08-25 | Controller docs checkpoint | `1ca088f`; Quick `32835630967` PASS; Standard `32835631051` failed at `Verify`; clean local rerun PASS |
+| 2026-08-25 | Limited B3 toolchain amendment | Official Microsoft archive SHA-256 frozen; amended policy digest `6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397`; replacement run remains separately locked |

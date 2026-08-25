@@ -232,6 +232,28 @@ digest, database freshness rule and license policy are normative in
 [`GA-SECURITY-TOOLCHAIN.md`](../release/GA-SECURITY-TOOLCHAIN.md). Toolchain
 drift is an Exception Gate, not an implementation choice.
 
+#### Human-approved Limited B3 provisioning amendment (2026-08-25)
+
+The Microsoft OpenJDK identity remains `21.0.12+8-LTS` on `ubuntu-24.04`.
+Because the GitHub Actions Microsoft resolver did not expose that exact version,
+the two new GA workflows may provision the same JDK only from the official
+Microsoft archive below:
+
+```text
+archive: microsoft-jdk-21.0.12-linux-x64.tar.gz
+archive URL: https://aka.ms/download-jdk/microsoft-jdk-21.0.12-linux-x64.tar.gz
+checksum URL: https://aka.ms/download-jdk/microsoft-jdk-21.0.12-linux-x64.tar.gz.sha256sum.txt
+archive SHA-256: f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f
+```
+
+The archive and sidecar must be verified before extraction into a fresh
+`RUNNER_TEMP` directory; `JAVA_HOME`, `java`, `javac` and Maven identity must
+be recorded. This is a qualification-only provisioning amendment. It does not
+change the candidate, production source, dependency graph, scanner policy,
+thresholds or G1-G12 semantics. JDK 21.0.11 and all other distributions are
+forbidden. Replacement G9/G11 execution requires a separate Human approval;
+the previous runs remain immutable `ABORTED / B3` evidence.
+
 ### D16 — Release source and production source may be distinguished
 
 The qualified production artifact source remains `e2828f5`. Human may either:

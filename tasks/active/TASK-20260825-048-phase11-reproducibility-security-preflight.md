@@ -79,11 +79,11 @@ policy details are frozen in ADR-0019, not chosen during implementation.
 
 | Path | Change |
 | --- | --- |
-| `.github/workflows/ga-qualification.yml` | new read-only reproducibility workflow |
-| `.github/workflows/ga-security.yml` | new pinned G11 workflow |
+| `.github/workflows/ga-qualification.yml` | new read-only reproducibility workflow with approved Microsoft JDK archive provisioning |
+| `.github/workflows/ga-security.yml` | new pinned G11 workflow with approved Microsoft JDK archive provisioning |
 | `qualification/**/ga/security/**` | report normalization and license policy validator |
 | qualification tests/resources | tool-manifest/hash/policy fixtures |
-| `docs/release/ga-security-toolchain-v1.properties` | consume approved canonical tool options; no implementation-time choice |
+| `docs/release/ga-security-toolchain-v1.properties` | consume approved canonical tool options and frozen JDK archive digest; no implementation-time choice |
 | `tasks/reports/PHASE-11-task-048.md` | evidence report |
 
 ## 12. Detailed Test / Profile Plan
@@ -119,7 +119,7 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | --- | --- | --- |
 | Blueprint | Approved | Human Phase 11 Blueprint Approval |
 | Implementation | In Progress | TASK-047 Evidence Gate PASS |
-| Preflight | Pending Evidence Gate | pinned G9/G11 workflow execution, retained reports, reviewers and exact-SHA CI |
+| Preflight | Pending Evidence Gate | amended official Microsoft JDK archive provisioning, G9/G11 replacement execution, retained reports, reviewers and exact-SHA CI |
 
 | Date | Reviewer | Decision / log |
 | --- | --- | --- |
@@ -130,6 +130,7 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | 2026-08-25 | Approved default-branch installation | master merge `0575c76`; only `ga-qualification.yml` and `ga-security.yml`; CI `32835193395` / Quick `32835193084` PASS |
 | 2026-08-25 | G9/G11 run result | `32835408168` / `32835411241` ABORTED/B3: pinned Microsoft OpenJDK `21.0.12` unavailable (21.0.11 newest); no version substitution or retry |
 | 2026-08-25 | Controller docs checkpoint | `1ca088f`; Quick `32835630967` PASS; Standard `32835631051` failed at `Verify`; clean local rerun PASS; diagnosis pending |
+| 2026-08-25 | Human Limited B3 Amendment | Approved official archive provisioning; `microsoft-jdk-21.0.12-linux-x64.tar.gz`, SHA-256 `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f`; replacement execution remains separately locked |
 
 ### Implementation Log
 

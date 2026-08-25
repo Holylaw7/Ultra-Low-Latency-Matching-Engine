@@ -18,11 +18,44 @@ jobs:
           fetch-tags: true
           persist-credentials: false
 
-      - name: Set up approved JDK
-        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00
-        with:
-          distribution: microsoft
-          java-version: '21.0.12'
+      - name: Provision approved Microsoft JDK archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          export JDK_ARCHIVE_NAME='microsoft-jdk-21.0.12-linux-x64.tar.gz'
+          export JDK_ARCHIVE_URL='https://aka.ms/download-jdk/microsoft-jdk-21.0.12-linux-x64.tar.gz'
+          export JDK_CHECKSUM_URL='https://aka.ms/download-jdk/microsoft-jdk-21.0.12-linux-x64.tar.gz.sha256sum.txt'
+          export JDK_EXPECTED_SHA256='f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f'
+          export JDK_ARCHIVE="$RUNNER_TEMP/$JDK_ARCHIVE_NAME"
+          export JDK_CHECKSUM="$RUNNER_TEMP/$JDK_ARCHIVE_NAME.sha256sum.txt"
+          export JDK_ROOT="$RUNNER_TEMP/microsoft-jdk-21.0.12"
+          export GA_EVIDENCE_DIR="$RUNNER_TEMP/ga-security-evidence"
+          test ! -e "$JDK_ROOT"
+          mkdir -p "$JDK_ROOT" "$GA_EVIDENCE_DIR"
+          curl --fail --silent --show-error --location --retry 2 "$JDK_CHECKSUM_URL" -o "$JDK_CHECKSUM"
+          test "$(awk -v name="$JDK_ARCHIVE_NAME" '$2 == name {print $1}' "$JDK_CHECKSUM")" = "$JDK_EXPECTED_SHA256"
+          curl --fail --silent --show-error --location --retry 2 "$JDK_ARCHIVE_URL" -o "$JDK_ARCHIVE"
+          test "$(sha256sum "$JDK_ARCHIVE" | cut -d' ' -f1)" = "$JDK_EXPECTED_SHA256"
+          sha256sum "$JDK_ARCHIVE" "$JDK_CHECKSUM" | tee "$GA_EVIDENCE_DIR/jdk-download-sha256sums.txt"
+          tar -tzf "$JDK_ARCHIVE" | awk 'BEGIN { bad=0 } /^\// || /(^|\/)\.\.(\/|$)/ { bad=1 } END { exit bad }'
+          tar -xzf "$JDK_ARCHIVE" -C "$JDK_ROOT"
+          export JAVA_HOME="$(find "$JDK_ROOT" -mindepth 1 -maxdepth 1 -type d -name 'jdk-*' -print -quit)"
+          test -n "$JAVA_HOME" && test -x "$JAVA_HOME/bin/java" && test -x "$JAVA_HOME/bin/javac"
+          export PATH="$JAVA_HOME/bin:$PATH"
+          {
+            printf 'jdk.vendor=Microsoft\n'
+            printf 'jdk.version=21.0.12+8-LTS\n'
+            printf 'jdk.platform=linux-x64\n'
+            printf 'jdk.archiveFilename=%s\n' "$JDK_ARCHIVE_NAME"
+            printf 'jdk.archiveSha256=%s\n' "$JDK_EXPECTED_SHA256"
+            printf 'jdk.checksumSha256=%s\n' "$(sha256sum "$JDK_CHECKSUM" | cut -d' ' -f1)"
+            printf 'jdk.javaHome=%s\n' "$JAVA_HOME"
+          } | tee "$GA_EVIDENCE_DIR/jdk-runtime-identity.txt"
+          java -version 2>&1 | tee "$GA_EVIDENCE_DIR/java-version.txt"
+          javac -version 2>&1 | tee "$GA_EVIDENCE_DIR/javac-version.txt"
+          grep -E '21\.0\.12|Microsoft' "$GA_EVIDENCE_DIR/java-version.txt"
+          printf 'JAVA_HOME=%s\n' "$JAVA_HOME" >> "$GITHUB_ENV"
+          printf '%s/bin\n' "$JAVA_HOME" >> "$GITHUB_PATH"
 
       - name: Verify policy and candidate identity
         shell: bash
@@ -32,7 +65,7 @@ jobs:
           export GA_CACHE_DIR="$RUNNER_TEMP/ga-security-cache"
           mkdir -p "$GA_EVIDENCE_DIR" "$GA_CACHE_DIR"
           test "$(sha256sum docs/release/ga-security-toolchain-v1.properties | cut -d' ' -f1)" = \
-            7c6e36e0bc045fad38255be65a519ee8db19b877d786a5be26d399efbf4e5554
+            6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397
           test "$(git rev-parse --is-shallow-repository)" = false
           test "$(git rev-parse refs/tags/v0.9.0-rc.1)" = \
             dfd38c08e80aed9035bf1c2d7c8faf8bae99c356

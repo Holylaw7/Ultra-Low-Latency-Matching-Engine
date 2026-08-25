@@ -2,7 +2,8 @@
 
 ## Status
 
-`Approved / Frozen by Human Phase 11 Blueprint Approval (2026-08-25)`. This
+`Approved / Frozen by Human Phase 11 Blueprint Approval (2026-08-25)` with the
+Human-approved Limited B3 Environment / Security Toolchain Amendment. This
 manifest freezes G9/G11 tooling. Tools run only after the applicable Task
 Evidence Gate and do not modify the
 candidate build or runtime dependency graph.
@@ -13,13 +14,45 @@ candidate build or runtime dependency graph.
 | --- | --- |
 | runner | GitHub-hosted `ubuntu-24.04`; exact image OS/package manifest recorded at run time |
 | checkout | `actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683` (v4.2.2), `fetch-depth: 0`, `fetch-tags: true`, `persist-credentials: false` |
-| Java setup | `actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00` (v4.7.1) |
-| JDK | Microsoft OpenJDK `21.0.12+8-LTS`; resolved distribution/archive digest recorded |
+| Java setup | Official Microsoft archive provisioning in the new GA workflows; the prior `actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00` resolver is not used for JDK installation after the approved B3 amendment |
+| JDK | Microsoft Build of OpenJDK `21.0.12+8-LTS`, Linux x64 archive `microsoft-jdk-21.0.12-linux-x64.tar.gz`, archive SHA-256 `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f` |
 | Maven | Apache Maven `3.9.16`, build commit `2bdd9fddda4b155ebf8000e807eb73fd829a51d5`; executable/distribution hash recorded; version drift ABORTS |
 
 Workflow permissions are `contents: read`; no write, package, release or OIDC
 permission is allowed. Network access is used only for pinned tool/artifact and
 database retrieval. Download failure or identity mismatch is `ABORTED`.
+
+### Approved JDK archive provisioning amendment
+
+The exact Microsoft JDK identity is unchanged. The resolver mechanism changed
+only because the GitHub Actions Microsoft catalog did not expose `21.0.12` to
+`actions/setup-java`. Both GA workflows now download the official versioned
+Linux x64 archive and its `.sha256sum.txt` sidecar, require the sidecar digest
+to equal the frozen value below, verify the downloaded archive before
+extraction, reject unsafe archive paths, extract into a fresh `RUNNER_TEMP`
+directory, and record `JAVA_HOME`, `java -version`, `javac -version` and Maven
+runtime evidence.
+
+```text
+vendor: Microsoft
+product: Microsoft Build of OpenJDK
+version/build: 21.0.12+8-LTS
+platform: linux-x64
+archive: microsoft-jdk-21.0.12-linux-x64.tar.gz
+archive URL: https://aka.ms/download-jdk/microsoft-jdk-21.0.12-linux-x64.tar.gz
+checksum URL: https://aka.ms/download-jdk/microsoft-jdk-21.0.12-linux-x64.tar.gz.sha256sum.txt
+archive SHA-256: f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f
+runner: ubuntu-24.04
+extraction: fresh RUNNER_TEMP directory
+```
+
+The archive digest is a normative input. A sidecar mismatch, archive mismatch,
+runtime identity mismatch or extraction failure is `ABORTED`; the workflow may
+not fall back to JDK 21.0.11 or another distribution. The old runs
+`32835408168` and `32835411241` remain immutable `ABORTED / B3` evidence.
+The canonical properties file retains the historical `action.setupJava.sha`
+field for provenance compatibility, but neither new GA workflow invokes that
+resolver after this amendment.
 
 ## Full-history checkout and G9 reproducible build contract
 
@@ -109,10 +142,10 @@ architecture pin.
 
 The ASCII LF-terminated file
 [`ga-security-toolchain-v1.properties`](ga-security-toolchain-v1.properties) is
-the canonical option inventory. Its proposed SHA-256 is:
+the canonical option inventory. Its amended SHA-256 is:
 
 ```text
-7c6e36e0bc045fad38255be65a519ee8db19b877d786a5be26d399efbf4e5554
+6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397
 ```
 
 TASK-048 must verify that hash before invoking a tool. The result manifest
@@ -130,7 +163,7 @@ workflow. Line continuations are presentation only; argument values are exact.
 
 ```bash
 test "$(sha256sum docs/release/ga-security-toolchain-v1.properties | cut -d' ' -f1)" = \
-  "7c6e36e0bc045fad38255be65a519ee8db19b877d786a5be26d399efbf4e5554"
+  "6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397"
 
 mvn -B -ntp -f core/pom.xml \
   org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeBom \

@@ -26,7 +26,7 @@ public final class GaSecurityPolicy {
 
     /** SHA-256 of the approved canonical toolchain properties file. */
     public static final String APPROVED_PROPERTIES_SHA256 =
-            "7c6e36e0bc045fad38255be65a519ee8db19b877d786a5be26d399efbf4e5554";
+            "6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397";
 
     private static final Set<String> REQUIRED_KEYS = Set.of(
             "action.checkout.sha", "action.setupJava.sha", "checkout.fetchDepth",
@@ -47,7 +47,9 @@ public final class GaSecurityPolicy {
             "dependencyCheck.skipTestScope", "dependencyCheck.versionCheckEnabled",
             "gitleaks.config", "gitleaks.container", "gitleaks.digest", "gitleaks.exitCode",
             "gitleaks.historyLogOpts", "gitleaks.maxTargetMegabytes", "gitleaks.redactPercent",
-            "gitleaks.reportFormat", "jdk.distribution", "jdk.version", "license.acceptedSpdx",
+            "gitleaks.reportFormat", "jdk.archiveFilename", "jdk.archiveSha256", "jdk.archiveUrl",
+            "jdk.checksumUrl", "jdk.distribution", "jdk.platform", "jdk.product", "jdk.version",
+            "license.acceptedSpdx",
             "license.artifact", "license.encoding", "license.excludedScopes", "license.goal",
             "license.includeOptional", "license.includeTransitiveDependencies", "license.jarSha256",
             "maven.buildCommit", "maven.version", "reproducibility.artifactPath",

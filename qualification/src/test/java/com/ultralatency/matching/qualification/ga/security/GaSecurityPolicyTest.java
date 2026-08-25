@@ -26,6 +26,11 @@ class GaSecurityPolicyTest {
         final GaSecurityPolicy parsed = GaSecurityPolicy.load(policy);
         assertEquals(GaSecurityPolicy.APPROVED_PROPERTIES_SHA256, parsed.sha256());
         assertEquals("ubuntu-24.04", parsed.value("runner.image"));
+        assertEquals("microsoft-jdk-21.0.12-linux-x64.tar.gz",
+                parsed.value("jdk.archiveFilename"));
+        assertEquals("f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f",
+                parsed.value("jdk.archiveSha256"));
+        assertEquals("linux-x64", parsed.value("jdk.platform"));
         assertTrue(parsed.acceptsRuntimeLicense("Apache-2.0"));
         assertTrue(!parsed.acceptsRuntimeLicense("GPL-3.0-only"));
     }
