@@ -252,10 +252,10 @@ The source checkpoint's initial Standard CI `32754918129` exposed an
 unrelated flaky core-test assertion; final docs/evidence sync `241485c`
 passed Standard CI `32802512908` and Quick Lane `32802512953` (earlier syncs
 `a0747bb` / `32802089849` and `a6a623b` / `32802326848` also passed).
-Benchmark review found the v3 timer included Protocol connection setup; a
-qualification-only measurement-boundary correction and evidence rerun are
-pending. The corrected v4 characterization is PASS; verifier, benchmark-reviewer
-and docs-auditor sign-off plus Sol High delta-only Closure Review remain pending.
+Benchmark review found the v3 timer included Protocol connection setup; the
+qualification-only measurement-boundary correction was completed at `7566814`
+and v4 evidence is PASS. Verifier, benchmark-reviewer and docs-auditor sign-off
+plus Sol High delta-only Closure Review remain pending.
 Production optimization
 and Product Release remain unauthorized.
 Reconnect/deduplication,
