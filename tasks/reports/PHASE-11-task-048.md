@@ -2,8 +2,9 @@
 
 ## Status
 
-`In Progress — B2/B3 remediation Evidence Gate PASS; G9/G11 replacement
-execution remains separately Human-gated.`
+`In Progress — B2/B3 remediation Evidence Gate PASS; the single authorized
+replacement execution for each gate is complete, but final G9/G11 evidence
+review is CHANGES REQUIRED.`
 
 TASK-048 implements the approved qualification-only reproducibility and
 security preflight boundary. It does not qualify the candidate, authorize a
@@ -70,7 +71,7 @@ tag, production source, existing workflow, dependency or runtime input changed.
 | Focused security/reproducibility tests | PASS — 5 tests |
 | `mvn -pl qualification -am test "-Dtest=*GaSecurity*,*Reproducib*"` | PASS |
 | Checkstyle during focused build | 0 violations |
-| G9/G11 scanner execution | Not run locally; replacement execution not authorized |
+| G9/G11 scanner execution | One Human-authorized replacement run each; G9 workflow PASS but no persisted artifact, G11 FAIL/B3 at missing NVD secret |
 | Full `mvn verify` | PASS — 225 core + 61 qualification tests; 2 expected skips |
 | Workflow YAML parse | PASS — both new workflows parse successfully |
 | Workflow Bash syntax | PASS — all workflow `run` blocks parse with Bash 5.3 |
@@ -94,8 +95,8 @@ prohibited runtime license remains `ABORTED`/blocker according to ADR-0019;
 none may be converted to PASS by omission or tool substitution.
 
 The B2/B3 remediation Evidence Gate is PASS, but TASK-049 remains
-dependency-locked until G9/G11 replacement execution produces accepted gate
-evidence. Full campaigns, `v1.0.0`, GitHub Release and GA remain unauthorized.
+dependency-locked because the replacement evidence is not yet accepted. Full
+campaigns, `v1.0.0`, GitHub Release and GA remain unauthorized.
 
 ## G9/G11 execution attempt
 
@@ -155,6 +156,26 @@ Qualification Quick Lane `32845529342` both pass. This closes the B2/B3
 remediation Evidence Gate only; it does not mark G9 or G11 PASS and does not
 authorize another execution.
 
+## Human-authorized replacement execution
+
+Exactly one fresh execution was authorized for each gate. Both runs used the
+approved workflow bytes (unchanged from `c01977a`) and candidate
+`v0.9.0-rc.1`; no old run artifacts were reused and no third run was started.
+
+- G9 run `32847427690` concluded `success`: the approved JDK, candidate
+  identity, two detached builds and reproducibility workflow completed. The
+  run exposed zero persisted GitHub Actions artifacts, so immutable artifact
+  and `SHA256SUMS` publication could not be independently validated. Its
+  workflow result is therefore recorded as **technical PASS / B2 evidence
+  incomplete / non-qualifying**, not as an accepted G9 PASS.
+- G11 run `32847442506` concluded `failure` at the protected NVD credential
+  presence check. JDK, candidate identity, scanner resolution and SBOM steps
+  passed; `NVD_API_KEY` was absent, so Dependency-Check did not run. This is
+  preserved as **FAIL / B3 / NON-QUALIFYING**.
+
+The two earlier failures `32842119210` and `32842122498` remain preserved
+unchanged. No automatic retry or replacement run is authorized.
+
 ## Completion log
 
 | Date | Stage | Result |
@@ -170,3 +191,4 @@ authorize another execution.
 | 2026-08-25 | Limited B3 toolchain amendment | Official Microsoft archive SHA-256 frozen; amended policy digest `6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397`; replacement run remains separately locked |
 | 2026-08-25 | Human Limited B2/B3 remediation | G9 packager and G11 protected NVD binding repaired; replacement runs `32842119210` / `32842122498` remain preserved failures; remediation Evidence Gate PASS at `b44fc4d` (`32845289320` / `32845289257`) |
 | 2026-08-25 | Final remediation evidence/status synchronization | `c01977a`; Standard `32845529323` PASS; Quick `32845529342` PASS; G9/G11 replacement execution remains separately Human-gated |
+| 2026-08-25 | Human-authorized replacement execution | G9 `32847427690` technical workflow PASS but zero persisted artifacts / B2 evidence incomplete; G11 `32847442506` FAIL/B3 because protected `NVD_API_KEY` was absent; no third run |

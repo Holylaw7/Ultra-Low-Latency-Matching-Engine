@@ -5,11 +5,11 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-048` — Reproducibility and Security Preflight |
-| Status | `In Progress — B2/B3 remediation Evidence Gate PASS; G9/G11 replacement execution separately Human-gated` |
+| Status | `In Progress — replacement runs complete; G9 artifact evidence incomplete (B2), G11 missing NVD secret (B3); final Evidence Gate CHANGES REQUIRED` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Depends On | TASK-047 Evidence Gate PASS after Human Blueprint Approval |
-| Next Gate | Human Replacement G9/G11 Execution Approval; no replacement execution is currently authorized |
+| Next Gate | Sol High B2/B3 final evidence review; no automatic third run |
 
 ## 2. Goal
 
@@ -119,7 +119,7 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | --- | --- | --- |
 | Blueprint | Approved | Human Phase 11 Blueprint Approval |
 | Implementation | In Progress | TASK-047 Evidence Gate PASS |
-| Preflight | B2/B3 Remediation Evidence Gate PASS | G9 recursive packager and protected NVD binding verified; G9/G11 replacement execution remains separately Human-gated |
+| Preflight | B2/B3 Remediation PASS; final evidence CHANGES REQUIRED | G9 `32847427690` technical PASS but no persisted artifacts; G11 `32847442506` FAIL/B3 at missing protected secret; no third run |
 
 | Date | Reviewer | Decision / log |
 | --- | --- | --- |
@@ -133,6 +133,7 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | 2026-08-25 | Human Limited B3 Amendment | Approved official archive provisioning; `microsoft-jdk-21.0.12-linux-x64.tar.gz`, SHA-256 `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f`; replacement execution remains separately locked |
 | 2026-08-25 | Human Limited B2/B3 Remediation | G9 recursive evidence packager and G11 protected NVD credential binding authorized; replacement failures `32842119210` / `32842122498` preserved |
 | 2026-08-25 | B2/B3 Remediation Evidence Gate | Implementation `b44fc4d`; final docs/status `c01977a`; Standard `32845529323` PASS; Quick `32845529342` PASS; replacement G9/G11 execution requires new Human approval |
+| 2026-08-25 | Human-authorized replacement execution | G9 `32847427690` workflow PASS but artifact publication incomplete; G11 `32847442506` FAIL/B3 due absent `NVD_API_KEY`; final Evidence Gate CHANGES REQUIRED; no third run |
 
 ### Implementation Log
 
