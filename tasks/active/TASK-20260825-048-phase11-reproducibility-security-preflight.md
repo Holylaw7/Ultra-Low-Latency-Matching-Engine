@@ -5,11 +5,11 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-048` — Reproducibility and Security Preflight |
-| Status | `Proposed — Dependency Locked` |
+| Status | `In Progress — TASK-048 implementation authorized by Human Phase 11 Blueprint Approval` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
-| Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Proposed |
+| Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Depends On | TASK-047 Evidence Gate PASS after Human Blueprint Approval |
-| Next Gate | Human Phase 11 Blueprint Approval |
+| Next Gate | TASK-048 Evidence Gate: focused tests, full verification, reviewers and exact-SHA CI |
 
 ## 2. Goal
 
@@ -51,8 +51,9 @@ and requires rc.2. Roll back qualification tooling only if it is defective.
 ## 7. Git / Approval
 
 Planned commit: `test(ga): add reproducibility and security preflight`.
-Implementation and workflow creation remain unauthorized until Blueprint
-Approval and TASK-047 PASS.
+Human Phase 11 Blueprint Approval and TASK-047 Evidence Gate PASS authorize
+this qualification-only implementation. Full G9/G11 campaigns remain subject
+to their own evidence and Human gates.
 
 ## 8. Background / Current Implementation
 
@@ -116,14 +117,14 @@ non-reproducible candidate is not rolled back; it blocks GA.
 
 | Stage | Status | Gate |
 | --- | --- | --- |
-| Blueprint | Proposed | Human approval |
-| Implementation | Dependency locked | TASK-047 PASS |
-| Preflight | Locked | G9/G11 PASS or blocker review |
+| Blueprint | Approved | Human Phase 11 Blueprint Approval |
+| Implementation | In Progress | TASK-047 Evidence Gate PASS |
+| Preflight | Pending Evidence Gate | focused tests, full verification, reviewers and exact-SHA CI |
 
 | Date | Reviewer | Decision / log |
 | --- | --- | --- |
-| 2026-08-25 | Human Developer | Pending Blueprint Approval |
-| 2026-08-25 | Design | Toolchain frozen; no execution |
+| 2026-08-25 | Human Developer | Blueprint approved; TASK-048 authorized after TASK-047 PASS |
+| 2026-08-25 | Implementation | Qualification-only policy/evaluator and pinned workflows added; scans not executed locally |
 
 ### Implementation Log
 

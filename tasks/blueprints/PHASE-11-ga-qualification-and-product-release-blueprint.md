@@ -470,7 +470,7 @@ Next Gate: TASK-048 Evidence Gate; TASK-047 Evidence Gate PASS recorded
 | Date | Stage | Result | Evidence | Next State |
 | --- | --- | --- | --- | --- |
 | 2026-08-25 | Discovery / Complete Blueprint Proposal | Approved | ADR-0019, Matrix, TASK-047..056 plans | TASK-047 Evidence Gate |
-| 2026-08-25 | TASK-047 Evidence Gate | PASS | `d25eac6`; Standard CI `32828665352`; Quick `32828665372` | TASK-048 Evidence Gate |
+| 2026-08-25 | TASK-047 Evidence Gate | PASS | implementation `d25eac6`; status `2521500`; Standard CI `32828844611`; Quick `32828844541` | TASK-048 Evidence Gate |
 
 ## 24. Phase Closure Checklist
 

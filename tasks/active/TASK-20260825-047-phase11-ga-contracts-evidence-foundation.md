@@ -124,7 +124,7 @@ Then verifier/docs-auditor and exact-SHA Standard/GA Quick CI must PASS.
 | --- | --- | --- | --- |
 | 2026-08-25 | Paused | Schema identity-width contradiction discovered before commit | Human amendment required |
 | 2026-08-25 | Resumed | Limited Schema Amendment approved; explicit Git SHA-1/SHA-256 typing | focused verification |
-| 2026-08-25 | Completed / Evidence Gate PASS | Added GA codec/store/evaluator/candidate verifier and field-type tests; no production changes | `d25eac6`; Standard CI `32828665352` PASS; Quick `32828665372` PASS |
+| 2026-08-25 | Completed / Evidence Gate PASS | Added GA codec/store/evaluator/candidate verifier and field-type tests; no production changes | implementation `d25eac6`; final status `2521500`; Standard CI `32828844611` PASS; Quick `32828844541` PASS |
 
 ### Implementation Log
 

@@ -36,8 +36,8 @@ are retained as separate fields and are never inferred from one another.
 | `git diff --check` | PASS |
 | Production/frozen-path audit | No production source, build, dependency or RC changes |
 | `.vscode/` | untouched / untracked |
-| Exact-SHA Standard CI | [32828665352](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32828665352) — PASS |
-| Qualification Quick Lane | [32828665372](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32828665372) — PASS |
+| Exact-SHA Standard CI | [32828844611](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32828844611) — PASS |
+| Qualification Quick Lane | [32828844541](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32828844541) — PASS |
 | Evidence checkpoint | `d25eac6c040f90acea4a27b62d6261373c98dc73` |
 
 The focused tests cover 40-character Git SHA-1 acceptance, 39/41/64-width,
