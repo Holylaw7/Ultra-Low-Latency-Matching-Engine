@@ -20,7 +20,7 @@ Closure.
 | Qualification Quick Lane for Full runner | [32734798461](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32734798461) — PASS |
 | Standard CI | [32730760419](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32730760419) — PASS |
 | Qualification Quick Lane | [32730760501](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32730760501) — PASS |
-| Standard CI for characterization checkpoint | [32754918129](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32754918129) — FAIL due to flaky core-test assertion; rerun on docs/evidence sync `a0747bb` [32802089849](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32802089849) — PASS |
+| Standard CI for characterization checkpoint | [32754918129](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32754918129) — FAIL due to flaky core-test assertion; docs/evidence sync reruns `a0747bb` [32802089849](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32802089849) and `a6a623b` [32802326848](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32802326848) — PASS |
 | Qualification Quick Lane for characterization checkpoint | [32754918118](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32754918118) — PASS |
 | Local regression | 225 core + 50 qualification tests; 0 failures/errors; 2 expected skips |
 | Checkstyle | 0 violations |

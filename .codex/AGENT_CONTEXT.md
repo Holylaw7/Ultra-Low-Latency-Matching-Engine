@@ -22,7 +22,7 @@
 | Engineering baseline commit | `ef73f60` (Phase 9 merge) |
 | Engineering baseline tag | `v0.8.0-engineering-baseline` |
 | Remote | `origin` — `https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | implementation branch `feature/phase10-release-candidate-runtime` at docs/evidence sync `a0747bb`; v3 characterization evidence is local/ignored; initial Standard CI `32754918129` exposed a flaky core-test assertion and rerun Standard CI `32802089849` PASS; `origin/master` remains at `3383a63`; `v0.8.0-engineering-baseline` remains frozen at `ef73f60`; `.vscode/` remains untouched |
+| Remote sync | implementation branch `feature/phase10-release-candidate-runtime` at docs/evidence sync `a6a623b`; v3 characterization evidence is local/ignored; initial Standard CI `32754918129` exposed a flaky core-test assertion and docs/evidence reruns `32802089849` and `32802326848` PASS; `origin/master` remains at `3383a63`; `v0.8.0-engineering-baseline` remains frozen at `ef73f60`; `.vscode/` remains untouched |
 | Latest Phase 7 CI | Master merge `6473365` — [32574891113](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574891113) PASS; tag `v0.6.0-engineering-baseline` — [32574958017](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574958017) PASS |
 | Latest Phase 7 docs CI | TASK-028 evidence checkpoint `9fed6b2` — [32574274905](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574274905) PASS; final docs sync commits are included in merge `6473365` |
 | Latest Phase 8 CI | Technical Closure input `c59d7c0` — [32616802595](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32616802595) PASS; remediation `4bdfb97` — [32620164524](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32620164524) PASS; merge `87abbc1` — [32622722649](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32622722649) PASS; tag — [32622757607](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32622757607) PASS |
@@ -249,8 +249,9 @@ resource CSV files. Summary SHA-256 is
 manifest SHA-256 is `3b093b39dc765172ac8b97ee22beda5798f7e96d0bd7da694608318915508212`;
 the recursive 919-entry sidecar is `fd8432ccd7b4f064b7766cb5397e32741405a7a043267612caf5efc17c46d7b1`.
 The source checkpoint's initial Standard CI `32754918129` exposed an
-unrelated flaky core-test assertion; docs/evidence sync `a0747bb` passed
-Standard CI `32802089849`.
+unrelated flaky core-test assertion; final docs/evidence sync `a6a623b`
+passed Standard CI `32802326848` (earlier sync `a0747bb` / `32802089849` also
+passed).
 Sol High delta-only Closure Review remains pending. Production optimization
 and Product Release remain unauthorized.
 Reconnect/deduplication,
