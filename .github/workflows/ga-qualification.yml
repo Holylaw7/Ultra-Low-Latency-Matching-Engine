@@ -175,3 +175,35 @@ jobs:
             cd "$RUNNER_TEMP/ga-evidence"
             sha256sum --check --strict SHA256SUMS
           )
+
+      - name: Publish immutable G9 evidence artifact
+        id: publish-evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: ga-g9-reproducibility-evidence
+          path: ${{ runner.temp }}/ga-evidence
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 6
+          overwrite: false
+          include-hidden-files: false
+
+      - name: Record G9 artifact publication metadata
+        if: always()
+        shell: bash
+        env:
+          ARTIFACT_ID: ${{ steps.publish-evidence.outputs.artifact-id }}
+          ARTIFACT_URL: ${{ steps.publish-evidence.outputs.artifact-url }}
+          ARTIFACT_DIGEST: ${{ steps.publish-evidence.outputs.artifact-digest }}
+        run: |
+          {
+            printf 'artifact.name=ga-g9-reproducibility-evidence\n'
+            printf 'artifact.id=%s\n' "${ARTIFACT_ID:-}"
+            printf 'artifact.url=%s\n' "${ARTIFACT_URL:-}"
+            printf 'artifact.digestSha256=%s\n' "${ARTIFACT_DIGEST:-}"
+            printf 'artifact.retentionDays=14\n'
+            printf 'artifact.compressionLevel=6\n'
+            printf 'artifact.overwrite=false\n'
+            printf 'artifact.ifNoFilesFound=error\n'
+          } >> "$GITHUB_STEP_SUMMARY"

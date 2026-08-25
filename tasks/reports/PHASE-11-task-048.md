@@ -21,6 +21,8 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
 | Policy SHA-256 | `6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397` |
 | JDK archive | `microsoft-jdk-21.0.12-linux-x64.tar.gz` / `linux-x64` |
 | JDK archive SHA-256 | `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f` |
+| Artifact publication action | `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` (v7.0.1) |
+| G9/G11 artifact contract | One gate-specific artifact; `if-no-files-found=error`; 14-day retention; compression 6; overwrite false; hidden files excluded; `always()` publication |
 
 ## Implementation
 
@@ -156,6 +158,22 @@ Qualification Quick Lane `32845529342` both pass. This closes the B2/B3
 remediation Evidence Gate only; it does not mark G9 or G11 PASS and does not
 authorize another execution.
 
+The second limited remediation adds the pinned artifact publication contract to
+both GA workflows. The approved G11 contract is repository-level
+`NVD_API_KEY`; its secret value is never handled by the agent and must be
+supplied through GitHub's protected secret store. No replacement execution is
+authorized until publication and secret presence are independently verified.
+
+The current Human-approved B2/B3 remediation is limited to this contract. G9
+uses the full immutable `actions/upload-artifact` commit
+`043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` with one deterministic artifact,
+`if-no-files-found=error`, 14-day retention, compression level 6,
+`overwrite=false`, hidden files excluded and `if: always()`. Each workflow
+records the action's artifact ID, URL and SHA-256 digest in the run summary.
+G11 remains blocked until the repository-level secret is securely provisioned;
+the value is not present in this repository or handled by the agent. This
+remediation does not authorize a replacement run.
+
 ## Human-authorized replacement execution
 
 Exactly one fresh execution was authorized for each gate. Both runs used the
@@ -192,3 +210,4 @@ unchanged. No automatic retry or replacement run is authorized.
 | 2026-08-25 | Human Limited B2/B3 remediation | G9 packager and G11 protected NVD binding repaired; replacement runs `32842119210` / `32842122498` remain preserved failures; remediation Evidence Gate PASS at `b44fc4d` (`32845289320` / `32845289257`) |
 | 2026-08-25 | Final remediation evidence/status synchronization | `c01977a`; Standard `32845529323` PASS; Quick `32845529342` PASS; G9/G11 replacement execution remains separately Human-gated |
 | 2026-08-25 | Human-authorized replacement execution | G9 `32847427690` technical workflow PASS but zero persisted artifacts / B2 evidence incomplete; G11 `32847442506` FAIL/B3 because protected `NVD_API_KEY` was absent; no third run |
+| 2026-08-25 | Human Limited B2/B3 remediation (current) | Authorized G9 publication contract and repository-level `NVD_API_KEY` provisioning; remediation Evidence Gate pending; replacement execution not authorized |

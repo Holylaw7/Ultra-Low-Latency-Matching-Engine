@@ -58,6 +58,14 @@ sidecar and the run manifest. The run manifest contains
 `artifact.inventory.path`, `.sha256` and `.size`. A parent Gate/campaign result
 hashes the immutable manifest, preventing a self-reference cycle.
 
+The GitHub Actions publication envelope is a second integrity boundary. Each
+G9/G11 run publishes one deterministic gate artifact with the pinned
+`actions/upload-artifact` commit and records the returned artifact ID, URL and
+SHA-256 digest in the run summary. Evidence review downloads that artifact,
+checks the API-reported digest, and then validates the extracted inventory and
+`SHA256SUMS` sidecar. A workflow success without a persisted artifact is not a
+qualifying Gate PASS.
+
 Artifact families use consecutive zero-padded identifiers:
 
 ```text

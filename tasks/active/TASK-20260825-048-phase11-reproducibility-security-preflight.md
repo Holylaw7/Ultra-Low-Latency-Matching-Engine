@@ -5,11 +5,11 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-048` — Reproducibility and Security Preflight |
-| Status | `In Progress — replacement runs complete; G9 artifact evidence incomplete (B2), G11 missing NVD secret (B3); final Evidence Gate CHANGES REQUIRED` |
+| Status | `In Progress — Human-approved B2/B3 remediation in progress; G9 publication contract being repaired; G11 repository secret provisioning pending; no replacement execution authorized` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Depends On | TASK-047 Evidence Gate PASS after Human Blueprint Approval |
-| Next Gate | Sol High B2/B3 final evidence review; no automatic third run |
+| Next Gate | Remediation Evidence Gate, then Human Replacement Execution Gate; no automatic third run |
 
 ## 2. Goal
 
@@ -19,7 +19,7 @@ full-history secret scan, scanner provenance and release-permission checks.
 
 ## 3. Scope and Non-Goals
 
-After approval: qualification/security tooling, evidence, and new
+After approval: qualification/security tooling, evidence publication, and new
 `.github/workflows/ga-qualification.yml` / `ga-security.yml`. Existing
 workflows, poms, candidate dependencies, Maven publication, signing and
 production files remain frozen.
@@ -80,7 +80,7 @@ policy details are frozen in ADR-0019, not chosen during implementation.
 | Path | Change |
 | --- | --- |
 | `.github/workflows/ga-qualification.yml` | new read-only reproducibility workflow with approved Microsoft JDK archive provisioning |
-| `.github/workflows/ga-security.yml` | new pinned G11 workflow with approved Microsoft JDK archive provisioning |
+| `.github/workflows/ga-security.yml` | new pinned G11 workflow with approved Microsoft JDK archive provisioning and protected-secret binding |
 | `qualification/**/ga/security/**` | report normalization and license policy validator |
 | qualification tests/resources | tool-manifest/hash/policy fixtures |
 | `docs/release/ga-security-toolchain-v1.properties` | consume approved canonical tool options and frozen JDK archive digest; no implementation-time choice |
@@ -119,7 +119,7 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | --- | --- | --- |
 | Blueprint | Approved | Human Phase 11 Blueprint Approval |
 | Implementation | In Progress | TASK-047 Evidence Gate PASS |
-| Preflight | B2/B3 Remediation PASS; final evidence CHANGES REQUIRED | G9 `32847427690` technical PASS but no persisted artifacts; G11 `32847442506` FAIL/B3 at missing protected secret; no third run |
+| Preflight | B2/B3 Remediation in progress; final evidence CHANGES REQUIRED | G9 `32847427690` technical PASS but no persisted artifacts; G11 `32847442506` FAIL/B3 at missing protected secret; no third run |
 
 | Date | Reviewer | Decision / log |
 | --- | --- | --- |
@@ -134,8 +134,13 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | 2026-08-25 | Human Limited B2/B3 Remediation | G9 recursive evidence packager and G11 protected NVD credential binding authorized; replacement failures `32842119210` / `32842122498` preserved |
 | 2026-08-25 | B2/B3 Remediation Evidence Gate | Implementation `b44fc4d`; final docs/status `c01977a`; Standard `32845529323` PASS; Quick `32845529342` PASS; replacement G9/G11 execution requires new Human approval |
 | 2026-08-25 | Human-authorized replacement execution | G9 `32847427690` workflow PASS but artifact publication incomplete; G11 `32847442506` FAIL/B3 due absent `NVD_API_KEY`; final Evidence Gate CHANGES REQUIRED; no third run |
+| 2026-08-25 | Human Limited B2/B3 remediation (current) | Approved G9 immutable artifact publication and repository-level `NVD_API_KEY` provisioning; upload-artifact `043fb46d1a93c77aae656e7c1c64a875d1fc6a0a`; replacement execution remains unauthorized |
 
 ### Implementation Log
 
-No further implementation is authorized; the preceding dated rows are the
-current preflight and evidence log.
+The current limited remediation is qualification-only. It may change the two
+new GA workflow publication paths and the corresponding evidence/status
+documents, but it may not change the candidate, production code, scanner,
+policy, thresholds or existing failed artifacts. The repository secret value
+is not handled by the agent; secure Human provisioning must complete before a
+future replacement execution can be considered.

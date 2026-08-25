@@ -458,11 +458,11 @@ explicit Human Phase 11 Closure Approval. Phase Closure does not create
 
 ```text
 Blueprint Status: Approved — Human Phase 11 Blueprint Approval 2026-08-25
-Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 B2/B3 remediation Evidence Gate PASS; TASK-049..056 dependency ordered and locked
+Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 B2/B3 remediation in progress after final evidence CHANGES REQUIRED; TASK-049..056 dependency ordered and locked
 Qualification Campaigns: Not Authorized
 RC mutation: Not Authorized
 v1.0.0 / GitHub Release / GA: Not Authorized
-Next Gate: Sol High B2/B3 final evidence review; no automatic third run
+Next Gate: Remediation Evidence Gate, then Human Replacement Execution Gate; no automatic third run
 ```
 
 ## 23. Execution Checkpoints
@@ -478,6 +478,7 @@ Next Gate: Sol High B2/B3 final evidence review; no automatic third run
 | 2026-08-25 | Limited B3 toolchain amendment | APPROVED | Official archive `microsoft-jdk-21.0.12-linux-x64.tar.gz`; SHA-256 `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f`; amended policy SHA `6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397` | Human replacement-run approval |
 | 2026-08-25 | B2/B3 remediation Evidence Gate | PASS | implementation `b44fc4d`; final docs/status `c01977a`; Standard `32845529323`; Quick `32845529342`; G9 `32842119210` and G11 `32842122498` preserved FAIL/non-qualifying | Human replacement G9/G11 execution approval required |
 | 2026-08-25 | Human-authorized replacement execution | CHANGES REQUIRED | G9 `32847427690` technical workflow PASS but zero persisted artifacts; G11 `32847442506` FAIL/B3 because protected `NVD_API_KEY` was absent; old failures preserved; no third run | Sol High B2/B3 final evidence review |
+| 2026-08-25 | Human Limited B2/B3 remediation (current) | AUTHORIZED / IN PROGRESS | Add pinned `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` publication contract; provision repository-level `NVD_API_KEY` without exposing its value; no replacement execution | Remediation Evidence Gate |
 
 ## 24. Phase Closure Checklist
 

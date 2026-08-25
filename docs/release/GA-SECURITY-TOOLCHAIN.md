@@ -17,10 +17,21 @@ candidate build or runtime dependency graph.
 | Java setup | Official Microsoft archive provisioning in the new GA workflows; the prior `actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00` resolver is not used for JDK installation after the approved B3 amendment |
 | JDK | Microsoft Build of OpenJDK `21.0.12+8-LTS`, Linux x64 archive `microsoft-jdk-21.0.12-linux-x64.tar.gz`, archive SHA-256 `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f` |
 | Maven | Apache Maven `3.9.16`, build commit `2bdd9fddda4b155ebf8000e807eb73fd829a51d5`; executable/distribution hash recorded; version drift ABORTS |
+| Evidence publication | `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` (v7.0.1); one deterministic gate artifact, `if-no-files-found=error`, `retention-days=14`, `compression-level=6`, `overwrite=false`, `include-hidden-files=false`, `if: always()` |
 
 Workflow permissions are `contents: read`; no write, package, release or OIDC
 permission is allowed. Network access is used only for pinned tool/artifact and
 database retrieval. Download failure or identity mismatch is `ABORTED`.
+
+Each GA workflow publishes one gate-specific artifact after its evidence
+directory is finalized (or partially populated after a failure). The workflow
+records the action's `artifact-id`, `artifact-url` and SHA-256 `artifact-digest`
+in the run summary. Evidence review must query the Actions artifact API,
+download the archive, verify the returned digest, and then run the internal
+`SHA256SUMS --check --strict` and manifest cross-reference checks. The artifact
+name/path/options and full action commit above are normative; a floating action
+tag, overwrite, missing-file warning or unverified download is not equivalent
+evidence.
 
 ### Approved JDK archive provisioning amendment
 
@@ -257,7 +268,7 @@ evidence-affecting arguments during TASK-048.
   evidence, scope and expiry. No inline/ad-hoc suppression is permitted.
 
 The workflow binds the NVD API credential only for the Dependency-Check step
-from the protected GitHub Actions secret `NVD_API_KEY` through
+from the protected repository-level GitHub Actions secret `NVD_API_KEY` through
 `nvdApiKeyEnvironmentVariable=NVD_API_KEY`. The secret value, length, digest,
 fingerprint and any transformed form are never recorded in logs, command lines,
 caches, manifests or artifacts. Evidence may record only the logical secret
