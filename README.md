@@ -121,6 +121,8 @@ v1, matching, durability and single-session semantics remain frozen; merge,
 The final docs/evidence sync validation for `eb9a4ab` also passed Standard CI
 `32814053468` and Quick Lane `32814053459`; this is external validation only
 and does not change the fixed Closure Input `dfe1f7d`.
+The final status synchronization `a6bc574` passed Standard CI `32814596881` and
+Quick Lane `32814596914`; this is also external validation only.
 
 Phase 8 remains documented by [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
 the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)
