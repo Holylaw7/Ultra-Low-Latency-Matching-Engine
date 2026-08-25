@@ -6,7 +6,7 @@
 | --- | --- |
 | Task ID | `TASK-20260824-046` |
 | Title | Release-candidate assembled-runtime qualification and Closure Proposal |
-| Status | `In Progress — Characterization CHANGES REQUIRED; corrected evidence run pending` |
+| Status | `In Progress — v4 characterization PASS; read-only Evidence Gate pending` |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
@@ -232,8 +232,9 @@ Planned commits: `test(runtime): qualify release-candidate assembly` and
 - [x] lifecycle matrix PASS — 10 `PURE_WAL` + 10 Snapshot-tail + 10 approved
   post-response forced terminations (30/30)
 - [x] exactly two Full runs and campaign PASS, or preserved failure + STOP
-- [ ] characterization artifacts/hashes/provenance accepted for final Closure;
-  preserved v3 evidence requires a corrected measurement-boundary rerun
+- [x] corrected characterization artifacts/hashes/provenance published; v4
+  measurement boundary excludes Protocol connection setup and records execution
+  model metadata
 - [x] claim boundaries and Closure input synchronized
 - [ ] Sol High Closure Review pending after proposal
 - [ ] Human Closure, merge, candidate tag and Product Release not self-authorized
@@ -245,4 +246,4 @@ Planned commits: `test(runtime): qualify release-candidate assembly` and
 | 2026-08-24 | Pre-Campaign Evidence PASS | Packaged Java 21 lifecycle command passed 30/30 cycles; Full Campaign remains Human-gated. | `0a96593`; Standard CI `32730760419`; Quick Lane `32730760501`; summary SHA `71862f5e49ec554c2344f0836785d6e737e1457fc06083d755c2d98e10564bc6` |
 | 2026-08-24 | Full Campaign Evidence PASS | Exactly two independent assembled-runtime Full Runs passed; campaign evaluator recorded 2/2 qualifying and `campaign.result=true`. Final percentile/profile evidence reconciliation and Closure Review remain pending. | runner `1a02e66`; Standard CI `32734798459`; Quick Lane `32734798461`; manifests `f65a3952...` / `60f24746...`; campaign summary `89799b16...` |
 | 2026-08-25 | Characterization Evidence Preserved / Review Pending | Qualification-only characterization produced 30 empty-WAL + 30 Snapshot-tail lifecycle samples, raw response/management distributions, paired 10-minute management trials, 62 JFR/resource/allocation artifacts and immutable hashes. | source checkpoint `7ba7ed0`; summary `6204f190...`; manifest `3b093b39...`; sidecar `fd8432cc...`; v3 timer-boundary issue requires corrected rerun |
-| 2026-08-25 | Benchmark Review CHANGES REQUIRED | v3 evidence is preserved but non-final because the trial timer started before Protocol client construction; the correction must construct the client first, start timing immediately before the command loop, and record execution-model metadata. | no new Full Run authorized; docs sync `241485c`; Standard `32802512908` PASS; Quick `32802512953` PASS |
+| 2026-08-25 | Corrected Characterization Evidence PASS | v3 evidence remains preserved as non-final; qualification-only correction committed and verified, then v4 characterization regenerated with the corrected boundary and execution-model metadata. | correction `7566814`; Standard `32811578976` PASS; Quick `32811578978` PASS; v4 summary `60608026...`; sidecar `da3cbb89...`; final read-only sign-off pending |

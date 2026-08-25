@@ -67,8 +67,10 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   v3 characterization summary is `6204f190...`, with 62 JFR/resource files, 62
   non-zero allocation summaries and a recursively verified 919-entry sidecar.
   Benchmark review found that the v3 trial timer included one-time Protocol
-  connection setup, so a qualification-only measurement-boundary correction
-  and rerun are required; no new 60-minute Full Run is authorized. Final
-  Evidence/Closure Review remains pending. Docs sync `241485c` passed Standard
-  CI `32802512908` and Quick Lane `32802512953`; merge, candidate tagging and
-  Product Release remain separately gated.
+  connection setup. The qualification-only correction `7566814` passed
+  Standard CI `32811578976` and Quick Lane `32811578978`; v4 characterization
+  then passed 30/30 + 30/30 lifecycle samples and both fixed 10-minute trials.
+  Its summary is `60608026...`, manifest `120fe39d...` and sidecar
+  `da3cbb89...` (903 entries); v3 remains preserved as non-final. Final
+  read-only Evidence/Closure Review remains pending. No new 60-minute Full Run
+  was authorized; merge, candidate tagging and Product Release remain gated.

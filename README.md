@@ -103,14 +103,16 @@ resource CSV files and 62 non-zero allocation summaries. Its preserved v3
 summary is `6204f190e70415b4aa8bfc48a43824b211530d315bd5cc29e00ec8da0d29f4d6` under
 `qualification-results/phase10-characterization-v3/rc-characterization-60bac1ef-bbe1-4df1-adb0-fa5ab310464b/`;
 however, benchmark review found that the v3 trial timer included one-time
-Protocol connection setup, so v3 is not final characterization evidence. A
-qualification-only measurement-boundary correction and rerun are pending; no
-new 60-minute Full Run is authorized. The recursive artifact sidecar contains
-919 verified file hashes. Standard CI for source checkpoint `7ba7ed0` exposed
-an unrelated flaky core-test assertion; docs/evidence sync `241485c` passed
-Standard CI `32802512908` and Quick Lane `32802512953` (earlier reruns
-`a0747bb` / `32802089849` and `a6a623b` / `32802326848` also passed), and no
-production source was changed. Protocol v1, WAL v1,
+Protocol connection setup. The qualification-only correction `7566814` passed
+Standard CI `32811578976` and Quick Lane `32811578978`, then generated v4
+evidence with the corrected boundary and execution-model metadata: summary
+`60608026...`, manifest `120fe39d...`, sidecar `da3cbb89...`, 30/30 + 30/30
+lifecycle samples and two fixed 10-minute trials. The v3 artifacts remain
+preserved as non-final; no new 60-minute Full Run was authorized. The recursive
+v4 sidecar contains 903 verified file hashes. Standard CI for source checkpoint
+`7ba7ed0` exposed an unrelated flaky core-test assertion; prior docs syncs
+`241485c` (`32802512908` / `32802512953`), `a0747bb` (`32802089849`) and
+`a6a623b` (`32802326848`) passed, and no production source was changed. Protocol v1, WAL v1,
 Snapshot v1, matching, durability and single-session semantics remain frozen;
 merge, `v0.9.0-rc.1` and Product Release remain unauthorized.
 

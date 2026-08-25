@@ -4,23 +4,23 @@
 
 `TASK-046` pre-campaign and lifecycle Evidence Gates passed. Human approval then
 authorized exactly two independent `RC_ASSEMBLED_RUNTIME_V1` Full Runs. Both
-completed with PASS and the immutable campaign evaluator returned PASS. The
-qualification-only characterization evidence is preserved, but its final
-benchmark review found that the v3 trial timer started before Protocol client
-construction; therefore the v3 throughput interval includes one-time connection
-setup and is not accepted as final characterization evidence. A bounded
-qualification-only correction is staged; no new 60-minute Full Run is
-authorized. The first source-checkpoint CI run exposed one unrelated flaky
-core-test assertion; the same Standard verification passed on the docs/evidence
-synchronization commits. The remaining gate is a corrected characterization
-run, read-only audit and then Sol High delta-only review, followed by Human
-Phase 10 Closure.
+completed with PASS and the immutable campaign evaluator returned PASS. The v3
+qualification-only characterization is preserved as non-final because its
+trial timer started before Protocol client construction. The bounded
+qualification-only correction has now produced a new v4 PASS with the timer
+starting after the connection is established and fixed execution-model metadata
+in the manifest. No new 60-minute Full Run was authorized. The first
+source-checkpoint CI run exposed one unrelated flaky core-test assertion; the
+same Standard verification passed on the synchronization commits. The remaining
+gate is read-only audit of v4, then Sol High delta-only review, followed by
+Human Phase 10 Closure.
 
 | Item | Evidence |
 | --- | --- |
 | Implementation | `0a96593` — `test(runtime): qualify release-candidate assembly` |
 | Assembled Full runner | `1a02e66` — `test(runtime): add assembled full campaign runner` |
 | Characterization source checkpoint | `7ba7ed0` — source tree used for the v3 qualification-only characterization evidence |
+| Corrected characterization checkpoint | `7566814` — qualification-only measurement-boundary correction; Standard [32811578976](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32811578976) and Quick [32811578978](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32811578978) — PASS |
 | Standard CI for Full runner | [32734798459](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32734798459) — PASS |
 | Qualification Quick Lane for Full runner | [32734798461](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32734798461) — PASS |
 | Standard CI | [32730760419](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32730760419) — PASS |
@@ -31,7 +31,7 @@ Phase 10 Closure.
 | Local regression | 225 core + 50 qualification tests; 0 failures/errors; 2 expected skips |
 | Checkstyle | 0 violations |
 | Package | `qualification/target/matching-engine-qualification.jar` |
-| Package SHA-256 | `1805904b9f5c7eda8350be524473d9f102cba403f36c4ae5005cd3b1692b181e` |
+| Package SHA-256 | v4 artifact `9eb43a8923f42146427ededd7a1c9f06148461ddc294743f7f45d9b0ee54d7df`; v3 artifact remains preserved separately |
 
 ## Authorized Scope Implemented
 
@@ -131,14 +131,14 @@ no replacement run was started.
 
 ## Characterization Remediation Evidence
 
-Review status: `CHANGES REQUIRED`. The preserved v3 artifacts are not deleted or
-rewritten, but their trial elapsed/throughput evidence is non-final because the
-measurement timer began before Protocol client construction. The qualification
-runner has a bounded correction staged to construct the client first, start the
-timer immediately before the command loop, and record the fixed execution model
-(`warmup=none`, one child process per trial, one sequential Protocol client and
-management thread). A new characterization result directory must be generated
-before this evidence can support final Closure. No new 60-minute Full Run is
+Review status: v4 evidence generated `PASS`; final verifier, benchmark-reviewer
+and docs-auditor sign-off remains pending. The preserved v3 artifacts are not
+deleted or rewritten, but their trial elapsed/throughput evidence remains
+non-final because the timer began before Protocol client construction. The v4
+runner constructs the client first, starts timing immediately before the command
+loop, stops before client close/graceful shutdown, and records the fixed
+execution model (`warmup=none`, one child process per trial, one sequential
+Protocol client and management thread). No new 60-minute Full Run was
 authorized.
 
 Human Limited Remediation was restricted to `qualification/**` and evidence
@@ -146,6 +146,48 @@ documentation. It did not alter the existing Full Run A/B or campaign
 artifacts, and it did not start Run C. The new characterization command uses
 the packaged Java 21 process and the public Protocol v1 / loopback management
 boundaries.
+
+| Item | Evidence |
+| --- | --- |
+| Corrected characterization directory | `qualification-results/phase10-characterization-v4/rc-characterization-5c878464-a969-4329-baa0-9bf7f2c183ad/` |
+| Corrected characterization result | `PASS` |
+| Corrected source checkpoint | `7566814` — Standard CI `32811578976` PASS; Quick Lane `32811578978` PASS |
+| Corrected empty-WAL lifecycle | `30/30` samples passed |
+| Corrected Snapshot-tail lifecycle | `30/30` samples passed |
+| Corrected lifecycle raw samples | `lifecycle-samples.csv` — SHA-256 `2564022db0c6b060fccb60fecd73d571b22386916adc4e82e6c829278b08eafa` |
+| Corrected management-idle trial | `600,001 ms`, `347,323` accepted, `P99 response 2,985,400 ns` |
+| Corrected STATUS @ 1 Hz trial | `600,002 ms`, `353,549` accepted, `601` management requests, `P99 response 2,731,900 ns` |
+| Corrected JFR/resource evidence | `62` JFR files, `62` resource CSV files and `62` allocation summaries; sidecar entries `903`, zero missing/mismatch |
+| Corrected manifest | `characterization-manifest-v1.txt` — SHA-256 `120fe39d4865bdf1b63413021c03e15a88ceaa7566c846a15512371545bb3e64` |
+| Corrected summary | `characterization-summary-v1.txt` — SHA-256 `60608026c7ef2d145c15c6d2b6a69426272d1aa81a1a91adb2a4b8319ac74767` |
+| Corrected artifact sidecar | `artifact-hashes-v1.txt` — SHA-256 `da3cbb8902351bae8bca8ca177b4c2cc566158851004255b5e7ffe071c5dd376` |
+| Corrected application JAR | SHA-256 `9eb43a8923f42146427ededd7a1c9f06148461ddc294743f7f45d9b0ee54d7df` |
+| Corrected configuration identity | `9bb4ec936223668ca1afcaa5e348f857d37a71ea6c68598c40895e0457f2bc60` |
+| Corrected comparability identity | `ea09a2676ff21fc5350404dbf15eb2613384265d95881edf17fa1941c2766cbe` |
+
+The corrected v4 lifecycle distributions (nanoseconds; `count=60`) are:
+
+| Distribution | P50 | P95 | P99 | P99.9 | Max |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Startup-to-ready | 743,896,400 | 810,654,100 | 863,620,300 | 863,620,300 | 863,620,300 |
+| Graceful shutdown | 791,959,400 | 814,311,700 | 822,533,600 | 822,533,600 | 822,533,600 |
+| Live Protocol response | 27,683,600 | 34,515,600 | 42,932,100 | 42,932,100 | 42,932,100 |
+
+The corrected management-idle response distribution is P50/P95/P99/P99.9/max
+`1,950,100 / 2,394,200 / 2,985,400 / 4,522,800 / 28,037,300 ns` with
+`347,323` accepted commands. The corrected STATUS-at-1-Hz response distribution
+is `1,942,300 / 2,347,400 / 2,731,900 / 4,419,100 / 50,581,100 ns` with
+`353,549` accepted commands and `601` management requests; management-query
+latency is `1,322,100 / 2,309,600 / 2,696,300 / 3,039,500 / 3,039,500 ns`.
+The first STATUS request is immediate and the remaining requests are scheduled
+at one-second intervals, explaining the 601-request count over approximately
+600 seconds.
+
+### Preserved v3 Evidence (non-final)
+
+The v3 directory remains immutable historical evidence. It is not used as the
+final characterization input because its trial interval included Protocol
+connection setup.
 
 | Item | Evidence |
 | --- | --- |
@@ -208,9 +250,9 @@ evidence and do not establish a production latency guarantee.
 ```text
 TASK-046 Full Campaign Evidence PASS
         ↓
-qualification-only characterization correction and evidence regeneration
+corrected v4 characterization Evidence PASS
         ↓
-final read-only Evidence/claim review (including latency/profile criterion)
+verifier + benchmark-reviewer + docs-auditor read-only Evidence Gate
         ↓
 Sol High Phase 10 Closure Review
         ↓
