@@ -5,13 +5,13 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-047` — GA Contracts and Evidence Foundation |
-| Status | `Implementation complete / Evidence Gate pending exact-SHA CI` |
+| Status | `Completed / Evidence Gate PASS` |
 | Owner / Implementer | Human Developer / Main Luna Max after approval |
 | Created | `2026-08-25` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Baseline | `v0.9.0-rc.1` tag object `dfd38c0`, peeled `e2828f5` |
-| Next Gate | TASK-047 Evidence Gate — exact-SHA CI and read-only audit |
+| Next Gate | TASK-048 Evidence Gate / implementation authorized by Blueprint |
 
 ## 2. Goal
 
@@ -113,8 +113,8 @@ Then verifier/docs-auditor and exact-SHA Standard/GA Quick CI must PASS.
 | Stage | Status | Next Gate |
 | --- | --- | --- |
 | ADR/Blueprint | Approved | TASK-047 implementation |
-| Implementation | Completed locally | exact-SHA CI / Evidence Gate |
-| Verification/docs | Locked | TASK-048 or Exception Gate |
+| Implementation | Completed | TASK-048 Evidence Gate |
+| Verification/docs | Completed | TASK-048 Evidence Gate |
 
 | Date | Reviewer | Decision | Constraints |
 | --- | --- | --- | --- |
@@ -124,7 +124,7 @@ Then verifier/docs-auditor and exact-SHA Standard/GA Quick CI must PASS.
 | --- | --- | --- | --- |
 | 2026-08-25 | Paused | Schema identity-width contradiction discovered before commit | Human amendment required |
 | 2026-08-25 | Resumed | Limited Schema Amendment approved; explicit Git SHA-1/SHA-256 typing | focused verification |
-| 2026-08-25 | Implementation complete locally | Added GA codec/store/evaluator/candidate verifier and field-type tests; no production changes | 6 focused tests; `mvn verify` PASS locally; exact-SHA CI pending |
+| 2026-08-25 | Completed / Evidence Gate PASS | Added GA codec/store/evaluator/candidate verifier and field-type tests; no production changes | `d25eac6`; Standard CI `32828665352` PASS; Quick `32828665372` PASS |
 
 ### Implementation Log
 

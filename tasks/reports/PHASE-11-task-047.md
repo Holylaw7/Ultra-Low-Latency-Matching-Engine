@@ -2,7 +2,7 @@
 
 ## Status
 
-`Implementation complete / Evidence Gate pending exact-SHA CI`. TASK-047 was
+`Completed / Evidence Gate PASS`. TASK-047 was
 resumed under the Human-approved Limited Schema Amendment. The amendment only
 typed Git object IDs as full 40-character SHA-1 values; all SHA-256 fields remain
 64 lowercase hexadecimal values. No production, candidate, dependency, RC or
@@ -36,7 +36,9 @@ are retained as separate fields and are never inferred from one another.
 | `git diff --check` | PASS |
 | Production/frozen-path audit | No production source, build, dependency or RC changes |
 | `.vscode/` | untouched / untracked |
-| Exact-SHA CI | Pending commit/push |
+| Exact-SHA Standard CI | [32828665352](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32828665352) — PASS |
+| Qualification Quick Lane | [32828665372](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32828665372) — PASS |
+| Evidence checkpoint | `d25eac6c040f90acea4a27b62d6261373c98dc73` |
 
 The focused tests cover 40-character Git SHA-1 acceptance, 39/41/64-width,
 uppercase, non-hex and whitespace rejection, SHA-256 cross-typing rejection,

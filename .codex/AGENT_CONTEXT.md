@@ -154,8 +154,8 @@ ADR-0011 Final Approved
   -> GA Evidence Schemas v1 / Matrix / Security Toolchain [Approved / Frozen]
   -> Apache-2.0 repository policy [Human accepted]
   -> GitHub binary distribution without Maven Central [Human accepted]
-  -> TASK-047 [Resumed after Human Limited Schema Amendment; Evidence Gate pending]
-  -> TASK-048 through TASK-056 [Dependency ordered; not started]
+  -> TASK-047 [Completed / Evidence Gate PASS; `d25eac6` / CI `32828665352` / Quick `32828665372`]
+  -> TASK-048 through TASK-056 [Dependency ordered; TASK-048 next, not started]
   -> Phase 11 Full Campaigns / Closure / v1.0.0 / GitHub Release / GA [Not Authorized]
   -> Product Release [Not Authorized]
 ```
