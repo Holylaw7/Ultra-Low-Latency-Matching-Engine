@@ -472,6 +472,7 @@ Next Gate: TASK-048 Evidence Gate; TASK-047 Evidence Gate PASS recorded
 | 2026-08-25 | Discovery / Complete Blueprint Proposal | Approved | ADR-0019, Matrix, TASK-047..056 plans | TASK-047 Evidence Gate |
 | 2026-08-25 | TASK-047 Evidence Gate | PASS | implementation `d25eac6`; status `2521500`; Standard CI `32828844611`; Quick `32828844541` | TASK-048 Evidence Gate |
 | 2026-08-25 | TASK-048 implementation checkpoint | PASS | `b64a399`; Standard CI `32831047004`; Quick `32831046928`; pinned G9/G11 workflows added, scans pending | TASK-048 Evidence Gate |
+| 2026-08-25 | TASK-048 G9/G11 execution | ABORTED / B3 | `32835408168` / `32835411241`; pinned Microsoft OpenJDK `21.0.12` unavailable; no artifacts or retry | Human toolchain decision |
 
 ## 24. Phase Closure Checklist
 

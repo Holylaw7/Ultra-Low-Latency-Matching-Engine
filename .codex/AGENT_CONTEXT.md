@@ -155,7 +155,7 @@ ADR-0011 Final Approved
   -> Apache-2.0 repository policy [Human accepted]
   -> GitHub binary distribution without Maven Central [Human accepted]
   -> TASK-047 [Completed / Evidence Gate PASS; implementation `d25eac6`, status `2521500`; CI `32828844611` / Quick `32828844541`]
-  -> TASK-048 [In Progress; implementation checkpoint `b64a399`, CI `32831047004` / Quick `32831046928` PASS; G9/G11 dispatch blocked because workflows are not on default branch]
+  -> TASK-048 [In Progress; implementation checkpoint `b64a399`, CI `32831047004` / Quick `32831046928` PASS; G9/G11 runs `32835408168` / `32835411241` ABORTED/B3 because pinned Microsoft OpenJDK `21.0.12` is unavailable]
   -> TASK-049 through TASK-056 [Dependency ordered; locked]
   -> Phase 11 Full Campaigns / Closure / v1.0.0 / GitHub Release / GA [Not Authorized]
   -> Product Release [Not Authorized]

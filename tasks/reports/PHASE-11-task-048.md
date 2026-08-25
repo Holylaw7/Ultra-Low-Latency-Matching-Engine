@@ -75,10 +75,20 @@ that branch. No G9/G11 run or artifact was created. The Windows host has no
 equivalent pinned Ubuntu runner (`act`) available. This is an execution
 precondition blocker, not a G9/G11 PASS or FAIL result.
 
-Resolving it requires a Human-approved execution path (for example, a
-workflow-only default-branch installation or an approved external pinned
-Ubuntu runner). No merge, candidate mutation, scanner substitution or local
-campaign was performed.
+The workflow-only default-branch installation was subsequently approved and
+performed, but both actual runs then terminated at the pinned JDK setup step:
+
+| Run | Workflow | Result |
+| --- | --- | --- |
+| `32835408168` | GA Reproducibility Qualification | `ABORTED / B3` |
+| `32835411241` | GA Security Qualification | `ABORTED / B3` |
+
+`actions/setup-java` reported that Microsoft distribution `21.0.12` was not
+available; the catalog exposed `21.0.11` as the newest Java 21 version. No
+scanner, build, or evidence artifact was produced. The approved workflow and
+toolchain were not changed to substitute `21.0.11`, and no automatic retry was
+performed. A Human/Sol decision is required for an approved environment or a
+toolchain amendment before another run.
 
 ## Completion log
 
@@ -88,3 +98,4 @@ campaign was performed.
 | 2026-08-25 | Implementation checkpoint | Qualification policy/evaluator, pinned workflows and tests added; commit `b64a399` |
 | 2026-08-25 | Standard/Quick CI | `32831047004` / `32831046928` PASS; G9/G11 workflows remain manual preflight evidence |
 | 2026-08-25 | G9/G11 dispatch attempt | HTTP 404: workflows are not installed on the default branch; no run/artifact created |
+| 2026-08-25 | G9/G11 execution | Runs `32835408168` / `32835411241` ABORTED/B3 at pinned JDK setup; no artifacts; no retry |
