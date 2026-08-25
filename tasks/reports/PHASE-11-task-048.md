@@ -2,9 +2,9 @@
 
 ## Status
 
-`In Progress — B2/B3 remediation Evidence Gate PASS; the single authorized
-replacement execution for each gate is complete, but final G9/G11 evidence
-review is CHANGES REQUIRED.`
+`In Progress — prior B2/B3 remediation checkpoint PASS; current publication /
+secret remediation is in progress; final G9/G11 evidence review is CHANGES
+REQUIRED.`
 
 TASK-048 implements the approved qualification-only reproducibility and
 security preflight boundary. It does not qualify the candidate, authorize a
@@ -96,8 +96,9 @@ identity mismatch, non-reproducible JAR, vulnerability, verified secret or
 prohibited runtime license remains `ABORTED`/blocker according to ADR-0019;
 none may be converted to PASS by omission or tool substitution.
 
-The B2/B3 remediation Evidence Gate is PASS, but TASK-049 remains
-dependency-locked because the replacement evidence is not yet accepted. Full
+The first B2/B3 remediation Evidence Gate at `b44fc4d` was PASS, but the
+current publication/secret remediation Evidence Gate remains pending. TASK-049
+is dependency-locked because replacement evidence is not yet accepted. Full
 campaigns, `v1.0.0`, GitHub Release and GA remain unauthorized.
 
 ## G9/G11 execution attempt
