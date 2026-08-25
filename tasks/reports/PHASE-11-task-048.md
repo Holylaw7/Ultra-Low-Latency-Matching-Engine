@@ -73,6 +73,9 @@ tag, production source, existing workflow, dependency or runtime input changed.
 | G9/G11 scanner execution | Not run locally; workflow evidence pending |
 | Full `mvn verify` | PASS — 225 core + 61 qualification tests; 2 expected skips |
 | Workflow YAML parse | PASS — both new workflows parse successfully |
+| Workflow Bash syntax | PASS — all workflow `run` blocks parse with Bash 5.3 |
+| G9 packager simulation | PASS — nested evidence directories inventory and verify atomically |
+| Secret-leak scan | PASS — remediation diff contains no credential material |
 | `git diff --check` | PASS |
 | Frozen production/existing-workflow audit | PASS — no production, POM or existing workflow change |
 | Standard exact-SHA CI | [32831047004](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32831047004) — PASS |
@@ -142,6 +145,11 @@ steps, but Dependency-Check received no valid NVD API key/data and failed with
 `Invalid API Key` / `NoDataException`; it remains immutable
 `FAIL / B3 / NON-QUALIFYING`. No third run was started.
 
+The Human-approved limited remediation is committed as `b44fc4d`. Standard CI
+`32845289320` and Qualification Quick Lane `32845289257` both pass. This
+closes the B2/B3 remediation Evidence Gate only; it does not mark G9 or G11
+PASS and does not authorize another execution.
+
 ## Completion log
 
 | Date | Stage | Result |
@@ -153,5 +161,6 @@ steps, but Dependency-Check received no valid NVD API key/data and failed with
 | 2026-08-25 | G9/G11 dispatch attempt | HTTP 404: workflows are not installed on the default branch; no run/artifact created |
 | 2026-08-25 | G9/G11 execution | Runs `32835408168` / `32835411241` ABORTED/B3 at pinned JDK setup; no artifacts; no retry |
 | 2026-08-25 | Controller docs checkpoint | `1ca088f`; Quick `32835630967` PASS; Standard `32835631051` failed at `Verify`; clean local rerun PASS |
+| 2026-08-25 | B2/B3 remediation Evidence Gate | Commit `b44fc4d`; Standard `32845289320` PASS; Quick `32845289257` PASS; G9/G11 replacement execution remains separately locked |
 | 2026-08-25 | Limited B3 toolchain amendment | Official Microsoft archive SHA-256 frozen; amended policy digest `6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397`; replacement run remains separately locked |
 | 2026-08-25 | Human Limited B2/B3 remediation | G9 packager and G11 protected NVD binding repaired; replacement runs `32842119210` / `32842122498` remain preserved failures; remediation Evidence Gate pending |

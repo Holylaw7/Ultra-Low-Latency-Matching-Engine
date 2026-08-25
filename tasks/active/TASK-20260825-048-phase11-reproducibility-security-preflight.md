@@ -132,6 +132,7 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | 2026-08-25 | Controller docs checkpoint | `1ca088f`; Quick `32835630967` PASS; Standard `32835631051` failed at `Verify`; clean local rerun PASS; diagnosis pending |
 | 2026-08-25 | Human Limited B3 Amendment | Approved official archive provisioning; `microsoft-jdk-21.0.12-linux-x64.tar.gz`, SHA-256 `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f`; replacement execution remains separately locked |
 | 2026-08-25 | Human Limited B2/B3 Remediation | G9 recursive evidence packager and G11 protected NVD credential binding authorized; replacement failures `32842119210` / `32842122498` preserved; remediation Evidence Gate pending |
+| 2026-08-25 | B2/B3 Remediation Evidence Gate | `b44fc4d`; Standard `32845289320` PASS; Quick `32845289257` PASS; replacement G9/G11 execution requires new Human approval |
 
 ### Implementation Log
 
