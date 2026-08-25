@@ -1,0 +1,144 @@
+name: GA Security Qualification
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  security-preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout controller with full history
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          persist-credentials: false
+
+      - name: Set up approved JDK
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00
+        with:
+          distribution: microsoft
+          java-version: '21.0.12'
+
+      - name: Verify policy and candidate identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          export GA_EVIDENCE_DIR="$RUNNER_TEMP/ga-security-evidence"
+          export GA_CACHE_DIR="$RUNNER_TEMP/ga-security-cache"
+          mkdir -p "$GA_EVIDENCE_DIR" "$GA_CACHE_DIR"
+          test "$(sha256sum docs/release/ga-security-toolchain-v1.properties | cut -d' ' -f1)" = \
+            7c6e36e0bc045fad38255be65a519ee8db19b877d786a5be26d399efbf4e5554
+          test "$(git rev-parse --is-shallow-repository)" = false
+          test "$(git rev-parse refs/tags/v0.9.0-rc.1)" = \
+            dfd38c08e80aed9035bf1c2d7c8faf8bae99c356
+          test "$(git rev-parse 'refs/tags/v0.9.0-rc.1^{}')" = \
+            e2828f563ee41316c062385c0244ac1336731359
+          git worktree add --detach "$RUNNER_TEMP/ga-security-candidate" \
+            e2828f563ee41316c062385c0244ac1336731359
+
+      - name: Resolve and verify pinned Maven scanner entry JARs
+        shell: bash
+        run: |
+          set -euo pipefail
+          export MAVEN_OPTS='-Dfile.encoding=UTF-8 -Duser.language=en -Duser.country=US -Duser.timezone=UTC'
+          export REPO="$RUNNER_TEMP/ga-security-cache/m2"
+          mkdir -p "$REPO"
+          for gav in \
+            org.cyclonedx:cyclonedx-maven-plugin:2.9.3 \
+            org.owasp:dependency-check-maven:13.0.0 \
+            org.codehaus.mojo:license-maven-plugin:2.7.1; do
+            mvn -B -ntp -Dmaven.repo.local="$REPO" \
+              org.apache.maven.plugins:maven-dependency-plugin:3.8.1:get \
+              -Dartifact="$gav" -Dtransitive=true
+          done
+          declare -A EXPECTED=(
+            ["$REPO/org/cyclonedx/cyclonedx-maven-plugin/2.9.3/cyclonedx-maven-plugin-2.9.3.jar"]="c452d5eebe28bc86bef2e7c72d129f04f60877bef843eac8120f01fb655be293"
+            ["$REPO/org/owasp/dependency-check-maven/13.0.0/dependency-check-maven-13.0.0.jar"]="627ab0406bde4ae5261a5dc002cd233ddf6a044d6b3b92950188abf1951b4b13"
+            ["$REPO/org/codehaus/mojo/license-maven-plugin/2.7.1/license-maven-plugin-2.7.1.jar"]="ce1430955c570d3d742e917f4bc2f89ec19752d92887f02aef6d360b3883fbb7"
+          )
+          for jar in "${!EXPECTED[@]}"; do
+            test -f "$jar"
+            test "$(sha256sum "$jar" | cut -d' ' -f1)" = "${EXPECTED[$jar]}"
+          done
+          find "$REPO" -type f -printf '%P\n' | sort > "$RUNNER_TEMP/ga-security-evidence/maven-repository-inventory"
+
+      - name: Generate approved SBOM and vulnerability evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          export MAVEN_OPTS='-Dfile.encoding=UTF-8 -Duser.language=en -Duser.country=US -Duser.timezone=UTC'
+          export REPO="$RUNNER_TEMP/ga-security-cache/m2"
+          export GA_EVIDENCE_DIR="$RUNNER_TEMP/ga-security-evidence"
+          export GA_CACHE_DIR="$RUNNER_TEMP/ga-security-cache"
+          mkdir -p "$GA_EVIDENCE_DIR/sbom"
+          cd "$RUNNER_TEMP/ga-security-candidate"
+          mvn -B -ntp -f core/pom.xml \
+            org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeBom \
+            -Dmaven.repo.local="$REPO" -DschemaVersion=1.6 -DprojectType=application \
+            -DincludeBomSerialNumber=false -DincludeCompileScope=true -DincludeProvidedScope=false \
+            -DincludeRuntimeScope=true -DincludeSystemScope=false -DincludeTestScope=false \
+            -DincludeLicenseText=false -DoutputFormat=json -DoutputName=bom \
+            -DoutputDirectory="$GA_EVIDENCE_DIR/sbom" -DoutputTimestamp="$(git show -s --format=%ct e2828f563ee41316c062385c0244ac1336731359)" \
+            -Dcyclonedx.skipAttach=true
+          mvn -B -ntp -f core/pom.xml \
+            org.owasp:dependency-check-maven:13.0.0:check \
+            -Dmaven.repo.local="$REPO" -DautoUpdate=true -DdataDirectory="$GA_CACHE_DIR/dependency-check-data" \
+            -Dformats=JSON,SARIF -DfailBuildOnCVSS=7.0 -DfailOnError=true \
+            -DskipTestScope=true -DskipProvidedScope=true -DskipRuntimeScope=false \
+            -DskipSystemScope=true -DskipDependencyManagement=true -DscanDependencies=true \
+            -DscanPlugins=false -DenableExperimental=false -DenableRetired=false \
+            -DversionCheckEnabled=false -DfailBuildOnUnusedSuppressionRule=true
+          cp core/target/dependency-check-report.* "$GA_EVIDENCE_DIR/"
+
+      - name: Generate approved license inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          export MAVEN_OPTS='-Dfile.encoding=UTF-8 -Duser.language=en -Duser.country=US -Duser.timezone=UTC'
+          cd "$RUNNER_TEMP/ga-security-candidate"
+          mvn -B -ntp -f core/pom.xml \
+            org.codehaus.mojo:license-maven-plugin:2.7.1:aggregate-third-party-report \
+            -Dmaven.repo.local="$RUNNER_TEMP/ga-security-cache/m2" \
+            -Dlicense.includeTransitiveDependencies=true -Dlicense.includeOptional=true \
+            -Dlicense.excludedScopes=test,provided,system -Dlicense.encoding=UTF-8
+          cp -r core/target/reports "$RUNNER_TEMP/ga-security-evidence/license-reports"
+
+      - name: Run pinned full-history and working-tree secret scans
+        shell: bash
+        run: |
+          set -euo pipefail
+          export GA_EVIDENCE_DIR="$RUNNER_TEMP/ga-security-evidence"
+          docker pull ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+          test "$(docker image inspect ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
+            --format '{{index .RepoDigests 0}}' 2>/dev/null)" = \
+            ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+          docker run --rm --network=none --workdir=/repo \
+            --volume="$RUNNER_TEMP/ga-security-candidate:/repo:ro" \
+            --volume="$GA_EVIDENCE_DIR/gitleaks:/out" \
+            ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
+            git --log-opts=--all --redact=100 --report-format=json \
+            --report-path=/out/history.json --exit-code=1 --no-banner --no-color
+          docker run --rm --network=none --workdir=/repo \
+            --volume="$RUNNER_TEMP/ga-security-candidate:/repo:ro" \
+            --volume="$GA_EVIDENCE_DIR/gitleaks:/out" \
+            ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
+            dir /repo --max-target-megabytes=10 --redact=100 --report-format=json \
+            --report-path=/out/working-tree.json --exit-code=1 --no-banner --no-color
+
+      - name: Record immutable tool output hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          find "$RUNNER_TEMP/ga-security-evidence" -type f \
+            ! -name 'tool-output-sha256sums' ! -name 'SHA256SUMS' \
+            -printf '%P\n' | sort | while IFS= read -r item; do
+            sha256sum "$RUNNER_TEMP/ga-security-evidence/$item"
+          done > "$RUNNER_TEMP/ga-security-evidence/tool-output-sha256sums"
+          find "$RUNNER_TEMP/ga-security-evidence" -type f -printf '%P\n' | sort | while IFS= read -r item; do
+            sha256sum "$RUNNER_TEMP/ga-security-evidence/$item"
+          done > "$RUNNER_TEMP/ga-security-evidence/SHA256SUMS"

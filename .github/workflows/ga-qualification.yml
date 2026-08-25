@@ -1,0 +1,101 @@
+name: GA Reproducibility Qualification
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reproducible-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout controller with full history
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          persist-credentials: false
+
+      - name: Set up approved JDK
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00
+        with:
+          distribution: microsoft
+          java-version: '21.0.12'
+
+      - name: Verify controller, candidate and toolchain identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/ga-evidence"
+          mvn --version | tee "$RUNNER_TEMP/ga-evidence/maven-version.txt"
+          grep -F 'Apache Maven 3.9.16' "$RUNNER_TEMP/ga-evidence/maven-version.txt"
+          test "$(git rev-parse --is-shallow-repository)" = false
+          test "$(git cat-file -t refs/tags/v0.9.0-rc.1)" = tag
+          test "$(git rev-parse refs/tags/v0.9.0-rc.1)" = \
+            dfd38c08e80aed9035bf1c2d7c8faf8bae99c356
+          test "$(git rev-parse 'refs/tags/v0.9.0-rc.1^{}')" = \
+            e2828f563ee41316c062385c0244ac1336731359
+          test "$(sha256sum docs/release/ga-security-toolchain-v1.properties | cut -d' ' -f1)" = \
+            7c6e36e0bc045fad38255be65a519ee8db19b877d786a5be26d399efbf4e5554
+          {
+            printf 'controller.gitSha=%s\n' "$GITHUB_SHA"
+            printf 'candidate.productionSha=%s\n' \
+              e2828f563ee41316c062385c0244ac1336731359
+            printf 'candidate.tagObjectSha=%s\n' \
+              dfd38c08e80aed9035bf1c2d7c8faf8bae99c356
+            printf 'candidate.sourceTreeSha256='
+            git archive --format=tar e2828f563ee41316c062385c0244ac1336731359 | sha256sum | cut -d' ' -f1
+          } | tee "$RUNNER_TEMP/ga-evidence/candidate.txt"
+
+      - name: Build two detached candidate worktrees with isolated Maven repositories
+        shell: bash
+        run: |
+          set -euo pipefail
+          export LANG=C.UTF-8
+          export LC_ALL=C.UTF-8
+          export TZ=UTC
+          export MAVEN_OPTS='-Dfile.encoding=UTF-8 -Duser.language=en -Duser.country=US -Duser.timezone=UTC'
+          export SOURCE_DATE_EPOCH="$(git show -s --format=%ct e2828f563ee41316c062385c0244ac1336731359)"
+          export GA_BUILD_A="$RUNNER_TEMP/ga-build-a"
+          export GA_BUILD_B="$RUNNER_TEMP/ga-build-b"
+          test ! -e "$GA_BUILD_A"
+          test ! -e "$GA_BUILD_B"
+          mkdir -p "$GA_BUILD_A/m2" "$GA_BUILD_B/m2"
+          git worktree add --detach "$GA_BUILD_A/source" \
+            e2828f563ee41316c062385c0244ac1336731359
+          git worktree add --detach "$GA_BUILD_B/source" \
+            e2828f563ee41316c062385c0244ac1336731359
+          trap 'git worktree remove --force "$GA_BUILD_A/source"; git worktree remove --force "$GA_BUILD_B/source"' EXIT
+          mkdir -p "$RUNNER_TEMP/ga-evidence/build-a" "$RUNNER_TEMP/ga-evidence/build-b"
+          (
+            cd "$GA_BUILD_A/source"
+            mvn -B -ntp -e -C -Dmaven.repo.local="$GA_BUILD_A/m2" \
+              -Dproject.build.outputTimestamp="$SOURCE_DATE_EPOCH" \
+              -pl core -am clean verify 2>&1 | tee "$RUNNER_TEMP/ga-evidence/build-a/maven.log"
+          )
+          (
+            cd "$GA_BUILD_B/source"
+            mvn -B -ntp -e -C -Dmaven.repo.local="$GA_BUILD_B/m2" \
+              -Dproject.build.outputTimestamp="$SOURCE_DATE_EPOCH" \
+              -pl core -am clean verify 2>&1 | tee "$RUNNER_TEMP/ga-evidence/build-b/maven.log"
+          )
+          test -z "$(git -C "$GA_BUILD_A/source" status --porcelain)"
+          test -z "$(git -C "$GA_BUILD_B/source" status --porcelain)"
+          test -f "$GA_BUILD_A/source/core/target/matching-engine-rc.jar"
+          test -f "$GA_BUILD_B/source/core/target/matching-engine-rc.jar"
+          cmp --silent "$GA_BUILD_A/source/core/target/matching-engine-rc.jar" \
+            "$GA_BUILD_B/source/core/target/matching-engine-rc.jar"
+          sha256sum "$GA_BUILD_A/source/core/target/matching-engine-rc.jar" \
+            "$GA_BUILD_B/source/core/target/matching-engine-rc.jar" \
+            | tee "$RUNNER_TEMP/ga-evidence/jar-sha256sums"
+          (
+            cd "$GA_BUILD_A/m2"
+            find . -type f -printf '%P\n' | sort | while IFS= read -r item; do sha256sum "$item"; done
+          ) > "$RUNNER_TEMP/ga-evidence/maven-a-inventory"
+          (
+            cd "$GA_BUILD_B/m2"
+            find . -type f -printf '%P\n' | sort | while IFS= read -r item; do sha256sum "$item"; done
+          ) > "$RUNNER_TEMP/ga-evidence/maven-b-inventory"
+          sha256sum "$RUNNER_TEMP/ga-evidence"/* > "$RUNNER_TEMP/ga-evidence/SHA256SUMS"
