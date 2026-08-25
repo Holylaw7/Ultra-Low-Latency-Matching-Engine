@@ -65,6 +65,21 @@ none may be converted to PASS by omission or tool substitution.
 TASK-049 remains dependency-locked until the TASK-048 Evidence Gate passes.
 Full campaigns, `v1.0.0`, GitHub Release and GA remain unauthorized.
 
+## G9/G11 execution attempt
+
+On 2026-08-25, dispatch of both new `workflow_dispatch` workflows was
+attempted against the approved feature-branch ref. GitHub returned HTTP 404
+because the workflow files are not present on the repository default branch;
+specifying the feature ref cannot dispatch a workflow that is not installed on
+that branch. No G9/G11 run or artifact was created. The Windows host has no
+equivalent pinned Ubuntu runner (`act`) available. This is an execution
+precondition blocker, not a G9/G11 PASS or FAIL result.
+
+Resolving it requires a Human-approved execution path (for example, a
+workflow-only default-branch installation or an approved external pinned
+Ubuntu runner). No merge, candidate mutation, scanner substitution or local
+campaign was performed.
+
 ## Completion log
 
 | Date | Stage | Result |
@@ -72,3 +87,4 @@ Full campaigns, `v1.0.0`, GitHub Release and GA remain unauthorized.
 | 2026-08-25 | Human Blueprint inheritance | TASK-048 authorized after TASK-047 PASS |
 | 2026-08-25 | Implementation checkpoint | Qualification policy/evaluator, pinned workflows and tests added; commit `b64a399` |
 | 2026-08-25 | Standard/Quick CI | `32831047004` / `32831046928` PASS; G9/G11 workflows remain manual preflight evidence |
+| 2026-08-25 | G9/G11 dispatch attempt | HTTP 404: workflows are not installed on the default branch; no run/artifact created |

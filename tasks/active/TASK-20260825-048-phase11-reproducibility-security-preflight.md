@@ -126,6 +126,7 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | 2026-08-25 | Human Developer | Blueprint approved; TASK-048 authorized after TASK-047 PASS |
 | 2026-08-25 | Implementation | Qualification-only policy/evaluator and pinned workflows added; scans not executed locally |
 | 2026-08-25 | Evidence checkpoint | `b64a399`; Standard CI `32831047004` PASS; Quick `32831046928` PASS; G9/G11 scan execution pending |
+| 2026-08-25 | G9/G11 execution attempt | GitHub `workflow_dispatch` returned HTTP 404 because new workflows are not on default branch; no scan artifact; Human execution-path decision required |
 
 ### Implementation Log
 
