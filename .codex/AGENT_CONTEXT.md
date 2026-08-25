@@ -10,12 +10,12 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
-| Phase | Phase 10 — Release-Candidate Runtime Assembly (`Completed / Human Approved / RC baseline frozen`) |
-| Latest product task | [`TASK-20260823-040`](../tasks/completed/TASK-20260823-040-phase9-final-evidence-reconciliation.md) — Completed / Archived / Phase 9 Baseline Frozen |
-| Latest architecture decision | [`ADR-0018`](../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) — Accepted |
-| Current planning task | TASK-20260824-046 — Completed / Archived; RC baseline frozen |
+| Phase | Phase 11 — GA Qualification (`Blueprint Approved; TASK-048 remediation in progress`) |
+| Latest product task | [`TASK-20260825-048`](../tasks/active/TASK-20260825-048-phase11-reproducibility-security-preflight.md) — In Progress; B2/B3 remediation Evidence Gate PASS; replacement execution separately Human-gated |
+| Latest architecture decision | [`ADR-0019`](../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) — Accepted |
+| Current planning task | TASK-20260825-048 — In Progress; G9/G11 replacement execution not authorized |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
-| Product stage | Phase 9 frozen at `v0.8.0-engineering-baseline`; Phase 10 frozen at `v0.9.0-rc.1`; Product Release separately governed |
+| Product stage | Phase 9 frozen at `v0.8.0-engineering-baseline`; Phase 10 frozen at `v0.9.0-rc.1`; Phase 11 GA qualification in progress; Product Release separately governed |
 | Product approval | Phase 9 Human Closure Approved; merge `ef73f60` / Master CI `32711512036` PASS; `v0.8.0-engineering-baseline` / Tag CI `32711649980` PASS; Closure Input `8e5d39d` / Standard CI `32709188522` / Quick Lane `32709188327`; remediation `5f3b1c5` / Standard CI `32710712341` / Quick Lane `32710712428` PASS |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `master` |
@@ -155,7 +155,7 @@ ADR-0011 Final Approved
   -> Apache-2.0 repository policy [Human accepted]
   -> GitHub binary distribution without Maven Central [Human accepted]
   -> TASK-047 [Completed / Evidence Gate PASS; implementation `d25eac6`, status `2521500`; CI `32828844611` / Quick `32828844541`]
-  -> TASK-048 [In Progress; implementation checkpoint `b64a399`, CI `32831047004` / Quick `32831046928` PASS; G9/G11 runs `32835408168` / `32835411241` ABORTED/B3 because pinned Microsoft OpenJDK `21.0.12` is unavailable]
+  -> TASK-048 [In Progress; B2/B3 remediation Evidence Gate PASS; implementation `b44fc4d`; final docs/status `c01977a`; Standard CI `32845529323` / Quick `32845529342` PASS; G9 `32842119210` and G11 `32842122498` remain preserved FAIL/non-qualifying; replacement execution not authorized]
   -> TASK-049 through TASK-056 [Dependency ordered; locked]
   -> Phase 11 Full Campaigns / Closure / v1.0.0 / GitHub Release / GA [Not Authorized]
   -> Product Release [Not Authorized]

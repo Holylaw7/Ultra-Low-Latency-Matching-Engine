@@ -2,8 +2,8 @@
 
 ## Status
 
-`In Progress — implementation checkpoint complete; external G9/G11 preflight
-execution and final exact-SHA CI evidence pending.`
+`In Progress — B2/B3 remediation Evidence Gate PASS; G9/G11 replacement
+execution remains separately Human-gated.`
 
 TASK-048 implements the approved qualification-only reproducibility and
 security preflight boundary. It does not qualify the candidate, authorize a
@@ -70,7 +70,7 @@ tag, production source, existing workflow, dependency or runtime input changed.
 | Focused security/reproducibility tests | PASS — 5 tests |
 | `mvn -pl qualification -am test "-Dtest=*GaSecurity*,*Reproducib*"` | PASS |
 | Checkstyle during focused build | 0 violations |
-| G9/G11 scanner execution | Not run locally; workflow evidence pending |
+| G9/G11 scanner execution | Not run locally; replacement execution not authorized |
 | Full `mvn verify` | PASS — 225 core + 61 qualification tests; 2 expected skips |
 | Workflow YAML parse | PASS — both new workflows parse successfully |
 | Workflow Bash syntax | PASS — all workflow `run` blocks parse with Bash 5.3 |
@@ -78,8 +78,11 @@ tag, production source, existing workflow, dependency or runtime input changed.
 | Secret-leak scan | PASS — remediation diff contains no credential material |
 | `git diff --check` | PASS |
 | Frozen production/existing-workflow audit | PASS — no production, POM or existing workflow change |
+| B2/B3 remediation static verification | PASS — YAML/Bash validation, G9 packager simulation, secret-leak scan and docs/evidence audit |
 | Standard exact-SHA CI | [32831047004](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32831047004) — PASS |
 | Qualification Quick Lane | [32831046928](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32831046928) — PASS |
+| Final remediation Standard CI | [32845529323](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32845529323) — PASS |
+| Final remediation Quick Lane | [32845529342](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32845529342) — PASS |
 | Controller docs checkpoint | [32835631051](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32835631051) — FAIL at `Verify`; Quick [32835630967](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32835630967) — PASS |
 | Local rerun after controller checkpoint | `mvn --batch-mode --no-transfer-progress verify` — PASS; 225 core + 61 qualification, 2 expected skips, Checkstyle 0 |
 
@@ -90,8 +93,9 @@ identity mismatch, non-reproducible JAR, vulnerability, verified secret or
 prohibited runtime license remains `ABORTED`/blocker according to ADR-0019;
 none may be converted to PASS by omission or tool substitution.
 
-TASK-049 remains dependency-locked until the TASK-048 Evidence Gate passes.
-Full campaigns, `v1.0.0`, GitHub Release and GA remain unauthorized.
+The B2/B3 remediation Evidence Gate is PASS, but TASK-049 remains
+dependency-locked until G9/G11 replacement execution produces accepted gate
+evidence. Full campaigns, `v1.0.0`, GitHub Release and GA remain unauthorized.
 
 ## G9/G11 execution attempt
 
@@ -145,10 +149,11 @@ steps, but Dependency-Check received no valid NVD API key/data and failed with
 `Invalid API Key` / `NoDataException`; it remains immutable
 `FAIL / B3 / NON-QUALIFYING`. No third run was started.
 
-The Human-approved limited remediation is committed as `b44fc4d`. Standard CI
-`32845289320` and Qualification Quick Lane `32845289257` both pass. This
-closes the B2/B3 remediation Evidence Gate only; it does not mark G9 or G11
-PASS and does not authorize another execution.
+The Human-approved limited remediation is implemented at `b44fc4d`. The final
+evidence/status synchronization is `c01977a`; Standard CI `32845529323` and
+Qualification Quick Lane `32845529342` both pass. This closes the B2/B3
+remediation Evidence Gate only; it does not mark G9 or G11 PASS and does not
+authorize another execution.
 
 ## Completion log
 
@@ -161,6 +166,7 @@ PASS and does not authorize another execution.
 | 2026-08-25 | G9/G11 dispatch attempt | HTTP 404: workflows are not installed on the default branch; no run/artifact created |
 | 2026-08-25 | G9/G11 execution | Runs `32835408168` / `32835411241` ABORTED/B3 at pinned JDK setup; no artifacts; no retry |
 | 2026-08-25 | Controller docs checkpoint | `1ca088f`; Quick `32835630967` PASS; Standard `32835631051` failed at `Verify`; clean local rerun PASS |
-| 2026-08-25 | B2/B3 remediation Evidence Gate | Commit `b44fc4d`; Standard `32845289320` PASS; Quick `32845289257` PASS; G9/G11 replacement execution remains separately locked |
+| 2026-08-25 | Initial B2/B3 remediation checkpoint | Commit `b44fc4d`; Standard `32845289320` PASS; Quick `32845289257` PASS; G9/G11 replacement execution remains separately locked |
 | 2026-08-25 | Limited B3 toolchain amendment | Official Microsoft archive SHA-256 frozen; amended policy digest `6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397`; replacement run remains separately locked |
-| 2026-08-25 | Human Limited B2/B3 remediation | G9 packager and G11 protected NVD binding repaired; replacement runs `32842119210` / `32842122498` remain preserved failures; remediation Evidence Gate pending |
+| 2026-08-25 | Human Limited B2/B3 remediation | G9 packager and G11 protected NVD binding repaired; replacement runs `32842119210` / `32842122498` remain preserved failures; remediation Evidence Gate PASS at `b44fc4d` (`32845289320` / `32845289257`) |
+| 2026-08-25 | Final remediation evidence/status synchronization | `c01977a`; Standard `32845529323` PASS; Quick `32845529342` PASS; G9/G11 replacement execution remains separately Human-gated |

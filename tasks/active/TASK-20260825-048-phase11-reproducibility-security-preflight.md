@@ -5,11 +5,11 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-048` — Reproducibility and Security Preflight |
-| Status | `In Progress — implementation checkpoint PASS; G9/G11 preflight Evidence Gate pending` |
+| Status | `In Progress — B2/B3 remediation Evidence Gate PASS; G9/G11 replacement execution separately Human-gated` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Depends On | TASK-047 Evidence Gate PASS after Human Blueprint Approval |
-| Next Gate | TASK-048 Evidence Gate: focused tests, full verification, reviewers and exact-SHA CI |
+| Next Gate | Human Replacement G9/G11 Execution Approval; no replacement execution is currently authorized |
 
 ## 2. Goal
 
@@ -119,7 +119,7 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | --- | --- | --- |
 | Blueprint | Approved | Human Phase 11 Blueprint Approval |
 | Implementation | In Progress | TASK-047 Evidence Gate PASS |
-| Preflight | Pending Evidence Gate | amended official Microsoft JDK archive provisioning, G9/G11 replacement execution, retained reports, reviewers and exact-SHA CI |
+| Preflight | B2/B3 Remediation Evidence Gate PASS | G9 recursive packager and protected NVD binding verified; G9/G11 replacement execution remains separately Human-gated |
 
 | Date | Reviewer | Decision / log |
 | --- | --- | --- |
@@ -131,8 +131,8 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | 2026-08-25 | G9/G11 run result | `32835408168` / `32835411241` ABORTED/B3: pinned Microsoft OpenJDK `21.0.12` unavailable (21.0.11 newest); no version substitution or retry |
 | 2026-08-25 | Controller docs checkpoint | `1ca088f`; Quick `32835630967` PASS; Standard `32835631051` failed at `Verify`; clean local rerun PASS; diagnosis pending |
 | 2026-08-25 | Human Limited B3 Amendment | Approved official archive provisioning; `microsoft-jdk-21.0.12-linux-x64.tar.gz`, SHA-256 `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f`; replacement execution remains separately locked |
-| 2026-08-25 | Human Limited B2/B3 Remediation | G9 recursive evidence packager and G11 protected NVD credential binding authorized; replacement failures `32842119210` / `32842122498` preserved; remediation Evidence Gate pending |
-| 2026-08-25 | B2/B3 Remediation Evidence Gate | `b44fc4d`; Standard `32845289320` PASS; Quick `32845289257` PASS; replacement G9/G11 execution requires new Human approval |
+| 2026-08-25 | Human Limited B2/B3 Remediation | G9 recursive evidence packager and G11 protected NVD credential binding authorized; replacement failures `32842119210` / `32842122498` preserved |
+| 2026-08-25 | B2/B3 Remediation Evidence Gate | Implementation `b44fc4d`; final docs/status `c01977a`; Standard `32845529323` PASS; Quick `32845529342` PASS; replacement G9/G11 execution requires new Human approval |
 
 ### Implementation Log
 

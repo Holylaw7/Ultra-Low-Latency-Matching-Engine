@@ -458,11 +458,11 @@ explicit Human Phase 11 Closure Approval. Phase Closure does not create
 
 ```text
 Blueprint Status: Approved — Human Phase 11 Blueprint Approval 2026-08-25
-Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 Authorized / TASK-049..056 dependency ordered
+Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 B2/B3 remediation Evidence Gate PASS; TASK-049..056 dependency ordered and locked
 Qualification Campaigns: Not Authorized
 RC mutation: Not Authorized
 v1.0.0 / GitHub Release / GA: Not Authorized
-Next Gate: TASK-048 Evidence Gate; TASK-047 Evidence Gate PASS recorded
+Next Gate: Human Replacement G9/G11 Execution Approval; replacement execution remains unauthorized
 ```
 
 ## 23. Execution Checkpoints
@@ -476,6 +476,7 @@ Next Gate: TASK-048 Evidence Gate; TASK-047 Evidence Gate PASS recorded
 | 2026-08-25 | TASK-048 G9/G11 execution | ABORTED / B3 | `32835408168` / `32835411241`; pinned Microsoft OpenJDK `21.0.12` unavailable; no artifacts or retry | Human toolchain decision |
 | 2026-08-25 | TASK-048 controller docs checkpoint | CHANGES REQUIRED | `1ca088f`; Quick `32835630967` PASS; Standard `32835631051` failed at `Verify`; local rerun PASS; public diagnostic unavailable | Resolve CI observation before Evidence Gate |
 | 2026-08-25 | Limited B3 toolchain amendment | APPROVED | Official archive `microsoft-jdk-21.0.12-linux-x64.tar.gz`; SHA-256 `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f`; amended policy SHA `6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397` | Human replacement-run approval |
+| 2026-08-25 | B2/B3 remediation Evidence Gate | PASS | implementation `b44fc4d`; final docs/status `c01977a`; Standard `32845529323`; Quick `32845529342`; G9 `32842119210` and G11 `32842122498` preserved FAIL/non-qualifying | Human replacement G9/G11 execution approval required |
 
 ## 24. Phase Closure Checklist
 
