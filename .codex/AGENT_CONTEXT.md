@@ -10,19 +10,19 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
-| Phase | Phase 10 — Release-Candidate Runtime Assembly (`TASK-046 characterization PASS / Sol High delta-only review pending`) |
+| Phase | Phase 10 — Release-Candidate Runtime Assembly (`TASK-046 characterization CHANGES REQUIRED / corrected evidence pending`) |
 | Latest product task | [`TASK-20260823-040`](../tasks/completed/TASK-20260823-040-phase9-final-evidence-reconciliation.md) — Completed / Archived / Phase 9 Baseline Frozen |
 | Latest architecture decision | [`ADR-0018`](../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) — Accepted |
-| Current planning task | TASK-20260824-046 — characterization Evidence PASS; Sol High delta-only Closure Review pending |
+| Current planning task | TASK-20260824-046 — benchmark-boundary remediation; no new 60-minute Full Run authorized |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
-| Product stage | Phase 9 frozen at `v0.8.0-engineering-baseline`; Phase 10 two-run Full Campaign and characterization PASS; final Closure and Product Release separately governed |
+| Product stage | Phase 9 frozen at `v0.8.0-engineering-baseline`; Phase 10 two-run Full Campaign PASS; characterization correction pending; final Closure and Product Release separately governed |
 | Product approval | Phase 9 Human Closure Approved; merge `ef73f60` / Master CI `32711512036` PASS; `v0.8.0-engineering-baseline` / Tag CI `32711649980` PASS; Closure Input `8e5d39d` / Standard CI `32709188522` / Quick Lane `32709188327`; remediation `5f3b1c5` / Standard CI `32710712341` / Quick Lane `32710712428` PASS |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `feature/phase10-release-candidate-runtime` |
 | Engineering baseline commit | `ef73f60` (Phase 9 merge) |
 | Engineering baseline tag | `v0.8.0-engineering-baseline` |
 | Remote | `origin` — `https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | implementation branch `feature/phase10-release-candidate-runtime` at docs/evidence sync `a6a623b`; v3 characterization evidence is local/ignored; initial Standard CI `32754918129` exposed a flaky core-test assertion and docs/evidence reruns `32802089849` and `32802326848` PASS; `origin/master` remains at `3383a63`; `v0.8.0-engineering-baseline` remains frozen at `ef73f60`; `.vscode/` remains untouched |
+| Remote sync | implementation branch `feature/phase10-release-candidate-runtime` at docs/evidence sync `241485c`; Standard CI `32802512908` and Quick Lane `32802512953` PASS; v3 characterization evidence is local/ignored but non-final because its timer included Protocol connection setup; corrected qualification-only rerun pending; `origin/master` remains at `3383a63`; `v0.8.0-engineering-baseline` remains frozen at `ef73f60`; `.vscode/` remains untouched |
 | Latest Phase 7 CI | Master merge `6473365` — [32574891113](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574891113) PASS; tag `v0.6.0-engineering-baseline` — [32574958017](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574958017) PASS |
 | Latest Phase 7 docs CI | TASK-028 evidence checkpoint `9fed6b2` — [32574274905](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574274905) PASS; final docs sync commits are included in merge `6473365` |
 | Latest Phase 8 CI | Technical Closure input `c59d7c0` — [32616802595](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32616802595) PASS; remediation `4bdfb97` — [32620164524](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32620164524) PASS; merge `87abbc1` — [32622722649](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32622722649) PASS; tag — [32622757607](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32622757607) PASS |
@@ -43,7 +43,7 @@
 | Phase 7 — Live Durable Command Pipeline Integration | Completed / Approved / Baseline Frozen | [`Blueprint`](../tasks/blueprints/PHASE-7-live-durable-command-pipeline-blueprint.md); [`ADR-0015`](../docs/adr/ADR-0015-live-durable-command-pipeline-integration.md); `v0.6.0-engineering-baseline` |
 | Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap | Completed / Human Approved / Baseline Frozen at `v0.7.0-engineering-baseline` | [`Blueprint`](../tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md); [`ADR-0016`](../docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md); [`TASK-034 report`](../tasks/reports/PHASE-8-task-034.md) |
 | Phase 9 — System Qualification, Performance Characterization and Long-Run Reliability | Completed / Human Approved / Baseline Frozen at `v0.8.0-engineering-baseline` | [`Blueprint`](../tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md); [`ADR-0017`](../docs/adr/ADR-0017-system-qualification-performance-reliability.md); [`TASK-040 report`](../tasks/reports/PHASE-9-task-040.md); merge `ef73f60`; Master CI `32711512036`; Tag CI `32711649980` |
-| Phase 10 — Release-Candidate Runtime Assembly | Approved / TASK-041~045 PASS; TASK-046 Full Campaign and v3 characterization PASS; Standard CI rerun PASS; Sol High delta-only Closure Review pending | [`Blueprint`](../tasks/blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md); [`ADR-0018`](../docs/adr/ADR-0018-release-candidate-runtime-boundary.md); [`TASK-046 report`](../tasks/reports/PHASE-10-task-046.md); runner `1a02e66`, characterization summary `6204f190...`, campaign 2/2 PASS |
+| Phase 10 — Release-Candidate Runtime Assembly | Approved / TASK-041~045 PASS; TASK-046 Full Campaign PASS; v3 characterization CHANGES REQUIRED; corrected evidence pending | [`Blueprint`](../tasks/blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md); [`ADR-0018`](../docs/adr/ADR-0018-release-candidate-runtime-boundary.md); [`TASK-046 report`](../tasks/reports/PHASE-10-task-046.md); runner `1a02e66`, preserved v3 summary `6204f190...`, campaign 2/2 PASS |
 | Phase 11+ / Product Release | Future Work | separate Discovery, Blueprint and Human Approval required |
 
 ## Current Product Gate
@@ -146,7 +146,7 @@ ADR-0011 Final Approved
   -> TASK-043 [Completed / Evidence Gate PASS; `247d526` / CI `32724123762` / Quick `32724123745`]
   -> TASK-044 [Completed / Evidence Gate PASS; `c3f0883` / CI `32726203105` / Quick `32726203076`]
   -> TASK-045 [Completed / Evidence Gate PASS; `f024aef` / CI `32728038236` / Quick `32728038263`]
-  -> TASK-046 [Full Campaign + v3 characterization evidence PASS; Standard CI remediation + Sol High delta-only Closure Review pending]
+  -> TASK-046 [Full Campaign PASS; v3 characterization CHANGES REQUIRED; corrected qualification-only evidence pending]
   -> Product Release [Not Authorized]
 ```
 
@@ -249,10 +249,12 @@ resource CSV files. Summary SHA-256 is
 manifest SHA-256 is `3b093b39dc765172ac8b97ee22beda5798f7e96d0bd7da694608318915508212`;
 the recursive 919-entry sidecar is `fd8432ccd7b4f064b7766cb5397e32741405a7a043267612caf5efc17c46d7b1`.
 The source checkpoint's initial Standard CI `32754918129` exposed an
-unrelated flaky core-test assertion; final docs/evidence sync `a6a623b`
-passed Standard CI `32802326848` (earlier sync `a0747bb` / `32802089849` also
-passed).
-Sol High delta-only Closure Review remains pending. Production optimization
+unrelated flaky core-test assertion; final docs/evidence sync `241485c`
+passed Standard CI `32802512908` and Quick Lane `32802512953` (earlier syncs
+`a0747bb` / `32802089849` and `a6a623b` / `32802326848` also passed).
+Benchmark review found the v3 timer included Protocol connection setup; a
+qualification-only measurement-boundary correction and evidence rerun are
+pending. Sol High delta-only Closure Review remains pending. Production optimization
 and Product Release remain unauthorized.
 Reconnect/deduplication,
 multi-session support and Product Release remain outside the proposal.

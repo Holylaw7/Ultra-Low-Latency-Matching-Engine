@@ -63,12 +63,12 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   Full Runs; both passed and the immutable campaign summary records `2/2`
   qualifying runs and `campaign.result=true`. Qualification-only
   characterization then passed 30/30 empty-WAL and 30/30 Snapshot-tail
-  lifecycle samples plus two fixed 10-minute management trials. The v3
-  characterization summary is `6204f190...`, with 62 JFR/resource files, 62
+  lifecycle samples plus two fixed 10-minute management trials. The preserved
+  v3 characterization summary is `6204f190...`, with 62 JFR/resource files, 62
   non-zero allocation summaries and a recursively verified 919-entry sidecar.
-  Standard CI for source checkpoint `7ba7ed0` exposed a flaky core-test
-  assertion; the same verification passed on final docs/evidence sync
-  `a6a623b` / CI `32802326848` (and earlier sync `a0747bb` / CI
-  `32802089849`). Characterization evidence remains preserved and Final
-  Evidence/Closure Review is pending. Merge, candidate tagging and Product
-  Release remain separately gated.
+  Benchmark review found that the v3 trial timer included one-time Protocol
+  connection setup, so a qualification-only measurement-boundary correction
+  and rerun are required; no new 60-minute Full Run is authorized. Final
+  Evidence/Closure Review remains pending. Docs sync `241485c` passed Standard
+  CI `32802512908` and Quick Lane `32802512953`; merge, candidate tagging and
+  Product Release remain separately gated.

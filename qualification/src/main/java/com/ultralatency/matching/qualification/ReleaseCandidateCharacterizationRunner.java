@@ -216,12 +216,13 @@ public final class ReleaseCandidateCharacterizationRunner {
             ReleaseCandidateManagementClient.requireReady(
                     ReleaseCandidateManagementClient.request(
                             child.managementPort(), "READY", STATUS_TIMEOUT));
-            measurementStartNanos = System.nanoTime();
-            final Instant deadline = Instant.now().plus(configuration.pairedTrialDuration());
-            Instant nextManagement = Instant.now();
             try (ProtocolV1QualificationClient client = new ProtocolV1QualificationClient(
                     new java.net.InetSocketAddress("127.0.0.1", child.protocolPort()),
                     configuration.commandTimeout())) {
+                // Exclude one-time Protocol connection setup from the measured interval.
+                measurementStartNanos = System.nanoTime();
+                final Instant deadline = Instant.now().plus(configuration.pairedTrialDuration());
+                Instant nextManagement = Instant.now();
                 while (Instant.now().isBefore(deadline)) {
                     final EngineCommand command = QualificationWorkloadV1.commandAtForRun(
                             workload, accepted);
@@ -243,8 +244,8 @@ public final class ReleaseCandidateCharacterizationRunner {
                                 configuration.managementInterval());
                     }
                 }
+                measurementEndNanos = System.nanoTime();
             }
-            measurementEndNanos = System.nanoTime();
             exitCode = child.gracefulShutdown(configuration.processTimeout());
         } catch (final IOException | RuntimeException failure) {
             publishFailure(directory, failure);
@@ -320,6 +321,12 @@ public final class ReleaseCandidateCharacterizationRunner {
                 .append("configurationIdentitySha256=").append(configurationSha).append('\n')
                 .append("comparabilityIdentitySha256=").append(comparabilitySha).append('\n')
                 .append("applicationJarSha256=").append(artifactSha).append('\n')
+                .append("executionModel=one-packaged-child-process-per-trial;single-protocol-client-thread;single-sequential-management-thread\n")
+                .append("warmup=none\n")
+                .append("forks=not-applicable;one-child-process-per-trial\n")
+                .append("clientThreads=1\n")
+                .append("managementThreads=1-sequential\n")
+                .append("measurementBoundary=after READY and Protocol connection established, before command loop and graceful shutdown\n")
                 .append("allocationEvidence=bounded-JFR-object-allocation-sampling\n")
                 .append("allocationEvidenceArtifact=allocation-summary-v1.txt-per-process\n");
         appendLifecycleDistributions(text, lifecycle);
@@ -362,6 +369,12 @@ public final class ReleaseCandidateCharacterizationRunner {
                 .append("artifact.lifecycleAndTrialFiles=artifact-hashes-v1.txt\n")
                 .append("artifact.allocationEvidence=allocation-summary-v1.txt-per-process\n")
                 .append("artifact.characterizationSummarySha256=").append(summarySha).append('\n')
+                .append("executionModel=one-packaged-child-process-per-trial;single-protocol-client-thread;single-sequential-management-thread\n")
+                .append("warmup=none\n")
+                .append("forks=not-applicable;one-child-process-per-trial\n")
+                .append("clientThreads=1\n")
+                .append("managementThreads=1-sequential\n")
+                .append("measurementBoundary=after-READY-and-Protocol-connection-before-command-loop\n")
                 .append("trial.managementIdle.artifactSha256=").append(idle.artifactSha256()).append('\n')
                 .append("trial.statusOneHz.artifactSha256=").append(status.artifactSha256()).append('\n')
                 .append("trial.managementIdle.acceptedCommands=").append(idle.acceptedCommands()).append('\n')
@@ -451,7 +464,12 @@ public final class ReleaseCandidateCharacterizationRunner {
         final StringBuilder text = new StringBuilder()
                 .append("schemaVersion=phase10-rc-trial-v1\n")
                 .append("name=").append(name).append('\n')
-                .append("measurementBoundary=after READY and Protocol connection, before graceful shutdown\n")
+                .append("measurementBoundary=after READY and Protocol connection established, before command loop and graceful shutdown\n")
+                .append("executionModel=one-packaged-child-process-per-trial;single-protocol-client-thread;single-sequential-management-thread\n")
+                .append("warmup=none\n")
+                .append("forks=not-applicable;one-child-process-per-trial\n")
+                .append("clientThreads=1\n")
+                .append("managementThreads=1-sequential\n")
                 .append("elapsedMillis=").append(elapsedMillis).append('\n')
                 .append("acceptedCommands=").append(accepted).append('\n')
                 .append("managementRequests=").append(managementRequests).append('\n')
@@ -495,6 +513,10 @@ public final class ReleaseCandidateCharacterizationRunner {
         fields.put("emptyWalSamples", Integer.toString(configuration.emptyWalSamples()));
         fields.put("snapshotTailSamples", Integer.toString(configuration.snapshotTailSamples()));
         fields.put("liveResponseSampling", "duration-driven-fixed-window");
+        fields.put("executionModel", "one-packaged-child-process-per-trial-single-protocol-client-thread-single-sequential-management-thread");
+        fields.put("warmup", "none");
+        fields.put("forks", "not-applicable-one-child-process-per-trial");
+        fields.put("measurementBoundary", "after-ready-and-protocol-connection-before-command-loop");
         fields.put("gitSha", configuration.gitSha());
         fields.put("baselineTag", configuration.baselineTag());
         fields.put("pairedTrialDuration", configuration.pairedTrialDuration().toString());

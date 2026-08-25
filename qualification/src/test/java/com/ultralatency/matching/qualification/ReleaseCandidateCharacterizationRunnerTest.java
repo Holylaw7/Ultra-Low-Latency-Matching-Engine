@@ -33,7 +33,11 @@ class ReleaseCandidateCharacterizationRunnerTest {
         assertTrue(Files.isRegularFile(result.summaryPath()));
         assertTrue(Files.isRegularFile(result.artifactHashesPath()));
         assertEquals(64, result.summarySha256().length());
-        assertTrue(Files.readString(result.summaryPath()).contains(
-                "claims.productionReady=NOT_CLAIMED"));
+        final String summary = Files.readString(result.summaryPath());
+        assertTrue(summary.contains("claims.productionReady=NOT_CLAIMED"));
+        assertTrue(summary.contains(
+                "measurementBoundary=after READY and Protocol connection established, before command loop and graceful shutdown"));
+        assertTrue(summary.contains("warmup=none"));
+        assertTrue(summary.contains("forks=not-applicable;one-child-process-per-trial"));
     }
 }

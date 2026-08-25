@@ -5,11 +5,16 @@
 `TASK-046` pre-campaign and lifecycle Evidence Gates passed. Human approval then
 authorized exactly two independent `RC_ASSEMBLED_RUNTIME_V1` Full Runs. Both
 completed with PASS and the immutable campaign evaluator returned PASS. The
-qualification-only characterization remediation is complete. The first
-source-checkpoint CI run exposed one unrelated flaky core-test assertion; the
-same Standard verification passed on the docs/evidence synchronization commit.
-The remaining gate is Sol High delta-only review, followed by Human Phase 10
-Closure.
+qualification-only characterization evidence is preserved, but its final
+benchmark review found that the v3 trial timer started before Protocol client
+construction; therefore the v3 throughput interval includes one-time connection
+setup and is not accepted as final characterization evidence. A bounded
+qualification-only correction is staged; no new 60-minute Full Run is
+authorized. The first source-checkpoint CI run exposed one unrelated flaky
+core-test assertion; the same Standard verification passed on the docs/evidence
+synchronization commits. The remaining gate is a corrected characterization
+run, read-only audit and then Sol High delta-only review, followed by Human
+Phase 10 Closure.
 
 | Item | Evidence |
 | --- | --- |
@@ -21,7 +26,8 @@ Closure.
 | Standard CI | [32730760419](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32730760419) — PASS |
 | Qualification Quick Lane | [32730760501](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32730760501) — PASS |
 | Standard CI for characterization checkpoint | [32754918129](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32754918129) — FAIL due to flaky core-test assertion; docs/evidence sync reruns `a0747bb` [32802089849](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32802089849) and `a6a623b` [32802326848](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32802326848) — PASS |
-| Qualification Quick Lane for characterization checkpoint | [32754918118](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32754918118) — PASS |
+| Qualification Quick Lane for characterization checkpoint | [32754918118](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32754918118) — historical PASS for the original `7ba7ed0` checkpoint; final docs-sync Quick Lane is [32802512953](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32802512953) — PASS |
+| Final docs/evidence sync | `241485c` — Standard [32802512908](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32802512908) and Quick [32802512953](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32802512953) — PASS; these validate the docs sync, not the uncorrected v3 measurement boundary |
 | Local regression | 225 core + 50 qualification tests; 0 failures/errors; 2 expected skips |
 | Checkstyle | 0 violations |
 | Package | `qualification/target/matching-engine-qualification.jar` |
@@ -125,6 +131,16 @@ no replacement run was started.
 
 ## Characterization Remediation Evidence
 
+Review status: `CHANGES REQUIRED`. The preserved v3 artifacts are not deleted or
+rewritten, but their trial elapsed/throughput evidence is non-final because the
+measurement timer began before Protocol client construction. The qualification
+runner has a bounded correction staged to construct the client first, start the
+timer immediately before the command loop, and record the fixed execution model
+(`warmup=none`, one child process per trial, one sequential Protocol client and
+management thread). A new characterization result directory must be generated
+before this evidence can support final Closure. No new 60-minute Full Run is
+authorized.
+
 Human Limited Remediation was restricted to `qualification/**` and evidence
 documentation. It did not alter the existing Full Run A/B or campaign
 artifacts, and it did not start Run C. The new characterization command uses
@@ -191,6 +207,8 @@ evidence and do not establish a production latency guarantee.
 
 ```text
 TASK-046 Full Campaign Evidence PASS
+        ↓
+qualification-only characterization correction and evidence regeneration
         ↓
 final read-only Evidence/claim review (including latency/profile criterion)
         ↓

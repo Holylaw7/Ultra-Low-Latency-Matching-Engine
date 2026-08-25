@@ -99,15 +99,18 @@ High delta-only Closure Review remain pending. The qualification-only
 characterization remediation then produced 30/30 empty-WAL and 30/30
 Snapshot-tail lifecycle samples, raw Protocol response and management samples,
 two fixed 10-minute management-idle/STATUS@1Hz trials, 62 JFR files, 62
-resource CSV files and 62 non-zero allocation summaries. Its immutable summary
-is `6204f190e70415b4aa8bfc48a43824b211530d315bd5cc29e00ec8da0d29f4d6` under
+resource CSV files and 62 non-zero allocation summaries. Its preserved v3
+summary is `6204f190e70415b4aa8bfc48a43824b211530d315bd5cc29e00ec8da0d29f4d6` under
 `qualification-results/phase10-characterization-v3/rc-characterization-60bac1ef-bbe1-4df1-adb0-fa5ab310464b/`;
-it records no >10% throughput or response-P99 regression trigger. The recursive
-artifact sidecar contains 919 verified file hashes. Standard CI for source
-checkpoint `7ba7ed0` exposed an unrelated flaky core-test assertion; the same
-verification passed on docs/evidence sync `a6a623b` / CI `32802326848` (the
-earlier rerun `a0747bb` / CI `32802089849` also passed), and no production
-source was changed. Protocol v1, WAL v1,
+however, benchmark review found that the v3 trial timer included one-time
+Protocol connection setup, so v3 is not final characterization evidence. A
+qualification-only measurement-boundary correction and rerun are pending; no
+new 60-minute Full Run is authorized. The recursive artifact sidecar contains
+919 verified file hashes. Standard CI for source checkpoint `7ba7ed0` exposed
+an unrelated flaky core-test assertion; docs/evidence sync `241485c` passed
+Standard CI `32802512908` and Quick Lane `32802512953` (earlier reruns
+`a0747bb` / `32802089849` and `a6a623b` / `32802326848` also passed), and no
+production source was changed. Protocol v1, WAL v1,
 Snapshot v1, matching, durability and single-session semantics remain frozen;
 merge, `v0.9.0-rc.1` and Product Release remain unauthorized.
 
