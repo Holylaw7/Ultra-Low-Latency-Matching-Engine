@@ -123,6 +123,9 @@ The final docs/evidence sync validation for `eb9a4ab` also passed Standard CI
 and does not change the fixed Closure Input `dfe1f7d`.
 The final status synchronization `a6bc574` passed Standard CI `32814596881` and
 Quick Lane `32814596914`; this is also external validation only.
+Current docs validation `84b3546` passed Standard CI `32814830192` and Quick
+Lane `32814830164`; this is external validation only and does not alter the
+fixed Closure Input.
 
 Phase 8 remains documented by [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
 the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)
