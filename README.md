@@ -98,13 +98,16 @@ qualifying runs, 17 cumulative natural post-GC samples and
 High delta-only Closure Review remain pending. The qualification-only
 characterization remediation then produced 30/30 empty-WAL and 30/30
 Snapshot-tail lifecycle samples, raw Protocol response and management samples,
-two fixed 10-minute management-idle/STATUS@1Hz trials, 62 JFR files and 62
-resource CSV files. Its immutable summary is
-`9d7bbfad3fe1464b776b34f714054528989e02ff132ddb6b448ddaa02bf9e888` under
-`qualification-results/phase10-characterization/`; it records no >10%
-throughput or response-P99 regression trigger. Protocol v1, WAL v1, Snapshot v1,
-matching, durability and single-session semantics remain frozen; merge,
-`v0.9.0-rc.1` and Product Release remain unauthorized.
+two fixed 10-minute management-idle/STATUS@1Hz trials, 62 JFR files, 62
+resource CSV files and 62 non-zero allocation summaries. Its immutable summary
+is `6204f190e70415b4aa8bfc48a43824b211530d315bd5cc29e00ec8da0d29f4d6` under
+`qualification-results/phase10-characterization-v3/rc-characterization-60bac1ef-bbe1-4df1-adb0-fa5ab310464b/`;
+it records no >10% throughput or response-P99 regression trigger. The recursive
+artifact sidecar contains 919 verified file hashes. Standard CI for source
+checkpoint `7ba7ed0` exposed an unrelated flaky core-test assertion and remains
+pending remediation; no production source was changed. Protocol v1, WAL v1,
+Snapshot v1, matching, durability and single-session semantics remain frozen;
+merge, `v0.9.0-rc.1` and Product Release remain unauthorized.
 
 Phase 8 remains documented by [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
 the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)

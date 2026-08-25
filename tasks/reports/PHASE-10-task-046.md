@@ -6,21 +6,23 @@
 authorized exactly two independent `RC_ASSEMBLED_RUNTIME_V1` Full Runs. Both
 completed with PASS and the immutable campaign evaluator returned PASS. The
 qualification-only characterization remediation is complete; the remaining
-gate is Sol High delta-only review, followed by Human Phase 10 Closure.
+gate is CI remediation, then Sol High delta-only review, followed by Human Phase 10 Closure.
 
 | Item | Evidence |
 | --- | --- |
 | Implementation | `0a96593` — `test(runtime): qualify release-candidate assembly` |
 | Assembled Full runner | `1a02e66` — `test(runtime): add assembled full campaign runner` |
-| Characterization source checkpoint | `5dbe95b` — source tree used for the qualification-only remediation evidence |
+| Characterization source checkpoint | `7ba7ed0` — source tree used for the v3 qualification-only characterization evidence |
 | Standard CI for Full runner | [32734798459](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32734798459) — PASS |
 | Qualification Quick Lane for Full runner | [32734798461](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32734798461) — PASS |
 | Standard CI | [32730760419](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32730760419) — PASS |
 | Qualification Quick Lane | [32730760501](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32730760501) — PASS |
+| Standard CI for characterization checkpoint | [32754918129](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32754918129) — FAIL; flaky core test assertion in `MatchingEnginePipelineFailureTest`, no production failure observed |
+| Qualification Quick Lane for characterization checkpoint | [32754918118](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32754918118) — PASS |
 | Local regression | 225 core + 50 qualification tests; 0 failures/errors; 2 expected skips |
 | Checkstyle | 0 violations |
 | Package | `qualification/target/matching-engine-qualification.jar` |
-| Package SHA-256 | `af4c270cfe550ab9166dee09752f12d03b8730aa1ea50cfb23835080c4146b39` |
+| Package SHA-256 | `1805904b9f5c7eda8350be524473d9f102cba403f36c4ae5005cd3b1692b181e` |
 
 ## Authorized Scope Implemented
 
@@ -128,23 +130,23 @@ boundaries.
 
 | Item | Evidence |
 | --- | --- |
-| Characterization directory | `qualification-results/phase10-characterization/rc-characterization-41879303-0a74-452d-9cf9-9ab05c565e3b/` |
+| Characterization directory | `qualification-results/phase10-characterization-v3/rc-characterization-60bac1ef-bbe1-4df1-adb0-fa5ab310464b/` |
 | Characterization result | `PASS` |
 | Empty-WAL lifecycle | `30/30` samples passed |
 | Snapshot-tail lifecycle | `30/30` samples passed |
-| Lifecycle raw samples | `lifecycle-samples.csv` — SHA-256 `0dafa54c4a6eff9caee3c371b1d417f58bf599da31033bb5a99c280fccbb9e26` |
-| Management idle trial | `601,818 ms`, `332,578` accepted, `P99 response 3,375,700 ns` |
-| STATUS @ 1 Hz trial | `601,847 ms`, `342,074` accepted, `601` management requests, `P99 response 3,096,000 ns` |
-| Idle response raw samples | `332,578` observations; immutable CSV retained |
-| STATUS response raw samples | `342,074` observations; immutable CSV retained |
-| JFR/resource evidence | `62` JFR files and `62` resource CSV files retained; no failure artifact |
+| Lifecycle raw samples | `lifecycle-samples.csv` — SHA-256 `23823439b948d9194fe9becc48c8bf7f87940e9e19c4d8eeac3e07a4c18b7c31` |
+| Management idle trial | `600,000 ms`, `353,589` accepted, `P99 response 3,126,500 ns` |
+| STATUS @ 1 Hz trial | `600,002 ms`, `369,562` accepted, `601` management requests, `P99 response 2,642,100 ns` |
+| Idle response raw samples | `353,589` observations; immutable CSV retained |
+| STATUS response raw samples | `369,562` observations; immutable CSV retained |
+| JFR/resource evidence | `62` JFR files and `62` resource CSV files retained; all 62 have non-zero allocation-sample evidence |
 | Throughput regression trigger | `false` (>10% threshold not reached) |
 | Response P99 regression trigger | `false` (>10% threshold not reached) |
-| Manifest | `characterization-manifest-v1.txt` — SHA-256 `6001363d0ef08ad8d2d20f10862a7432711706621e3a61e407f9d12c42f03882` |
-| Summary | `characterization-summary-v1.txt` — SHA-256 `9d7bbfad3fe1464b776b34f714054528989e02ff132ddb6b448ddaa02bf9e888` |
-| Artifact sidecar | `artifact-hashes-v1.txt` — SHA-256 `264a4fad7e8c5e350b691b641393324742b9e318617d06c6d5163eed46167dd7` |
-| Application JAR | SHA-256 `671313a35acf46cb3dd2722b797c2c2fff3be1544700cf4f84b45f15ea3ec494` |
-| Configuration identity | `4ec0dfee372e8294af1e35ea0c8979e7c9161bbc088352dc37edcc6f3468f086` |
+| Manifest | `characterization-manifest-v1.txt` — SHA-256 `3b093b39dc765172ac8b97ee22beda5798f7e96d0bd7da694608318915508212` |
+| Summary | `characterization-summary-v1.txt` — SHA-256 `6204f190e70415b4aa8bfc48a43824b211530d315bd5cc29e00ec8da0d29f4d6` |
+| Artifact sidecar | `artifact-hashes-v1.txt` — SHA-256 `fd8432ccd7b4f064b7766cb5397e32741405a7a043267612caf5efc17c46d7b1` |
+| Application JAR | SHA-256 `1805904b9f5c7eda8350be524473d9f102cba403f36c4ae5005cd3b1692b181e` |
+| Configuration identity | `2eac433a94cd8a9879e150a447a4df5af5ba6eddc751e4e2ae52a4c11b05572c` |
 | Comparability identity | `ea09a2676ff21fc5350404dbf15eb2613384265d95881edf17fa1941c2766cbe` |
 
 The immutable summary records the complete percentile distributions (all values
@@ -152,24 +154,27 @@ are nanoseconds; `count=60` for each lifecycle distribution):
 
 | Distribution | P50 | P95 | P99 | P99.9 | Max |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Startup-to-ready | 738,424,100 | 769,152,700 | 789,171,400 | 789,171,400 | 789,171,400 |
-| Graceful shutdown | 789,025,500 | 814,677,700 | 819,572,700 | 819,572,700 | 819,572,700 |
-| Live Protocol response | 25,705,100 | 38,971,600 | 46,693,400 | 46,693,400 | 46,693,400 |
+| Startup-to-ready | 677,920,000 | 724,395,800 | 763,668,700 | 763,668,700 | 763,668,700 |
+| Graceful shutdown | 813,318,500 | 834,417,700 | 835,941,400 | 835,941,400 | 835,941,400 |
+| Live Protocol response | 21,423,000 | 32,569,800 | 34,464,700 | 34,464,700 | 34,464,700 |
 
 The paired ten-minute trial distributions are also retained in the immutable
 summary and raw CSVs. Management-idle response latency is P50/P95/P99/P99.9/max
-`2,029,300 / 2,648,700 / 3,375,700 / 6,407,000 / 34,704,500 ns`; the
-STATUS-at-1-Hz response distribution is `1,970,200 / 2,547,100 / 3,096,000 /
-5,590,500 / 51,381,100 ns`, and its management-query distribution is
-`1,376,800 / 2,279,200 / 2,545,000 / 2,893,900 / 2,893,900 ns`.
+`1,961,700 / 2,363,000 / 3,126,500 / 4,410,600 / 27,759,800 ns`; the
+STATUS-at-1-Hz response distribution is `1,863,200 / 2,186,700 / 2,642,100 /
+4,163,400 / 33,303,100 ns`, and its management-query distribution is
+`1,141,000 / 1,741,500 / 2,113,900 / 2,931,400 / 2,931,400 ns`.
 
-All raw lifecycle, response, management, JFR and resource artifacts are local
-ignored evidence. No percentile filtering or retry was used. The fixed paired
-trials use the same packaged build/configuration and JDK/GC environment. Netty
-allocator is recorded as `default-configured`; the shaded application JAR does
-not expose a package implementation version, so that runtime field remains
-`UNAVAILABLE` rather than being invented. The approved build dependency remains
-Netty `4.2.17.Final`.
+All raw lifecycle, response, management, JFR, allocation-summary and resource
+artifacts are local ignored evidence. The recursive sidecar contains 919 file
+hashes and was independently re-scanned with zero missing or mismatched entries.
+No percentile filtering or retry was used. The fixed paired trials use the same
+semantic build/configuration and JDK/GC environment; ephemeral protocol and
+management ports are intentionally distinct per child process. Netty allocator
+is recorded as `default-configured`; the shaded application JAR does not expose
+a package implementation version, so Netty/Disruptor runtime fields remain
+`UNAVAILABLE` rather than being invented. The approved build dependencies remain
+Netty `4.2.17.Final` and Disruptor `4.0.0`.
 
 ## Claim Boundary
 
