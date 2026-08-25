@@ -5,8 +5,11 @@
 `TASK-046` pre-campaign and lifecycle Evidence Gates passed. Human approval then
 authorized exactly two independent `RC_ASSEMBLED_RUNTIME_V1` Full Runs. Both
 completed with PASS and the immutable campaign evaluator returned PASS. The
-qualification-only characterization remediation is complete; the remaining
-gate is CI remediation, then Sol High delta-only review, followed by Human Phase 10 Closure.
+qualification-only characterization remediation is complete. The first
+source-checkpoint CI run exposed one unrelated flaky core-test assertion; the
+same Standard verification passed on the docs/evidence synchronization commit.
+The remaining gate is Sol High delta-only review, followed by Human Phase 10
+Closure.
 
 | Item | Evidence |
 | --- | --- |
@@ -17,7 +20,7 @@ gate is CI remediation, then Sol High delta-only review, followed by Human Phase
 | Qualification Quick Lane for Full runner | [32734798461](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32734798461) — PASS |
 | Standard CI | [32730760419](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32730760419) — PASS |
 | Qualification Quick Lane | [32730760501](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32730760501) — PASS |
-| Standard CI for characterization checkpoint | [32754918129](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32754918129) — FAIL; flaky core test assertion in `MatchingEnginePipelineFailureTest`, no production failure observed |
+| Standard CI for characterization checkpoint | [32754918129](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32754918129) — FAIL due to flaky core-test assertion; rerun on docs/evidence sync `a0747bb` [32802089849](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32802089849) — PASS |
 | Qualification Quick Lane for characterization checkpoint | [32754918118](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32754918118) — PASS |
 | Local regression | 225 core + 50 qualification tests; 0 failures/errors; 2 expected skips |
 | Checkstyle | 0 violations |

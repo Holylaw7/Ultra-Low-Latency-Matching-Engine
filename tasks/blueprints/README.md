@@ -67,6 +67,7 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   characterization summary is `6204f190...`, with 62 JFR/resource files, 62
   non-zero allocation summaries and a recursively verified 919-entry sidecar.
   Standard CI for source checkpoint `7ba7ed0` exposed a flaky core-test
-  assertion; the characterization evidence remains preserved while CI
-  remediation and Final Evidence/Closure Review are pending. Merge, candidate
-  tagging and Product Release remain separately gated.
+  assertion; the same verification passed on docs/evidence sync `a0747bb` / CI
+  `32802089849`. Characterization evidence remains preserved and Final
+  Evidence/Closure Review is pending. Merge, candidate tagging and Product
+  Release remain separately gated.

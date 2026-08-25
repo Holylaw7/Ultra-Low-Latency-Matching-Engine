@@ -104,8 +104,9 @@ is `6204f190e70415b4aa8bfc48a43824b211530d315bd5cc29e00ec8da0d29f4d6` under
 `qualification-results/phase10-characterization-v3/rc-characterization-60bac1ef-bbe1-4df1-adb0-fa5ab310464b/`;
 it records no >10% throughput or response-P99 regression trigger. The recursive
 artifact sidecar contains 919 verified file hashes. Standard CI for source
-checkpoint `7ba7ed0` exposed an unrelated flaky core-test assertion and remains
-pending remediation; no production source was changed. Protocol v1, WAL v1,
+checkpoint `7ba7ed0` exposed an unrelated flaky core-test assertion; the same
+verification passed on docs/evidence sync `a0747bb` / CI `32802089849`, and no
+production source was changed. Protocol v1, WAL v1,
 Snapshot v1, matching, durability and single-session semantics remain frozen;
 merge, `v0.9.0-rc.1` and Product Release remain unauthorized.
 
