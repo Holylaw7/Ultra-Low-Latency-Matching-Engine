@@ -117,6 +117,9 @@ passed Standard CI `32813640675` and Quick Lane `32813640754` as external
 validation. No production source was changed. Protocol v1, WAL v1, Snapshot
 v1, matching, durability and single-session semantics remain frozen; merge,
 `v0.9.0-rc.1` and Product Release remain unauthorized.
+The final docs/evidence sync validation for `eb9a4ab` also passed Standard CI
+`32814053468` and Quick Lane `32814053459`; this is external validation only
+and does not change the fixed Closure Input `dfe1f7d`.
 
 Phase 8 remains documented by [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
 the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)

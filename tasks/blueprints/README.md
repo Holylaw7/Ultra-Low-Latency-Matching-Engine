@@ -75,5 +75,7 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   technical docs/evidence input `dfe1f7d` passed Standard CI `32813393216` and
   Quick Lane `32813393127`; docs-only status validation `b7530f6` passed
   Standard CI `32813640675` and Quick Lane `32813640754`. Final read-only
+  docs/evidence sync validation `eb9a4ab` passed Standard CI `32814053468` and
+  Quick Lane `32814053459`; this is external validation only. Final read-only
   Evidence/Closure Review remains pending. No new 60-minute Full Run was
   authorized; merge, candidate tagging and Product Release remain gated.
