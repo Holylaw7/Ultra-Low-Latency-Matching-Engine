@@ -127,8 +127,11 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | 2026-08-25 | Implementation | Qualification-only policy/evaluator and pinned workflows added; scans not executed locally |
 | 2026-08-25 | Evidence checkpoint | `b64a399`; Standard CI `32831047004` PASS; Quick `32831046928` PASS; G9/G11 scan execution pending |
 | 2026-08-25 | G9/G11 execution attempt | GitHub `workflow_dispatch` returned HTTP 404 because new workflows are not on default branch; no scan artifact; Human execution-path decision required |
+| 2026-08-25 | Approved default-branch installation | master merge `0575c76`; only `ga-qualification.yml` and `ga-security.yml`; CI `32835193395` / Quick `32835193084` PASS |
 | 2026-08-25 | G9/G11 run result | `32835408168` / `32835411241` ABORTED/B3: pinned Microsoft OpenJDK `21.0.12` unavailable (21.0.11 newest); no version substitution or retry |
+| 2026-08-25 | Controller docs checkpoint | `1ca088f`; Quick `32835630967` PASS; Standard `32835631051` failed at `Verify`; clean local rerun PASS; diagnosis pending |
 
 ### Implementation Log
 
-No implementation has begun; the preceding dated rows are the initial log.
+No further implementation is authorized; the preceding dated rows are the
+current preflight and evidence log.
