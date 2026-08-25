@@ -3,7 +3,8 @@
 ## Status
 
 `Approved / Frozen by Human Phase 11 Blueprint Approval (2026-08-25)` with the
-Human-approved Limited B3 Environment / Security Toolchain Amendment. This
+Human-approved Limited B3 Environment / Security Toolchain Amendment and the
+Human-approved optional-NVD-key credential-mode amendment. This
 manifest freezes G9/G11 tooling. Tools run only after the applicable Task
 Evidence Gate and do not modify the
 candidate build or runtime dependency graph.
@@ -156,7 +157,7 @@ The ASCII LF-terminated file
 the canonical option inventory. Its amended SHA-256 is:
 
 ```text
-6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397
+e042d191c63ee6f397d6756761f0fc969c3e97a9f5e9357c1c769f43aa2bdff5
 ```
 
 TASK-048 must verify that hash before invoking a tool. The result manifest
@@ -174,7 +175,7 @@ workflow. Line continuations are presentation only; argument values are exact.
 
 ```bash
 test "$(sha256sum docs/release/ga-security-toolchain-v1.properties | cut -d' ' -f1)" = \
-  "6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397"
+  "e042d191c63ee6f397d6756761f0fc969c3e97a9f5e9357c1c769f43aa2bdff5"
 
 mvn -B -ntp -f core/pom.xml \
   org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeBom \
@@ -193,6 +194,9 @@ mvn -B -ntp -f core/pom.xml \
   -DoutputTimestamp="${SOURCE_DATE_EPOCH}" \
   -Dcyclonedx.skipAttach=true
 
+# Select exactly one credential-mode argument set before this invocation:
+# Anonymous: -DnvdApiDelay=8000 (omit the API-key property)
+# Authenticated: -DnvdApiDelay=3500 -DnvdApiKeyEnvironmentVariable=NVD_API_KEY
 mvn -B -ntp -f core/pom.xml \
   org.owasp:dependency-check-maven:13.0.0:check \
   -DautoUpdate=true \
@@ -267,14 +271,38 @@ evidence-affecting arguments during TASK-048.
 - Suppression requires a separate Human-approved file naming CVE, dependency,
   evidence, scope and expiry. No inline/ad-hoc suppression is permitted.
 
-The workflow binds the NVD API credential only for the Dependency-Check step
-from the protected repository-level GitHub Actions secret `NVD_API_KEY` through
-`nvdApiKeyEnvironmentVariable=NVD_API_KEY`. The secret value, length, digest,
-fingerprint and any transformed form are never recorded in logs, command lines,
-caches, manifests or artifacts. Evidence may record only the logical secret
-name, protected-secret source and `present`/`used` booleans. A missing or
-invalid credential remains `ABORTED / B3`; it cannot be converted to a scan
-PASS or replaced with a prebuilt database.
+The NVD API credential is optional. When the protected repository-level GitHub
+Actions secret `NVD_API_KEY` is non-empty, the workflow uses authenticated mode
+through `nvdApiKeyEnvironmentVariable=NVD_API_KEY` with the frozen 3500 ms NVD
+request delay. When the secret is absent or empty, the workflow omits the API
+key property entirely and uses anonymous NVD access with the frozen 8000 ms
+request delay. An empty value is never passed as an API key.
+
+Both modes must complete the same Dependency-Check `13.0.0` scan, obtain usable
+NVD data no older than 24 hours, produce the required JSON/SARIF reports and
+provenance, and satisfy the unchanged CVSS, license, SBOM and secret policies.
+Missing/unusable NVD data, stale data, scanner errors or missing reports remain
+`ABORTED`/B3; optional credentials do not turn a failed scan into PASS and do
+not permit a prebuilt or stale database.
+
+The secret value, length, digest, fingerprint and any transformed form are
+never recorded in logs, command lines, caches, manifests or artifacts. Evidence
+may record only `credential.logicalName`, `credential.present`,
+`credential.used` and `credential.mode` (`AUTHENTICATED` or `ANONYMOUS`), plus
+the non-secret mode/delay provenance. The workflow also emits a
+G11-specific `nvd-configuration-identity.txt`; its canonical
+`configuration.identitySha256` input includes the selected credential mode and
+approved delay, but never secret material.
+
+The canonical policy freezes the mode contract as follows:
+
+| Mode | API-key property | NVD request delay |
+| --- | --- | ---: |
+| `AUTHENTICATED` | `nvdApiKeyEnvironmentVariable=NVD_API_KEY` | `3500` ms |
+| `ANONYMOUS` | omitted | `8000` ms |
+
+This is a credential-mode amendment only. It does not alter Dependency-Check,
+freshness, severity, suppression, license, SBOM or candidate identity rules.
 
 ## Secret policy
 

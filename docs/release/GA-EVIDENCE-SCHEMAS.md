@@ -149,6 +149,15 @@ Constraints:
 - `comparability.identitySha256` hashes JDK/JVM/GC/heap/OS/CPU/filesystem/
   storage/Netty allocator/JFR configuration fields required by that Gate.
 
+For G11, the immutable evidence directory also contains non-secret
+`nvd-credential-provenance.txt` fields for `credential.logicalName`,
+`credential.present`, `credential.used` and `credential.mode`, together with
+`nvd-configuration-identity.txt`. The latter records a G11-specific
+`configuration.identitySha256` over the candidate, controller, policy,
+scanner, freshness, selected `AUTHENTICATED`/`ANONYMOUS` mode and approved
+delay. Secret material and derived forms are never schema data. This
+credential-mode amendment does not change the v1 field inventory.
+
 ## `ga-gate-result-v1`
 
 Required fixed fields:

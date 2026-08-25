@@ -260,6 +260,15 @@ The normative details are in the GA Qualification Matrix.
 - [ ] No Critical/High runtime vulnerability, verified committed secret or
   prohibited runtime license exists; scanner provenance is retained.
 
+The Human-approved limited security-toolchain amendment makes `NVD_API_KEY`
+optional without weakening G11. A non-empty key selects authenticated mode
+with `nvdApiKeyEnvironmentVariable=NVD_API_KEY` and a 3500 ms request delay;
+an absent/empty key selects anonymous mode, omits the API-key property and uses
+an 8000 ms request delay. Both modes must complete Dependency-Check 13.0.0,
+meet the <=24h NVD freshness bound and produce validated JSON/SARIF and
+provenance. Missing/unusable data, scanner errors or missing reports remain
+ABORTED/B3. No G9/G11 execution is authorized by this amendment.
+
 ### G12 Evidence Audit
 
 - [ ] All G1-G12 results reference the same candidate and valid immutable
@@ -458,11 +467,11 @@ explicit Human Phase 11 Closure Approval. Phase Closure does not create
 
 ```text
 Blueprint Status: Approved — Human Phase 11 Blueprint Approval 2026-08-25
-Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 B2/B3 remediation in progress after final evidence CHANGES REQUIRED; TASK-049..056 dependency ordered and locked
+Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 optional-NVD-key security-toolchain amendment in progress after final evidence CHANGES REQUIRED; TASK-049..056 dependency ordered and locked
 Qualification Campaigns: Not Authorized
 RC mutation: Not Authorized
 v1.0.0 / GitHub Release / GA: Not Authorized
-Next Gate: Remediation Evidence Gate, then Human Replacement Execution Gate; no automatic third run
+Next Gate: Optional-key remediation Evidence Gate, then Human Replacement Execution Gate; no automatic third run
 ```
 
 ## 23. Execution Checkpoints
@@ -478,7 +487,8 @@ Next Gate: Remediation Evidence Gate, then Human Replacement Execution Gate; no 
 | 2026-08-25 | Limited B3 toolchain amendment | APPROVED | Official archive `microsoft-jdk-21.0.12-linux-x64.tar.gz`; SHA-256 `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f`; amended policy SHA `6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397` | Human replacement-run approval |
 | 2026-08-25 | B2/B3 remediation Evidence Gate | PASS | implementation `b44fc4d`; final docs/status `c01977a`; Standard `32845529323`; Quick `32845529342`; G9 `32842119210` and G11 `32842122498` preserved FAIL/non-qualifying | Human replacement G9/G11 execution approval required |
 | 2026-08-25 | Human-authorized replacement execution | CHANGES REQUIRED | G9 `32847427690` technical workflow PASS but zero persisted artifacts; G11 `32847442506` FAIL/B3 because protected `NVD_API_KEY` was absent; old failures preserved; no third run | Sol High B2/B3 final evidence review |
-| 2026-08-25 | Human Limited B2/B3 remediation (current) | AUTHORIZED / IN PROGRESS | Add pinned `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` publication contract; provision repository-level `NVD_API_KEY` without exposing its value; no replacement execution | Remediation Evidence Gate |
+| 2026-08-25 | Human Limited B2/B3 remediation (historical / superseded) | COMPLETED / SUPERSEDED | Added the pinned `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` publication contract; repository-level `NVD_API_KEY` provisioning was later superseded by the optional-key amendment; no replacement execution | Optional-key remediation Evidence Gate |
+| 2026-08-25 | Human Limited optional-NVD-key amendment (current) | AUTHORIZED / IN PROGRESS | `NVD_API_KEY` optional; authenticated/anonymous mode with 3500/8000 ms delays; Dependency-Check/freshness/policies unchanged; no G9/G11 execution | Remediation Evidence Gate |
 
 ## 24. Phase Closure Checklist
 

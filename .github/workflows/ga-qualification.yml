@@ -71,7 +71,7 @@ jobs:
           test "$(git rev-parse 'refs/tags/v0.9.0-rc.1^{}')" = \
             e2828f563ee41316c062385c0244ac1336731359
           test "$(sha256sum docs/release/ga-security-toolchain-v1.properties | cut -d' ' -f1)" = \
-            6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397
+            e042d191c63ee6f397d6756761f0fc969c3e97a9f5e9357c1c769f43aa2bdff5
           {
             printf 'controller.gitSha=%s\n' "$GITHUB_SHA"
             printf 'candidate.productionSha=%s\n' \

@@ -1,6 +1,7 @@
 package com.ultralatency.matching.qualification.ga.security;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,6 +32,9 @@ class GaSecurityPolicyTest {
         assertEquals("f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f",
                 parsed.value("jdk.archiveSha256"));
         assertEquals("linux-x64", parsed.value("jdk.platform"));
+        assertEquals("8000", parsed.value("dependencyCheck.nvdApiDelayAnonymousMillis"));
+        assertEquals("3500", parsed.value("dependencyCheck.nvdApiDelayAuthenticatedMillis"));
+        assertEquals("OPTIONAL", parsed.value("dependencyCheck.nvdCredentialMode"));
         assertTrue(parsed.acceptsRuntimeLicense("Apache-2.0"));
         assertTrue(!parsed.acceptsRuntimeLicense("GPL-3.0-only"));
     }
@@ -55,6 +59,32 @@ class GaSecurityPolicyTest {
         }) {
             assertThrows(IllegalArgumentException.class, () -> GaSecurityPolicy.parse(mutation));
         }
+    }
+
+    @Test
+    void keepsNvdCredentialModeOptionalAndExplicit() throws Exception {
+        final Path workflow = Path.of("..", ".github", "workflows", "ga-security.yml")
+                .toAbsolutePath().normalize();
+        if (!Files.isRegularFile(workflow)) {
+            return;
+        }
+        final String yaml = Files.readString(workflow, StandardCharsets.UTF_8);
+        assertTrue(yaml.contains("credential_mode=ANONYMOUS"));
+        assertTrue(yaml.contains("credential_mode=AUTHENTICATED"));
+        assertTrue(yaml.contains("NVD_API_DELAY=8000"));
+        assertTrue(yaml.contains("NVD_API_DELAY=3500"));
+        assertTrue(yaml.contains("credential.mode=%s"));
+        assertTrue(yaml.contains("nvd.credentialMode=%s"));
+        assertTrue(yaml.contains("nvd-configuration-identity.txt"));
+        assertTrue(yaml.contains("configuration.identitySha256=%s"));
+        assertTrue(yaml.contains("nvd.configurationIdentitySha256=%s"));
+        assertTrue(yaml.contains("dependencyCheck.nvdCredentialMode=%s"));
+        assertTrue(yaml.contains("test -s core/target/dependency-check-report.json"));
+        assertTrue(yaml.contains("test -s core/target/dependency-check-report.sarif"));
+        assertFalse(yaml.contains("NVD credential is absent; refusing"));
+        final int branch = yaml.indexOf("if [ \"$credential_mode\" = AUTHENTICATED ]; then");
+        final int keyProperty = yaml.indexOf("-DnvdApiKeyEnvironmentVariable=NVD_API_KEY");
+        assertTrue(branch >= 0 && keyProperty > branch);
     }
 
     private static byte[] concat(final byte[] first, final byte[] second) {

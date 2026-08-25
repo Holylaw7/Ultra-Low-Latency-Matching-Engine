@@ -65,7 +65,7 @@ jobs:
           export GA_CACHE_DIR="$RUNNER_TEMP/ga-security-cache"
           mkdir -p "$GA_EVIDENCE_DIR" "$GA_CACHE_DIR"
           test "$(sha256sum docs/release/ga-security-toolchain-v1.properties | cut -d' ' -f1)" = \
-            6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397
+            e042d191c63ee6f397d6756761f0fc969c3e97a9f5e9357c1c769f43aa2bdff5
           test "$(git rev-parse --is-shallow-repository)" = false
           test "$(git rev-parse refs/tags/v0.9.0-rc.1)" = \
             dfd38c08e80aed9035bf1c2d7c8faf8bae99c356
@@ -132,42 +132,83 @@ jobs:
           export NVD_DATA_DIR="$GA_CACHE_DIR/dependency-check-data"
           export CREDENTIAL_PROVENANCE_TMP="$GA_EVIDENCE_DIR/nvd-credential-provenance.tmp"
           export CREDENTIAL_PROVENANCE="$GA_EVIDENCE_DIR/nvd-credential-provenance.txt"
+          export NVD_CONFIGURATION_INPUT_TMP="$GA_EVIDENCE_DIR/nvd-configuration-identity-input.tmp"
+          export NVD_CONFIGURATION_INPUT="$GA_EVIDENCE_DIR/nvd-configuration-identity-input.txt"
+          export NVD_CONFIGURATION_IDENTITY_TMP="$GA_EVIDENCE_DIR/nvd-configuration-identity.tmp"
+          export NVD_CONFIGURATION_IDENTITY="$GA_EVIDENCE_DIR/nvd-configuration-identity.txt"
           export NVD_PROVENANCE_TMP="$GA_EVIDENCE_DIR/nvd-update-provenance.tmp"
           export NVD_PROVENANCE="$GA_EVIDENCE_DIR/nvd-update-provenance.txt"
           credential_present=false
+          credential_mode=ANONYMOUS
+          credential_used=false
+          NVD_API_DELAY=8000
+          nvd_api_key_environment_variable=none
           if [ -n "${NVD_API_KEY:-}" ]; then
             credential_present=true
+            credential_mode=AUTHENTICATED
+            credential_used=true
+            NVD_API_DELAY=3500
+            nvd_api_key_environment_variable=NVD_API_KEY
           fi
+          policy_sha256="$(sha256sum "$GITHUB_WORKSPACE/docs/release/ga-security-toolchain-v1.properties" | cut -d' ' -f1)"
+          test "$policy_sha256" = \
+            e042d191c63ee6f397d6756761f0fc969c3e97a9f5e9357c1c769f43aa2bdff5
+          controller_git_sha="$(git -C "$GITHUB_WORKSPACE" rev-parse HEAD)"
+          {
+            printf 'candidate.productionSha=e2828f563ee41316c062385c0244ac1336731359\n'
+            printf 'candidate.tagObjectSha=dfd38c08e80aed9035bf1c2d7c8faf8bae99c356\n'
+            printf 'controller.gitSha=%s\n' "$controller_git_sha"
+            printf 'dependencyCheck.cvssThreshold=7.0\n'
+            printf 'dependencyCheck.dataFreshnessHours=24\n'
+            printf 'dependencyCheck.nvdApiDelayMillis=%s\n' "$NVD_API_DELAY"
+            printf 'dependencyCheck.nvdApiKeyEnvironmentVariable=%s\n' \
+              "$nvd_api_key_environment_variable"
+            printf 'dependencyCheck.nvdCredentialMode=%s\n' "$credential_mode"
+            printf 'dependencyCheck.scanner=org.owasp:dependency-check-maven:13.0.0\n'
+            printf 'policy.propertiesSha256=%s\n' "$policy_sha256"
+          } > "$NVD_CONFIGURATION_INPUT_TMP"
+          mv -f "$NVD_CONFIGURATION_INPUT_TMP" "$NVD_CONFIGURATION_INPUT"
+          nvd_configuration_identity_sha256="$(sha256sum "$NVD_CONFIGURATION_INPUT" | cut -d' ' -f1)"
+          {
+            cat "$NVD_CONFIGURATION_INPUT"
+            printf 'configuration.identitySha256=%s\n' "$nvd_configuration_identity_sha256"
+          } > "$NVD_CONFIGURATION_IDENTITY_TMP"
+          mv -f "$NVD_CONFIGURATION_IDENTITY_TMP" "$NVD_CONFIGURATION_IDENTITY"
           {
             printf 'credential.logicalName=NVD_API_KEY\n'
-            printf 'credential.source=GitHub Actions protected secret\n'
             printf 'credential.present=%s\n' "$credential_present"
-            printf 'credential.used=false\n'
-          } > "$CREDENTIAL_PROVENANCE_TMP"
-          mv -f "$CREDENTIAL_PROVENANCE_TMP" "$CREDENTIAL_PROVENANCE"
-          if [ "$credential_present" != true ]; then
-            echo 'NVD credential is absent; refusing to run Dependency-Check.' >&2
-            exit 1
-          fi
-          {
-            printf 'credential.logicalName=NVD_API_KEY\n'
-            printf 'credential.source=GitHub Actions protected secret\n'
-            printf 'credential.present=true\n'
-            printf 'credential.used=true\n'
+            printf 'credential.used=%s\n' "$credential_used"
+            printf 'credential.mode=%s\n' "$credential_mode"
           } > "$CREDENTIAL_PROVENANCE_TMP"
           mv -f "$CREDENTIAL_PROVENANCE_TMP" "$CREDENTIAL_PROVENANCE"
           export NVD_UPDATE_STARTED="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           cd "$RUNNER_TEMP/ga-security-candidate"
           set +e
-          mvn -B -ntp -f core/pom.xml \
-            org.owasp:dependency-check-maven:13.0.0:check \
-            -Dmaven.repo.local="$REPO" -DautoUpdate=true -DdataDirectory="$NVD_DATA_DIR" \
-            -DnvdApiKeyEnvironmentVariable=NVD_API_KEY \
-            -Dformats=JSON,SARIF -DfailBuildOnCVSS=7.0 -DfailOnError=true \
-            -DskipTestScope=true -DskipProvidedScope=true -DskipRuntimeScope=false \
-            -DskipSystemScope=true -DskipDependencyManagement=true -DscanDependencies=true \
-            -DscanPlugins=false -DenableExperimental=false -DenableRetired=false \
-            -DversionCheckEnabled=false -DfailBuildOnUnusedSuppressionRule=true
+          declare -a DEPENDENCY_CHECK_ARGS=(
+            org.owasp:dependency-check-maven:13.0.0:check
+            "-Dmaven.repo.local=$REPO"
+            "-DautoUpdate=true"
+            "-DdataDirectory=$NVD_DATA_DIR"
+            "-DnvdApiDelay=$NVD_API_DELAY"
+            "-Dformats=JSON,SARIF"
+            "-DfailBuildOnCVSS=7.0"
+            "-DfailOnError=true"
+            "-DskipTestScope=true"
+            "-DskipProvidedScope=true"
+            "-DskipRuntimeScope=false"
+            "-DskipSystemScope=true"
+            "-DskipDependencyManagement=true"
+            "-DscanDependencies=true"
+            "-DscanPlugins=false"
+            "-DenableExperimental=false"
+            "-DenableRetired=false"
+            "-DversionCheckEnabled=false"
+            "-DfailBuildOnUnusedSuppressionRule=true"
+          )
+          if [ "$credential_mode" = AUTHENTICATED ]; then
+            DEPENDENCY_CHECK_ARGS+=("-DnvdApiKeyEnvironmentVariable=NVD_API_KEY")
+          fi
+          mvn -B -ntp -f core/pom.xml "${DEPENDENCY_CHECK_ARGS[@]}"
           scan_status=$?
           set -e
           export NVD_UPDATE_FINISHED="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -187,13 +228,18 @@ jobs:
             printf 'nvd.dataDirectoryPresent=%s\n' "$data_directory_present"
             printf 'nvd.dataFreshnessLimitSeconds=86400\n'
             printf 'nvd.scanner=org.owasp:dependency-check-maven:13.0.0\n'
-            printf 'nvd.apiKeyEnvironmentVariable=NVD_API_KEY\n'
+            printf 'nvd.apiKeyEnvironmentVariable=%s\n' "$nvd_api_key_environment_variable"
+            printf 'nvd.apiDelayMillis=%s\n' "$NVD_API_DELAY"
+            printf 'nvd.credentialMode=%s\n' "$credential_mode"
+            printf 'nvd.configurationIdentitySha256=%s\n' "$nvd_configuration_identity_sha256"
             printf 'nvd.scanExitCode=%s\n' "$scan_status"
           } > "$NVD_PROVENANCE_TMP"
           mv -f "$NVD_PROVENANCE_TMP" "$NVD_PROVENANCE"
           if [ "$scan_status" -ne 0 ]; then
             exit "$scan_status"
           fi
+          test -s core/target/dependency-check-report.json
+          test -s core/target/dependency-check-report.sarif
           test "$data_directory_present" = true
           test -z "$(find "$NVD_DATA_DIR" -mindepth 1 -type l -print -quit)"
           test -z "$(find "$NVD_DATA_DIR" -mindepth 1 ! -type f ! -type d -print -quit)"
@@ -216,7 +262,10 @@ jobs:
             printf 'nvd.dataLatestFileAgeSeconds=%s\n' "$data_age_seconds"
             printf 'nvd.dataFreshnessLimitSeconds=86400\n'
             printf 'nvd.scanner=org.owasp:dependency-check-maven:13.0.0\n'
-            printf 'nvd.apiKeyEnvironmentVariable=NVD_API_KEY\n'
+            printf 'nvd.apiKeyEnvironmentVariable=%s\n' "$nvd_api_key_environment_variable"
+            printf 'nvd.apiDelayMillis=%s\n' "$NVD_API_DELAY"
+            printf 'nvd.credentialMode=%s\n' "$credential_mode"
+            printf 'nvd.configurationIdentitySha256=%s\n' "$nvd_configuration_identity_sha256"
             printf 'nvd.dataFileCount=%s\n' "$(wc -l < "$GA_EVIDENCE_DIR/nvd-data-inventory")"
             printf 'nvd.scanExitCode=%s\n' "$scan_status"
           } > "$NVD_PROVENANCE_TMP"
