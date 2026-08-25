@@ -149,14 +149,28 @@ Constraints:
 - `comparability.identitySha256` hashes JDK/JVM/GC/heap/OS/CPU/filesystem/
   storage/Netty allocator/JFR configuration fields required by that Gate.
 
-For G11, the immutable evidence directory also contains non-secret
+For G11, the immutable evidence directory contains non-secret
 `nvd-credential-provenance.txt` fields for `credential.logicalName`,
-`credential.present`, `credential.used` and `credential.mode`, together with
-`nvd-configuration-identity.txt`. The latter records a G11-specific
-`configuration.identitySha256` over the candidate, controller, policy,
-scanner, freshness, selected `AUTHENTICATED`/`ANONYMOUS` mode and approved
-delay. Secret material and derived forms are never schema data. This
-credential-mode amendment does not change the v1 field inventory.
+`credential.present`, `credential.used`, `credential.mode` and
+`credential.source`. Under the approved Data-Feed Amendment the mode is
+`NOT_REQUIRED` and the source is `OFFICIAL_NVD_JSON_2_0_FEED`; no API-key
+value or derived form is schema data. It also contains
+`nvd-feed/nvdcve-2.0-modified.meta`,
+`nvd-feed/nvdcve-2.0-modified.json.gz` and
+`nvd-update-provenance.txt` with the official feed URL/template, metadata
+SHA-256, compressed archive SHA-256, uncompressed content SHA-256,
+`lastModifiedDate`, byte sizes and measured age. The feed's `.meta` SHA-256
+may use the official uppercase hexadecimal spelling; the validator accepts it
+case-insensitively and records the canonical lowercase digest. The feed's
+`.meta` SHA-256 describes the uncompressed JSON content; the separately
+recorded archive SHA-256 covers the downloaded gzip bytes. The feed is validated before
+Dependency-Check runs, and Dependency-Check 13.0.0 remains the only
+dependency-to-CVE analyzer. `nvd-configuration-identity.txt` records a
+G11-specific `configuration.identitySha256` over the candidate, controller,
+policy, scanner, official feed template/format/name and freshness criterion.
+Missing, malformed, stale or unusable feed data, scanner errors and missing
+JSON/SARIF reports remain fail-closed. This is a narrow v1 evidence amendment;
+it does not change candidate identity or any G1-G12 threshold.
 
 ## `ga-gate-result-v1`
 

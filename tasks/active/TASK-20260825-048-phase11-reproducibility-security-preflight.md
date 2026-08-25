@@ -5,11 +5,11 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-048` — Reproducibility and Security Preflight |
-| Status | `In Progress — B3 environment-isolation remediation Evidence Gate PASS at bdceeb5; G9 32856372581 PASS/qualifying/frozen; G11 32856384325 FAIL/B3/preserved; no G11 replacement execution authorized` |
+| Status | `In Progress — Limited Data-Feed Amendment implementation; G9 32856372581 PASS/qualifying/frozen; G11 32863465378 FAIL/B3/preserved; no replacement execution authorized` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Depends On | TASK-047 Evidence Gate PASS after Human Blueprint Approval |
-| Next Gate | Separate Human G11 Replacement Execution Gate; no automatic retry |
+| Next Gate | Data-Feed remediation Evidence Gate; then separate Human G11 Replacement Execution Gate; no automatic retry |
 
 ## 2. Goal
 
@@ -80,10 +80,10 @@ policy details are frozen in ADR-0019, not chosen during implementation.
 | Path | Change |
 | --- | --- |
 | `.github/workflows/ga-qualification.yml` | new read-only reproducibility workflow with approved Microsoft JDK archive provisioning |
-| `.github/workflows/ga-security.yml` | new pinned G11 workflow with approved Microsoft JDK archive provisioning and optional protected-secret/anonymous NVD binding |
+| `.github/workflows/ga-security.yml` | new pinned G11 workflow with approved Microsoft JDK archive provisioning and official NVD JSON 2.0 feed validation |
 | `qualification/**/ga/security/**` | report normalization and license policy validator |
 | qualification tests/resources | tool-manifest/hash/policy fixtures |
-| `docs/release/ga-security-toolchain-v1.properties` | consume approved canonical tool options and frozen JDK archive digest; no implementation-time choice |
+| `docs/release/ga-security-toolchain-v1.properties` | consume approved canonical tool options, official feed template and frozen JDK archive digest; no implementation-time choice |
 | `tasks/reports/PHASE-11-task-048.md` | evidence report |
 
 ## 12. Detailed Test / Profile Plan
@@ -119,7 +119,7 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | --- | --- | --- |
 | Blueprint | Approved | Human Phase 11 Blueprint Approval |
 | Implementation | In Progress | TASK-047 Evidence Gate PASS |
-| Preflight | B3 environment-isolation remediation Evidence Gate PASS at `bdceeb5`; separate G11 replacement gate pending | G9 `32856372581` PASS/qualifying/frozen; G11 `32856384325` FAIL/B3/preserved; no G11 rerun |
+| Preflight | Limited Data-Feed Amendment in progress; separate G11 replacement gate pending | G9 `32856372581` PASS/qualifying/frozen; G11 `32863465378` FAIL/B3/preserved; no G11 rerun |
 
 | Date | Reviewer | Decision / log |
 | --- | --- | --- |
@@ -134,28 +134,20 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | 2026-08-25 | Human Limited B2/B3 Remediation | G9 recursive evidence packager and G11 protected NVD credential binding authorized; replacement failures `32842119210` / `32842122498` preserved |
 | 2026-08-25 | B2/B3 Remediation Evidence Gate | Implementation `b44fc4d`; final docs/status `c01977a`; Standard `32845529323` PASS; Quick `32845529342` PASS; replacement G9/G11 execution requires new Human approval |
 | 2026-08-25 | Human-authorized replacement execution | G9 `32847427690` workflow PASS but artifact publication incomplete; G11 `32847442506` FAIL/B3 due absent `NVD_API_KEY`; final Evidence Gate CHANGES REQUIRED; no third run |
-| 2026-08-25 | Human Limited optional-NVD-key amendment (current) | API key made optional; authenticated mode uses 3500 ms delay and anonymous mode omits the key property and uses 8000 ms delay; Dependency-Check/freshness/policies unchanged; no replacement execution |
+| 2026-08-25 | Human Limited optional-NVD-key amendment (historical / superseded) | API key was made optional for an API-mode attempt; the official JSON 2.0 Data-Feed Amendment supersedes that path; no replacement execution |
 | 2026-08-25 | Human Limited B3 environment-isolation remediation | Authorized to keep the secret out of the anonymous scanner step and invoke it with `env -u NVD_API_KEY`; G9 `32856372581` PASS/frozen; G11 `32856384325` preserved FAIL; no G11 rerun |
 | 2026-08-25 | B3 remediation Evidence Gate | PASS — `bdceeb588f163465040b315da2ae1fa4a444bc31`; Standard `32862255686` PASS; Quick `32862256047` PASS; G11 replacement remains separately Human-gated |
+| 2026-08-25 | Human Limited Data-Feed Amendment | Approved Dependency-Check `13.0.0` plus official NVD JSON 2.0 feed; API key no longer required; feed metadata/archive integrity and <=24h freshness remain mandatory; no G11 execution |
 
 ### Implementation Log
 
-The current limited remediation is qualification-only. It may change the two
-new GA workflow publication paths and the corresponding evidence/status
-documents, but it may not change the candidate, production code, scanner,
-policy, thresholds or existing failed artifacts. The repository secret value
-is not handled by the agent. A future replacement execution must use the
-approved authenticated/anonymous mode contract and still requires a separate
-Human gate.
-
-The Human-approved optional-NVD-key amendment now permits either authenticated
-or anonymous NVD API access. A non-scanner mode-selection step reads the
-protected secret through a temporary input name; only the authenticated scanner
-step declares `NVD_API_KEY`, uses environment-variable indirection and a 3500 ms
-request delay. The anonymous scanner step declares no such environment entry,
-asserts absence and invokes Maven with `env -u NVD_API_KEY`, using an 8000 ms
-request delay.
-Both modes require a real Dependency-Check 13.0.0 scan, usable NVD data no
-older than 24 hours, JSON/SARIF reports, provenance and unchanged CVSS 7.0,
-license, SBOM and secret policies. This remediation does not execute G9/G11,
-reclassify prior failures or unlock TASK-049.
+The current limited remediation is qualification-only. It may change the new
+G11 workflow feed acquisition/validation path, the corresponding qualification
+tests and evidence/status documents, but it may not change the candidate,
+production code, root/core POM, Dependency-Check version, policy thresholds or
+existing failed artifacts. The official NVD JSON 2.0 feed is validated before
+the scanner; Dependency-Check remains the only vulnerability analyzer. The
+validator records metadata/archive/content digests, sizes, `lastModifiedDate`
+and measured age, while the scanner receives the approved feed template. This
+remediation does not execute G9/G11, reclassify prior failures or unlock
+TASK-049.

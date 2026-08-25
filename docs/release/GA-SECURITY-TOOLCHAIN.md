@@ -3,8 +3,7 @@
 ## Status
 
 `Approved / Frozen by Human Phase 11 Blueprint Approval (2026-08-25)` with the
-Human-approved Limited B3 Environment / Security Toolchain Amendment and the
-Human-approved optional-NVD-key credential-mode amendment. This
+Human-approved Limited Data-Feed Amendment. This
 manifest freezes G9/G11 tooling. Tools run only after the applicable Task
 Evidence Gate and do not modify the
 candidate build or runtime dependency graph.
@@ -157,7 +156,7 @@ The ASCII LF-terminated file
 the canonical option inventory. Its amended SHA-256 is:
 
 ```text
-e042d191c63ee6f397d6756761f0fc969c3e97a9f5e9357c1c769f43aa2bdff5
+c677eaa8c09b17d6212f578830fa5e483f9b5bd961b8f477585d9d576ab5700e
 ```
 
 TASK-048 must verify that hash before invoking a tool. The result manifest
@@ -175,7 +174,7 @@ workflow. Line continuations are presentation only; argument values are exact.
 
 ```bash
 test "$(sha256sum docs/release/ga-security-toolchain-v1.properties | cut -d' ' -f1)" = \
-  "e042d191c63ee6f397d6756761f0fc969c3e97a9f5e9357c1c769f43aa2bdff5"
+  "c677eaa8c09b17d6212f578830fa5e483f9b5bd961b8f477585d9d576ab5700e"
 
 mvn -B -ntp -f core/pom.xml \
   org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeBom \
@@ -194,13 +193,15 @@ mvn -B -ntp -f core/pom.xml \
   -DoutputTimestamp="${SOURCE_DATE_EPOCH}" \
   -Dcyclonedx.skipAttach=true
 
-# Select exactly one credential-mode argument set before this invocation:
-# Anonymous: -DnvdApiDelay=8000 (omit the API-key property)
-# Authenticated: -DnvdApiDelay=3500 -DnvdApiKeyEnvironmentVariable=NVD_API_KEY
+# Validate the official NVD JSON 2.0 modified feed before this invocation.
+# The validator records the .meta digest, compressed archive digest,
+# uncompressed content digest, byte sizes, lastModifiedDate and age.
+# Dependency-Check remains the only dependency-to-CVE analyzer.
 mvn -B -ntp -f core/pom.xml \
   org.owasp:dependency-check-maven:13.0.0:check \
   -DautoUpdate=true \
   -DdataDirectory="${GA_CACHE_DIR}/dependency-check-data" \
+  -DnvdDatafeedUrl="https://nvd.nist.gov/feeds/json/cve/2.0/nvdcve-2.0-{0}.json.gz" \
   -Dformats=JSON,SARIF \
   -DfailBuildOnCVSS=7.0 \
   -DfailOnError=true \
@@ -271,42 +272,29 @@ evidence-affecting arguments during TASK-048.
 - Suppression requires a separate Human-approved file naming CVE, dependency,
   evidence, scope and expiry. No inline/ad-hoc suppression is permitted.
 
-The NVD API credential is optional. When the protected repository-level GitHub
-Actions secret `NVD_API_KEY` is non-empty, the workflow uses authenticated mode
-through `nvdApiKeyEnvironmentVariable=NVD_API_KEY` with the frozen 3500 ms NVD
-request delay. When the secret is absent or empty, the workflow omits the API
-key property entirely and uses anonymous NVD access with the frozen 8000 ms
-request delay. A non-scanner mode-selection step may inspect the protected
-secret through a temporary input name, but only the authenticated scanner step
-declares `NVD_API_KEY`. The anonymous scanner step has no such environment entry
-and invokes Maven with `env -u NVD_API_KEY`; the scanner process must observe
-the variable as absent, never as an empty value.
+The approved acquisition mode is the official NVD JSON 2.0 data feed. The
+workflow downloads `nvdcve-2.0-modified.meta` and its gzip archive from
+`https://nvd.nist.gov/feeds/json/cve/2.0`, validates the metadata fields
+`lastModifiedDate`, `size`, `gzSize` and `sha256`, verifies gzip integrity,
+compressed byte size and the SHA-256 of the uncompressed JSON, and rejects
+future or older-than-24-hour metadata. The official `.meta` hexadecimal digest
+is accepted case-insensitively and recorded in canonical lowercase form. It
+records both feed URLs, the metadata
+SHA-256, compressed archive SHA-256, uncompressed content SHA-256, sizes and
+freshness in `nvd-update-provenance.txt` and publishes the validated feed files
+with the immutable G11 artifact. Dependency-Check `13.0.0` then receives the
+same official template through `-DnvdDatafeedUrl`; it performs the normal
+dependency analysis and emits JSON/SARIF. No custom vulnerability matcher is
+implemented.
 
-Both modes must complete the same Dependency-Check `13.0.0` scan, obtain usable
-NVD data no older than 24 hours, produce the required JSON/SARIF reports and
-provenance, and satisfy the unchanged CVSS, license, SBOM and secret policies.
-Missing/unusable NVD data, stale data, scanner errors or missing reports remain
-`ABORTED`/B3; optional credentials do not turn a failed scan into PASS and do
-not permit a prebuilt or stale database.
-
-The secret value, length, digest, fingerprint and any transformed form are
-never recorded in logs, command lines, caches, manifests or artifacts. Evidence
-may record only `credential.logicalName`, `credential.present`,
-`credential.used` and `credential.mode` (`AUTHENTICATED` or `ANONYMOUS`), plus
-the non-secret mode/delay provenance. The workflow also emits a
-G11-specific `nvd-configuration-identity.txt`; its canonical
-`configuration.identitySha256` input includes the selected credential mode and
-approved delay, but never secret material.
-
-The canonical policy freezes the mode contract as follows:
-
-| Mode | API-key property | NVD request delay |
-| --- | --- | ---: |
-| `AUTHENTICATED` | `nvdApiKeyEnvironmentVariable=NVD_API_KEY` | `3500` ms |
-| `ANONYMOUS` | omitted | `8000` ms |
-
-This is a credential-mode amendment only. It does not alter Dependency-Check,
-freshness, severity, suppression, license, SBOM or candidate identity rules.
+`NVD_API_KEY` is not required or passed to the scanner. The credential
+provenance records only `credential.logicalName=NVD_API_KEY`,
+`credential.present=false`, `credential.used=false`,
+`credential.mode=NOT_REQUIRED` and the official feed source. Missing,
+malformed, stale or unusable feed data, scanner errors, missing reports or
+evidence-integrity failures remain `ABORTED`/B3. This data-feed amendment does
+not alter Dependency-Check, freshness, severity, suppression, license, SBOM,
+candidate identity or any G1-G12 threshold.
 
 ## Secret policy
 

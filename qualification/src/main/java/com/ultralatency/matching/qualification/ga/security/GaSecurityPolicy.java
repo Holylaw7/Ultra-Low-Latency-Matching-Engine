@@ -26,7 +26,7 @@ public final class GaSecurityPolicy {
 
     /** SHA-256 of the approved canonical toolchain properties file. */
     public static final String APPROVED_PROPERTIES_SHA256 =
-            "e042d191c63ee6f397d6756761f0fc969c3e97a9f5e9357c1c769f43aa2bdff5";
+            "c677eaa8c09b17d6212f578830fa5e483f9b5bd961b8f477585d9d576ab5700e";
 
     private static final Set<String> REQUIRED_KEYS = Set.of(
             "action.checkout.sha", "action.setupJava.sha", "checkout.fetchDepth",
@@ -41,8 +41,9 @@ public final class GaSecurityPolicy {
             "dependencyCheck.enableRetired", "dependencyCheck.failBuildOnCvss",
             "dependencyCheck.failBuildOnUnusedSuppressionRule", "dependencyCheck.failOnError",
             "dependencyCheck.formats", "dependencyCheck.goal", "dependencyCheck.jarSha256",
-            "dependencyCheck.nvdApiDelayAnonymousMillis",
-            "dependencyCheck.nvdApiDelayAuthenticatedMillis", "dependencyCheck.nvdCredentialMode",
+            "dependencyCheck.nvdDatafeedUrlTemplate", "dependencyCheck.nvdFeedBaseUrl",
+            "dependencyCheck.nvdFeedFormat", "dependencyCheck.nvdFeedMode",
+            "dependencyCheck.nvdFeedName",
             "dependencyCheck.scanDependencies", "dependencyCheck.scanPlugins",
             "dependencyCheck.skipDependencyManagement", "dependencyCheck.skipProvidedScope",
             "dependencyCheck.skipRuntimeScope", "dependencyCheck.skipSystemScope",

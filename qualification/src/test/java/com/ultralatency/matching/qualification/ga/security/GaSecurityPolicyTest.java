@@ -32,9 +32,13 @@ class GaSecurityPolicyTest {
         assertEquals("f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f",
                 parsed.value("jdk.archiveSha256"));
         assertEquals("linux-x64", parsed.value("jdk.platform"));
-        assertEquals("8000", parsed.value("dependencyCheck.nvdApiDelayAnonymousMillis"));
-        assertEquals("3500", parsed.value("dependencyCheck.nvdApiDelayAuthenticatedMillis"));
-        assertEquals("OPTIONAL", parsed.value("dependencyCheck.nvdCredentialMode"));
+        assertEquals("https://nvd.nist.gov/feeds/json/cve/2.0/nvdcve-2.0-{0}.json.gz",
+                parsed.value("dependencyCheck.nvdDatafeedUrlTemplate"));
+        assertEquals("https://nvd.nist.gov/feeds/json/cve/2.0",
+                parsed.value("dependencyCheck.nvdFeedBaseUrl"));
+        assertEquals("JSON_2.0_GZIP", parsed.value("dependencyCheck.nvdFeedFormat"));
+        assertEquals("OFFICIAL", parsed.value("dependencyCheck.nvdFeedMode"));
+        assertEquals("nvdcve-2.0-modified", parsed.value("dependencyCheck.nvdFeedName"));
         assertTrue(parsed.acceptsRuntimeLicense("Apache-2.0"));
         assertTrue(!parsed.acceptsRuntimeLicense("GPL-3.0-only"));
     }
@@ -62,49 +66,36 @@ class GaSecurityPolicyTest {
     }
 
     @Test
-    void keepsNvdCredentialModeOptionalAndExplicit() throws Exception {
+    void usesOfficialNvdJsonFeedAndKeepsApiKeyOutOfTheScanner() throws Exception {
         final Path workflow = Path.of("..", ".github", "workflows", "ga-security.yml")
                 .toAbsolutePath().normalize();
         if (!Files.isRegularFile(workflow)) {
             return;
         }
         final String yaml = Files.readString(workflow, StandardCharsets.UTF_8);
-        assertTrue(yaml.contains("mode=ANONYMOUS"));
-        assertTrue(yaml.contains("mode=AUTHENTICATED"));
-        assertTrue(yaml.contains("delay=8000"));
-        assertTrue(yaml.contains("delay=3500"));
-        assertTrue(yaml.contains("credential.mode=%s"));
-        assertTrue(yaml.contains("nvd.credentialMode=%s"));
+        assertTrue(yaml.contains("Prepare approved NVD JSON 2.0 feed evidence"));
+        assertTrue(yaml.contains("Execute NVD JSON 2.0 Dependency-Check scan"));
+        assertTrue(yaml.contains("NVD_FEED_URL_TEMPLATE"));
+        assertTrue(yaml.contains("nvd.feed.archiveSha256=%s"));
+        assertTrue(yaml.contains("nvd.feed.contentSha256=%s"));
+        assertTrue(yaml.contains("nvd.feed.lastModifiedDate=%s"));
+        assertTrue(yaml.contains("nvd.feed.freshnessLimitSeconds=86400"));
         assertTrue(yaml.contains("nvd-configuration-identity.txt"));
         assertTrue(yaml.contains("configuration.identitySha256=%s"));
         assertTrue(yaml.contains("nvd.configurationIdentitySha256=%s"));
-        assertTrue(yaml.contains("dependencyCheck.nvdCredentialMode=%s"));
+        assertTrue(yaml.contains("dependencyCheck.nvdDatafeedUrlTemplate=%s"));
         assertTrue(yaml.contains("dependency-check-report.json"));
         assertTrue(yaml.contains("dependency-check-report.sarif"));
-        assertTrue(yaml.contains("name: Resolve NVD credential mode"));
-        assertTrue(yaml.contains("name: Execute authenticated Dependency-Check scan"));
-        assertTrue(yaml.contains("name: Execute anonymous Dependency-Check scan"));
         assertTrue(yaml.contains("name: Finalize approved vulnerability evidence"));
-
-        final String modeStep = section(yaml, "- name: Resolve NVD credential mode",
-                "- name: Prepare approved vulnerability evidence");
-        final String authenticatedStep = section(yaml,
-                "- name: Execute authenticated Dependency-Check scan",
-                "- name: Execute anonymous Dependency-Check scan");
-        final String anonymousStep = section(yaml,
-                "- name: Execute anonymous Dependency-Check scan",
-                "- name: Finalize approved vulnerability evidence");
-
-        assertTrue(modeStep.contains("QUALIFICATION_NVD_KEY: ${{ secrets.NVD_API_KEY }}"));
-        assertTrue(authenticatedStep.contains("NVD_API_KEY: ${{ secrets.NVD_API_KEY }}"));
-        assertTrue(authenticatedStep.contains("-DnvdApiKeyEnvironmentVariable=NVD_API_KEY"));
-        assertTrue(authenticatedStep.contains("continue-on-error: true"));
-        assertTrue(anonymousStep.contains("env -u NVD_API_KEY mvn"));
-        assertTrue(anonymousStep.contains("${NVD_API_KEY+x}"));
-        assertFalse(anonymousStep.contains("NVD_API_KEY: ${{ secrets.NVD_API_KEY }}"));
-        assertFalse(anonymousStep.contains("nvdApiKeyEnvironmentVariable"));
-        assertFalse(anonymousStep.contains("-DnvdApiKey"));
-        assertTrue(yaml.contains("NVD_API_KEY_ENVIRONMENT_VARIABLE"));
+        assertTrue(yaml.contains("env -u NVD_API_KEY mvn"));
+        assertFalse(yaml.contains("secrets.NVD_API_KEY"));
+        assertFalse(yaml.contains("nvdApiKeyEnvironmentVariable"));
+        assertFalse(yaml.contains("-DnvdApiKey"));
+        assertFalse(yaml.contains("nvdApiDelay"));
+        assertTrue(yaml.contains("gzip -t"));
+        assertTrue(yaml.contains("lastModifiedDate"));
+        assertTrue(yaml.contains("actual_feed_content_sha256"));
+        assertTrue(yaml.contains("FAILED_BEFORE_PROVENANCE_PUBLICATION"));
         assertTrue(yaml.contains("dependency-check-args"));
         assertTrue(yaml.contains("nvd-scan-exit-code"));
     }

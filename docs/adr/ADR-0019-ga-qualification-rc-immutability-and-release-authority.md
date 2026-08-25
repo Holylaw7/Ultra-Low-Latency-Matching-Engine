@@ -254,28 +254,28 @@ thresholds or G1-G12 semantics. JDK 21.0.11 and all other distributions are
 forbidden. Replacement G9/G11 execution requires a separate Human approval;
 the previous runs remain immutable `ABORTED / B3` evidence.
 
-#### Human-approved optional NVD credential amendment (2026-08-25)
+#### Human-approved official NVD JSON 2.0 data-feed amendment (2026-08-25)
 
-The repository-level `NVD_API_KEY` is optional. If present and non-empty, the
-G11 workflow uses authenticated NVD API mode through
-`nvdApiKeyEnvironmentVariable=NVD_API_KEY` and the frozen 3500 ms request delay.
-If absent or empty, the workflow omits the API-key property and uses anonymous
-NVD access with the frozen 8000 ms request delay. An empty API-key value is
-never passed to Dependency-Check.
+Dependency-Check `13.0.0` remains the pinned dependency-to-CVE analyzer, but
+G11 vulnerability data acquisition is changed from the broken anonymous/API
+path to the official NVD JSON 2.0 data-feed path. The workflow validates
+`nvdcve-2.0-modified.meta` and its gzip archive before invoking the scanner:
+the metadata `lastModifiedDate` must be no older than 24 hours, `size` and
+`gzSize` must match the downloaded bytes, gzip decoding must succeed, and the
+SHA-256 of the uncompressed JSON must equal the metadata `sha256` field. The
+metadata digest, compressed archive digest, content digest, source URLs, byte
+sizes and freshness are retained in immutable evidence.
 
-This amendment does not change Dependency-Check `13.0.0`, the required NVD
-freshness bound of 24 hours, CVSS threshold `7.0`, auto-update behavior,
-report formats, SBOM/license/secret policies, candidate identity or any G1-G12
-threshold. Anonymous mode must still complete a real Dependency-Check scan,
-produce JSON/SARIF and provenance, and fail closed on stale/unusable data,
-scanner errors, missing reports or evidence-integrity failures. Evidence may
-record only the logical credential name, presence, use and selected mode; the
-secret value and all derived forms remain forbidden. The workflow records the
-selected mode and approved delay in its G11-specific
-`nvd-configuration-identity.txt` digest without including secret material.
-This is a
-qualification-only toolchain amendment; it does not authorize a replacement
-G9/G11 execution or unlock TASK-049.
+The scanner receives the approved template
+`https://nvd.nist.gov/feeds/json/cve/2.0/nvdcve-2.0-{0}.json.gz` through
+`-DnvdDatafeedUrl`; no custom vulnerability matcher is introduced and
+`NVD_API_KEY` is not required or passed to the scanner. Missing, malformed,
+stale or unusable feed data, scanner errors or missing JSON/SARIF reports
+remain fail-closed B3 outcomes. `Dependency-Check=13.0.0`, CVSS blocker
+threshold `7.0`, freshness `<=24h`, auto-update behavior, report formats,
+SBOM/license/secret policies, candidate identity and all G1-G12 thresholds
+remain unchanged. This qualification-only amendment does not authorize a
+replacement G11 execution or unlock TASK-049.
 
 ### D16 — Release source and production source may be distinguished
 

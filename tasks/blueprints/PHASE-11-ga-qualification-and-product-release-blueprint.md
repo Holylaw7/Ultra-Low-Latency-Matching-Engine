@@ -260,14 +260,17 @@ The normative details are in the GA Qualification Matrix.
 - [ ] No Critical/High runtime vulnerability, verified committed secret or
   prohibited runtime license exists; scanner provenance is retained.
 
-The Human-approved limited security-toolchain amendment makes `NVD_API_KEY`
-optional without weakening G11. A non-empty key selects authenticated mode
-with `nvdApiKeyEnvironmentVariable=NVD_API_KEY` and a 3500 ms request delay;
-an absent/empty key selects anonymous mode, omits the API-key property and uses
-an 8000 ms request delay. Both modes must complete Dependency-Check 13.0.0,
-meet the <=24h NVD freshness bound and produce validated JSON/SARIF and
-provenance. Missing/unusable data, scanner errors or missing reports remain
-ABORTED/B3. No G9/G11 execution is authorized by this amendment.
+The Human-approved limited Data-Feed Amendment keeps Dependency-Check
+`13.0.0` as the dependency-to-CVE analyzer and changes NVD acquisition to the
+official JSON 2.0 feed. The workflow validates the `modified` feed metadata,
+gzip archive size/integrity and uncompressed-content SHA-256 before invoking
+the scanner with `-DnvdDatafeedUrl=https://nvd.nist.gov/feeds/json/cve/2.0/
+nvdcve-2.0-{0}.json.gz`. `NVD_API_KEY` is not required or passed to the scanner.
+The feed `lastModifiedDate` must satisfy the unchanged <=24h freshness bound;
+missing, malformed, stale or unusable feeds, scanner errors or missing
+JSON/SARIF reports remain ABORTED/B3. Dependency-Check still performs the
+normal vulnerability analysis; no custom matcher is introduced. No G9/G11
+execution is authorized by this amendment.
 
 ### G12 Evidence Audit
 
@@ -467,7 +470,7 @@ explicit Human Phase 11 Closure Approval. Phase Closure does not create
 
 ```text
 Blueprint Status: Approved — Human Phase 11 Blueprint Approval 2026-08-25
-Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 B3 environment-isolation remediation Evidence Gate PASS at `bdceeb5` after G11 `32856384325` FAIL/B3; G9 `32856372581` PASS/qualifying/frozen; TASK-049..056 dependency ordered and locked
+Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 Limited Data-Feed Amendment in progress after G11 `32863465378` FAIL/B3; G9 `32856372581` PASS/qualifying/frozen; TASK-049..056 dependency ordered and locked
 Qualification Campaigns: Not Authorized
 RC mutation: Not Authorized
 v1.0.0 / GitHub Release / GA: Not Authorized
@@ -488,8 +491,9 @@ Next Gate: Separate Human G11 Replacement Execution Gate; no automatic retry
 | 2026-08-25 | B2/B3 remediation Evidence Gate | PASS | implementation `b44fc4d`; final docs/status `c01977a`; Standard `32845529323`; Quick `32845529342`; G9 `32842119210` and G11 `32842122498` preserved FAIL/non-qualifying | Human replacement G9/G11 execution approval required |
 | 2026-08-25 | Human-authorized replacement execution | CHANGES REQUIRED | G9 `32847427690` technical workflow PASS but zero persisted artifacts; G11 `32847442506` FAIL/B3 because protected `NVD_API_KEY` was absent; old failures preserved; no third run | Sol High B2/B3 final evidence review |
 | 2026-08-25 | Human Limited B2/B3 remediation (historical / superseded) | COMPLETED / SUPERSEDED | Added the pinned `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` publication contract; repository-level `NVD_API_KEY` provisioning was later superseded by the optional-key amendment; no replacement execution | Optional-key remediation Evidence Gate |
-| 2026-08-25 | Human Limited optional-NVD-key amendment (current) | COMPLETED / SUPERSEDED BY ENVIRONMENT REMEDIATION | `NVD_API_KEY` optional; authenticated/anonymous mode with 3500/8000 ms delays; Dependency-Check/freshness/policies unchanged | B3 environment-isolation remediation Evidence Gate |
+| 2026-08-25 | Human Limited optional-NVD-key amendment (historical / superseded) | COMPLETED / SUPERSEDED | `NVD_API_KEY` optional; authenticated/anonymous API mode was later superseded by the official JSON 2.0 data-feed amendment | Data-Feed amendment Evidence Gate |
 | 2026-08-25 | Human Limited B3 environment-isolation remediation | COMPLETED / EVIDENCE GATE PASS | Anonymous scanner step must not declare `NVD_API_KEY`; `env -u NVD_API_KEY` defense-in-depth; commit `bdceeb588f163465040b315da2ae1fa4a444bc31`; Standard `32862255686` PASS; Quick `32862256047` PASS; G9 `32856372581` PASS/frozen; G11 `32856384325` preserved FAIL; no G11 rerun | Separate Human G11 Replacement Execution Gate |
+| 2026-08-25 | Human Limited official NVD JSON 2.0 Data-Feed Amendment | AUTHORIZED / IMPLEMENTATION IN PROGRESS | Dependency-Check `13.0.0` unchanged; official `modified` feed metadata/archive/content validation; `NVD_API_KEY` not required; <=24h freshness and CVSS `7.0` unchanged; G9/G11 execution not authorized | Data-Feed remediation Evidence Gate |
 
 ## 24. Phase Closure Checklist
 

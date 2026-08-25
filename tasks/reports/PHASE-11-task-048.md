@@ -2,7 +2,7 @@
 
 ## Status
 
-`In Progress — Human-approved B3 environment-isolation remediation Evidence Gate PASS at bdceeb5; G9 remains qualifying/frozen, G11 remains preserved non-qualifying, and no new G11 execution is authorized; final TASK-048 evidence review and the separate Human G11 Replacement Execution Gate remain pending.`
+`In Progress — Human-approved Limited Data-Feed Amendment; G9 remains qualifying/frozen, G11 run 32863465378 remains preserved B3/non-qualifying, and no new G11 execution is authorized; remediation Evidence Gate and the separate Human G11 Replacement Execution Gate remain pending.`
 
 TASK-048 implements the approved qualification-only reproducibility and
 security preflight boundary. It does not qualify the candidate, authorize a
@@ -16,7 +16,7 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
 | Annotated tag object | `dfd38c08e80aed9035bf1c2d7c8faf8bae99c356` |
 | Peeled production SHA | `e2828f563ee41316c062385c0244ac1336731359` |
 | Approved toolchain policy | `ga-security-toolchain-v1.properties` (B3 environment-isolation remediation Evidence Gate PASS) |
-| Policy SHA-256 | `e042d191c63ee6f397d6756761f0fc969c3e97a9f5e9357c1c769f43aa2bdff5`; G9/G11 run results are recorded below; no new execution authorized |
+| Policy SHA-256 | `c677eaa8c09b17d6212f578830fa5e483f9b5bd961b8f477585d9d576ab5700e`; G9/G11 run results are recorded below; no new execution authorized |
 | JDK archive | `microsoft-jdk-21.0.12-linux-x64.tar.gz` / `linux-x64` |
 | JDK archive SHA-256 | `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f` |
 | Artifact publication action | `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` (v7.0.1) |
@@ -43,17 +43,14 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
   fresh extraction, then record Java/Maven runtime identity. Candidate,
   production and existing workflows remain outside this change.
 - The Human-approved limited B2/B3 remediation repairs only the G9 final
-  evidence packager and G11 protected NVD credential binding. G9 now performs
-  recursive regular-file enumeration with normalized deterministic paths,
-  fail-closed filesystem checks and complete inventory validation. The current
-  optional-NVD-key amendment makes `NVD_API_KEY` optional: authenticated mode
-  binds it only to Dependency-Check with a 3500 ms delay; anonymous mode omits
-  the key property, does not declare the variable in the scanner step, removes
-  it defensively with `env -u NVD_API_KEY`, and uses an 8000 ms delay. Both
-  modes still require a real Dependency-Check 13.0.0 scan, <=24h usable data,
-  reports and provenance.
-  Reproducibility, scanner, threshold, freshness, policy and candidate inputs
-  remain unchanged.
+  evidence packager and G11 protected NVD credential binding; those historical
+  results remain preserved. The current Data-Feed Amendment changes only G11
+  acquisition: it validates the official NVD JSON 2.0 `modified` metadata and
+  gzip archive (size, gzip integrity, uncompressed SHA-256 and <=24h
+  `lastModifiedDate`) and then invokes the unchanged Dependency-Check 13.0.0
+  analyzer with `-DnvdDatafeedUrl`. No custom vulnerability matcher or API-key
+  environment is used. Reproducibility, scanner version, threshold, freshness,
+  policy and candidate inputs remain unchanged.
 
 Existing workflows, POMs, dependencies, candidate source and production paths
 were not modified. The Windows development host did not execute the pinned
@@ -143,7 +140,7 @@ The exact Microsoft archive identity is now frozen as
 `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f`; the
 canonical properties digest at that earlier checkpoint was
 `6abe66f22ac58b29a45287cf99402045f04b6e2d37fcdb1d144eef215b649397`. The
-later optional-NVD-key amendment has a new canonical digest recorded below.
+later Data-Feed Amendment has a new canonical digest recorded below.
 The workflow change remains qualification-only. Replacement G9/G11 execution is
 still a separate Human gate and has not been authorized.
 
@@ -173,12 +170,12 @@ authorize another execution.
 The second limited remediation added the pinned artifact publication contract
 to both GA workflows. Its interim G11 binding used the repository-level
 `NVD_API_KEY`; the secret value is never handled by the agent. The later
-optional-NVD-key amendment supersedes the mandatory-presence precondition while
-retaining protected authenticated mode when a key is present. No replacement
-execution is authorized by either remediation.
+Data-Feed Amendment supersedes the API credential-mode attempt while retaining
+the same scanner, freshness and severity policy. No replacement execution is
+authorized by either remediation.
 
-The current Human-approved B2/B3 remediation is limited to the publication and
-credential-mode contracts. G9 uses the full immutable `actions/upload-artifact` commit
+The historical Human-approved B2/B3 remediation was limited to the publication
+and credential-mode contracts. G9 uses the full immutable `actions/upload-artifact` commit
 `043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` with one deterministic artifact,
 `if-no-files-found=error`, 14-day retention, compression level 6,
 `overwrite=false`, hidden files excluded and `if: always()`. Each workflow
@@ -207,36 +204,30 @@ approved workflow bytes (unchanged from `c01977a`) and candidate
 The two earlier failures `32842119210` and `32842122498` remain preserved
 unchanged. No automatic retry or replacement run is authorized.
 
-## Human-approved optional-NVD-key amendment
+## Human-approved official NVD JSON 2.0 data-feed amendment
 
-The mandatory repository-secret precondition is removed without removing or
-weakening G11. `NVD_API_KEY` is optional. A non-empty secret selects
-`AUTHENTICATED` mode, records only non-secret credential metadata and passes
-`nvdApiKeyEnvironmentVariable=NVD_API_KEY` with the frozen 3500 ms request
-delay. An absent or empty secret selects `ANONYMOUS` mode, omits the API-key
-property entirely and uses the frozen 8000 ms request delay. The scan must
-still complete with Dependency-Check 13.0.0, usable NVD data no older than 24
-hours, JSON/SARIF reports, provenance, CVSS 7.0 and all existing policy gates.
+The selected acquisition path is the official NVD JSON 2.0 data feed. Before
+Dependency-Check runs, the workflow validates the `modified` feed `.meta` and
+gzip archive: `lastModifiedDate` must be within the unchanged 24-hour bound,
+`size` and `gzSize` must match the downloaded bytes, gzip decoding must pass,
+and the SHA-256 of the uncompressed JSON must equal the metadata `sha256`.
+Metadata, archive and content digests, byte sizes, source URLs and measured age
+are retained in immutable evidence. Dependency-Check 13.0.0 receives the
+approved `nvdDatafeedUrl` template and performs the normal dependency analysis;
+no custom matcher is implemented. `NVD_API_KEY` is not required or passed to
+the scanner.
 
-This is qualification-only remediation. It does not modify the candidate,
-production code, POM/dependency graph, scanner, thresholds or prior evidence.
-The G11 workflow also emits a non-secret configuration identity digest whose
-canonical input includes the selected mode and approved delay, never the
-credential value or any derived form.
+This qualification-only amendment does not modify the candidate, production
+code, POM/dependency graph, scanner version, thresholds, prior evidence or G9.
+Missing, malformed, stale or unusable feed data, scanner errors and missing
+JSON/SARIF reports remain fail-closed B3 outcomes. No G9/G11 execution is
+performed here; replacement execution remains a separate Human gate and
+TASK-049 remains locked.
 
-The current B3 remediation separates mode selection from scanner invocation.
-Only the authenticated scanner step declares `NVD_API_KEY`; the anonymous
-scanner step must have no such environment entry and invokes Maven through
-`env -u NVD_API_KEY`. This closes the distinction between an absent variable
-and an empty variable. Remediation evidence is required before another G11
-execution can be considered.
-No G9/G11 execution is performed here; replacement execution remains a
-separate Human gate and TASK-049 remains locked.
-
-The amended canonical policy bytes currently hash to
-`e042d191c63ee6f397d6756761f0fc969c3e97a9f5e9357c1c769f43aa2bdff5`; this
-hash is the input for the remediation Evidence Gate and does not qualify a
-G9/G11 run.
+The amended canonical policy bytes hash to
+`c677eaa8c09b17d6212f578830fa5e483f9b5bd961b8f477585d9d576ab5700e`; this
+hash is the input for the current remediation Evidence Gate and does not
+qualify a G9/G11 run.
 
 ## Completion log
 
@@ -255,6 +246,8 @@ G9/G11 run.
 | 2026-08-25 | Final remediation evidence/status synchronization | `c01977a`; Standard `32845529323` PASS; Quick `32845529342` PASS; G9/G11 replacement execution remains separately Human-gated |
 | 2026-08-25 | Human-authorized replacement execution | G9 `32847427690` technical workflow PASS but zero persisted artifacts / B2 evidence incomplete; G11 `32847442506` FAIL/B3 because protected `NVD_API_KEY` was absent; no third run |
 | 2026-08-25 | Human Limited B2/B3 remediation (historical / superseded) | Authorized G9 publication contract and repository-level `NVD_API_KEY` provisioning; later superseded by the optional-key amendment; replacement execution was not authorized |
-| 2026-08-25 | Human Limited optional-NVD-key amendment (current) | `NVD_API_KEY` optional; authenticated/anonymous mode and 3500/8000 ms delays frozen; Dependency-Check/freshness/policy unchanged; no G9/G11 execution |
+| 2026-08-25 | Human Limited optional-NVD-key amendment (historical / superseded) | API credential-mode attempt preserved as historical; official JSON 2.0 Data-Feed Amendment selected; no G9/G11 execution |
 | 2026-08-25 | Human Limited B3 environment-isolation remediation | Authorized to remove `NVD_API_KEY` from the anonymous scanner process environment; G9 `32856372581` remains PASS/qualifying, G11 `32856384325` remains FAIL/B3; no G11 rerun |
 | 2026-08-25 | B3 remediation Evidence Gate | PASS — commit `bdceeb588f163465040b315da2ae1fa4a444bc31`; Standard `32862255686` PASS; Quick `32862256047` PASS; G9 remains frozen qualifying evidence; G11 replacement remains separately Human-gated |
+| 2026-08-25 | Human Limited Data-Feed Amendment | Approved official NVD JSON 2.0 feed for Dependency-Check `13.0.0`; API key not required; metadata/archive/content integrity and <=24h freshness mandatory; no G11 execution authorized |
+| 2026-08-25 | Human Limited Data-Feed Amendment | Approved Dependency-Check `13.0.0` plus official NVD JSON 2.0 feed; API key not required; metadata/archive/content integrity and <=24h freshness remain mandatory; no G11 execution authorized |
