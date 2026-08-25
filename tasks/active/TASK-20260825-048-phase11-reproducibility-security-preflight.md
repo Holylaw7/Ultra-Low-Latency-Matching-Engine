@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-048` — Reproducibility and Security Preflight |
-| Status | `In Progress — TASK-048 implementation authorized by Human Phase 11 Blueprint Approval` |
+| Status | `In Progress — implementation checkpoint PASS; G9/G11 preflight Evidence Gate pending` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Depends On | TASK-047 Evidence Gate PASS after Human Blueprint Approval |
@@ -119,12 +119,13 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | --- | --- | --- |
 | Blueprint | Approved | Human Phase 11 Blueprint Approval |
 | Implementation | In Progress | TASK-047 Evidence Gate PASS |
-| Preflight | Pending Evidence Gate | focused tests, full verification, reviewers and exact-SHA CI |
+| Preflight | Pending Evidence Gate | pinned G9/G11 workflow execution, retained reports, reviewers and exact-SHA CI |
 
 | Date | Reviewer | Decision / log |
 | --- | --- | --- |
 | 2026-08-25 | Human Developer | Blueprint approved; TASK-048 authorized after TASK-047 PASS |
 | 2026-08-25 | Implementation | Qualification-only policy/evaluator and pinned workflows added; scans not executed locally |
+| 2026-08-25 | Evidence checkpoint | `b64a399`; Standard CI `32831047004` PASS; Quick `32831046928` PASS; G9/G11 scan execution pending |
 
 ### Implementation Log
 

@@ -52,7 +52,8 @@ the Windows development host; therefore no G9/G11 PASS is claimed here.
 | Workflow YAML parse | PASS — both new workflows parse successfully |
 | `git diff --check` | PASS |
 | Frozen production/existing-workflow audit | PASS — no production, POM or existing workflow change |
-| Standard/Quick exact-SHA CI | Pending final checkpoint |
+| Standard exact-SHA CI | [32831047004](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32831047004) — PASS |
+| Qualification Quick Lane | [32831046928](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32831046928) — PASS |
 
 ## Evidence and claim boundary
 
@@ -69,4 +70,5 @@ Full campaigns, `v1.0.0`, GitHub Release and GA remain unauthorized.
 | Date | Stage | Result |
 | --- | --- | --- |
 | 2026-08-25 | Human Blueprint inheritance | TASK-048 authorized after TASK-047 PASS |
-| 2026-08-25 | Implementation checkpoint | Qualification policy/evaluator, pinned workflows and tests added |
+| 2026-08-25 | Implementation checkpoint | Qualification policy/evaluator, pinned workflows and tests added; commit `b64a399` |
+| 2026-08-25 | Standard/Quick CI | `32831047004` / `32831046928` PASS; G9/G11 workflows remain manual preflight evidence |
