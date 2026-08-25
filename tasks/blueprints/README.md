@@ -79,7 +79,8 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   Quick Lane `32814053459`; this is external validation only. Final status
   synchronization `a6bc574` passed Standard CI `32814596881` and Quick Lane
   `32814596914`; this is also external validation only. Current docs validation
-  `84b3546` passed Standard CI `32814830192` and Quick Lane `32814830164`; this
-  is external validation only. Final read-only
-  Evidence Gate is PASS; Sol High Evidence/Closure Review remains pending. No new 60-minute Full Run was
-  authorized; merge, candidate tagging and Product Release remain gated.
+  `84b3546` passed Standard CI `32814830192` and Quick Lane `32814830164`; final
+  status validation `016660b` passed Standard CI `32814993419` and Quick Lane
+  `32814993430`. Final read-only Evidence Gate, Sol High Review and Human Phase
+  10 Closure Approval are complete. Master CI and candidate Tag CI remain before
+  freezing `v0.9.0-rc.1`; Product Release remains gated.

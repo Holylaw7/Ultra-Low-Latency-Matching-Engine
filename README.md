@@ -95,8 +95,8 @@ Qualification Quick Lane `32734798461`; both independent Full Runs passed the
 60-minute/1M-command gates, and the immutable campaign summary records `2/2`
 qualifying runs, 17 cumulative natural post-GC samples and
 `campaign.result=true`. The final verifier, benchmark-reviewer and docs-auditor
-read-only Evidence Gate is PASS; Sol High delta-only Closure Review remains
-pending. The qualification-only
+read-only Evidence Gate is PASS; Sol High delta-only Closure Review and Human
+Phase 10 Closure Approval are complete. The qualification-only
 characterization remediation then produced 30/30 empty-WAL and 30/30
 Snapshot-tail lifecycle samples, raw Protocol response and management samples,
 two fixed 10-minute management-idle/STATUS@1Hz trials, 62 JFR files, 62
@@ -116,8 +116,9 @@ docs/evidence input is `dfe1f7d` with Standard CI `32813393216` and Quick Lane
 `32813393127` PASS; the subsequent docs-only status correction `b7530f6`
 passed Standard CI `32813640675` and Quick Lane `32813640754` as external
 validation. No production source was changed. Protocol v1, WAL v1, Snapshot
-v1, matching, durability and single-session semantics remain frozen; merge,
-`v0.9.0-rc.1` and Product Release remain unauthorized.
+v1, matching, durability and single-session semantics remain frozen; normal
+merge is authorized after Master CI, and `v0.9.0-rc.1` is authorized after Tag
+CI. Product Release remains unauthorized.
 The final docs/evidence sync validation for `eb9a4ab` also passed Standard CI
 `32814053468` and Quick Lane `32814053459`; this is external validation only
 and does not change the fixed Closure Input `dfe1f7d`.
@@ -125,7 +126,9 @@ The final status synchronization `a6bc574` passed Standard CI `32814596881` and
 Quick Lane `32814596914`; this is also external validation only.
 Current docs validation `84b3546` passed Standard CI `32814830192` and Quick
 Lane `32814830164`; this is external validation only and does not alter the
-fixed Closure Input.
+fixed Closure Input. Final status validation `016660b` passed Standard CI
+`32814993419` and Quick Lane `32814993430`; Human Phase 10 Closure Approval is
+recorded, with Master CI and RC tag CI still required before freezing.
 
 Phase 8 remains documented by [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
 the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)

@@ -12,9 +12,10 @@ starting after the connection is established and fixed execution-model metadata
 in the manifest. No new 60-minute Full Run was authorized. The first
 source-checkpoint CI run exposed one unrelated flaky core-test assertion; the
 same Standard verification passed on the synchronization commits. The
-verifier, benchmark-reviewer and docs-auditor read-only Evidence Gate is now
-PASS; the remaining gate is Sol High delta-only review, followed by Human
-Phase 10 Closure.
+verifier, benchmark-reviewer and docs-auditor read-only Evidence Gate is PASS.
+Sol High delta-only review and Human Phase 10 Closure are also approved;
+normal merge and RC tagging are now authorized after their exact-SHA CI gates.
+Product Release remains unauthorized.
 
 | Item | Evidence |
 | --- | --- |
@@ -263,4 +264,12 @@ verifier + benchmark-reviewer + docs-auditor read-only Evidence Gate PASS
 Sol High Phase 10 Closure Review
         ↓
 Human Phase 10 Closure Approval
+        ↓
+--no-ff merge to master
+        ↓
+Master exact-SHA CI PASS
+        ↓
+v0.9.0-rc.1 tag + Tag CI PASS
+        ↓
+final archive/docs synchronization
 ```
