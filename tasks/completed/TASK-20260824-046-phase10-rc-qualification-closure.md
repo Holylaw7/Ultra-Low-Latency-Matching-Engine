@@ -6,18 +6,18 @@
 | --- | --- |
 | Task ID | `TASK-20260824-046` |
 | Title | Release-candidate assembled-runtime qualification and Closure Proposal |
-| Status | `Completed — Human Phase 10 Closure Approved; merge/RC tag authorized after CI` |
+| Status | `Completed / Archived — Human Phase 10 Closure Approved; RC baseline frozen` |
 | Implementer | Main Codex / Luna Max — only writer after approval |
 | Related ADR | [`ADR-0018`](../../docs/adr/ADR-0018-release-candidate-runtime-boundary.md) |
 | Blueprint | [`Phase 10 Blueprint`](../blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md) |
 | Dependency | TASK-045 Evidence Gate PASS (`f024aef`; Standard CI `32728038236`; Quick Lane `32728038263`) |
-| Final Gate | Human Phase 10 Closure Approved; Master CI, RC tag CI and final archive remain |
+| Final Gate | Human Phase 10 Closure Approved; merge, Master CI, RC tag CI and archive complete |
 
 ## 2. Goal
 
 Qualify the packaged application through its public Protocol v1 and management
-boundaries, reconcile all Phase 10 evidence and prepare—but do not approve—the
-Phase 10 Closure Proposal.
+boundaries, reconcile all Phase 10 evidence and record the approved Phase 10
+Closure. The task is archived after the RC baseline freeze.
 
 ## 3. Required Evidence
 
@@ -222,8 +222,9 @@ quick harness -> lifecycle matrix -> pre-campaign Evidence Gate -> Human Full
 Campaign authorization -> exactly two runs -> campaign evaluation -> three
 read-only auditors -> exact-SHA CI -> Closure Proposal -> STOP.
 
-Planned commits: `test(runtime): qualify release-candidate assembly` and
-`docs(runtime): prepare phase10 closure evidence`. No merge/tag/release.
+Implementation and evidence commits were followed by the authorized
+`--no-ff` merge and RC tag. The post-tag archive is documentation-only;
+Product Release remains unauthorized.
 
 ## 15. Completion Checklist / Log
 
@@ -238,7 +239,10 @@ Planned commits: `test(runtime): qualify release-candidate assembly` and
   model metadata
 - [x] claim boundaries and Closure input synchronized
 - [x] Sol High Closure Review approved
-- [x] Human Phase 10 Closure approved; merge and candidate tag authorized after CI
+- [x] Human Phase 10 Closure approved; merge `e2828f5` / Master CI `32816928409` PASS
+- [x] `v0.9.0-rc.1` points to `e2828f5`; Tag CI `32817075147` and Quick Lane
+  `32817075152` PASS
+- [x] TASK-046 archived and final status/documentation synchronization complete
 - [ ] Product Release / GA remains unauthorized
 
 | Date | Status | Summary | Verification |
@@ -246,8 +250,9 @@ Planned commits: `test(runtime): qualify release-candidate assembly` and
 | 2026-08-24 | Proposed | Qualification manifest and stop gates frozen | docs only |
 | 2026-08-24 | Authorized / Next | TASK-045 completed; begin pre-campaign assembled-runtime qualification implementation. | TASK-045 exact-SHA Standard/Quick CI PASS |
 | 2026-08-24 | Pre-Campaign Evidence PASS | Packaged Java 21 lifecycle command passed 30/30 cycles; Full Campaign remains Human-gated. | `0a96593`; Standard CI `32730760419`; Quick Lane `32730760501`; summary SHA `71862f5e49ec554c2344f0836785d6e737e1457fc06083d755c2d98e10564bc6` |
-| 2026-08-24 | Full Campaign Evidence PASS | Exactly two independent assembled-runtime Full Runs passed; campaign evaluator recorded 2/2 qualifying and `campaign.result=true`. Final percentile/profile evidence reconciliation and Closure Review remain pending. | runner `1a02e66`; Standard CI `32734798459`; Quick Lane `32734798461`; manifests `f65a3952...` / `60f24746...`; campaign summary `89799b16...` |
-| 2026-08-25 | Characterization Evidence Preserved / Review Pending | Qualification-only characterization produced 30 empty-WAL + 30 Snapshot-tail lifecycle samples, raw response/management distributions, paired 10-minute management trials, 62 JFR/resource/allocation artifacts and immutable hashes. | source checkpoint `7ba7ed0`; summary `6204f190...`; manifest `3b093b39...`; sidecar `fd8432cc...`; v3 timer-boundary issue requires corrected rerun |
+| 2026-08-24 | Full Campaign Evidence PASS | Exactly two independent assembled-runtime Full Runs passed; campaign evaluator recorded 2/2 qualifying and `campaign.result=true`. Final percentile/profile evidence reconciliation and Closure Review were pending at this checkpoint and were completed by the later v4/Closure records. | runner `1a02e66`; Standard CI `32734798459`; Quick Lane `32734798461`; manifests `f65a3952...` / `60f24746...`; campaign summary `89799b16...` |
+| 2026-08-25 | Historical v3 Characterization Evidence | Qualification-only characterization produced 30 empty-WAL + 30 Snapshot-tail lifecycle samples, raw response/management distributions, paired 10-minute management trials, 62 JFR/resource/allocation artifacts and immutable hashes. The v3 timer-boundary issue was superseded by the corrected v4 evidence. | source checkpoint `7ba7ed0`; summary `6204f190...`; manifest `3b093b39...`; sidecar `fd8432cc...`; v3 preserved as non-final |
 | 2026-08-25 | Corrected Characterization Evidence PASS | v3 evidence remains preserved as non-final; qualification-only correction committed and verified, then v4 characterization regenerated with the corrected boundary and execution-model metadata. | correction `7566814`; Standard `32811578976` PASS; Quick `32811578978` PASS; v4 summary `60608026...`; sidecar `da3cbb89...` |
 | 2026-08-25 | Read-only Evidence Gate PASS | verifier, benchmark-reviewer and docs-auditor independently accepted v4 evidence, provenance, hashes, claim boundaries and documentation synchronization. Sol High delta-only Closure Review approved. | fixed Closure Input `dfe1f7d`; external validations `b7530f6` / `eb9a4ab`; status-sync `a6bc574` Standard `32814596881` / Quick `32814596914`; current docs validation `84b3546` Standard `32814830192` / Quick `32814830164` — all PASS |
 | 2026-08-25 | Human Phase 10 Closure Approved | Human approved TASK-041 through TASK-046 closure and authorized `--no-ff` merge, Master CI, `v0.9.0-rc.1` after Tag CI, and final archive/docs synchronization. Product Release remains unauthorized. | Sol High delta-only Review PASS; accepted local test-stability observation remains non-blocking |
+| 2026-08-25 | RC Baseline Frozen | Merge `e2828f5` passed Master CI `32816928409`; `v0.9.0-rc.1` points to the merge and passed Tag CI `32817075147` / Quick Lane `32817075152`; task archived. | Post-tag archive is documentation-only; Product Release remains unauthorized |

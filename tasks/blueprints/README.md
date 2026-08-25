@@ -82,5 +82,7 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   `84b3546` passed Standard CI `32814830192` and Quick Lane `32814830164`; final
   status validation `016660b` passed Standard CI `32814993419` and Quick Lane
   `32814993430`. Final read-only Evidence Gate, Sol High Review and Human Phase
-  10 Closure Approval are complete. Master CI and candidate Tag CI remain before
-  freezing `v0.9.0-rc.1`; Product Release remains gated.
+  10 Closure Approval are complete. Phase 10 merge `e2828f5` passed Master CI
+  `32816928409`; annotated candidate tag `v0.9.0-rc.1` points to that merge and
+  passed Tag CI `32817075147` (Quick Lane `32817075152`). Product Release remains
+  gated; the post-tag archive is documentation-only.

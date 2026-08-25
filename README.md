@@ -34,7 +34,8 @@ OpenAI model-selection guidance is linked from `.codex/MASTER_PROMPT.md`.
 
 ## Current Stage
 
-Phase 10 — Release-Candidate Runtime Assembly is the active approved phase.
+Phase 10 — Release-Candidate Runtime Assembly is completed and frozen as the
+`v0.9.0-rc.1` release-candidate engineering baseline.
 Phase 9 remains completed, approved and frozen at
 `v0.8.0-engineering-baseline` from merge `ef73f60`; Master CI is
 `32711512036` and tag CI is `32711649980`.
@@ -116,9 +117,10 @@ docs/evidence input is `dfe1f7d` with Standard CI `32813393216` and Quick Lane
 `32813393127` PASS; the subsequent docs-only status correction `b7530f6`
 passed Standard CI `32813640675` and Quick Lane `32813640754` as external
 validation. No production source was changed. Protocol v1, WAL v1, Snapshot
-v1, matching, durability and single-session semantics remain frozen; normal
-merge is authorized after Master CI, and `v0.9.0-rc.1` is authorized after Tag
-CI. Product Release remains unauthorized.
+v1, matching, durability and single-session semantics remain frozen. Phase 10
+merge `e2828f5` passed Master CI `32816928409`; annotated tag
+`v0.9.0-rc.1` points to that merge and passed Tag CI `32817075147` (Quick Lane
+`32817075152`). Product Release remains unauthorized.
 The final docs/evidence sync validation for `eb9a4ab` also passed Standard CI
 `32814053468` and Quick Lane `32814053459`; this is external validation only
 and does not change the fixed Closure Input `dfe1f7d`.
@@ -127,8 +129,9 @@ Quick Lane `32814596914`; this is also external validation only.
 Current docs validation `84b3546` passed Standard CI `32814830192` and Quick
 Lane `32814830164`; this is external validation only and does not alter the
 fixed Closure Input. Final status validation `016660b` passed Standard CI
-`32814993419` and Quick Lane `32814993430`; Human Phase 10 Closure Approval is
-recorded, with Master CI and RC tag CI still required before freezing.
+`32814993419` and Quick Lane `32814993430`; Human Phase 10 Closure Approval,
+the verified master merge and RC tag freeze are complete. The post-tag archive
+is documentation-only and does not move `v0.9.0-rc.1`.
 
 Phase 8 remains documented by [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
 the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)

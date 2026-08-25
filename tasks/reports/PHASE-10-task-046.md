@@ -13,9 +13,10 @@ in the manifest. No new 60-minute Full Run was authorized. The first
 source-checkpoint CI run exposed one unrelated flaky core-test assertion; the
 same Standard verification passed on the synchronization commits. The
 verifier, benchmark-reviewer and docs-auditor read-only Evidence Gate is PASS.
-Sol High delta-only review and Human Phase 10 Closure are also approved;
-normal merge and RC tagging are now authorized after their exact-SHA CI gates.
-Product Release remains unauthorized.
+Sol High delta-only review and Human Phase 10 Closure are approved. The normal
+merge and RC tagging are complete: merge `e2828f5` passed Master CI
+`32816928409`, and annotated tag `v0.9.0-rc.1` passed Tag CI `32817075147`
+(Quick Lane `32817075152`). Product Release remains unauthorized.
 
 | Item | Evidence |
 | --- | --- |
@@ -127,8 +128,8 @@ The manifests' declared artifact relative paths and SHA-256 values were
 verified against the preserved local artifacts. The Full result artifacts
 include counts, digests, resource CSV and JFR evidence. The separate live
 latency percentile/management-overhead distribution evidence is produced by
-the characterization remediation above; final claim/closure review remains
-separately governed and no unsupported production performance claim is made.
+the characterization remediation above; final claim/closure review is
+approved and no unsupported production performance claim is made.
 ```
 
 The two authorized Full Runs completed without failure. Any failed, aborted or
@@ -137,9 +138,9 @@ no replacement run was started.
 
 ## Characterization Remediation Evidence
 
-Review status: v4 evidence generated `PASS`; verifier, benchmark-reviewer and
-docs-auditor sign-off is `PASS`, with Sol High delta-only Closure Review
-pending. The preserved v3 artifacts are not
+Review status: v4 evidence generated `PASS`; verifier, benchmark-reviewer,
+docs-auditor sign-off and Sol High delta-only Closure Review are `PASS`. The
+preserved v3 artifacts are not
 deleted or rewritten, but their trial elapsed/throughput evidence remains
 non-final because the timer began before Protocol client construction. The v4
 runner constructs the client first, starts timing immediately before the command
@@ -234,8 +235,9 @@ STATUS-at-1-Hz response distribution is `1,863,200 / 2,186,700 / 2,642,100 /
 `1,141,000 / 1,741,500 / 2,113,900 / 2,931,400 / 2,931,400 ns`.
 
 All raw lifecycle, response, management, JFR, allocation-summary and resource
-artifacts are local ignored evidence. The recursive sidecar contains 919 file
-hashes and was independently re-scanned with zero missing or mismatched entries.
+artifacts are local ignored evidence. The corrected v4 recursive sidecar
+contains 903 file hashes and was independently re-scanned with zero missing or
+mismatched entries.
 No percentile filtering or retry was used. The fixed paired trials use the same
 semantic build/configuration and JDK/GC environment; ephemeral protocol and
 management ports are intentionally distinct per child process. Netty allocator
@@ -252,7 +254,7 @@ Ready, SLA/RTO, exactly-once, HA, bounded-WAL-retention or hardware-power-loss
 claim. The characterization distributions are local component/loopback
 evidence and do not establish a production latency guarantee.
 
-## Next Gate
+## Final Closure / Baseline
 
 ```text
 TASK-046 Full Campaign Evidence PASS
@@ -261,15 +263,13 @@ corrected v4 characterization Evidence PASS
         ↓
 verifier + benchmark-reviewer + docs-auditor read-only Evidence Gate PASS
         ↓
-Sol High Phase 10 Closure Review
+Sol High Phase 10 Closure Review — APPROVED
         ↓
-Human Phase 10 Closure Approval
+Human Phase 10 Closure Approval — APPROVED
         ↓
---no-ff merge to master
+merge e2828f5 / Master CI 32816928409 — PASS
         ↓
-Master exact-SHA CI PASS
+v0.9.0-rc.1 / Tag CI 32817075147 — PASS
         ↓
-v0.9.0-rc.1 tag + Tag CI PASS
-        ↓
-final archive/docs synchronization
+TASK-046 archived; post-tag docs synchronization complete
 ```
