@@ -86,3 +86,9 @@ Historical Phases completed before Phase Blueprint Mode are not retrofitted.
   `32816928409`; annotated candidate tag `v0.9.0-rc.1` points to that merge and
   passed Tag CI `32817075147` (Quick Lane `32817075152`). Product Release remains
   gated; the post-tag archive is documentation-only.
+- [`PHASE-11-ga-qualification-and-product-release-blueprint.md`](PHASE-11-ga-qualification-and-product-release-blueprint.md)
+  — **Approved by Human Phase 11 Blueprint Approval (2026-08-25).** ADR-0019 D1-D18,
+  GA Gates G1-G12 and TASK-047 through TASK-056 define qualification of the
+  immutable `v0.9.0-rc.1` candidate. Production and qualification
+  implementation, costly campaigns, candidate mutation, `v1.0.0`, GitHub
+  Release publication and GA remain unauthorized.

@@ -150,6 +150,13 @@ ADR-0011 Final Approved
   -> Phase 10 merge `e2828f5` / Master CI `32816928409` PASS
   -> `v0.9.0-rc.1` / Tag CI `32817075147` PASS
   -> Phase 10 [RC baseline frozen; final docs/archive synchronized]
+  -> Phase 11 Blueprint / ADR-0019 [Human Approved 2026-08-25]
+  -> GA Evidence Schemas v1 / Matrix / Security Toolchain [Approved / Frozen]
+  -> Apache-2.0 repository policy [Human accepted]
+  -> GitHub binary distribution without Maven Central [Human accepted]
+  -> TASK-047 [Resumed after Human Limited Schema Amendment; Evidence Gate pending]
+  -> TASK-048 through TASK-056 [Dependency ordered; not started]
+  -> Phase 11 Full Campaigns / Closure / v1.0.0 / GitHub Release / GA [Not Authorized]
   -> Product Release [Not Authorized]
 ```
 
