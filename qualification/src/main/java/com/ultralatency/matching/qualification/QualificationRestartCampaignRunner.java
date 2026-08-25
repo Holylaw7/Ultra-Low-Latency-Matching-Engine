@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * Runs the TASK-038 child-process restart and termination campaign.
@@ -156,7 +157,9 @@ public final class QualificationRestartCampaignRunner {
                 child.forceTerminate(configuration.processTimeout());
             }
             exitCode = child.exitCode();
-            final List<EngineCommand> persisted = CommandWalReader.read(walConfiguration);
+            final List<EngineCommand> persisted = mode == QualificationRestartMode.FORCED_TERMINATION
+                    ? readAfterForcedTermination(walConfiguration, configuration.processTimeout())
+                    : CommandWalReader.read(walConfiguration);
             final List<EngineCommand> expectedPrefix = commands.subList(0, endCommand);
             if (!persisted.equals(expectedPrefix)) {
                 throw new IOException("cycle WAL prefix differs at cycle " + cycleNumber);
@@ -206,6 +209,22 @@ public final class QualificationRestartCampaignRunner {
                 child.close();
             }
         }
+    }
+
+    private static List<EngineCommand> readAfterForcedTermination(
+            final WalConfiguration configuration,
+            final Duration timeout) throws IOException {
+        final long deadline = System.nanoTime() + timeout.toNanos();
+        IOException lastFailure = null;
+        while (System.nanoTime() < deadline) {
+            try {
+                return CommandWalReader.read(configuration);
+            } catch (final IOException failure) {
+                lastFailure = failure;
+                LockSupport.parkNanos(Duration.ofMillis(25).toNanos());
+            }
+        }
+        throw new IOException("WAL did not become readable after forced termination", lastFailure);
     }
 
     private static Path createArtifactDirectory(final Path outputDirectory) throws IOException {

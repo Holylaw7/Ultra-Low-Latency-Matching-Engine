@@ -19,6 +19,18 @@ public final class QualificationJfrRecording implements AutoCloseable {
 
     /** Starts a disk-backed recording with GC and thread lifecycle events enabled. */
     public static QualificationJfrRecording start(final Path destination) throws IOException {
+        return start(destination, false);
+    }
+
+    /** Starts characterization evidence with bounded allocation sampling enabled. */
+    public static QualificationJfrRecording startCharacterization(final Path destination)
+            throws IOException {
+        return start(destination, true);
+    }
+
+    private static QualificationJfrRecording start(
+            final Path destination,
+            final boolean allocationSampling) throws IOException {
         if (destination == null) {
             throw new NullPointerException("destination");
         }
@@ -32,6 +44,14 @@ public final class QualificationJfrRecording implements AutoCloseable {
         recording.enable("jdk.GCHeapSummary").withoutStackTrace();
         recording.enable("jdk.ThreadStart").withoutStackTrace();
         recording.enable("jdk.ThreadEnd").withoutStackTrace();
+        if (allocationSampling) {
+            recording.enable("jdk.ObjectAllocationSample")
+                    .with("throttle", "100/s")
+                    .withoutStackTrace();
+            recording.enable("jdk.ThreadAllocationStatistics")
+                    .with("period", "1 s")
+                    .withoutStackTrace();
+        }
         recording.setToDisk(true);
         recording.setDestination(normalized);
         recording.start();

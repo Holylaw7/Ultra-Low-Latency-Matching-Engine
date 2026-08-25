@@ -34,9 +34,10 @@ OpenAI model-selection guidance is linked from `.codex/MASTER_PROMPT.md`.
 
 ## Current Stage
 
-Phase 8 — Snapshot Checkpoint and Online Recovery Bootstrap is completed,
-approved and frozen at `v0.7.0-engineering-baseline`. The merge commit is
-`87abbc1`, Master CI is `32622722649`, and tag CI is `32622757607`.
+Phase 10 — Release-Candidate Runtime Assembly is the active approved phase.
+Phase 9 remains completed, approved and frozen at
+`v0.8.0-engineering-baseline` from merge `ef73f60`; Master CI is
+`32711512036` and tag CI is `32711649980`.
 
 Phase 9 Blueprint is approved. [`ADR-0017`](docs/adr/ADR-0017-system-qualification-performance-reliability.md),
 the [Complete Phase 9 Blueprint](tasks/blueprints/PHASE-9-system-qualification-and-long-run-reliability-blueprint.md)
@@ -66,10 +67,68 @@ archived and its Evidence Gate PASS is accepted. The current Closure
 Input is `8e5d39d`, Standard CI `32709188522` PASS and Qualification Quick
 Lane `32709188327` PASS. Sol High review and Human Phase 9 Closure Approval are
 complete. Phase 9 merge `ef73f60` passed Master CI `32711512036`; the
-`v0.8.0-engineering-baseline` tag passed Tag CI `32711649980`. Phase 10,
-production optimization and Product Release remain unauthorized.
-The approved 20/10 restart/termination campaign passed with its
-evidence review and immutable artifact hashes.
+`v0.8.0-engineering-baseline` tag passed Tag CI `32711649980`.
+
+Phase 10 Discovery is complete and Human Blueprint Approval is recorded.
+[`ADR-0018`](docs/adr/ADR-0018-release-candidate-runtime-boundary.md) and the
+[Complete Phase 10 Blueprint](tasks/blueprints/PHASE-10-release-candidate-runtime-assembly-blueprint.md)
+authorize Release-Candidate Runtime Assembly through TASK-041 to TASK-046.
+TASK-041 runtime contracts and lifecycle/status boundaries are implemented at
+`cc9a957`; Standard CI `32718394177` and Qualification Quick Lane
+`32718394269` both pass. TASK-042 composition/runtime assembly is complete at
+`1eba2c5`; Standard CI `32720292382` and Qualification Quick Lane
+`32720292393` both pass. TASK-043 strict configuration and reproducible
+packaging is complete at `247d526`; Standard CI `32724123762` and
+Qualification Quick Lane `32724123745` both pass. TASK-044 bounded health,
+readiness and operational status is complete at `c3f0883`; Standard CI
+`32726203105` and Qualification Quick Lane `32726203076` both pass. TASK-045
+shutdown and terminal-failure hardening is complete at `f024aef`; Standard CI
+`32728038236` and Qualification Quick Lane `32728038263` both pass. TASK-046
+pre-campaign qualification is complete at `0a96593`; Standard CI
+`32730760419` and Qualification Quick Lane `32730760501` both pass. The
+packaged Java 21 lifecycle matrix passed 30/30 cycles (10 empty/PURE_WAL, 10
+Snapshot-tail and 10 approved post-response forced terminations), with immutable
+summary/hash evidence recorded in [`TASK-046 report`](tasks/reports/PHASE-10-task-046.md).
+Human then authorized exactly two `RC_ASSEMBLED_RUNTIME_V1` Full Runs. The
+assembled runner checkpoint `1a02e66` passed Standard CI `32734798459` and
+Qualification Quick Lane `32734798461`; both independent Full Runs passed the
+60-minute/1M-command gates, and the immutable campaign summary records `2/2`
+qualifying runs, 17 cumulative natural post-GC samples and
+`campaign.result=true`. The final verifier, benchmark-reviewer and docs-auditor
+read-only Evidence Gate is PASS; Sol High delta-only Closure Review and Human
+Phase 10 Closure Approval are complete. The qualification-only
+characterization remediation then produced 30/30 empty-WAL and 30/30
+Snapshot-tail lifecycle samples, raw Protocol response and management samples,
+two fixed 10-minute management-idle/STATUS@1Hz trials, 62 JFR files, 62
+resource CSV files and 62 non-zero allocation summaries. Its preserved v3
+summary is `6204f190e70415b4aa8bfc48a43824b211530d315bd5cc29e00ec8da0d29f4d6` under
+`qualification-results/phase10-characterization-v3/rc-characterization-60bac1ef-bbe1-4df1-adb0-fa5ab310464b/`;
+however, benchmark review found that the v3 trial timer included one-time
+Protocol connection setup. The qualification-only correction `7566814` passed
+Standard CI `32811578976` and Quick Lane `32811578978`, then generated v4
+evidence with the corrected boundary and execution-model metadata: summary
+`60608026...`, manifest `120fe39d...`, sidecar `da3cbb89...`, 30/30 + 30/30
+lifecycle samples and two fixed 10-minute trials. The v3 artifacts remain
+preserved as non-final; no new 60-minute Full Run was authorized. The recursive
+v4 sidecar contains 903 verified file hashes. Standard CI for source checkpoint
+`7ba7ed0` exposed an unrelated flaky core-test assertion. The fixed technical
+docs/evidence input is `dfe1f7d` with Standard CI `32813393216` and Quick Lane
+`32813393127` PASS; the subsequent docs-only status correction `b7530f6`
+passed Standard CI `32813640675` and Quick Lane `32813640754` as external
+validation. No production source was changed. Protocol v1, WAL v1, Snapshot
+v1, matching, durability and single-session semantics remain frozen; normal
+merge is authorized after Master CI, and `v0.9.0-rc.1` is authorized after Tag
+CI. Product Release remains unauthorized.
+The final docs/evidence sync validation for `eb9a4ab` also passed Standard CI
+`32814053468` and Quick Lane `32814053459`; this is external validation only
+and does not change the fixed Closure Input `dfe1f7d`.
+The final status synchronization `a6bc574` passed Standard CI `32814596881` and
+Quick Lane `32814596914`; this is also external validation only.
+Current docs validation `84b3546` passed Standard CI `32814830192` and Quick
+Lane `32814830164`; this is external validation only and does not alter the
+fixed Closure Input. Final status validation `016660b` passed Standard CI
+`32814993419` and Quick Lane `32814993430`; Human Phase 10 Closure Approval is
+recorded, with Master CI and RC tag CI still required before freezing.
 
 Phase 8 remains documented by [`ADR-0016`](docs/adr/ADR-0016-snapshot-checkpoint-and-online-recovery-bootstrap.md),
 the [Complete Phase 8 Blueprint](tasks/blueprints/PHASE-8-snapshot-checkpoint-and-online-recovery-blueprint.md)

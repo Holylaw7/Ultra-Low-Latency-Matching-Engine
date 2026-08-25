@@ -12,4 +12,9 @@ class MatchingEngineApplicationTest {
                 "Ultra-Low-Latency Matching Engine",
                 MatchingEngineApplication.applicationName());
     }
+
+    @Test
+    void exposesStableApplicationVersion() {
+        assertEquals("0.1.0-SNAPSHOT", MatchingEngineApplication.applicationVersion());
+    }
 }
