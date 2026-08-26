@@ -66,47 +66,17 @@ class GaSecurityPolicyTest {
     }
 
     @Test
-    void usesOfficialNvdJsonFeedAndKeepsApiKeyOutOfTheScanner() throws Exception {
-        final Path workflow = Path.of("..", ".github", "workflows", "ga-security.yml")
+    void preservesHistoricalV1NvdContractWithoutReinterpretingCurrentWorkflow() throws Exception {
+        final Path policy = Path.of("..", "docs", "release", "ga-security-toolchain-v1.properties")
                 .toAbsolutePath().normalize();
-        if (!Files.isRegularFile(workflow)) {
+        if (!Files.isRegularFile(policy)) {
             return;
         }
-        final String yaml = Files.readString(workflow, StandardCharsets.UTF_8);
-        assertTrue(yaml.contains("Prepare approved NVD JSON 2.0 feed evidence"));
-        assertTrue(yaml.contains("Execute NVD JSON 2.0 Dependency-Check scan"));
-        assertTrue(yaml.contains("NVD_FEED_URL_TEMPLATE"));
-        assertTrue(yaml.contains("nvd.feed.archiveSha256=%s"));
-        assertTrue(yaml.contains("nvd.feed.contentSha256=%s"));
-        assertTrue(yaml.contains("nvd.feed.lastModifiedDate=%s"));
-        assertTrue(yaml.contains("nvd.feed.freshnessLimitSeconds=86400"));
-        assertTrue(yaml.contains("nvd-configuration-identity.txt"));
-        assertTrue(yaml.contains("configuration.identitySha256=%s"));
-        assertTrue(yaml.contains("nvd.configurationIdentitySha256=%s"));
-        assertTrue(yaml.contains("dependencyCheck.nvdDatafeedUrlTemplate=%s"));
-        assertTrue(yaml.contains("dependency-check-report.json"));
-        assertTrue(yaml.contains("dependency-check-report.sarif"));
-        assertTrue(yaml.contains("name: Finalize approved vulnerability evidence"));
-        assertTrue(yaml.contains("env -u NVD_API_KEY mvn"));
-        assertFalse(yaml.contains("secrets.NVD_API_KEY"));
-        assertFalse(yaml.contains("nvdApiKeyEnvironmentVariable"));
-        assertFalse(yaml.contains("-DnvdApiKey"));
-        assertFalse(yaml.contains("nvdApiDelay"));
-        assertTrue(yaml.contains("gzip -t"));
-        assertTrue(yaml.contains("lastModifiedDate"));
-        assertTrue(yaml.contains("actual_feed_content_sha256"));
-        assertTrue(yaml.contains("FAILED_BEFORE_PROVENANCE_PUBLICATION"));
-        assertTrue(yaml.contains("dependency-check-args"));
-        assertTrue(yaml.contains("nvd-scan-exit-code"));
-    }
-
-    private static String section(final String source, final String startMarker,
-            final String endMarker) {
-        final int start = source.indexOf(startMarker);
-        final int end = source.indexOf(endMarker, start + startMarker.length());
-        assertTrue(start >= 0, "Missing workflow marker: " + startMarker);
-        assertTrue(end > start, "Missing workflow marker: " + endMarker);
-        return source.substring(start, end);
+        final String historical = Files.readString(policy, StandardCharsets.US_ASCII);
+        assertTrue(historical.contains("schema.version=ga-security-toolchain-v1"));
+        assertTrue(historical.contains("dependencyCheck.artifact="));
+        assertTrue(historical.contains("dependencyCheck.nvdFeedMode=OFFICIAL"));
+        assertFalse(historical.contains("OFFLINE_SUPPLY_CHAIN_SECURITY_V1"));
     }
 
     private static byte[] concat(final byte[] first, final byte[] second) {

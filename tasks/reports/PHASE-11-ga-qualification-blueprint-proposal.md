@@ -10,8 +10,8 @@
 | Matrix | [GA Qualification Matrix](../../docs/release/GA-QUALIFICATION-MATRIX.md) |
 | Evidence schemas | [GA Evidence Schemas](../../docs/release/GA-EVIDENCE-SCHEMAS.md) |
 | Security tools | [GA Security Toolchain](../../docs/release/GA-SECURITY-TOOLCHAIN.md) |
-| Tasks | `TASK-20260825-047` Authorized / `TASK-048` through `TASK-056` dependency ordered |
-| Implementation | `TASK-047 Authorized; later Tasks gated` |
+| Tasks | `TASK-047 Completed / TASK-048 In Progress / TASK-049 through TASK-056 dependency ordered` |
+| Implementation | `Human-approved OFFLINE_SUPPLY_CHAIN_SECURITY_V1 amendment implementation; fresh G11 separately gated` |
 | Campaign / Release | `Not Authorized` |
 
 ## Proposal result
@@ -35,15 +35,20 @@ commands.
    legal assessment.
 3. GitHub binary distribution without Maven Central: **Accepted** for this
    scope; Maven Central is not required or authorized.
+4. G11 remains mandatory but is amended to
+   `OFFLINE_SUPPLY_CHAIN_SECURITY_V1`; current external CVE/NVD evaluation is
+   outside the portfolio-release boundary. Historical NVD-backed failures are
+   preserved and no fresh G11 execution is authorized by the amendment.
 
 ## Stop state
 
 ```text
 Phase 11 Blueprint: Approved
-TASK-047: Authorized / Next
-TASK-048..056: Dependency ordered / gated
+TASK-047: Completed / Evidence Gate PASS
+TASK-048: In Progress / Offline G11 policy amendment implementation
+TASK-049..056: Dependency ordered / locked
 Campaign execution: Not Authorized
 Candidate mutation: Not Authorized
 v1.0.0 / GitHub Release / GA: Not Authorized
-Next: TASK-047 Evidence Gate
+Next: Amendment Evidence Gate, then separate Human fresh G11 execution gate
 ```

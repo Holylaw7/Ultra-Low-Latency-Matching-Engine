@@ -149,28 +149,24 @@ Constraints:
 - `comparability.identitySha256` hashes JDK/JVM/GC/heap/OS/CPU/filesystem/
   storage/Netty allocator/JFR configuration fields required by that Gate.
 
-For G11, the immutable evidence directory contains non-secret
-`nvd-credential-provenance.txt` fields for `credential.logicalName`,
-`credential.present`, `credential.used`, `credential.mode` and
-`credential.source`. Under the approved Data-Feed Amendment the mode is
-`NOT_REQUIRED` and the source is `OFFICIAL_NVD_JSON_2_0_FEED`; no API-key
-value or derived form is schema data. It also contains
-`nvd-feed/nvdcve-2.0-modified.meta`,
-`nvd-feed/nvdcve-2.0-modified.json.gz` and
-`nvd-update-provenance.txt` with the official feed URL/template, metadata
-SHA-256, compressed archive SHA-256, uncompressed content SHA-256,
-`lastModifiedDate`, byte sizes and measured age. The feed's `.meta` SHA-256
-may use the official uppercase hexadecimal spelling; the validator accepts it
-case-insensitively and records the canonical lowercase digest. The feed's
-`.meta` SHA-256 describes the uncompressed JSON content; the separately
-recorded archive SHA-256 covers the downloaded gzip bytes. The feed is validated before
-Dependency-Check runs, and Dependency-Check 13.0.0 remains the only
-dependency-to-CVE analyzer. `nvd-configuration-identity.txt` records a
-G11-specific `configuration.identitySha256` over the candidate, controller,
-policy, scanner, official feed template/format/name and freshness criterion.
-Missing, malformed, stale or unusable feed data, scanner errors and missing
-JSON/SARIF reports remain fail-closed. This is a narrow v1 evidence amendment;
-it does not change candidate identity or any G1-G12 threshold.
+The Human-approved G11 policy amendment adds the gate-specific
+`g11-offline-supply-chain-evidence-v1` payload while retaining
+`ga-run-manifest-v1`, `ga-gate-result-v1` and `ga-release-manifest-v1`.
+Its immutable evidence directory must contain the candidate/application JAR,
+CycloneDX JSON SBOM, normalized SBOM components, an independently generated
+runtime dependency inventory, runtime license disposition, both full-history
+and candidate-bound secret-scan reports, tool/JDK/policy provenance, the G11
+manifest/result and strict `SHA256SUMS`. The SBOM, dependency and license
+coordinate sets must be non-empty, duplicate-free and exactly consistent.
+Missing, malformed, inconsistent, unlicensed, unapproved-license, secret-scan
+or hash/publication evidence fails closed.
+
+`ga-security-toolchain-v1.properties` and NVD-specific evidence fields remain
+valid only for interpreting historical G11 FAIL/B3 runs under their original
+contract. They are not required or accepted as replacement evidence under
+`OFFLINE_SUPPLY_CHAIN_SECURITY_V1`, and historical artifacts may not be
+backfilled or re-evaluated as PASS. The current gate publishes no normative
+Dependency-Check, NVD, CVE or CVSS result.
 
 ## `ga-gate-result-v1`
 

@@ -257,20 +257,21 @@ The normative details are in the GA Qualification Matrix.
 
 ### G11 Security
 
-- [ ] No Critical/High runtime vulnerability, verified committed secret or
-  prohibited runtime license exists; scanner provenance is retained.
+- [ ] `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` passes all conjunctive criteria:
+  candidate/JAR identity, valid non-empty CycloneDX SBOM, independent runtime
+  dependency inventory, exact SBOM/inventory consistency, complete accepted
+  license disposition, full-history and candidate-bound secret scans, and
+  immutable evidence/hash publication.
 
-The Human-approved limited Data-Feed Amendment keeps Dependency-Check
-`13.0.0` as the dependency-to-CVE analyzer and changes NVD acquisition to the
-official JSON 2.0 feed. The workflow validates the `modified` feed metadata,
-gzip archive size/integrity and uncompressed-content SHA-256 before invoking
-the scanner with `-DnvdDatafeedUrl=https://nvd.nist.gov/feeds/json/cve/2.0/
-nvdcve-2.0-{0}.json.gz`. `NVD_API_KEY` is not required or passed to the scanner.
-The feed `lastModifiedDate` must satisfy the unchanged <=24h freshness bound;
-missing, malformed, stale or unusable feeds, scanner errors or missing
-JSON/SARIF reports remain ABORTED/B3. Dependency-Check still performs the
-normal vulnerability analysis; no custom matcher is introduced. No G9/G11
-execution is authorized by this amendment.
+The Human-approved portfolio policy amendment removes Dependency-Check and
+live/current NVD/CVE evaluation from normative G11. The gate remains mandatory
+and fail-closed; it is not a skipped vulnerability scan or a synthetic scanner
+PASS. `ga-security-toolchain-v1.properties` and every historical FAIL/B3 run
+remain preserved for audit, while `ga-security-toolchain-v2.properties` and
+`g11-offline-supply-chain-evidence-v1` define fresh qualifying evidence.
+Current external CVE/NVD evaluation is outside the portfolio-release boundary,
+so G11 cannot support CVE-clean, NVD-clean, no-known-vulnerability, no-CVSS-
+`>=7`, Dependency-Check-passed or production-security claims.
 
 ### G12 Evidence Audit
 
@@ -470,11 +471,11 @@ explicit Human Phase 11 Closure Approval. Phase Closure does not create
 
 ```text
 Blueprint Status: Approved — Human Phase 11 Blueprint Approval 2026-08-25
-Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 Limited Data-Feed Amendment in progress after G11 `32863465378` FAIL/B3; G9 `32856372581` PASS/qualifying/frozen; TASK-049..056 dependency ordered and locked
+Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 OFFLINE_SUPPLY_CHAIN_SECURITY_V1 policy amendment implementation after latest NVD-backed G11 `32870534485` FAIL/B3; G9 `32856372581` PASS/qualifying/frozen; TASK-049..056 dependency ordered and locked
 Qualification Campaigns: Not Authorized
 RC mutation: Not Authorized
 v1.0.0 / GitHub Release / GA: Not Authorized
-Next Gate: Separate Human G11 Replacement Execution Gate; no automatic retry
+Next Gate: Offline policy amendment Evidence Gate, then STOP for separate Human fresh G11 Execution Approval; no automatic execution
 ```
 
 ## 23. Execution Checkpoints
@@ -494,6 +495,8 @@ Next Gate: Separate Human G11 Replacement Execution Gate; no automatic retry
 | 2026-08-25 | Human Limited optional-NVD-key amendment (historical / superseded) | COMPLETED / SUPERSEDED | `NVD_API_KEY` optional; authenticated/anonymous API mode was later superseded by the official JSON 2.0 data-feed amendment | Data-Feed amendment Evidence Gate |
 | 2026-08-25 | Human Limited B3 environment-isolation remediation | COMPLETED / EVIDENCE GATE PASS | Anonymous scanner step must not declare `NVD_API_KEY`; `env -u NVD_API_KEY` defense-in-depth; commit `bdceeb588f163465040b315da2ae1fa4a444bc31`; Standard `32862255686` PASS; Quick `32862256047` PASS; G9 `32856372581` PASS/frozen; G11 `32856384325` preserved FAIL; no G11 rerun | Separate Human G11 Replacement Execution Gate |
 | 2026-08-25 | Human Limited official NVD JSON 2.0 Data-Feed Amendment | AUTHORIZED / IMPLEMENTATION IN PROGRESS | Dependency-Check `13.0.0` unchanged; official `modified` feed metadata/archive/content validation; `NVD_API_KEY` not required; <=24h freshness and CVSS `7.0` unchanged; G9/G11 execution not authorized | Data-Feed remediation Evidence Gate |
+| 2026-08-26 | Human-authorized Data-Feed G11 execution | FAIL / B3 / PRESERVED | G11 `32870534485`; feed preflight failed before Dependency-Check; artifact `9571906279` / SHA-256 `13db7d0f2e0915d4435e039baf4f9ff70215e4aef6712d5d2bf41dec538ad6a1`; no candidate defect or retry | Human policy decision |
+| 2026-08-26 | Human G11 Qualification Policy Amendment | AUTHORIZED / IMPLEMENTATION IN PROGRESS | Mandatory `OFFLINE_SUPPLY_CHAIN_SECURITY_V1`; v1/NVD evidence preserved; v2 policy/evidence contract; current CVE/NVD evaluation outside portfolio boundary; no fresh G11 execution | Amendment Evidence Gate |
 
 ## 24. Phase Closure Checklist
 

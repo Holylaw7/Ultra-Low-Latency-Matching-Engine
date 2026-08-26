@@ -31,7 +31,7 @@ All twelve Gates are conjunctive. `FAIL` cannot be waived. `ABORTED` is not
 | G8 Observability | Diagnose without changing semantics | management schema/counters, JFR, GC, process outcomes | complete bounded evidence; no mutable engine observation | B1/B2 |
 | G9 Reproducibility | Rebuild identical release artifact | two clean builds, pinned environment, source digest, SBOM, `SHA256SUMS` | byte-identical JAR and internally consistent provenance | B1/B3/B4 |
 | G10 Documentation | Enable a third party to operate the supported scope | install, config, recovery, failure, security boundary, rollback and limitations runbooks | executable instructions and no unsupported claim | B4 |
-| G11 Security | Establish baseline supply-chain hygiene | runtime dependency/license scan, full-history secret scan, permissions/release audit | no Critical/High runtime vuln, verified secret or prohibited license | B0/B1/B3/B4 |
+| G11 Security | Establish offline supply-chain evidence | candidate-bound SBOM, independent runtime dependency inventory, license disposition, full-history and candidate-bound secret scans, artifact integrity/provenance | every `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` criterion PASS; no verified secret, inventory mismatch, prohibited/unknown license or missing/invalid artifact | B0/B1/B2/B4 |
 | G12 Evidence Audit | Bind every claim to immutable evidence | schema/hash/link/stale-state audit plus reviewers and exact-SHA CI | all Gates resolve PASS against the same candidate; no stale or missing artifact | B0/B2/B4 |
 
 ## G1 / G2 qualification profiles
@@ -192,3 +192,10 @@ Passing this matrix may support only the narrow scope in ADR-0019 D4 on the
 recorded environment. It does not prove public-Internet safety, exactly-once,
 HA, hardware power-loss safety, universal SLO/SLA/RTO, maximum capacity or
 memory-leak freedom.
+
+G11 is the Human-amended `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` gate. Current
+external CVE/NVD vulnerability-database evaluation is outside this
+portfolio-release qualification boundary. Passing G11 does not support claims
+of CVE/NVD cleanliness, absence of known vulnerabilities, absence of CVSS
+`>=7` findings, Dependency-Check success, production security certification
+or general production security.

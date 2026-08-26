@@ -2,7 +2,7 @@
 
 ## Status
 
-`In Progress — Human-approved Limited Data-Feed Amendment; G9 remains qualifying/frozen, G11 run 32863465378 remains preserved B3/non-qualifying, and no new G11 execution is authorized; remediation Evidence Gate and the separate Human G11 Replacement Execution Gate remain pending.`
+`In Progress — Human-approved OFFLINE_SUPPLY_CHAIN_SECURITY_V1 policy amendment implementation; G9 remains qualifying/frozen, latest G11 run 32870534485 remains FAIL/B3/non-qualifying/preserved, and no fresh offline G11 execution is authorized.`
 
 TASK-048 implements the approved qualification-only reproducibility and
 security preflight boundary. It does not qualify the candidate, authorize a
@@ -15,8 +15,9 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
 | Candidate tag | `v0.9.0-rc.1` |
 | Annotated tag object | `dfd38c08e80aed9035bf1c2d7c8faf8bae99c356` |
 | Peeled production SHA | `e2828f563ee41316c062385c0244ac1336731359` |
-| Approved toolchain policy | `ga-security-toolchain-v1.properties` (B3 environment-isolation remediation Evidence Gate PASS) |
-| Policy SHA-256 | `c677eaa8c09b17d6212f578830fa5e483f9b5bd961b8f477585d9d576ab5700e`; G9/G11 run results are recorded below; no new execution authorized |
+| Historical toolchain policy | `ga-security-toolchain-v1.properties` / NVD-backed runs only / preserved unchanged |
+| Current G11 toolchain policy | `ga-security-toolchain-v2.properties` / `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` |
+| Current policy SHA-256 | `7ab79aa16313ed363a6c2576a0b18dcaa545666f2478d092c1cf44b581be9c30`; no fresh G11 execution authorized |
 | JDK archive | `microsoft-jdk-21.0.12-linux-x64.tar.gz` / `linux-x64` |
 | JDK archive SHA-256 | `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f` |
 | Artifact publication action | `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` (v7.0.1) |
@@ -24,8 +25,10 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
 
 ## Implementation
 
-- `GaSecurityPolicy` requires the exact approved policy SHA-256, ASCII LF
-  bytes, sorted unique keys, exact key set, and no BOM/CR/unknown property.
+- `GaSecurityPolicy` preserves the exact historical v1/NVD contract.
+  `GaOfflineSupplyChainPolicy` separately requires the approved v2 SHA-256,
+  ASCII/LF bytes, sorted unique exact keys, no BOM/CR/unknown property and the
+  exact G11/gate/evidence identities.
 - `GaSecurityFindingEvaluator` classifies scanner outage as `ABORTED`, runtime
   High/Critical or CVSS >= 7 findings as blockers, verified/unresolved secrets
   as blockers, and runtime licenses outside the approved SPDX set as blockers.
@@ -35,27 +38,25 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
   worktrees, isolated Maven repositories, the normative build command, byte
   comparison and repository/JAR/source evidence hashes.
 - `ga-security.yml` uses the approved pinned actions and candidate identity,
-  resolves and verifies pinned scanner entry JARs, invokes the normative
-  CycloneDX/Dependency-Check/license/Gitleaks commands, and records output
-  hashes. It is `workflow_dispatch` only and has `contents: read` permission.
+  rebuilds and hashes the application JAR, generates a CycloneDX SBOM and an
+  independent runtime dependency list, enforces exact coordinate/license
+  consistency, runs pinned full-history and candidate-bound Gitleaks, then
+  strictly hashes and publishes the offline evidence. It does not invoke
+  Dependency-Check or NVD.
 - The approved B3 amendment replaces only JDK provisioning: both new workflows
   verify the Microsoft 21.0.12 archive sidecar and archive SHA-256 before a
   fresh extraction, then record Java/Maven runtime identity. Candidate,
   production and existing workflows remain outside this change.
-- The Human-approved limited B2/B3 remediation repairs only the G9 final
-  evidence packager and G11 protected NVD credential binding; those historical
-  results remain preserved. The current Data-Feed Amendment changes only G11
-  acquisition: it validates the official NVD JSON 2.0 `modified` metadata and
-  gzip archive (size, gzip integrity, uncompressed SHA-256 and <=24h
-  `lastModifiedDate`) and then invokes the unchanged Dependency-Check 13.0.0
-  analyzer with `-DnvdDatafeedUrl`. No custom vulnerability matcher or API-key
-  environment is used. Reproducibility, scanner version, threshold, freshness,
-  policy and candidate inputs remain unchanged.
+- The Human-approved policy amendment does not rewrite any NVD-backed failure.
+  It creates a new v2 contract and fresh gate-specific evidence schema while
+  retaining the top-level GA schemas. Current CVE/NVD database evaluation is
+  explicitly outside the portfolio-release boundary; no vulnerability-clean
+  or Dependency-Check-passed claim is permitted.
 
-Existing workflows, POMs, dependencies, candidate source and production paths
-were not modified. The Windows development host did not execute the pinned
-scanner or a full-history qualification campaign; the GitHub G9/G11 results
-and their immutable artifacts are recorded below.
+No production source/test, POM, dependency, candidate source, G9 workflow or
+runtime path was modified. Only the new GA G11 workflow changed under the
+approved qualification amendment. The Windows development host did not execute
+G11; GitHub G9/G11 results and immutable artifacts are recorded below.
 
 The approved default-branch workflow installation was deliberately narrow: the
 master merge `0575c76` contains only the two new Phase 11 workflow files. Their
@@ -71,17 +72,17 @@ tag, production source, existing workflow, dependency or runtime input changed.
 
 | Check | Result |
 | --- | --- |
-| Focused security/reproducibility tests | PASS — 6 tests |
+| Focused security/policy tests | PASS — 14 tests |
 | `mvn -pl qualification -am test "-Dtest=*GaSecurity*,*Reproducib*"` | PASS |
 | Checkstyle during focused build | 0 violations |
-| G9/G11 scanner execution | G9 `32856372581` PASS/qualifying/frozen; G11 `32856384325` FAIL/B3/preserved; no new execution authorized |
-| Full `mvn verify` | PASS — 225 core + 62 qualification tests; 2 expected skips |
+| G9/G11 execution | G9 `32856372581` PASS/qualifying/frozen; latest NVD-backed G11 `32870534485` FAIL/B3/preserved; fresh offline G11 not authorized |
+| Full `mvn verify` | PASS — 225 core + 70 qualification tests; 2 expected skips |
 | Workflow YAML parse | PASS — both new workflows parse successfully |
 | Workflow Bash syntax | PASS — all workflow `run` blocks parse with Bash 5.3 |
 | G9 packager simulation | PASS — nested evidence directories inventory and verify atomically |
 | Secret-leak scan | PASS — remediation diff contains no credential material |
 | `git diff --check` | PASS |
-| Frozen production/existing-workflow audit | PASS — no production, POM or existing workflow change |
+| Frozen-path audit | PASS — no production, production-test, POM, dependency, benchmark or G9 workflow change |
 | B2/B3 remediation static verification | PASS — YAML/Bash validation, G9 packager simulation, secret-leak scan and docs/evidence audit |
 | Current B3 remediation Standard CI | [32862255686](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32862255686) — PASS at `bdceeb588f163465040b315da2ae1fa4a444bc31` |
 | Current B3 remediation Quick Lane | [32862256047](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32862256047) — PASS at `bdceeb588f163465040b315da2ae1fa4a444bc31` |
@@ -94,19 +95,19 @@ tag, production source, existing workflow, dependency or runtime input changed.
 
 ## Evidence and claim boundary
 
-This report records implementation evidence only. Scanner outage, toolchain
-identity mismatch, non-reproducible JAR, vulnerability, verified secret or
-prohibited runtime license remains `ABORTED`/blocker according to ADR-0019;
-none may be converted to PASS by omission or tool substitution.
+This report records implementation evidence only. Under the current offline
+G11 contract, toolchain/candidate mismatch, invalid or inconsistent SBOM,
+dependency/license evidence, verified or unresolved secret, missing artifact
+or hash/publication failure remains a blocker; none may be converted to PASS
+by omission or substitution.
 
 The first B2/B3 remediation Evidence Gate at `b44fc4d` was PASS, and the fresh
-G9 run `32856372581` is qualifying/frozen. G11 run `32856384325` remains
-FAIL/B3/non-qualifying because the anonymous scanner inherited an empty
-`NVD_API_KEY`; the current environment-isolation remediation reached its
-Evidence Gate PASS at `bdceeb588f163465040b315da2ae1fa4a444bc31`, verified by
-Standard CI `32862255686` and Quick Lane `32862256047`. TASK-049 is
-dependency-locked because replacement evidence is not yet accepted. Full
-campaigns, `v1.0.0`, GitHub Release and GA remain unauthorized.
+G9 run `32856372581` is qualifying/frozen. Every NVD-backed G11 attempt,
+including latest run `32870534485`, remains preserved under its original
+contract as FAIL/B3/non-qualifying. The Human-approved policy amendment does
+not reinterpret those results; it authorizes only a new implementation and
+requires a separately authorized fresh offline G11. TASK-049 remains locked.
+Full campaigns, `v1.0.0`, GitHub Release and GA remain unauthorized.
 
 ## G9/G11 execution attempt
 
@@ -180,9 +181,10 @@ and credential-mode contracts. G9 uses the full immutable `actions/upload-artifa
 `if-no-files-found=error`, 14-day retention, compression level 6,
 `overwrite=false`, hidden files excluded and `if: always()`. Each workflow
 records the action's artifact ID, URL and SHA-256 digest in the run summary.
-G11 remains blocked until the repository-level secret is securely provisioned;
-the value is not present in this repository or handled by the agent. This
-remediation does not authorize a replacement run.
+At that historical checkpoint G11 remained blocked until repository-level
+credential provisioning. Later amendments superseded that acquisition path;
+the statement is retained only to explain the historical evidence and is not
+the current v2 prerequisite.
 
 ## Human-authorized replacement execution
 
@@ -204,30 +206,41 @@ approved workflow bytes (unchanged from `c01977a`) and candidate
 The two earlier failures `32842119210` and `32842122498` remain preserved
 unchanged. No automatic retry or replacement run is authorized.
 
-## Human-approved official NVD JSON 2.0 data-feed amendment
+## Historical / superseded NVD JSON 2.0 data-feed amendment
 
-The selected acquisition path is the official NVD JSON 2.0 data feed. Before
-Dependency-Check runs, the workflow validates the `modified` feed `.meta` and
-gzip archive: `lastModifiedDate` must be within the unchanged 24-hour bound,
-`size` and `gzSize` must match the downloaded bytes, gzip decoding must pass,
-and the SHA-256 of the uncompressed JSON must equal the metadata `sha256`.
-Metadata, archive and content digests, byte sizes, source URLs and measured age
-are retained in immutable evidence. Dependency-Check 13.0.0 receives the
-approved `nvdDatafeedUrl` template and performs the normal dependency analysis;
-no custom matcher is implemented. `NVD_API_KEY` is not required or passed to
-the scanner.
+The selected acquisition path under that historical contract was the official
+NVD JSON 2.0 data feed. Before Dependency-Check, the workflow was required to
+validate the `modified` feed metadata/archive, 24-hour freshness, sizes, gzip
+integrity and uncompressed JSON SHA-256. Metadata, archive/content digests,
+source URLs, sizes and measured age were intended as immutable evidence.
+Dependency-Check 13.0.0 was the analyzer; no custom matcher or API key was
+introduced.
 
 This qualification-only amendment does not modify the candidate, production
 code, POM/dependency graph, scanner version, thresholds, prior evidence or G9.
 Missing, malformed, stale or unusable feed data, scanner errors and missing
-JSON/SARIF reports remain fail-closed B3 outcomes. No G9/G11 execution is
-performed here; replacement execution remains a separate Human gate and
-TASK-049 remains locked.
+JSON/SARIF reports were fail-closed B3 outcomes. This section is retained only
+to interpret historical evidence and is superseded by the offline G11 policy
+below; TASK-049 remains locked.
 
-The amended canonical policy bytes hash to
+The final historical NVD-backed v1 policy bytes hash to
 `c677eaa8c09b17d6212f578830fa5e483f9b5bd961b8f477585d9d576ab5700e`; this
-hash is the input for the current remediation Evidence Gate and does not
-qualify a G9/G11 run.
+hash remains an interpretation input for v1 artifacts and does not qualify a
+G9/G11 run under the amended v2 policy.
+
+## Human-approved offline G11 policy amendment
+
+The latest NVD-backed G11 run `32870534485` failed in official-feed preflight
+before Dependency-Check analysis. Artifact `9571906279`, digest
+`13db7d0f2e0915d4435e039baf4f9ff70215e4aef6712d5d2bf41dec538ad6a1`,
+is preserved FAIL/B3/non-qualifying. No candidate defect was observed.
+
+Human then approved `OFFLINE_SUPPLY_CHAIN_SECURITY_V1`. The historical v1
+policy remains unchanged; the current canonical v2 policy hash is
+`7ab79aa16313ed363a6c2576a0b18dcaa545666f2478d092c1cf44b581be9c30`.
+Dependency-Check/NVD/CVE/CVSS are outside the new normative portfolio gate and
+no cleanliness claim is permitted. This amendment implementation does not
+execute G11 or authorize TASK-049.
 
 ## Completion log
 
@@ -251,3 +264,5 @@ qualify a G9/G11 run.
 | 2026-08-25 | B3 remediation Evidence Gate | PASS — commit `bdceeb588f163465040b315da2ae1fa4a444bc31`; Standard `32862255686` PASS; Quick `32862256047` PASS; G9 remains frozen qualifying evidence; G11 replacement remains separately Human-gated |
 | 2026-08-25 | Human Limited Data-Feed Amendment | Approved official NVD JSON 2.0 feed for Dependency-Check `13.0.0`; API key not required; metadata/archive/content integrity and <=24h freshness mandatory; no G11 execution authorized |
 | 2026-08-25 | Human Limited Data-Feed Amendment | Approved Dependency-Check `13.0.0` plus official NVD JSON 2.0 feed; API key not required; metadata/archive/content integrity and <=24h freshness remain mandatory; no G11 execution authorized |
+| 2026-08-26 | Human-authorized Data-Feed G11 execution | Run `32870534485` FAIL/B3 in feed preflight; artifact `9571906279` / SHA-256 `13db7d0f2e0915d4435e039baf4f9ff70215e4aef6712d5d2bf41dec538ad6a1`; preserved/non-qualifying; no retry |
+| 2026-08-26 | Human G11 Qualification Policy Amendment | Approved mandatory `OFFLINE_SUPPLY_CHAIN_SECURITY_V1`; v1/NVD contract and failures preserved; v2 implementation authorized; fresh G11 not authorized |

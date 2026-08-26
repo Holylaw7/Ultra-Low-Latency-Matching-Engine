@@ -210,10 +210,20 @@ exit outcomes without observing mutable engine state.
 G9 requires two independent clean builds with byte-identical JARs, pinned
 toolchain identity, source tree digest, SBOM and `SHA256SUMS`. G10 requires
 install/run/configuration/recovery/failure/upgrade/rollback/limitations
-documentation. G11 requires runtime dependency/license audit, full-history
-secret scan and scanner provenance. A Critical/High runtime vulnerability,
-verified committed secret or prohibited runtime license blocks GA. Scanner
-outage is `ABORTED`, not `PASS`.
+documentation. Under the Human-approved portfolio security-policy amendment,
+G11 remains conjunctive as `OFFLINE_SUPPLY_CHAIN_SECURITY_V1`: it requires a
+candidate-bound CycloneDX SBOM, an independently generated runtime dependency
+inventory, exact SBOM/inventory consistency, deterministic runtime-license
+disposition, full-history and candidate-bound secret scans, application JAR
+provenance and strict immutable artifact/hash publication. Any missing,
+malformed, inconsistent, prohibited/unknown-license, secret-scan or integrity
+evidence blocks G11.
+
+External CVE/NVD vulnerability-database evaluation and Dependency-Check are
+outside this portfolio-release qualification boundary. No claim is made that
+dependencies are free of currently known vulnerabilities or CVSS `>=7`
+findings. Historical NVD-backed G11 failures remain preserved under the v1
+toolchain contract and are never rewritten or reused.
 
 The full-history checkout inputs, detached candidate worktrees, isolated Maven
 repositories, environment, exact build/scanner commands, artifact path,
@@ -227,10 +237,25 @@ legal advice. Human approved GitHub binary publication without a Maven Central
 coordinate for this GA scope; requiring Maven 1.0.0 metadata or Central
 publication changes build/release inputs and requires a new RC.
 
-The exact approved scanners, generators, action SHAs, plugin JAR hashes, OCI
-digest, database freshness rule and license policy are normative in
+The exact approved generators, action SHAs, plugin JAR hashes, OCI digest,
+inventory rules and license policy are normative in
 [`GA-SECURITY-TOOLCHAIN.md`](../release/GA-SECURITY-TOOLCHAIN.md). Toolchain
 drift is an Exception Gate, not an implementation choice.
+
+#### Human-approved G11 portfolio policy amendment (2026-08-26)
+
+The normative G11 gate changes from the NVD-backed v1 contract to
+`OFFLINE_SUPPLY_CHAIN_SECURITY_V1`. Gate ID `G11` and its conjunctive nature do
+not change. `ga-security-toolchain-v1.properties` and all historical FAIL/B3
+runs remain immutable interpretation evidence; the new normative policy is
+`ga-security-toolchain-v2.properties`, with gate-specific evidence schema
+`g11-offline-supply-chain-evidence-v1`. Top-level GA evidence schemas remain
+v1.
+
+This is a qualification-policy/tooling amendment, not a candidate repair.
+`v0.9.0-rc.1` remains immutable, no candidate defect was observed and rc.2 is
+not required. A fresh offline G11 execution remains separately Human-gated.
+G9 run `32856372581` remains qualifying/frozen and must not be rerun.
 
 #### Human-approved Limited B3 provisioning amendment (2026-08-25)
 
@@ -254,10 +279,10 @@ thresholds or G1-G12 semantics. JDK 21.0.11 and all other distributions are
 forbidden. Replacement G9/G11 execution requires a separate Human approval;
 the previous runs remain immutable `ABORTED / B3` evidence.
 
-#### Human-approved official NVD JSON 2.0 data-feed amendment (2026-08-25)
+#### Historical / superseded NVD JSON 2.0 data-feed amendment (2026-08-25)
 
-Dependency-Check `13.0.0` remains the pinned dependency-to-CVE analyzer, but
-G11 vulnerability data acquisition is changed from the broken anonymous/API
+Under that historical contract, Dependency-Check `13.0.0` remained the pinned
+dependency-to-CVE analyzer, and G11 data acquisition changed from anonymous/API
 path to the official NVD JSON 2.0 data-feed path. The workflow validates
 `nvdcve-2.0-modified.meta` and its gzip archive before invoking the scanner:
 the metadata `lastModifiedDate` must be no older than 24 hours, `size` and
@@ -274,8 +299,10 @@ stale or unusable feed data, scanner errors or missing JSON/SARIF reports
 remain fail-closed B3 outcomes. `Dependency-Check=13.0.0`, CVSS blocker
 threshold `7.0`, freshness `<=24h`, auto-update behavior, report formats,
 SBOM/license/secret policies, candidate identity and all G1-G12 thresholds
-remain unchanged. This qualification-only amendment does not authorize a
-replacement G11 execution or unlock TASK-049.
+remained unchanged. This historical amendment did not authorize a replacement
+G11 execution or unlock TASK-049. It is superseded by the 2026-08-26 offline
+G11 portfolio policy amendment above and is retained only to interpret prior
+FAIL/B3 evidence.
 
 ### D16 — Release source and production source may be distinguished
 

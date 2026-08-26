@@ -5,11 +5,11 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-048` — Reproducibility and Security Preflight |
-| Status | `In Progress — Limited Data-Feed Amendment implementation; G9 32856372581 PASS/qualifying/frozen; G11 32863465378 FAIL/B3/preserved; no replacement execution authorized` |
+| Status | `In Progress — Human-approved OFFLINE_SUPPLY_CHAIN_SECURITY_V1 policy amendment implementation; G9 32856372581 PASS/qualifying/frozen; latest G11 32870534485 FAIL/B3/preserved; fresh offline G11 not authorized` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Depends On | TASK-047 Evidence Gate PASS after Human Blueprint Approval |
-| Next Gate | Data-Feed remediation Evidence Gate; then separate Human G11 Replacement Execution Gate; no automatic retry |
+| Next Gate | Offline supply-chain amendment Evidence Gate; then STOP for a separate Human fresh G11 Execution Gate |
 
 ## 2. Goal
 
@@ -31,9 +31,13 @@ production files remain frozen.
       both candidate builds use fresh detached worktrees and isolated Maven
       repositories under the normative command/environment contract.
 - [ ] Source tree, toolchain, JAR, SBOM and `SHA256SUMS` bind correctly.
-- [ ] No Critical/High runtime vulnerability or verified committed secret.
+- [ ] Full-history and candidate-bound secret scans pass with no unresolved or
+      verified committed secret.
+- [ ] CycloneDX SBOM and independent runtime dependency inventory are non-empty
+      and exactly consistent.
 - [ ] Runtime license inventory contains no Human-prohibited license.
-- [ ] Scanner version/config/output hashes are recorded; outage is ABORTED.
+- [ ] Pinned generator/scanner identities and all output hashes are recorded;
+      missing/malformed/inconsistent evidence fails closed.
 - [ ] Apache-2.0 and GitHub-binary release choices are explicitly Human-resolved.
 
 ## 5. Evidence Gate
@@ -57,9 +61,12 @@ to their own evidence and Human gates.
 
 ## 8. Background / Current Implementation
 
-The candidate builds in CI but has no GA SBOM, pinned vulnerability/license
-audit or full-history secret result. Existing workflows use floating major
-action tags and are not themselves GA security evidence.
+The candidate builds in CI but initially had no GA SBOM, independent runtime
+dependency/license inventory or full-history secret result. Historical
+NVD-backed G11 executions remain preserved non-qualifying evidence. The
+Human-approved amendment explicitly places current external CVE/NVD evaluation
+outside the portfolio-release boundary rather than converting those failures
+to PASS.
 
 ## 9. Requirements, Inputs, Outputs and Non-Goals
 
@@ -80,10 +87,11 @@ policy details are frozen in ADR-0019, not chosen during implementation.
 | Path | Change |
 | --- | --- |
 | `.github/workflows/ga-qualification.yml` | new read-only reproducibility workflow with approved Microsoft JDK archive provisioning |
-| `.github/workflows/ga-security.yml` | new pinned G11 workflow with approved Microsoft JDK archive provisioning and official NVD JSON 2.0 feed validation |
-| `qualification/**/ga/security/**` | report normalization and license policy validator |
+| `.github/workflows/ga-security.yml` | pinned `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` workflow |
+| `qualification/**/ga/security/**` | v2 policy, inventory consistency and fail-closed evidence validators |
 | qualification tests/resources | tool-manifest/hash/policy fixtures |
-| `docs/release/ga-security-toolchain-v1.properties` | consume approved canonical tool options, official feed template and frozen JDK archive digest; no implementation-time choice |
+| `docs/release/ga-security-toolchain-v1.properties` | preserved unchanged for historical NVD-backed evidence |
+| `docs/release/ga-security-toolchain-v2.properties` | new canonical offline G11 policy |
 | `tasks/reports/PHASE-11-task-048.md` | evidence report |
 
 ## 12. Detailed Test / Profile Plan
@@ -91,10 +99,11 @@ policy details are frozen in ADR-0019, not chosen during implementation.
 Unit: severity/scope/license/suppression/tool-manifest rules. Integration: the
 exact non-shallow checkout, tag-object/peeled verification, two fresh detached
 candidate worktrees, isolated Maven repositories, normative clean-build
-command, byte comparison, plugin JAR hash verification, SBOM and full-history
-scan. Failure: shallow history, shared repository, dirty source diff, stale NVD,
-network/tool identity mismatch, missing artifact and finding all produce
-FAIL/ABORTED as specified. Benchmark/profile: not applicable.
+command, byte comparison, plugin JAR hash verification, SBOM/dependency/license
+consistency and both full-history/candidate-bound secret scans. Failure:
+shallow history, shared repository, dirty source diff, tool identity mismatch,
+missing/malformed/inconsistent artifact or secret finding all fail closed.
+Benchmark/profile: not applicable.
 
 ## 13. Verification Commands
 
@@ -119,7 +128,7 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | --- | --- | --- |
 | Blueprint | Approved | Human Phase 11 Blueprint Approval |
 | Implementation | In Progress | TASK-047 Evidence Gate PASS |
-| Preflight | Limited Data-Feed Amendment in progress; separate G11 replacement gate pending | G9 `32856372581` PASS/qualifying/frozen; G11 `32863465378` FAIL/B3/preserved; no G11 rerun |
+| Preflight | Offline supply-chain policy amendment implementation; fresh G11 separately gated | G9 `32856372581` PASS/qualifying/frozen; G11 `32870534485` FAIL/B3/preserved; no G11 rerun |
 
 | Date | Reviewer | Decision / log |
 | --- | --- | --- |
@@ -138,16 +147,14 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | 2026-08-25 | Human Limited B3 environment-isolation remediation | Authorized to keep the secret out of the anonymous scanner step and invoke it with `env -u NVD_API_KEY`; G9 `32856372581` PASS/frozen; G11 `32856384325` preserved FAIL; no G11 rerun |
 | 2026-08-25 | B3 remediation Evidence Gate | PASS — `bdceeb588f163465040b315da2ae1fa4a444bc31`; Standard `32862255686` PASS; Quick `32862256047` PASS; G11 replacement remains separately Human-gated |
 | 2026-08-25 | Human Limited Data-Feed Amendment | Approved Dependency-Check `13.0.0` plus official NVD JSON 2.0 feed; API key no longer required; feed metadata/archive integrity and <=24h freshness remain mandatory; no G11 execution |
+| 2026-08-26 | Human G11 Qualification Policy Amendment | Approved `OFFLINE_SUPPLY_CHAIN_SECURITY_V1`; NVD/Dependency-Check removed from normative portfolio G11; historical failures preserved; fresh G11 not authorized |
 
 ### Implementation Log
 
-The current limited remediation is qualification-only. It may change the new
-G11 workflow feed acquisition/validation path, the corresponding qualification
-tests and evidence/status documents, but it may not change the candidate,
-production code, root/core POM, Dependency-Check version, policy thresholds or
-existing failed artifacts. The official NVD JSON 2.0 feed is validated before
-the scanner; Dependency-Check remains the only vulnerability analyzer. The
-validator records metadata/archive/content digests, sizes, `lastModifiedDate`
-and measured age, while the scanner receives the approved feed template. This
-remediation does not execute G9/G11, reclassify prior failures or unlock
-TASK-049.
+The current limited remediation is qualification/docs-only. It replaces the
+normative G11 path with a mandatory offline gate covering candidate/JAR
+identity, CycloneDX SBOM, independent runtime dependency inventory, license
+disposition, full-history and candidate-bound secret scans, tool provenance
+and strict immutable artifact publication. The v1 NVD policy and every failed
+run remain preserved. This remediation does not execute G9/G11, reclassify
+prior failures, claim CVE/NVD cleanliness or unlock TASK-049.

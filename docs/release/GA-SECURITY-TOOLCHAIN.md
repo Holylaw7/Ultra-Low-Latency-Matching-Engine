@@ -1,12 +1,55 @@
-# GA Security Toolchain v1 — Normative Proposal
+# GA Security Toolchain — v2 Normative / v1 Historical
 
 ## Status
 
-`Approved / Frozen by Human Phase 11 Blueprint Approval (2026-08-25)` with the
-Human-approved Limited Data-Feed Amendment. This
-manifest freezes G9/G11 tooling. Tools run only after the applicable Task
-Evidence Gate and do not modify the
-candidate build or runtime dependency graph.
+`ga-security-toolchain-v2.properties` is the current Human-approved normative
+G11 contract. It defines `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` for this portfolio
+release. `ga-security-toolchain-v1.properties` is retained byte-for-byte as the
+historical NVD-backed contract so every earlier G11 FAIL/B3 artifact remains
+interpretable. Historical evidence is never reclassified or reused.
+
+Tools run only after the applicable Human execution gate and do not modify the
+candidate build or runtime dependency graph. The policy amendment itself does
+not authorize a fresh G11 run.
+
+## Current normative G11 contract
+
+The current G11 evidence unit is
+`g11-offline-supply-chain-evidence-v1`. It is conjunctive and requires:
+
+1. exact candidate tag object, peeled production commit and tree identity;
+2. a freshly built candidate application JAR with SHA-256 provenance;
+3. a structurally valid, non-empty CycloneDX 1.6 JSON SBOM;
+4. an independent Maven runtime dependency inventory whose normalized
+   coordinates exactly equal the SBOM component coordinates;
+5. deterministic SPDX disposition for every runtime dependency, limited to
+   the v2 policy's accepted set;
+6. pinned Gitleaks full-history and candidate-bound scans with zero unresolved
+   or verified findings;
+7. pinned JDK, Maven, CycloneDX, dependency-inventory, license and OCI tool
+   identity/provenance;
+8. normalized regular-file inventory, no symlink/non-regular/duplicate or
+   out-of-bound path, strict `SHA256SUMS` validation and fail-closed GitHub
+   artifact publication.
+
+The canonical v2 policy SHA-256 is
+`7ab79aa16313ed363a6c2576a0b18dcaa545666f2478d092c1cf44b581be9c30`.
+Dependency-Check, NVD data/API access, CVE lookup, CVSS evaluation and database
+freshness are not normative inputs or outputs of v2. They are outside this
+portfolio-release boundary. The workflow must not emit a fake or skipped
+Dependency-Check PASS.
+
+Permitted claim:
+
+> `v0.9.0-rc.1 passed OFFLINE_SUPPLY_CHAIN_SECURITY_V1: candidate-bound SBOM,
+> runtime dependency inventory, license, repository secret-scan and immutable
+> artifact evidence were validated.`
+
+Mandatory limitation:
+
+> `Current external CVE/NVD vulnerability evaluation is outside this
+> portfolio-release boundary. No claim is made that dependencies are free of
+> currently known vulnerabilities.`
 
 ## Pinned workflow foundation
 
@@ -20,8 +63,8 @@ candidate build or runtime dependency graph.
 | Evidence publication | `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` (v7.0.1); one deterministic gate artifact, `if-no-files-found=error`, `retention-days=14`, `compression-level=6`, `overwrite=false`, `include-hidden-files=false`, `if: always()` |
 
 Workflow permissions are `contents: read`; no write, package, release or OIDC
-permission is allowed. Network access is used only for pinned tool/artifact and
-database retrieval. Download failure or identity mismatch is `ABORTED`.
+permission is allowed. Network access is used only for pinned tool/artifact
+retrieval. Download failure or identity mismatch is `ABORTED`.
 
 Each GA workflow publishes one gate-specific artifact after its evidence
 directory is finalized (or partially populated after a failure). The workflow
@@ -134,7 +177,15 @@ comparison evidence. Any pre-existing directory, checkout mismatch, source
 diff, missing artifact, repository sharing or byte/hash mismatch is B0/FAIL,
 not a retry. No third build is automatic.
 
-## Pinned scanners and generators
+## Historical v1 NVD-backed contract
+
+The remainder of this section preserves the original v1 scanner, generator and
+NVD acquisition contract solely to interpret historical G11 runs. It is not
+the current qualifying G11 procedure and must not be invoked or quoted as a v2
+PASS requirement. Common pins may be shared only where the v2 properties file
+also freezes them explicitly.
+
+## Pinned scanners and generators (historical v1)
 
 | Purpose | Exact tool | Integrity pin / rule |
 | --- | --- | --- |
@@ -149,7 +200,7 @@ local repository before invoking its goal. All transitive tool artifacts and
 tool reports are inventoried even though only the plugin entry JAR is the
 architecture pin.
 
-## Canonical configuration and exact invocations
+## Canonical configuration and exact invocations (historical v1)
 
 The ASCII LF-terminated file
 [`ga-security-toolchain-v1.properties`](ga-security-toolchain-v1.properties) is
@@ -259,7 +310,7 @@ option, format substitution, unrecorded environment expansion or
 configuration-hash mismatch is B0; Luna is not authorized to choose alternate
 evidence-affecting arguments during TASK-048.
 
-## Vulnerability policy
+## Vulnerability policy (historical v1 only)
 
 - Dependency-Check database update must complete during the run; database/feed
   timestamp and hash are recorded. If the feed is unavailable, stale by more
@@ -296,7 +347,7 @@ evidence-integrity failures remain `ABORTED`/B3. This data-feed amendment does
 not alter Dependency-Check, freshness, severity, suppression, license, SBOM,
 candidate identity or any G1-G12 threshold.
 
-## Secret policy
+## Secret policy (historical v1; v2 remains fail-closed)
 
 Gitleaks scans the complete reachable history (`--all`) and current working
 tree. A verified credential/token/private key is B0. A finding may be marked
@@ -304,7 +355,7 @@ false positive only by Human approval with fingerprint and non-secret rationale;
 the original finding remains preserved. Redaction in committed reports must not
 remove fingerprint/path/commit evidence needed for audit.
 
-## License policy
+## License policy (historical v1; accepted SPDX set retained by v2)
 
 For runtime dependencies the accepted SPDX set is:
 
@@ -322,7 +373,7 @@ review. Test/qualification tool licenses are inventoried separately. The
 accepted project license policy is Apache-2.0, subject to the Human's legal
 assessment; this policy is engineering governance, not legal advice.
 
-## Update rule
+## Update rule (historical v1)
 
 Any version, coordinate, action SHA, OCI digest, database freshness rule,
 severity threshold, allowed-license set or suppression policy change requires

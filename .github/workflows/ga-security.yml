@@ -7,7 +7,7 @@ permissions:
   contents: read
 
 jobs:
-  security-preflight:
+  offline-supply-chain-security:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
@@ -22,68 +22,86 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          export JDK_ARCHIVE_NAME='microsoft-jdk-21.0.12-linux-x64.tar.gz'
-          export JDK_ARCHIVE_URL='https://aka.ms/download-jdk/microsoft-jdk-21.0.12-linux-x64.tar.gz'
-          export JDK_CHECKSUM_URL='https://aka.ms/download-jdk/microsoft-jdk-21.0.12-linux-x64.tar.gz.sha256sum.txt'
-          export JDK_EXPECTED_SHA256='f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f'
-          export JDK_ARCHIVE="$RUNNER_TEMP/$JDK_ARCHIVE_NAME"
-          export JDK_CHECKSUM="$RUNNER_TEMP/$JDK_ARCHIVE_NAME.sha256sum.txt"
-          export JDK_ROOT="$RUNNER_TEMP/microsoft-jdk-21.0.12"
-          export GA_EVIDENCE_DIR="$RUNNER_TEMP/ga-security-evidence"
+          JDK_ARCHIVE_NAME='microsoft-jdk-21.0.12-linux-x64.tar.gz'
+          JDK_ARCHIVE_URL='https://aka.ms/download-jdk/microsoft-jdk-21.0.12-linux-x64.tar.gz'
+          JDK_CHECKSUM_URL='https://aka.ms/download-jdk/microsoft-jdk-21.0.12-linux-x64.tar.gz.sha256sum.txt'
+          JDK_EXPECTED_SHA256='f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f'
+          JDK_ARCHIVE="$RUNNER_TEMP/$JDK_ARCHIVE_NAME"
+          JDK_CHECKSUM="$RUNNER_TEMP/$JDK_ARCHIVE_NAME.sha256sum.txt"
+          JDK_ROOT="$RUNNER_TEMP/microsoft-jdk-21.0.12"
+          GA_EVIDENCE_DIR="$RUNNER_TEMP/ga-security-evidence"
           test ! -e "$JDK_ROOT"
           mkdir -p "$JDK_ROOT" "$GA_EVIDENCE_DIR"
           curl --fail --silent --show-error --location --retry 2 "$JDK_CHECKSUM_URL" -o "$JDK_CHECKSUM"
           test "$(awk -v name="$JDK_ARCHIVE_NAME" '$2 == name {print $1}' "$JDK_CHECKSUM")" = "$JDK_EXPECTED_SHA256"
           curl --fail --silent --show-error --location --retry 2 "$JDK_ARCHIVE_URL" -o "$JDK_ARCHIVE"
           test "$(sha256sum "$JDK_ARCHIVE" | cut -d' ' -f1)" = "$JDK_EXPECTED_SHA256"
-          sha256sum "$JDK_ARCHIVE" "$JDK_CHECKSUM" | tee "$GA_EVIDENCE_DIR/jdk-download-sha256sums.txt"
+          (
+            cd "$RUNNER_TEMP"
+            sha256sum "$JDK_ARCHIVE_NAME" "$JDK_ARCHIVE_NAME.sha256sum.txt"
+          ) > "$GA_EVIDENCE_DIR/jdk-download-sha256sums.txt"
           tar -tzf "$JDK_ARCHIVE" | awk 'BEGIN { bad=0 } /^\// || /(^|\/)\.\.(\/|$)/ { bad=1 } END { exit bad }'
           tar -xzf "$JDK_ARCHIVE" -C "$JDK_ROOT"
-          export JAVA_HOME="$(find "$JDK_ROOT" -mindepth 1 -maxdepth 1 -type d -name 'jdk-*' -print -quit)"
+          JAVA_HOME="$(find "$JDK_ROOT" -mindepth 1 -maxdepth 1 -type d -name 'jdk-*' -print -quit)"
           test -n "$JAVA_HOME" && test -x "$JAVA_HOME/bin/java" && test -x "$JAVA_HOME/bin/javac"
+          export JAVA_HOME
           export PATH="$JAVA_HOME/bin:$PATH"
           {
-            printf 'jdk.vendor=Microsoft\n'
-            printf 'jdk.version=21.0.12+8-LTS\n'
-            printf 'jdk.platform=linux-x64\n'
             printf 'jdk.archiveFilename=%s\n' "$JDK_ARCHIVE_NAME"
             printf 'jdk.archiveSha256=%s\n' "$JDK_EXPECTED_SHA256"
             printf 'jdk.checksumSha256=%s\n' "$(sha256sum "$JDK_CHECKSUM" | cut -d' ' -f1)"
-            printf 'jdk.javaHome=%s\n' "$JAVA_HOME"
-          } | tee "$GA_EVIDENCE_DIR/jdk-runtime-identity.txt"
-          java -version 2>&1 | tee "$GA_EVIDENCE_DIR/java-version.txt"
-          javac -version 2>&1 | tee "$GA_EVIDENCE_DIR/javac-version.txt"
+            printf 'jdk.platform=linux-x64\n'
+            printf 'jdk.vendor=Microsoft\n'
+            printf 'jdk.version=21.0.12+8-LTS\n'
+          } > "$GA_EVIDENCE_DIR/jdk-runtime-identity.txt"
+          "$JAVA_HOME/bin/java" -version 2>&1 | tee "$GA_EVIDENCE_DIR/java-version.txt"
+          "$JAVA_HOME/bin/javac" -version 2>&1 | tee "$GA_EVIDENCE_DIR/javac-version.txt"
+          mvn -version 2>&1 | tee "$GA_EVIDENCE_DIR/maven-version.txt"
           grep -E '21\.0\.12|Microsoft' "$GA_EVIDENCE_DIR/java-version.txt"
+          grep -F 'Apache Maven 3.9.16' "$GA_EVIDENCE_DIR/maven-version.txt"
           printf 'JAVA_HOME=%s\n' "$JAVA_HOME" >> "$GITHUB_ENV"
           printf '%s/bin\n' "$JAVA_HOME" >> "$GITHUB_PATH"
 
-      - name: Verify policy and candidate identity
+      - name: Verify v2 policy and immutable candidate identity
         shell: bash
         run: |
           set -euo pipefail
-          export GA_EVIDENCE_DIR="$RUNNER_TEMP/ga-security-evidence"
-          export GA_CACHE_DIR="$RUNNER_TEMP/ga-security-cache"
-          mkdir -p "$GA_EVIDENCE_DIR" "$GA_CACHE_DIR"
-          test "$(sha256sum docs/release/ga-security-toolchain-v1.properties | cut -d' ' -f1)" = \
-            c677eaa8c09b17d6212f578830fa5e483f9b5bd961b8f477585d9d576ab5700e
+          GA_EVIDENCE_DIR="$RUNNER_TEMP/ga-security-evidence"
+          GA_CACHE_DIR="$RUNNER_TEMP/ga-security-cache"
+          CANDIDATE_DIR="$RUNNER_TEMP/ga-security-candidate"
+          POLICY='docs/release/ga-security-toolchain-v2.properties'
+          POLICY_SHA256='7ab79aa16313ed363a6c2576a0b18dcaa545666f2478d092c1cf44b581be9c30'
+          mkdir -p "$GA_EVIDENCE_DIR/policy" "$GA_CACHE_DIR"
+          test "$(sha256sum "$POLICY" | cut -d' ' -f1)" = "$POLICY_SHA256"
           test "$(git rev-parse --is-shallow-repository)" = false
-          test "$(git rev-parse refs/tags/v0.9.0-rc.1)" = \
-            dfd38c08e80aed9035bf1c2d7c8faf8bae99c356
-          test "$(git rev-parse 'refs/tags/v0.9.0-rc.1^{}')" = \
-            e2828f563ee41316c062385c0244ac1336731359
-          git worktree add --detach "$RUNNER_TEMP/ga-security-candidate" \
-            e2828f563ee41316c062385c0244ac1336731359
+          tag_object="$(git rev-parse refs/tags/v0.9.0-rc.1)"
+          production_sha="$(git rev-parse 'refs/tags/v0.9.0-rc.1^{}')"
+          test "$tag_object" = dfd38c08e80aed9035bf1c2d7c8faf8bae99c356
+          test "$production_sha" = e2828f563ee41316c062385c0244ac1336731359
+          test ! -e "$CANDIDATE_DIR"
+          git worktree add --detach "$CANDIDATE_DIR" "$production_sha"
+          test -z "$(git -C "$CANDIDATE_DIR" status --porcelain --untracked-files=all)"
+          cp "$POLICY" "$GA_EVIDENCE_DIR/policy/ga-security-toolchain-v2.properties"
+          {
+            printf 'candidate.tag=v0.9.0-rc.1\n'
+            printf 'candidate.tagObjectSha=%s\n' "$tag_object"
+            printf 'candidate.productionSha=%s\n' "$production_sha"
+            printf 'candidate.treeSha=%s\n' "$(git -C "$CANDIDATE_DIR" rev-parse 'HEAD^{tree}')"
+            printf 'controller.gitSha=%s\n' "$(git rev-parse HEAD)"
+            printf 'policy.propertiesSha256=%s\n' "$POLICY_SHA256"
+          } > "$GA_EVIDENCE_DIR/candidate-identity.txt"
 
-      - name: Resolve and verify pinned Maven scanner entry JARs
+      - name: Resolve and verify pinned supply-chain tools
         shell: bash
         run: |
           set -euo pipefail
           export MAVEN_OPTS='-Dfile.encoding=UTF-8 -Duser.language=en -Duser.country=US -Duser.timezone=UTC'
-          export REPO="$RUNNER_TEMP/ga-security-cache/m2"
+          REPO="$RUNNER_TEMP/ga-security-cache/m2"
+          EVIDENCE="$RUNNER_TEMP/ga-security-evidence"
           mkdir -p "$REPO"
           for gav in \
             org.cyclonedx:cyclonedx-maven-plugin:2.9.3 \
-            org.owasp:dependency-check-maven:13.0.0 \
+            org.apache.maven.plugins:maven-dependency-plugin:3.8.1 \
             org.codehaus.mojo:license-maven-plugin:2.7.1; do
             mvn -B -ntp -Dmaven.repo.local="$REPO" \
               org.apache.maven.plugins:maven-dependency-plugin:3.8.1:get \
@@ -91,313 +109,240 @@ jobs:
           done
           declare -A EXPECTED=(
             ["$REPO/org/cyclonedx/cyclonedx-maven-plugin/2.9.3/cyclonedx-maven-plugin-2.9.3.jar"]="c452d5eebe28bc86bef2e7c72d129f04f60877bef843eac8120f01fb655be293"
-            ["$REPO/org/owasp/dependency-check-maven/13.0.0/dependency-check-maven-13.0.0.jar"]="627ab0406bde4ae5261a5dc002cd233ddf6a044d6b3b92950188abf1951b4b13"
+            ["$REPO/org/apache/maven/plugins/maven-dependency-plugin/3.8.1/maven-dependency-plugin-3.8.1.jar"]="9fc3d435085983b16bc53903f9413aede9de30e20c57c0cece94614f328b14b5"
             ["$REPO/org/codehaus/mojo/license-maven-plugin/2.7.1/license-maven-plugin-2.7.1.jar"]="ce1430955c570d3d742e917f4bc2f89ec19752d92887f02aef6d360b3883fbb7"
           )
           for jar in "${!EXPECTED[@]}"; do
             test -f "$jar"
             test "$(sha256sum "$jar" | cut -d' ' -f1)" = "${EXPECTED[$jar]}"
           done
-          find "$REPO" -type f -printf '%P\n' | sort > "$RUNNER_TEMP/ga-security-evidence/maven-repository-inventory"
+          (
+            cd "$REPO"
+            sha256sum \
+              org/apache/maven/plugins/maven-dependency-plugin/3.8.1/maven-dependency-plugin-3.8.1.jar \
+              org/codehaus/mojo/license-maven-plugin/2.7.1/license-maven-plugin-2.7.1.jar \
+              org/cyclonedx/cyclonedx-maven-plugin/2.9.3/cyclonedx-maven-plugin-2.9.3.jar
+          ) > "$EVIDENCE/tool-entry-sha256sums.txt"
+          find "$REPO" -type f -printf '%P\n' | LC_ALL=C sort > "$EVIDENCE/maven-repository-inventory"
 
-      - name: Generate approved SBOM evidence
+      - name: Build candidate JAR and generate supply-chain inputs
         shell: bash
         run: |
           set -euo pipefail
           export MAVEN_OPTS='-Dfile.encoding=UTF-8 -Duser.language=en -Duser.country=US -Duser.timezone=UTC'
-          export REPO="$RUNNER_TEMP/ga-security-cache/m2"
-          export GA_EVIDENCE_DIR="$RUNNER_TEMP/ga-security-evidence"
-          export GA_CACHE_DIR="$RUNNER_TEMP/ga-security-cache"
-          mkdir -p "$GA_EVIDENCE_DIR/sbom"
-          cd "$RUNNER_TEMP/ga-security-candidate"
+          REPO="$RUNNER_TEMP/ga-security-cache/m2"
+          CANDIDATE="$RUNNER_TEMP/ga-security-candidate"
+          EVIDENCE="$RUNNER_TEMP/ga-security-evidence"
+          CACHE="$RUNNER_TEMP/ga-security-cache"
+          mkdir -p "$EVIDENCE/application" "$EVIDENCE/sbom" "$EVIDENCE/dependency" \
+            "$EVIDENCE/license" "$EVIDENCE/gitleaks"
+          cd "$CANDIDATE"
+          mvn -B -ntp -f core/pom.xml package -DskipTests -Dmaven.repo.local="$REPO"
+          test -s core/target/matching-engine-rc.jar
+          cp core/target/matching-engine-rc.jar "$EVIDENCE/application/matching-engine-rc.jar"
           mvn -B -ntp -f core/pom.xml \
             org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeBom \
             -Dmaven.repo.local="$REPO" -DschemaVersion=1.6 -DprojectType=application \
             -DincludeBomSerialNumber=false -DincludeCompileScope=true -DincludeProvidedScope=false \
             -DincludeRuntimeScope=true -DincludeSystemScope=false -DincludeTestScope=false \
             -DincludeLicenseText=false -DoutputFormat=json -DoutputName=bom \
-            -DoutputDirectory="$GA_EVIDENCE_DIR/sbom" -DoutputTimestamp="$(git show -s --format=%ct e2828f563ee41316c062385c0244ac1336731359)" \
-            -Dcyclonedx.skipAttach=true
-
-      - name: Prepare approved NVD JSON 2.0 feed evidence
-        shell: bash
-        run: |
-          set -euo pipefail
-          export MAVEN_OPTS='-Dfile.encoding=UTF-8 -Duser.language=en -Duser.country=US -Duser.timezone=UTC'
-          export REPO="$RUNNER_TEMP/ga-security-cache/m2"
-          export GA_EVIDENCE_DIR="$RUNNER_TEMP/ga-security-evidence"
-          export GA_CACHE_DIR="$RUNNER_TEMP/ga-security-cache"
-          export NVD_DATA_DIR="$GA_CACHE_DIR/dependency-check-data"
-          export NVD_FEED_DIR="$GA_CACHE_DIR/nvd-feed"
-          export NVD_FEED_EVIDENCE_DIR="$GA_EVIDENCE_DIR/nvd-feed"
-          export NVD_FEED_BASE_URL='https://nvd.nist.gov/feeds/json/cve/2.0'
-          export NVD_FEED_URL_TEMPLATE='https://nvd.nist.gov/feeds/json/cve/2.0/nvdcve-2.0-{0}.json.gz'
-          export NVD_FEED_NAME='nvdcve-2.0-modified'
-          export NVD_FEED_META_URL="$NVD_FEED_BASE_URL/$NVD_FEED_NAME.meta"
-          export NVD_FEED_ARCHIVE_URL="$NVD_FEED_BASE_URL/$NVD_FEED_NAME.json.gz"
-          export NVD_FEED_META="$NVD_FEED_DIR/$NVD_FEED_NAME.meta"
-          export NVD_FEED_ARCHIVE="$NVD_FEED_DIR/$NVD_FEED_NAME.json.gz"
-          export NVD_PROVENANCE_TMP="$GA_EVIDENCE_DIR/nvd-update-provenance.tmp"
-          export NVD_PROVENANCE="$GA_EVIDENCE_DIR/nvd-update-provenance.txt"
-          export NVD_CONFIGURATION_INPUT_TMP="$GA_EVIDENCE_DIR/nvd-configuration-identity-input.tmp"
-          export NVD_CONFIGURATION_INPUT="$GA_EVIDENCE_DIR/nvd-configuration-identity-input.txt"
-          export NVD_CONFIGURATION_IDENTITY_TMP="$GA_EVIDENCE_DIR/nvd-configuration-identity.tmp"
-          export NVD_CONFIGURATION_IDENTITY="$GA_EVIDENCE_DIR/nvd-configuration-identity.txt"
-          mkdir -p "$GA_EVIDENCE_DIR" "$GA_CACHE_DIR" "$NVD_DATA_DIR" \
-            "$NVD_FEED_DIR" "$NVD_FEED_EVIDENCE_DIR"
-          policy_sha256="$(sha256sum "$GITHUB_WORKSPACE/docs/release/ga-security-toolchain-v1.properties" | cut -d' ' -f1)"
-          test "$policy_sha256" = \
-            c677eaa8c09b17d6212f578830fa5e483f9b5bd961b8f477585d9d576ab5700e
-          curl --fail --silent --show-error --location --retry 2 --proto '=https' \
-            --tlsv1.2 "$NVD_FEED_META_URL" -o "$NVD_FEED_META"
-          curl --fail --silent --show-error --location --retry 2 --proto '=https' \
-            --tlsv1.2 "$NVD_FEED_ARCHIVE_URL" -o "$NVD_FEED_ARCHIVE"
-          meta_value() {
-            sed -n "s/^$1:[[:space:]]*//p" "$NVD_FEED_META"
-          }
-          feed_last_modified="$(meta_value lastModifiedDate)"
-          feed_size="$(meta_value size)"
-          feed_gz_size="$(meta_value gzSize)"
-          feed_content_sha256="$(meta_value sha256)"
-          test -n "$feed_last_modified"
-          [[ "$feed_size" =~ ^[0-9]+$ ]]
-          [[ "$feed_gz_size" =~ ^[0-9]+$ ]]
-          [[ "$feed_content_sha256" =~ ^[0-9A-Fa-f]{64}$ ]]
-          feed_content_sha256="$(printf '%s' "$feed_content_sha256" | tr '[:upper:]' '[:lower:]')"
-          test "$(stat -c '%s' "$NVD_FEED_ARCHIVE")" = "$feed_gz_size"
-          gzip -t "$NVD_FEED_ARCHIVE"
-          actual_feed_size="$(gzip -cd "$NVD_FEED_ARCHIVE" | wc -c | tr -d ' ')"
-          actual_feed_content_sha256="$(gzip -cd "$NVD_FEED_ARCHIVE" | sha256sum | cut -d' ' -f1)"
-          test "$actual_feed_size" = "$feed_size"
-          test "$actual_feed_content_sha256" = "$feed_content_sha256"
-          feed_meta_sha256="$(sha256sum "$NVD_FEED_META" | cut -d' ' -f1)"
-          feed_archive_sha256="$(sha256sum "$NVD_FEED_ARCHIVE" | cut -d' ' -f1)"
-          feed_last_modified_epoch="$(date -u -d "$feed_last_modified" +%s)"
-          feed_now_epoch="$(date -u +%s)"
-          feed_age_seconds=$((feed_now_epoch - feed_last_modified_epoch))
-          test "$feed_age_seconds" -ge 0
-          test "$feed_age_seconds" -le 86400
-          cp "$NVD_FEED_META" "$NVD_FEED_EVIDENCE_DIR/"
-          cp "$NVD_FEED_ARCHIVE" "$NVD_FEED_EVIDENCE_DIR/"
-          controller_git_sha="$(git -C "$GITHUB_WORKSPACE" rev-parse HEAD)"
-          {
-            printf 'candidate.productionSha=e2828f563ee41316c062385c0244ac1336731359\n'
-            printf 'candidate.tagObjectSha=dfd38c08e80aed9035bf1c2d7c8faf8bae99c356\n'
-            printf 'controller.gitSha=%s\n' "$controller_git_sha"
-            printf 'dependencyCheck.cvssThreshold=7.0\n'
-            printf 'dependencyCheck.dataFreshnessHours=24\n'
-            printf 'dependencyCheck.nvdDatafeedUrlTemplate=%s\n' "$NVD_FEED_URL_TEMPLATE"
-            printf 'dependencyCheck.nvdFeedFormat=JSON_2.0_GZIP\n'
-            printf 'dependencyCheck.nvdFeedMode=OFFICIAL\n'
-            printf 'dependencyCheck.nvdFeedName=%s\n' "$NVD_FEED_NAME"
-            printf 'dependencyCheck.scanner=org.owasp:dependency-check-maven:13.0.0\n'
-            printf 'policy.propertiesSha256=%s\n' "$policy_sha256"
-          } > "$NVD_CONFIGURATION_INPUT_TMP"
-          mv -f "$NVD_CONFIGURATION_INPUT_TMP" "$NVD_CONFIGURATION_INPUT"
-          nvd_configuration_identity_sha256="$(sha256sum "$NVD_CONFIGURATION_INPUT" | cut -d' ' -f1)"
-          {
-            cat "$NVD_CONFIGURATION_INPUT"
-            printf 'configuration.identitySha256=%s\n' "$nvd_configuration_identity_sha256"
-          } > "$NVD_CONFIGURATION_IDENTITY_TMP"
-          mv -f "$NVD_CONFIGURATION_IDENTITY_TMP" "$NVD_CONFIGURATION_IDENTITY"
-          {
-            printf 'credential.logicalName=NVD_API_KEY\n'
-            printf 'credential.present=false\n'
-            printf 'credential.used=false\n'
-            printf 'credential.mode=NOT_REQUIRED\n'
-            printf 'credential.source=OFFICIAL_NVD_JSON_2_0_FEED\n'
-          } > "$GA_EVIDENCE_DIR/nvd-credential-provenance.txt"
-          {
-            printf 'nvd.feed.mode=OFFICIAL_JSON_2_0\n'
-            printf 'nvd.feed.baseUrl=%s\n' "$NVD_FEED_BASE_URL"
-            printf 'nvd.feed.urlTemplate=%s\n' "$NVD_FEED_URL_TEMPLATE"
-            printf 'nvd.feed.name=%s\n' "$NVD_FEED_NAME"
-            printf 'nvd.feed.metaUrl=%s\n' "$NVD_FEED_META_URL"
-            printf 'nvd.feed.archiveUrl=%s\n' "$NVD_FEED_ARCHIVE_URL"
-            printf 'nvd.feed.metaSha256=%s\n' "$feed_meta_sha256"
-            printf 'nvd.feed.archiveSha256=%s\n' "$feed_archive_sha256"
-            printf 'nvd.feed.contentSha256=%s\n' "$feed_content_sha256"
-            printf 'nvd.feed.size=%s\n' "$feed_size"
-            printf 'nvd.feed.gzSize=%s\n' "$feed_gz_size"
-            printf 'nvd.feed.lastModifiedDate=%s\n' "$feed_last_modified"
-            printf 'nvd.feed.ageSeconds=%s\n' "$feed_age_seconds"
-            printf 'nvd.feed.freshnessLimitSeconds=86400\n'
-            printf 'nvd.feed.validatedAt=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          } > "$NVD_PROVENANCE_TMP"
-          mv -f "$NVD_PROVENANCE_TMP" "$NVD_PROVENANCE"
-          printf '%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > \
-            "$GA_CACHE_DIR/nvd-update-started"
-          cat > "$GA_CACHE_DIR/dependency-check-args" <<EOF
-          org.owasp:dependency-check-maven:13.0.0:check
-          -Dmaven.repo.local=$REPO
-          -DautoUpdate=true
-          -DdataDirectory=$NVD_DATA_DIR
-          -DnvdDatafeedUrl=$NVD_FEED_URL_TEMPLATE
-          -Dformats=JSON,SARIF
-          -DfailBuildOnCVSS=7.0
-          -DfailOnError=true
-          -DskipTestScope=true
-          -DskipProvidedScope=true
-          -DskipRuntimeScope=false
-          -DskipSystemScope=true
-          -DskipDependencyManagement=true
-          -DscanDependencies=true
-          -DscanPlugins=false
-          -DenableExperimental=false
-          -DenableRetired=false
-          -DversionCheckEnabled=false
-          -DfailBuildOnUnusedSuppressionRule=true
-          EOF
-
-      - name: Execute NVD JSON 2.0 Dependency-Check scan
-        continue-on-error: true
-        shell: bash
-        run: |
-          set -euo pipefail
-          export MAVEN_OPTS='-Dfile.encoding=UTF-8 -Duser.language=en -Duser.country=US -Duser.timezone=UTC'
-          export GA_CACHE_DIR="$RUNNER_TEMP/ga-security-cache"
-          cd "$RUNNER_TEMP/ga-security-candidate"
-          mapfile -t DEPENDENCY_CHECK_ARGS < "$GA_CACHE_DIR/dependency-check-args"
-          set +e
-          env -u NVD_API_KEY mvn -B -ntp -f core/pom.xml "${DEPENDENCY_CHECK_ARGS[@]}"
-          scan_status=$?
-          set -e
-          printf '%s\n' "$scan_status" > "$GA_CACHE_DIR/nvd-scan-exit-code"
-          exit "$scan_status"
-
-      - name: Finalize approved vulnerability evidence
-        if: always()
-        shell: bash
-        run: |
-          set -euo pipefail
-          export GA_EVIDENCE_DIR="$RUNNER_TEMP/ga-security-evidence"
-          export GA_CACHE_DIR="$RUNNER_TEMP/ga-security-cache"
-          export NVD_DATA_DIR="$GA_CACHE_DIR/dependency-check-data"
-          export NVD_PROVENANCE_TMP="$GA_EVIDENCE_DIR/nvd-update-provenance.tmp"
-          export NVD_PROVENANCE="$GA_EVIDENCE_DIR/nvd-update-provenance.txt"
-          if [ -s "$GA_CACHE_DIR/nvd-update-started" ]; then
-            export NVD_UPDATE_STARTED="$(cat "$GA_CACHE_DIR/nvd-update-started")"
-          else
-            export NVD_UPDATE_STARTED='UNAVAILABLE_BEFORE_FEED_VALIDATION'
-          fi
-          export NVD_UPDATE_FINISHED="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          nvd_configuration_identity_sha256='UNAVAILABLE'
-          if [ -s "$GA_EVIDENCE_DIR/nvd-configuration-identity.txt" ]; then
-            nvd_configuration_identity_sha256="$(sed -n 's/^configuration.identitySha256=//p' \
-              "$GA_EVIDENCE_DIR/nvd-configuration-identity.txt")"
-          fi
-          scan_status=125
-          if [ -s "$GA_CACHE_DIR/nvd-scan-exit-code" ]; then
-            scan_status="$(cat "$GA_CACHE_DIR/nvd-scan-exit-code")"
-          fi
-          for report in "$RUNNER_TEMP/ga-security-candidate"/core/target/dependency-check-report.*; do
-            if [ -f "$report" ]; then
-              cp "$report" "$GA_EVIDENCE_DIR/"
-            fi
-          done
-          data_directory_present=false
-          if [ -d "$NVD_DATA_DIR" ]; then
-            data_directory_present=true
-          fi
-          if [ "$scan_status" -ne 0 ]; then
-            {
-              printf 'nvd.updateStarted=%s\n' "$NVD_UPDATE_STARTED"
-              if [ -s "$NVD_PROVENANCE" ]; then
-                cat "$NVD_PROVENANCE"
-              else
-                printf 'nvd.feed.validation=FAILED_BEFORE_PROVENANCE_PUBLICATION\n'
-              fi
-              printf 'nvd.updateFinished=%s\n' "$NVD_UPDATE_FINISHED"
-              printf 'nvd.scanner=org.owasp:dependency-check-maven:13.0.0\n'
-              printf 'nvd.configurationIdentitySha256=%s\n' "$nvd_configuration_identity_sha256"
-              printf 'nvd.scanExitCode=%s\n' "$scan_status"
-            } > "$NVD_PROVENANCE_TMP"
-            mv -f "$NVD_PROVENANCE_TMP" "$NVD_PROVENANCE"
-            exit "$scan_status"
-          fi
-          test -s "$RUNNER_TEMP/ga-security-candidate/core/target/dependency-check-report.json"
-          test -s "$RUNNER_TEMP/ga-security-candidate/core/target/dependency-check-report.sarif"
-          test "$data_directory_present" = true
-          test -z "$(find "$NVD_DATA_DIR" -mindepth 1 -type l -print -quit)"
-          test -z "$(find "$NVD_DATA_DIR" -mindepth 1 ! -type f ! -type d -print -quit)"
-          find "$NVD_DATA_DIR" -type f -printf '%P\n' | LC_ALL=C sort > "$GA_EVIDENCE_DIR/nvd-data-inventory"
-          test -s "$GA_EVIDENCE_DIR/nvd-data-inventory"
-          while IFS= read -r item; do
-            sha256sum "$NVD_DATA_DIR/$item"
-          done < "$GA_EVIDENCE_DIR/nvd-data-inventory" > "$GA_EVIDENCE_DIR/nvd-data-sha256sums"
-          feed_age_seconds="$(sed -n 's/^nvd.feed.ageSeconds=//p' "$NVD_PROVENANCE")"
-          [[ "$feed_age_seconds" =~ ^[0-9]+$ ]]
-          test "$feed_age_seconds" -le 86400
-          {
-            printf 'nvd.updateStarted=%s\n' "$NVD_UPDATE_STARTED"
-            cat "$NVD_PROVENANCE"
-            printf 'nvd.updateFinished=%s\n' "$NVD_UPDATE_FINISHED"
-            printf 'nvd.dataDirectory=dependency-check-data\n'
-            printf 'nvd.dataDirectoryPresent=true\n'
-            printf 'nvd.scanner=org.owasp:dependency-check-maven:13.0.0\n'
-            printf 'nvd.configurationIdentitySha256=%s\n' "$nvd_configuration_identity_sha256"
-            printf 'nvd.dataFileCount=%s\n' "$(wc -l < "$GA_EVIDENCE_DIR/nvd-data-inventory")"
-            printf 'nvd.scanExitCode=%s\n' "$scan_status"
-          } > "$NVD_PROVENANCE_TMP"
-          mv -f "$NVD_PROVENANCE_TMP" "$NVD_PROVENANCE"
-
-      - name: Generate approved license inventory
-        shell: bash
-        run: |
-          set -euo pipefail
-          export MAVEN_OPTS='-Dfile.encoding=UTF-8 -Duser.language=en -Duser.country=US -Duser.timezone=UTC'
-          cd "$RUNNER_TEMP/ga-security-candidate"
+            -DoutputDirectory="$EVIDENCE/sbom" -Dcyclonedx.skipAttach=true
+          mvn -B -ntp -f core/pom.xml \
+            org.apache.maven.plugins:maven-dependency-plugin:3.8.1:list \
+            -Dmaven.repo.local="$REPO" -DincludeScope=runtime \
+            -DoutputFile="$CACHE/runtime-dependencies.raw" \
+            -DoutputAbsoluteArtifactFilename=false
           mvn -B -ntp -f core/pom.xml \
             org.codehaus.mojo:license-maven-plugin:2.7.1:aggregate-third-party-report \
-            -Dmaven.repo.local="$RUNNER_TEMP/ga-security-cache/m2" \
-            -Dlicense.includeTransitiveDependencies=true -Dlicense.includeOptional=true \
-            -Dlicense.excludedScopes=test,provided,system -Dlicense.encoding=UTF-8
-          cp -r core/target/reports "$RUNNER_TEMP/ga-security-evidence/license-reports"
+            -Dmaven.repo.local="$REPO" -Dlicense.includeTransitiveDependencies=true \
+            -Dlicense.includeOptional=true -Dlicense.excludedScopes=test,provided,system \
+            -Dlicense.encoding=UTF-8
+          test -d core/target/reports
+          test -n "$(find core/target/reports -type f -print -quit)"
+          cp -R core/target/reports "$EVIDENCE/license/plugin-reports"
+          {
+            printf 'application.jarPath=application/matching-engine-rc.jar\n'
+            printf 'application.jarSha256=%s\n' "$(sha256sum "$EVIDENCE/application/matching-engine-rc.jar" | cut -d' ' -f1)"
+            printf 'candidate.productionSha=e2828f563ee41316c062385c0244ac1336731359\n'
+          } > "$EVIDENCE/application/application-jar-provenance.txt"
+          find "$REPO" -type f -printf '%P\n' | LC_ALL=C sort > \
+            "$EVIDENCE/maven-repository-inventory"
 
-      - name: Run pinned full-history and working-tree secret scans
+      - name: Validate SBOM and normalized supply-chain inventories
         shell: bash
         run: |
           set -euo pipefail
-          export GA_EVIDENCE_DIR="$RUNNER_TEMP/ga-security-evidence"
-          docker pull ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
-          test "$(docker image inspect ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
-            --format '{{index .RepoDigests 0}}' 2>/dev/null)" = \
-            ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+          EVIDENCE="$RUNNER_TEMP/ga-security-evidence"
+          CACHE="$RUNNER_TEMP/ga-security-cache"
+          python3 - "$EVIDENCE" "$CACHE/runtime-dependencies.raw" <<'PY'
+          import json
+          import pathlib
+          import re
+          import sys
+
+          root = pathlib.Path(sys.argv[1])
+          raw_dependencies = pathlib.Path(sys.argv[2])
+          bom_path = root / "sbom" / "bom.json"
+          bom = json.loads(bom_path.read_text(encoding="utf-8"))
+          if bom.get("bomFormat") != "CycloneDX" or bom.get("specVersion") != "1.6":
+              raise SystemExit("invalid CycloneDX identity")
+          components = bom.get("components")
+          if not isinstance(components, list) or not components:
+              raise SystemExit("empty CycloneDX component inventory")
+
+          sbom = {}
+          accepted = {"Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "MIT"}
+          for component in components:
+              group = component.get("group")
+              name = component.get("name")
+              version = component.get("version")
+              if not all(isinstance(value, str) and value.strip() == value and value
+                         for value in (group, name, version)):
+                  raise SystemExit("invalid CycloneDX component coordinate")
+              coordinate = f"{group}:{name}:{version}"
+              if coordinate in sbom:
+                  raise SystemExit("duplicate CycloneDX component coordinate")
+              licenses = component.get("licenses")
+              if not isinstance(licenses, list) or not licenses:
+                  raise SystemExit(f"missing runtime license: {coordinate}")
+              identifiers = []
+              for item in licenses:
+                  license_data = item.get("license") if isinstance(item, dict) else None
+                  identifier = license_data.get("id") if isinstance(license_data, dict) else None
+                  if not isinstance(identifier, str) or not identifier:
+                      raise SystemExit(f"non-SPDX runtime license: {coordinate}")
+                  identifiers.append(identifier)
+              if not set(identifiers).issubset(accepted):
+                  raise SystemExit(f"unapproved runtime license: {coordinate}")
+              sbom[coordinate] = ",".join(sorted(set(identifiers)))
+
+          dependencies = set()
+          pattern = re.compile(r"^\s*([^:\s]+):([^:\s]+):([^:\s]+):(.+):(compile|runtime)\s*$")
+          for line in raw_dependencies.read_text(encoding="utf-8").splitlines():
+              match = pattern.match(line)
+              if not match:
+                  continue
+              middle = match.group(4).split(":")
+              version = middle[-1]
+              coordinate = f"{match.group(1)}:{match.group(2)}:{version}"
+              if coordinate in dependencies:
+                  raise SystemExit("duplicate runtime dependency coordinate")
+              dependencies.add(coordinate)
+          if not dependencies:
+              raise SystemExit("empty runtime dependency inventory")
+          if set(sbom) != dependencies:
+              raise SystemExit("SBOM/runtime dependency inventory mismatch")
+
+          dependency_output = root / "dependency" / "runtime-dependencies.txt"
+          dependency_output.write_text("".join(f"{item}\n" for item in sorted(dependencies)),
+                                       encoding="ascii", newline="\n")
+          license_output = root / "license" / "runtime-license-inventory.txt"
+          license_output.write_text(
+              "".join(f"{item}={sbom[item]}\n" for item in sorted(sbom)),
+              encoding="ascii", newline="\n")
+          (root / "sbom" / "normalized-components.txt").write_text(
+              "".join(f"{item}\n" for item in sorted(sbom)),
+              encoding="ascii", newline="\n")
+          PY
+          test -s "$EVIDENCE/sbom/bom.json"
+          test -s "$EVIDENCE/sbom/normalized-components.txt"
+          test -s "$EVIDENCE/dependency/runtime-dependencies.txt"
+          test -s "$EVIDENCE/license/runtime-license-inventory.txt"
+          cmp "$EVIDENCE/sbom/normalized-components.txt" \
+            "$EVIDENCE/dependency/runtime-dependencies.txt"
+
+      - name: Run pinned full-history and candidate-bound secret scans
+        shell: bash
+        run: |
+          set -euo pipefail
+          EVIDENCE="$RUNNER_TEMP/ga-security-evidence"
+          IMAGE='ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f'
+          docker pull "$IMAGE"
+          test "$(docker image inspect "$IMAGE" --format '{{index .RepoDigests 0}}' 2>/dev/null)" = "$IMAGE"
           docker run --rm --network=none --workdir=/repo \
-            --volume="$RUNNER_TEMP/ga-security-candidate:/repo:ro" \
-            --volume="$GA_EVIDENCE_DIR/gitleaks:/out" \
-            ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
-            git --log-opts=--all --redact=100 --report-format=json \
+            --volume="$GITHUB_WORKSPACE:/repo:ro" --volume="$EVIDENCE/gitleaks:/out" \
+            "$IMAGE" git --log-opts=--all --redact=100 --report-format=json \
             --report-path=/out/history.json --exit-code=1 --no-banner --no-color
           docker run --rm --network=none --workdir=/repo \
             --volume="$RUNNER_TEMP/ga-security-candidate:/repo:ro" \
-            --volume="$GA_EVIDENCE_DIR/gitleaks:/out" \
-            ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
+            --volume="$EVIDENCE/gitleaks:/out" "$IMAGE" \
             dir /repo --max-target-megabytes=10 --redact=100 --report-format=json \
             --report-path=/out/working-tree.json --exit-code=1 --no-banner --no-color
+          test -f "$EVIDENCE/gitleaks/history.json"
+          test -f "$EVIDENCE/gitleaks/working-tree.json"
 
-      - name: Record immutable tool output hashes
+      - name: Finalize conjunctive G11 evidence
         shell: bash
         run: |
           set -euo pipefail
-          export GA_EVIDENCE_SUMS_TMP="$RUNNER_TEMP/ga-security-evidence/SHA256SUMS.tmp"
-          find "$RUNNER_TEMP/ga-security-evidence" -type f \
-            ! -name 'tool-output-sha256sums' ! -name 'SHA256SUMS' ! -name 'SHA256SUMS.tmp' \
-            -printf '%P\n' | sort | while IFS= read -r item; do
-            sha256sum "$RUNNER_TEMP/ga-security-evidence/$item"
-          done > "$RUNNER_TEMP/ga-security-evidence/tool-output-sha256sums"
-          find "$RUNNER_TEMP/ga-security-evidence" -type f \
-            ! -name 'tool-output-sha256sums' ! -name 'SHA256SUMS' ! -name 'SHA256SUMS.tmp' \
-            -printf '%P\n' | sort | while IFS= read -r item; do
-            sha256sum "$RUNNER_TEMP/ga-security-evidence/$item"
-          done > "$GA_EVIDENCE_SUMS_TMP"
+          EVIDENCE="$RUNNER_TEMP/ga-security-evidence"
+          POLICY_SHA256='7ab79aa16313ed363a6c2576a0b18dcaa545666f2478d092c1cf44b581be9c30'
+          dependency_count="$(wc -l < "$EVIDENCE/dependency/runtime-dependencies.txt" | tr -d ' ')"
+          test "$dependency_count" -gt 0
+          {
+            printf 'applicationJar.valid=true\n'
+            printf 'candidate.productionSha=e2828f563ee41316c062385c0244ac1336731359\n'
+            printf 'candidate.tagObjectSha=dfd38c08e80aed9035bf1c2d7c8faf8bae99c356\n'
+            printf 'dependencyInventory.count=%s\n' "$dependency_count"
+            printf 'dependencyInventory.valid=true\n'
+            printf 'externalCveNvdEvaluation.inQualificationBoundary=false\n'
+            printf 'gate.id=G11\n'
+            printf 'gate.version=OFFLINE_SUPPLY_CHAIN_SECURITY_V1\n'
+            printf 'licenseDisposition.valid=true\n'
+            printf 'policy.propertiesSha256=%s\n' "$POLICY_SHA256"
+            printf 'sbomDependencyConsistency.valid=true\n'
+            printf 'sbom.valid=true\n'
+            printf 'schema.version=g11-offline-supply-chain-evidence-v1\n'
+            printf 'secretScan.candidateBoundPassed=true\n'
+            printf 'secretScan.fullHistoryPassed=true\n'
+          } > "$EVIDENCE/g11-offline-supply-chain-manifest.txt"
+          {
+            printf 'claim.externalCveNvdEvaluation=false\n'
+            printf 'gate.blocker=NONE\n'
+            printf 'gate.id=G11\n'
+            printf 'gate.outcome=PASS\n'
+            printf 'gate.version=OFFLINE_SUPPLY_CHAIN_SECURITY_V1\n'
+          } > "$EVIDENCE/g11-gate-result.txt"
+
+      - name: Record and verify immutable evidence inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          EVIDENCE="$RUNNER_TEMP/ga-security-evidence"
+          test -z "$(find "$EVIDENCE" -mindepth 1 -type l -print -quit)"
+          test -z "$(find "$EVIDENCE" -mindepth 1 ! -type f ! -type d -print -quit)"
+          find "$EVIDENCE" -type f ! -name SHA256SUMS ! -name SHA256SUMS.tmp \
+            -printf '%P\n' | LC_ALL=C sort > "$RUNNER_TEMP/ga-security-artifact-paths"
+          test -s "$RUNNER_TEMP/ga-security-artifact-paths"
+          test "$(sort -u "$RUNNER_TEMP/ga-security-artifact-paths" | wc -l)" = \
+            "$(wc -l < "$RUNNER_TEMP/ga-security-artifact-paths")"
+          for required in \
+            application/application-jar-provenance.txt \
+            application/matching-engine-rc.jar candidate-identity.txt \
+            dependency/runtime-dependencies.txt g11-gate-result.txt \
+            g11-offline-supply-chain-manifest.txt gitleaks/history.json \
+            gitleaks/working-tree.json java-version.txt javac-version.txt \
+            jdk-runtime-identity.txt \
+            license/runtime-license-inventory.txt \
+            maven-repository-inventory maven-version.txt \
+            policy/ga-security-toolchain-v2.properties sbom/bom.json \
+            sbom/normalized-components.txt tool-entry-sha256sums.txt; do
+            grep -Fx "$required" "$RUNNER_TEMP/ga-security-artifact-paths"
+          done
           (
-            cd "$RUNNER_TEMP/ga-security-evidence"
+            cd "$EVIDENCE"
+            while IFS= read -r item; do
+              test -f "$item"
+              sha256sum "$item"
+            done < "$RUNNER_TEMP/ga-security-artifact-paths"
+          ) > "$EVIDENCE/SHA256SUMS.tmp"
+          (
+            cd "$EVIDENCE"
             sha256sum --check --strict SHA256SUMS.tmp
           )
-          mv -f "$GA_EVIDENCE_SUMS_TMP" "$RUNNER_TEMP/ga-security-evidence/SHA256SUMS"
+          mv "$EVIDENCE/SHA256SUMS.tmp" "$EVIDENCE/SHA256SUMS"
           (
-            cd "$RUNNER_TEMP/ga-security-evidence"
+            cd "$EVIDENCE"
             sha256sum --check --strict SHA256SUMS
           )
 
@@ -406,7 +351,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
-          name: ga-g11-security-evidence
+          name: ga-g11-offline-supply-chain-evidence
           path: ${{ runner.temp }}/ga-security-evidence
           if-no-files-found: error
           retention-days: 14
@@ -423,7 +368,7 @@ jobs:
           ARTIFACT_DIGEST: ${{ steps.publish-evidence.outputs.artifact-digest }}
         run: |
           {
-            printf 'artifact.name=ga-g11-security-evidence\n'
+            printf 'artifact.name=ga-g11-offline-supply-chain-evidence\n'
             printf 'artifact.id=%s\n' "${ARTIFACT_ID:-}"
             printf 'artifact.url=%s\n' "${ARTIFACT_URL:-}"
             printf 'artifact.digestSha256=%s\n' "${ARTIFACT_DIGEST:-}"
