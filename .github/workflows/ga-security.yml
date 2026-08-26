@@ -70,9 +70,14 @@ jobs:
           GA_CACHE_DIR="$RUNNER_TEMP/ga-security-cache"
           CANDIDATE_DIR="$RUNNER_TEMP/ga-security-candidate"
           POLICY='docs/release/ga-security-toolchain-v2.properties'
-          POLICY_SHA256='f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114'
-          mkdir -p "$GA_EVIDENCE_DIR/policy" "$GA_CACHE_DIR"
+          DISPOSITION='docs/release/ga-gitleaks-false-positive-dispositions-v1.properties'
+          DISPOSITION_SHA256='0854c43f9138d8073f640fe1e37f97c7d482f01bcbe3e8280534ee3cbc70466c'
+          POLICY_SHA256='02225e9d08f458f3d593747ad9937bd7c777b6787f52b253328213d7a8ebc117'
+          mkdir -p "$GA_EVIDENCE_DIR/policy" "$GA_EVIDENCE_DIR/gitleaks" "$GA_CACHE_DIR"
           test "$(sha256sum "$POLICY" | cut -d' ' -f1)" = "$POLICY_SHA256"
+          test "$(sha256sum "$DISPOSITION" | cut -d' ' -f1)" = "$DISPOSITION_SHA256"
+          grep -Fx 'gitleaks.dispositionManifest=docs/release/ga-gitleaks-false-positive-dispositions-v1.properties' "$POLICY"
+          grep -Fx 'gitleaks.dispositionSchema=ga-gitleaks-false-positive-disposition-v1' "$POLICY"
           test "$(git rev-parse --is-shallow-repository)" = false
           tag_object="$(git rev-parse refs/tags/v0.9.0-rc.1)"
           production_sha="$(git rev-parse 'refs/tags/v0.9.0-rc.1^{}')"
@@ -82,6 +87,7 @@ jobs:
           git worktree add --detach "$CANDIDATE_DIR" "$production_sha"
           test -z "$(git -C "$CANDIDATE_DIR" status --porcelain --untracked-files=all)"
           cp "$POLICY" "$GA_EVIDENCE_DIR/policy/ga-security-toolchain-v2.properties"
+          cp "$DISPOSITION" "$GA_EVIDENCE_DIR/gitleaks/approved-dispositions.properties"
           {
             printf 'candidate.tag=v0.9.0-rc.1\n'
             printf 'candidate.tagObjectSha=%s\n' "$tag_object"
@@ -394,27 +400,47 @@ jobs:
         run: |
           set -euo pipefail
           EVIDENCE="$RUNNER_TEMP/ga-security-evidence"
+          REPOSITORY="$GITHUB_WORKSPACE"
+          CANDIDATE="$RUNNER_TEMP/ga-security-candidate"
           IMAGE='ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f'
           docker pull "$IMAGE"
           test "$(docker image inspect "$IMAGE" --format '{{index .RepoDigests 0}}' 2>/dev/null)" = "$IMAGE"
+          set +e
           docker run --rm --network=none --workdir=/repo \
             --volume="$GITHUB_WORKSPACE:/repo:ro" --volume="$EVIDENCE/gitleaks:/out" \
             "$IMAGE" git --log-opts=--all --redact=100 --report-format=json \
             --report-path=/out/history.json --exit-code=1 --no-banner --no-color
+          HISTORY_EXIT=$?
           docker run --rm --network=none --workdir=/repo \
-            --volume="$RUNNER_TEMP/ga-security-candidate:/repo:ro" \
+            --volume="$CANDIDATE:/repo:ro" \
             --volume="$EVIDENCE/gitleaks:/out" "$IMAGE" \
             dir /repo --max-target-megabytes=10 --redact=100 --report-format=json \
             --report-path=/out/working-tree.json --exit-code=1 --no-banner --no-color
+          CANDIDATE_EXIT=$?
+          set -e
           test -f "$EVIDENCE/gitleaks/history.json"
           test -f "$EVIDENCE/gitleaks/working-tree.json"
+          test -s "$EVIDENCE/gitleaks/approved-dispositions.properties"
+          python3 qualification/src/main/python/gitleaks_disposition_evaluator.py \
+            "$EVIDENCE/gitleaks/history.json" \
+            "$EVIDENCE/gitleaks/working-tree.json" \
+            "$EVIDENCE/gitleaks/approved-dispositions.properties" \
+            "$REPOSITORY" "$CANDIDATE" \
+            e2828f563ee41316c062385c0244ac1336731359 \
+            "$HISTORY_EXIT" "$CANDIDATE_EXIT" \
+            "$EVIDENCE/gitleaks/disposition-evaluation.txt"
+          test -s "$EVIDENCE/gitleaks/disposition-evaluation.txt"
 
       - name: Finalize conjunctive G11 evidence
         shell: bash
         run: |
           set -euo pipefail
           EVIDENCE="$RUNNER_TEMP/ga-security-evidence"
-          POLICY_SHA256='f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114'
+          POLICY_SHA256='02225e9d08f458f3d593747ad9937bd7c777b6787f52b253328213d7a8ebc117'
+          DISPOSITION_SHA256="$(sha256sum "$EVIDENCE/gitleaks/approved-dispositions.properties" | cut -d' ' -f1)"
+          DISPOSITION_EVALUATION_SHA256="$(sha256sum "$EVIDENCE/gitleaks/disposition-evaluation.txt" | cut -d' ' -f1)"
+          test -s "$EVIDENCE/gitleaks/approved-dispositions.properties"
+          test -s "$EVIDENCE/gitleaks/disposition-evaluation.txt"
           dependency_count="$(wc -l < "$EVIDENCE/dependency/runtime-dependencies.txt" | tr -d ' ')"
           test "$dependency_count" -gt 0
           {
@@ -431,6 +457,8 @@ jobs:
             printf 'sbomDependencyConsistency.valid=true\n'
             printf 'sbom.valid=true\n'
             printf 'schema.version=g11-offline-supply-chain-evidence-v1\n'
+            printf 'secretScan.dispositionEvaluationSha256=%s\n' "$DISPOSITION_EVALUATION_SHA256"
+            printf 'secretScan.dispositionManifestSha256=%s\n' "$DISPOSITION_SHA256"
             printf 'secretScan.candidateBoundPassed=true\n'
             printf 'secretScan.fullHistoryPassed=true\n'
           } > "$EVIDENCE/g11-offline-supply-chain-manifest.txt"
@@ -440,6 +468,8 @@ jobs:
             printf 'gate.id=G11\n'
             printf 'gate.outcome=PASS\n'
             printf 'gate.version=OFFLINE_SUPPLY_CHAIN_SECURITY_V1\n'
+            printf 'secretScan.dispositionEvaluation=PASS\n'
+            printf 'secretScan.dispositionManifestSha256=%s\n' "$DISPOSITION_SHA256"
           } > "$EVIDENCE/g11-gate-result.txt"
 
       - name: Record and verify immutable evidence inventory
@@ -459,7 +489,9 @@ jobs:
             application/matching-engine-rc.jar candidate-identity.txt \
             dependency/runtime-dependencies.txt g11-gate-result.txt \
             g11-offline-supply-chain-manifest.txt gitleaks/history.json \
-            gitleaks/working-tree.json java-version.txt javac-version.txt \
+            gitleaks/approved-dispositions.properties \
+            gitleaks/disposition-evaluation.txt gitleaks/working-tree.json \
+            java-version.txt javac-version.txt \
             jdk-runtime-identity.txt \
             license/runtime-license-inventory.txt \
             license/plugin-reports/aggregate-third-party-report.html \

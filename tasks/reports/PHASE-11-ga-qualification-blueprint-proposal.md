@@ -39,13 +39,19 @@ commands.
    `OFFLINE_SUPPLY_CHAIN_SECURITY_V1`; current external CVE/NVD evaluation is
    outside the portfolio-release boundary. Historical NVD-backed failures are
    preserved and no fresh G11 execution is authorized by the amendment.
+5. Human approved a narrow G11 false-positive disposition amendment: exact
+   fingerprint/path/commit-or-candidate/blob/rule/line matches with
+   `DEMONSTRABLE_NON_SECRET` classification may be machine-accepted; broad
+   suppressions remain forbidden and both raw full-history/candidate-bound
+   reports remain mandatory. Its implementation is authorized, but no fresh
+   G11 execution is authorized by this amendment.
 
 ## Stop state
 
 ```text
 Phase 11 Blueprint: Approved
 TASK-047: Completed / Evidence Gate PASS
-TASK-048: In Progress — offline G11 policy; root-selector Maven B2 remediation PASS at `e1464ed` after `32925783003` FAIL/preserved; fresh G11 separately gated
+TASK-048: In Progress — offline G11 policy; root-selector Maven B2 remediation PASS at `e1464ed`; G11 `32947367541` preserved FAIL/non-qualifying after two documentation false positives; exact disposition remediation authorized; fresh G11 separately gated
 TASK-049..056: Dependency ordered / locked
 Campaign execution: Not Authorized
 Candidate mutation: Not Authorized

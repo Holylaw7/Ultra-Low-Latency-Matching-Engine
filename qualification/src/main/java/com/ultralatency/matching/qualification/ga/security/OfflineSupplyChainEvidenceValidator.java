@@ -16,6 +16,8 @@ public final class OfflineSupplyChainEvidenceValidator {
             "dependency/runtime-dependencies.txt",
             "g11-gate-result.txt",
             "g11-offline-supply-chain-manifest.txt",
+            "gitleaks/approved-dispositions.properties",
+            "gitleaks/disposition-evaluation.txt",
             "gitleaks/history.json",
             "gitleaks/working-tree.json",
             "java-version.txt",

@@ -2,13 +2,11 @@
 
 ## Status
 
-`In Progress — Human-approved license-report B2 remediation Evidence Gate PASS
-at 30c89c4 (Standard CI 32932454011; Quick Lane 32932454009); the subsequent
-fresh G11 run 32943456313 remains FAIL/B2/non-qualifying/preserved after a
-step-local shell-variable defect; the follow-up remediation is recorded at
-eced533 (Standard CI 32945056542; Quick Lane 32945056508), with final audit
-checkpoint 688d955 (Standard CI 32946223271; Quick Lane 32946223268), and no
-further fresh G11 execution is authorized.`
+`In Progress — Human-approved G11 false-positive disposition amendment is
+authorized for qualification-only implementation; G9 32856372581 remains
+PASS/qualifying/frozen; fresh G11 32947367541 remains FAIL/non-qualifying/
+preserved after two demonstrably non-secret full-history findings; no fresh
+G11 execution is authorized.`
 
 TASK-048 implements the approved qualification-only reproducibility and
 security preflight boundary. It does not qualify the candidate, authorize a
@@ -23,7 +21,7 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
 | Peeled production SHA | `e2828f563ee41316c062385c0244ac1336731359` |
 | Historical toolchain policy | `ga-security-toolchain-v1.properties` / NVD-backed runs only / preserved unchanged |
 | Current G11 toolchain policy | `ga-security-toolchain-v2.properties` / `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` |
-| Current policy SHA-256 | `f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114`; license-report remediation `30c89c4` / Standard `32932454011` / Quick `32932454009` PASS; shell-scope remediation `eced533` / Standard `32945056542` / Quick `32945056508` PASS; no further fresh G11 execution authorized |
+| Current policy SHA-256 | `02225e9d08f458f3d593747ad9937bd7c777b6787f52b253328213d7a8ebc117`; G11 disposition manifest `0854c43f9138d8073f640fe1e37f97c7d482f01bcbe3e8280534ee3cbc70466c`; false-positive disposition remediation in progress; no fresh G11 execution authorized |
 | JDK archive | `microsoft-jdk-21.0.12-linux-x64.tar.gz` / `linux-x64` |
 | JDK archive SHA-256 | `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f` |
 | Artifact publication action | `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` (v7.0.1) |
@@ -47,8 +45,9 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
   rebuilds and hashes the application JAR, generates a CycloneDX SBOM and an
   independent runtime dependency list, enforces exact coordinate/license
   consistency, generates the root-reactor license report, runs pinned
-  full-history and candidate-bound Gitleaks, then strictly hashes and publishes
-  the offline evidence. It does not invoke Dependency-Check or NVD.
+  full-history and candidate-bound Gitleaks, evaluates both reports against the
+  exact v2 disposition manifest, then strictly hashes and publishes the offline
+  evidence. It does not invoke Dependency-Check or NVD.
 - The approved B3 amendment replaces only JDK provisioning: both new workflows
   verify the Microsoft 21.0.12 archive sidecar and archive SHA-256 before a
   fresh extraction, then record Java/Maven runtime identity. Candidate,
@@ -78,13 +77,13 @@ tag, production source, existing workflow, dependency or runtime input changed.
 
 | Check | Result |
 | --- | --- |
-| Focused security/policy tests | PASS — 14 tests |
+| Focused security/policy tests | PASS — Java policy/security tests plus 3 Python disposition tests |
 | `mvn -pl qualification -am test "-Dtest=*GaSecurity*,*Reproducib*"` | PASS |
 | Root-selector qualification build | PASS — `mvn -B -ntp -pl core -am package -DskipTests`; root-relative Checkstyle 0; `core/target/matching-engine-rc.jar` present |
-| v2 policy digest / command contract | PASS — SHA-256 `f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114`; current license goal uses root `-pl core -am` and report path `target/reports/aggregate-third-party-report.html` |
+| v2 policy digest / command contract | PASS — current SHA-256 `02225e9d08f458f3d593747ad9937bd7c777b6787f52b253328213d7a8ebc117`; disposition manifest SHA-256 `0854c43f9138d8073f640fe1e37f97c7d482f01bcbe3e8280534ee3cbc70466c`; license goal uses root `-pl core -am` and report path `target/reports/aggregate-third-party-report.html` |
 | Checkstyle during focused build | 0 violations |
 | G9/G11 execution | G9 `32856372581` PASS/qualifying/frozen; offline G11 `32925783003` FAIL/B2/preserved before SBOM; B2 remediation `e1464ed` / CI `32927818204` / Quick `32927818172` PASS; no fresh G11 execution authorized |
-| Full `mvn verify` | PASS — 225 core + 70 qualification tests; 2 expected skips |
+| Full `mvn verify` | PASS — 225 core + 72 qualification tests; 2 expected skips |
 | Workflow YAML parse | PASS — both new workflows parse successfully |
 | Workflow Bash syntax | PASS — all workflow `run` blocks parse with Bash 5.3 |
 | G9 packager simulation | PASS — nested evidence directories inventory and verify atomically |
@@ -244,8 +243,8 @@ before Dependency-Check analysis. Artifact `9571906279`, digest
 is preserved FAIL/B3/non-qualifying. No candidate defect was observed.
 
 Human then approved `OFFLINE_SUPPLY_CHAIN_SECURITY_V1`. The historical v1
-policy remains unchanged; the current canonical v2 policy hash is
-`f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114`.
+policy remains unchanged; at that pre-disposition checkpoint the v2 policy
+hash was `f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114`.
 Dependency-Check/NVD/CVE/CVSS are outside the new normative portfolio gate and
 no cleanliness claim is permitted. This amendment implementation does not
 execute G11 or authorize TASK-049.
@@ -286,8 +285,9 @@ artifact at `target/reports/aggregate-third-party-report.html`. The old
 `license/plugin-reports/aggregate-third-party-report.html` and is included in
 the immutable inventory. Candidate/POM/production/G9 inputs remain unchanged.
 
-The v2 policy digest remains
-`f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114`.
+At the pre-disposition license-report checkpoint the v2 policy digest was
+`f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114`; the
+current disposition amendment uses the updated policy hash recorded above.
 The repository-root isolated smoke generated a 15,394-byte report at the
 approved path and no legacy core report. The workflow now validates UTF-8 HTML
 structure, the pinned plugin marker, dependency headings and exact coordinate
@@ -316,6 +316,36 @@ A read-only cross-step shell-variable audit found no second undeclared local
 variable. The limited workflow-only remediation is implemented at `eced533`,
 with Standard CI `32945056542` and Quick Lane `32945056508` passing; a new G11
 execution still requires separate Human approval.
+
+## Current G11 false-positive disposition amendment
+
+Run `32947367541` reached the pinned full-history Gitleaks scan and found two
+generic-api-key results in documentation prose. The results are preserved as
+`FAIL / NON-QUALIFYING / PRESERVED`; candidate defect was not observed and the
+candidate-bound scan did not execute because the original shell step stopped on
+the history exit code. Read-only review classified both findings as
+demonstrably non-secret: one historical environment-variable documentation
+reference at commit `993c2477`, and one properties-schema prose line at commit
+`d753af0b`. The latter is also bound to the candidate blob identity without
+claiming that the skipped candidate-bound scan passed.
+
+Human approved a narrow machine-verifiable disposition amendment. The new
+manifest `docs/release/ga-gitleaks-false-positive-dispositions-v1.properties`
+binds scanner/rule, scope, canonical path, full commit or candidate production
+identity, blob object ID, line range, exact Gitleaks fingerprint, classification
+and a fixed non-secret rationale digest. It contains no match, secret, secret
+hash or transformed secret. The workflow now runs both scans even when the
+history scan returns findings, retains both raw reports, and fails closed on
+any finding that is not an exact manifest match. The disposition manifest and
+the safe evaluation sidecar are mandatory immutable evidence artifacts.
+
+This is qualification-policy/tooling remediation only. It does not alter the
+Gitleaks rules, candidate, production source, G9 evidence or TASK-048 gate
+authority. The implementation Evidence Gate must pass focused disposition
+tests, malformed/mutated/new-finding fail-closed tests, full regression,
+Checkstyle, workflow/static validation, secret-leak scan, frozen-path audit,
+verifier/docs-auditor and exact-SHA Standard/Quick CI before a separate Human
+fresh G11 execution can be considered.
 
 ## Completion log
 

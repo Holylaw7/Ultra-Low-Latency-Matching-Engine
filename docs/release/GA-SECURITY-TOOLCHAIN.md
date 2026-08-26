@@ -24,8 +24,9 @@ The current G11 evidence unit is
    coordinates exactly equal the SBOM component coordinates;
 5. deterministic SPDX disposition for every runtime dependency, limited to
    the v2 policy's accepted set;
-6. pinned Gitleaks full-history and candidate-bound scans with zero unresolved
-   or verified findings;
+6. pinned Gitleaks full-history and candidate-bound scans where every finding
+   is either an exact approved non-secret disposition or a zero-result, with
+   verified/credible secrets always blocking;
 7. pinned JDK, Maven, CycloneDX, dependency-inventory, license and OCI tool
    identity/provenance;
 8. a non-empty root-reactor `aggregate-third-party-report.html` license
@@ -35,7 +36,7 @@ The current G11 evidence unit is
    artifact publication.
 
 The canonical v2 policy SHA-256 is
-`f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114`.
+`02225e9d08f458f3d593747ad9937bd7c777b6787f52b253328213d7a8ebc117`.
 Dependency-Check, NVD data/API access, CVE lookup, CVSS evaluation and database
 freshness are not normative inputs or outputs of v2. They are outside this
 portfolio-release boundary. The workflow must not emit a fake or skipped
@@ -52,6 +53,33 @@ Mandatory limitation:
 > `Current external CVE/NVD vulnerability evaluation is outside this
 > portfolio-release boundary. No claim is made that dependencies are free of
 > currently known vulnerabilities.`
+
+### Human-approved G11 false-positive disposition amendment (2026-08-26)
+
+The current v2 Gitleaks contract remains fail-closed and does not use
+`.gitleaksignore`, path-wide exclusions or inline allow comments. The only
+additional disposition mechanism is the exact, versioned manifest
+`ga-gitleaks-false-positive-dispositions-v1.properties`, whose SHA-256 is
+`0854c43f9138d8073f640fe1e37f97c7d482f01bcbe3e8280534ee3cbc70466c`.
+
+The workflow retains both raw JSON reports, executes both scans even when the
+history scan returns findings, and evaluates each finding against the manifest
+after the scanner exits. A disposition binds the pinned scanner/rule, scope,
+canonical repository path, full commit or candidate production identity, blob
+object ID, line range, exact Gitleaks fingerprint, classification and a digest
+of a fixed non-secret rationale code. The manifest contains no match, secret,
+secret hash, transformed secret or sensitive line. Unknown, changed or
+unapproved findings fail G11; only an exact `DEMONSTRABLE_NON_SECRET`
+disposition is accepted. Candidate-bound scanning is mandatory and is never
+represented as passed merely because the history scan was classified.
+
+The two findings approved by this amendment are narrowly bound to the
+historical environment-variable documentation at commit `993c2477` and the
+properties-schema prose at commit `d753af0`; the latter also has a separate
+candidate-bound blob disposition for the immutable candidate tree. These are
+safe metadata references only. The original run `32947367541` remains
+`FAIL / NON-QUALIFYING / PRESERVED`; the amendment does not reclassify or reuse
+that artifact and does not authorize a fresh G11 execution.
 
 ## Pinned workflow foundation
 
@@ -338,8 +366,9 @@ and only then runs the evidence-producing goal in a second Maven invocation.
 The resolution invocation, repository inventory and SHA-256 sidecar are part of
 the Gate artifact. Gitleaks image identity must equal the pinned OCI digest
 reported by the local container runtime before either scan. No `.gitleaks.toml`
-or suppression file is accepted; the pinned image's embedded default rule set
-is the exact configuration. Dependency-Check runs with no suppression file.
+or `.gitleaksignore` suppression file is accepted; the pinned image's embedded
+default rule set plus the exact v2 disposition manifest is the configuration.
+Dependency-Check runs with no suppression file.
 
 CycloneDX writes directly to `${GA_EVIDENCE_DIR}/sbom`. The Dependency-Check
 and license report goals have no approved command-line output-directory
@@ -389,13 +418,17 @@ evidence-integrity failures remain `ABORTED`/B3. This data-feed amendment does
 not alter Dependency-Check, freshness, severity, suppression, license, SBOM,
 candidate identity or any G1-G12 threshold.
 
-## Secret policy (historical v1; v2 remains fail-closed)
+## Secret policy (v2 disposition contract; historical v1 retained)
 
 Gitleaks scans the complete reachable history (`--all`) and current working
-tree. A verified credential/token/private key is B0. A finding may be marked
-false positive only by Human approval with fingerprint and non-secret rationale;
-the original finding remains preserved. Redaction in committed reports must not
-remove fingerprint/path/commit evidence needed for audit.
+tree. A verified credential/token/private key is B0. A finding is accepted only
+when the raw report's exact fingerprint, scanner/rule, scope, canonical path,
+commit or candidate identity, blob, line range and rationale digest match the
+Human-approved v2 disposition manifest. All other findings remain unresolved
+and block G11. The original raw reports remain preserved; redaction must not
+remove fingerprint/path/commit evidence needed for audit. The manifest never
+contains a match, secret, secret hash or transformed secret, and broad path or
+rule suppressions are forbidden.
 
 ## License policy (historical v1; accepted SPDX set retained by v2)
 

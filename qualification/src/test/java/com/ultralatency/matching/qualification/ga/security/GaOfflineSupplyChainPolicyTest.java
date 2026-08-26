@@ -40,6 +40,12 @@ class GaOfflineSupplyChainPolicyTest {
         assertEquals("core", parsed.value("license.reactorProject"));
         assertEquals("target/reports/aggregate-third-party-report.html",
                 parsed.value("license.reportPath"));
+        assertEquals("docs/release/ga-gitleaks-false-positive-dispositions-v1.properties",
+                parsed.value("gitleaks.dispositionManifest"));
+        assertEquals("0854c43f9138d8073f640fe1e37f97c7d482f01bcbe3e8280534ee3cbc70466c",
+                parsed.value("gitleaks.dispositionManifestSha256"));
+        assertEquals("ga-gitleaks-false-positive-disposition-v1",
+                parsed.value("gitleaks.dispositionSchema"));
     }
 
     @Test
@@ -67,6 +73,10 @@ class GaOfflineSupplyChainPolicyTest {
                 OfflineSupplyChainEvidenceValidator.REQUIRED_ARTIFACTS);
         assertTrue(OfflineSupplyChainEvidenceValidator.REQUIRED_ARTIFACTS.contains(
                 "license/plugin-reports/aggregate-third-party-report.html"));
+        assertTrue(OfflineSupplyChainEvidenceValidator.REQUIRED_ARTIFACTS.contains(
+                "gitleaks/approved-dispositions.properties"));
+        assertTrue(OfflineSupplyChainEvidenceValidator.REQUIRED_ARTIFACTS.contains(
+                "gitleaks/disposition-evaluation.txt"));
         OfflineSupplyChainEvidenceValidator.validate(
                 coordinates, coordinates, coordinates, artifacts);
         assertThrows(IllegalArgumentException.class,
@@ -109,6 +119,13 @@ class GaOfflineSupplyChainPolicyTest {
         assertTrue(yaml.contains("report-validation.txt"));
         assertTrue(yaml.contains("license report HTML parsing failed"));
         assertTrue(yaml.contains("(?:\\s+--\\s+.*)?\\s*$"));
+        assertTrue(yaml.contains("approved-dispositions.properties"));
+        assertTrue(yaml.contains("gitleaks_disposition_evaluator.py"));
+        assertTrue(yaml.contains("HISTORY_EXIT=$?"));
+        assertTrue(yaml.contains("CANDIDATE_EXIT=$?"));
+        assertTrue(yaml.contains("candidate-bound secret scans"));
+        assertTrue(yaml.contains("disposition-evaluation.txt"));
+        assertFalse(yaml.contains(".gitleaksignore"));
         assertTrue(yaml.contains("test ! -e core/target/reports"));
         assertFalse(yaml.contains("test -d core/target/reports"));
         assertFalse(yaml.contains("cp -R core/target/reports"));
@@ -117,6 +134,23 @@ class GaOfflineSupplyChainPolicyTest {
         assertFalse(yaml.contains("dependency-check-maven"));
         assertFalse(yaml.contains("NVD_API_KEY"));
         assertFalse(yaml.contains("nvd.nist.gov"));
+    }
+
+    @Test
+    void dispositionEvaluatorIsExplicitlyFailClosed() throws Exception {
+        final Path evaluator = Path.of("src", "main", "python",
+                "gitleaks_disposition_evaluator.py").toAbsolutePath().normalize();
+        if (!Files.isRegularFile(evaluator)) {
+            return;
+        }
+        final String source = Files.readString(evaluator, StandardCharsets.UTF_8);
+        assertTrue(source.contains("parse_manifest"));
+        assertTrue(source.contains("candidateBoundScan.executed=true"));
+        assertTrue(source.contains("seen.issubset(expected)"));
+        assertTrue(source.contains("unapproved {scope} Gitleaks finding count is non-zero"));
+        assertTrue(source.contains("DEMONSTRABLE_NON_SECRET"));
+        assertFalse(source.contains("Match"));
+        assertFalse(source.contains("Secret"));
     }
 
     @Test

@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-048` — Reproducibility and Security Preflight |
-| Status | `In Progress — license-report remediation PASS at 30c89c4; fresh G11 32943456313 FAIL/B2/preserved on undeclared step-local REPO; shell-scope remediation eced533 / Standard 32945056542 / Quick 32945056508 PASS; final B2 audit checkpoint 688d955 / Standard 32946223271 / Quick 32946223268 PASS; no further fresh G11 authorized` |
+| Status | `In Progress — fresh G11 32947367541 FAIL/non-qualifying/preserved after two read-only-confirmed documentation false positives; Human-approved exact Gitleaks disposition amendment authorized; G9 32856372581 PASS/qualifying/frozen; no fresh G11 authorized` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Depends On | TASK-047 Evidence Gate PASS after Human Blueprint Approval |
@@ -32,7 +32,8 @@ production files remain frozen.
       repositories under the normative command/environment contract.
 - [ ] Source tree, toolchain, JAR, SBOM and `SHA256SUMS` bind correctly.
 - [ ] Full-history and candidate-bound secret scans pass with no unresolved or
-      verified committed secret.
+      verified committed secret; demonstrable non-secret findings require an
+      exact approved disposition manifest match.
 - [ ] CycloneDX SBOM and independent runtime dependency inventory are non-empty
       and exactly consistent.
 - [ ] Runtime license inventory contains no Human-prohibited license.
@@ -161,6 +162,7 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | 2026-08-26 | G11 shell-scope B2 remediation Evidence Gate | PASS | `eced533`; Standard `32945056542`; Quick `32945056508`; step-local variable audit, YAML/Bash, focused/full regression and frozen-boundary checks passed; fresh G11 remains Human-gated |
 | 2026-08-26 | TASK-048/Phase 11 status synchronization | PASS | `e51db47`; Standard `32945333516`; Quick `32945333468`; latest failure/remediation state synchronized; fresh G11 remains Human-gated |
 | 2026-08-26 | Final B2 remediation audit checkpoint | PASS | `688d955`; Standard `32946223271`; Quick `32946223268`; docs/evidence state synchronized; fresh G11 remains Human-gated |
+| 2026-08-26 | Human false-positive disposition amendment | APPROVED / IN PROGRESS | Run `32947367541` preserved FAIL/non-qualifying after two documentation findings; exact fingerprint/path/commit-or-candidate/blob/rule/line disposition manifest and mandatory candidate-bound evaluation authorized; no fresh G11 execution |
 
 ### Implementation Log
 
@@ -179,3 +181,13 @@ steps without changing the Maven command or policy identity. A static audit
 checks every GA security `run:` block for undeclared shell variables. Commit
 `eced533` passed Standard CI `32945056542` and Quick Lane `32945056508`; the
 fresh G11 execution remains separately Human-gated.
+
+The current limited amendment adds the exact manifest
+`docs/release/ga-gitleaks-false-positive-dispositions-v1.properties` and a
+qualification-only evaluator. The workflow keeps both raw Gitleaks reports,
+captures each scanner exit code without short-circuiting the candidate-bound
+scan, rejects unknown or changed findings, and publishes the manifest plus a
+safe evaluation sidecar in the immutable inventory. This mechanism is not a
+broad suppression and does not reinterpret run `32947367541`; the amendment
+Evidence Gate must pass before a separate Human fresh G11 execution can be
+considered.

@@ -168,6 +168,19 @@ malformed or unreconciled report evidence fails closed.
 Missing, malformed, inconsistent, unlicensed, unapproved-license, secret-scan
 or hash/publication evidence fails closed.
 
+The Human-approved G11 false-positive disposition amendment adds two required
+Gitleaks artifacts without changing the top-level schema version:
+`gitleaks/approved-dispositions.properties` must be the exact
+`ga-gitleaks-false-positive-disposition-v1` ASCII/LF manifest, and
+`gitleaks/disposition-evaluation.txt` must record the safe evaluation outcome
+and manifest SHA-256. Every raw finding is evaluated after both full-history
+and candidate-bound scans. Only an exact fingerprint/path/commit-or-candidate
+identity/blob/rule/line match with classification
+`DEMONSTRABLE_NON_SECRET` is accepted; an unknown, changed or unapproved
+finding fails closed. Neither artifact may contain a match, secret, secret
+hash, transformed secret or sensitive line. Historical G11 artifacts remain
+bound to their original contract and are never backfilled or re-evaluated.
+
 `ga-security-toolchain-v1.properties` and NVD-specific evidence fields remain
 valid only for interpreting historical G11 FAIL/B3 runs under their original
 contract. They are not required or accepted as replacement evidence under

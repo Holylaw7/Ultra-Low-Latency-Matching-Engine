@@ -1,0 +1,18 @@
+[
+  {
+    "RuleID": "generic-api-key",
+    "File": "docs/release/GA-SECURITY-TOOLCHAIN.md",
+    "Commit": "993c2477c4a1bc2e465944705b9af16d86d87723",
+    "StartLine": 199,
+    "EndLine": 199,
+    "Fingerprint": "993c2477c4a1bc2e465944705b9af16d86d87723:docs/release/GA-SECURITY-TOOLCHAIN.md:generic-api-key:199"
+  },
+  {
+    "RuleID": "generic-api-key",
+    "File": "tasks/reports/PHASE-10-task-043.md",
+    "Commit": "d753af0b3ccc85b36313803b15a82ddf83dc138c",
+    "StartLine": 28,
+    "EndLine": 28,
+    "Fingerprint": "d753af0b3ccc85b36313803b15a82ddf83dc138c:tasks/reports/PHASE-10-task-043.md:generic-api-key:28"
+  }
+]

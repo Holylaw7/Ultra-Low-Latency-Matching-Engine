@@ -257,6 +257,28 @@ This is a qualification-policy/tooling amendment, not a candidate repair.
 not required. A fresh offline G11 execution remains separately Human-gated.
 G9 run `32856372581` remains qualifying/frozen and must not be rerun.
 
+#### Human-approved G11 false-positive disposition amendment (2026-08-26)
+
+The v2 Gitleaks scan remains mandatory, full-history and candidate-bound; this
+amendment adds only a machine-verifiable disposition path for demonstrably
+non-secret findings. Raw reports are retained and every finding must either
+have an exact entry in
+`ga-gitleaks-false-positive-dispositions-v1.properties` or fail G11. An entry
+binds the pinned scanner/rule, scan scope, canonical path, full historical
+commit or immutable candidate production SHA, blob object ID, line range,
+exact Gitleaks fingerprint, `DEMONSTRABLE_NON_SECRET` classification and a
+digest of a fixed non-secret rationale code. Match text, secret material,
+secret hashes and transformed values are prohibited.
+
+The approved manifest is not a broad Gitleaks suppression and does not permit
+inline comments, `.gitleaksignore`, path-wide rules or rule-wide exclusions.
+Unknown, changed, verified or credible-secret findings remain blockers. The
+workflow must execute the candidate-bound scan even when full-history findings
+are dispositioned, and must publish both raw reports, the manifest and a safe
+evaluation sidecar in the immutable SHA-256 inventory. Run `32947367541`
+remains preserved `FAIL / NON-QUALIFYING`; this qualification-policy amendment
+does not reclassify it or authorize a fresh G11 execution.
+
 #### Human-approved Limited B3 provisioning amendment (2026-08-25)
 
 The Microsoft OpenJDK identity remains `21.0.12+8-LTS` on `ubuntu-24.04`.
