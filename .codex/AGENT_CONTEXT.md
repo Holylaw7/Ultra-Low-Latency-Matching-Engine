@@ -11,13 +11,13 @@
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
 | Phase | Phase 11 — GA Qualification (`Blueprint Approved; TASK-048 Closed; TASK-049 G1/G2 evidence pending final review`) |
-| Latest product task | [`TASK-20260825-049`](../tasks/active/TASK-20260825-049-phase11-correctness-deterministic-recovery.md) — In Progress; approved G1/G2 matrix 24/24 cases and 96 recovery observations passed; TASK-048 G9/G11 evidence remains frozen; TASK-050 locked |
+| Latest product task | [`TASK-20260825-049`](../tasks/active/TASK-20260825-049-phase11-correctness-deterministic-recovery.md) — In Progress; exact-controller `d75a3a0` G1/G2 matrix 24/24 cases and 96 recovery observations passed; TASK-048 G9/G11 evidence remains frozen; TASK-050 locked |
 | Latest architecture decision | [`ADR-0019`](../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) — Accepted |
-| Current planning task | TASK-20260825-049 — In Progress; qualification-only G1/G2 runner/evaluator implemented; full approved matrix passed locally; TASK-050 remains locked pending TASK-049 Evidence Gate |
+| Current planning task | TASK-20260825-049 — In Progress; qualification-only G1/G2 runner/evaluator implemented; exact-controller approved matrix passed (24/24 cases, 96 recovery observations); TASK-050 remains locked pending TASK-049 Evidence Gate |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 9 frozen at `v0.8.0-engineering-baseline`; Phase 10 frozen at `v0.9.0-rc.1`; Phase 11 GA qualification in progress; Product Release separately governed |
 | Product approval | Phase 9 Human Closure Approved; merge `ef73f60` / Master CI `32711512036` PASS; `v0.8.0-engineering-baseline` / Tag CI `32711649980` PASS; Closure Input `8e5d39d` / Standard CI `32709188522` / Quick Lane `32709188327`; remediation `5f3b1c5` / Standard CI `32710712341` / Quick Lane `32710712428` PASS |
-| Phase 11 current gate | TASK-048 Closed / Human Approved (`f2d5470`, Standard `32959524443`, Quick `32959524552`); TASK-049 G1/G2 matrix locally PASS (24/24 cases, 96 recovery observations, 0 failures); TASK-050 remains locked pending TASK-049 final Evidence Gate |
+| Phase 11 current gate | TASK-048 Closed / Human Approved (`f2d5470`, Standard `32959524443`, Quick `32959524552`); TASK-049 exact-controller `d75a3a0` G1/G2 matrix PASS (24/24 cases, 96 recovery observations, 0 failures); TASK-050 remains locked pending TASK-049 final Evidence Gate |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `docs/phase11-ga-qualification-blueprint` |
 | Engineering baseline commit | `e2828f5` (Phase 10 merge; Master CI `32816928409` PASS) |
@@ -160,7 +160,7 @@ ADR-0011 Final Approved
   -> TASK-048 false-positive disposition amendment [Human approved; Evidence Gate PASS at `7be2b61`; fresh G11 not authorized]
   -> TASK-048 fresh G11 `32952590543` [FAIL/B2/preserved; candidate-bound Gitleaks emitted absolute `/repo` path; candidate Blob matched approved disposition; no candidate defect; path-contract remediation `f6db140` Evidence Gate PASS]
   -> TASK-048 fresh G11 `32955619875` [PASS/qualifying/frozen; `OFFLINE_SUPPLY_CHAIN_SECURITY_V1`; artifact `9601871146` digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`; candidate identity and candidate-bound Gitleaks path contract passed; TASK-048 final evidence review pending]
-  -> TASK-049 [In Progress; approved G1/G2 implementation and matrix evidence: 24/24 cases, 96 recovery observations, 0 failures; local task summary/manifest/sidecar verified; final Evidence Gate review pending]
+  -> TASK-049 [In Progress; approved G1/G2 implementation and exact-controller `d75a3a0` matrix evidence: 24/24 cases, 96 recovery observations, 0 failures; task summary/manifest/sidecar verified (4,322/4,322 entries); final Evidence Gate review pending]
   -> TASK-050 through TASK-056 [Dependency ordered; locked]
   -> Phase 11 Full Campaigns / Closure / v1.0.0 / GitHub Release / GA [Not Authorized]
   -> Product Release [Not Authorized]

@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-049` — GA Correctness and Deterministic Recovery |
-| Status | `In Progress — implementation and G1/G2 matrix execution` |
+| Status | `Evidence Gate Pending Final Review — exact-controller G1/G2 matrix PASS` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Human Approved |
 | Depends On | TASK-048 Human Closure Approved |
@@ -25,12 +25,12 @@ or golden-semantic change is permitted.
 
 ## 4. Acceptance Criteria
 
-- [ ] Ordered EngineResult/trade output is exact for every profile/seed.
-- [ ] Canonical checkpoint and command/transcript/WAL/probe digests agree.
-- [ ] TradeId and EventSequence suffixes agree across recovery modes.
-- [ ] Invalid trade, lost command, gap and divergence counts are zero.
-- [ ] Snapshot results for prefix 1..N are not fabricated or re-emitted.
-- [ ] Every run has immutable v1 GA manifest and sidecar validation.
+- [x] Ordered EngineResult/trade output is exact for every profile/seed.
+- [x] Canonical checkpoint and command/transcript/WAL/probe digests agree.
+- [x] TradeId and EventSequence suffixes agree across recovery modes.
+- [x] Invalid trade, lost command, gap and divergence counts are zero.
+- [x] Snapshot results for prefix 1..N are not fabricated or re-emitted.
+- [x] Every matrix run has a task-specific immutable v1 manifest and sidecar validation.
 
 ## 5. Evidence Gate
 
@@ -96,17 +96,20 @@ divergence is B0/B1 and has no in-Task fix.
 
 | Stage | Status | Gate |
 | --- | --- | --- |
-| Implementation | In progress | TASK-048 Human Closure Approved |
-| Matrix execution | In progress | all G1/G2 criteria |
-| Completion | Locked | reviewers + CI |
+| Implementation | Completed | TASK-048 Human Closure Approved |
+| Matrix execution | PASS | exact controller `d75a3a0`; 24/24 cases; 96 recovery observations |
+| Completion | Pending final Evidence Gate | verifier/docs-auditor + exact-SHA CI |
 
 | Date | Reviewer / status | Record |
 | --- | --- | --- |
 | 2026-08-25 | Human / Approved | Phase 11 Blueprint and TASK-049 dependency authorization approved |
 | 2026-08-26 | Human / Authorized | TASK-048 closed; TASK-049 implementation and matrix execution authorized |
+| 2026-08-26 | Main Luna Max / Evidence | Exact-controller matrix `d75a3a0`: 24/24 cases PASS; 96 recovery observations; sidecar 4,322/4,322 validated |
 
 ### Implementation Log
 
 Implementation is qualification-only and remains bounded by the approved
-Phase 11 Blueprint. Focused matrix tests and the approved G1/G2 matrix are
-being executed before Evidence Gate review; TASK-050 remains locked.
+Phase 11 Blueprint. Focused tests and the approved exact-controller G1/G2
+matrix have passed. The immutable task report records the evidence hashes;
+verifier/docs-auditor and exact-SHA CI remain before final closure. TASK-050
+remains locked.
