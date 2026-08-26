@@ -3,9 +3,11 @@
 ## Status
 
 `In Progress — Human-approved license-report B2 remediation Evidence Gate PASS
-at 30c89c4 (Standard CI 32932454011; Quick Lane 32932454009); G9 remains
-qualifying/frozen, offline G11 run 32929258318 remains FAIL/B2/non-qualifying/
-preserved, and no fresh G11 execution is authorized.`
+at 30c89c4 (Standard CI 32932454011; Quick Lane 32932454009); the subsequent
+fresh G11 run 32943456313 remains FAIL/B2/non-qualifying/preserved after a
+step-local shell-variable defect; the follow-up remediation is recorded at
+eced533 (Standard CI 32945056542; Quick Lane 32945056508), and no further
+fresh G11 execution is authorized.`
 
 TASK-048 implements the approved qualification-only reproducibility and
 security preflight boundary. It does not qualify the candidate, authorize a
@@ -20,7 +22,7 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
 | Peeled production SHA | `e2828f563ee41316c062385c0244ac1336731359` |
 | Historical toolchain policy | `ga-security-toolchain-v1.properties` / NVD-backed runs only / preserved unchanged |
 | Current G11 toolchain policy | `ga-security-toolchain-v2.properties` / `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` |
-| Current policy SHA-256 | `f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114`; license-report remediation `30c89c4` / Standard `32932454011` / Quick `32932454009` PASS; no fresh G11 execution authorized |
+| Current policy SHA-256 | `f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114`; license-report remediation `30c89c4` / Standard `32932454011` / Quick `32932454009` PASS; shell-scope remediation `eced533` / Standard `32945056542` / Quick `32945056508` PASS; no further fresh G11 execution authorized |
 | JDK archive | `microsoft-jdk-21.0.12-linux-x64.tar.gz` / `linux-x64` |
 | JDK archive SHA-256 | `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f` |
 | Artifact publication action | `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` (v7.0.1) |
@@ -302,6 +304,18 @@ required report artifact was absent. Its GitHub artifact is `9592633595` with
 digest `4382fcb02c8a97c42d66e7617e9276e470f772def42a02a9c1067cebd5cb7c4b`.
 No candidate defect was observed and no retry was started.
 
+The next Human-authorized fresh G11 run, `32943456313`, is also preserved as
+`FAIL / B2 / NON-QUALIFYING`. Candidate identity, JDK/tool resolution,
+candidate build, SBOM input generation and dependency input generation
+completed. The license-report validation step then referenced `REPO` without
+declaring it in that independent shell block, and `set -u` terminated the
+workflow before the remaining G11 criteria. Its failure artifact is `9597396741`
+with digest `bc3ad708418d0194c05e695d4990daa1e9319480b6787493e4968f132fc17689`.
+A read-only cross-step shell-variable audit found no second undeclared local
+variable. The limited workflow-only remediation is implemented at `eced533`,
+with Standard CI `32945056542` and Quick Lane `32945056508` passing; a new G11
+execution still requires separate Human approval.
+
 ## Completion log
 
 | Date | Stage | Result |
@@ -332,3 +346,6 @@ No candidate defect was observed and no retry was started.
 | 2026-08-26 | Human Limited G11 license-report B2 Remediation | AUTHORIZED / IN PROGRESS | Preserve `license-maven-plugin:2.7.1:aggregate-third-party-report`; switch workflow to root `-pl core -am`; require `target/reports/aggregate-third-party-report.html`; update v2 policy identity and validator; no fresh G11 execution |
 | 2026-08-26 | Human-authorized offline G11 execution | FAIL / B2 / PRESERVED | Run `32929258318`; artifact `9592633595` / SHA-256 `4382fcb02c8a97c42d66e7617e9276e470f772def42a02a9c1067cebd5cb7c4b`; license report goal skipped before required artifact publication; candidate defect not observed; no retry |
 | 2026-08-26 | License-report B2 remediation Evidence Gate | PASS | `30c89c4`; Standard CI `32932454011`; Quick Lane `32932454009`; root-reactor report parseability, runtime-coordinate reconciliation and Maven module-annotation handling validated; production/candidate/POM/G9 diff 0; fresh G11 remains separately Human-gated |
+| 2026-08-26 | Human-authorized fresh G11 execution | FAIL / B2 / PRESERVED | Run `32943456313`; artifact `9597396741` / SHA-256 `bc3ad708418d0194c05e695d4990daa1e9319480b6787493e4968f132fc17689`; license-report validation aborted on undeclared step-local `REPO`; candidate defect not observed; no retry |
+| 2026-08-26 | Sol High B2 cross-step scope review | CONFIRMED | Only the license validation step omitted `REPO`; limited workflow-only remediation approved; no policy/candidate/POM change |
+| 2026-08-26 | G11 shell-scope B2 remediation Evidence Gate | PASS | `eced533`; Standard CI `32945056542`; Quick Lane `32945056508`; focused/full regression, step-local variable audit, YAML/Bash, diff and frozen-boundary checks PASS; fresh G11 remains separately Human-gated |

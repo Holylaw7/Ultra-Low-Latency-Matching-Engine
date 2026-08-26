@@ -10,10 +10,10 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
-| Phase | Phase 11 — GA Qualification (`Blueprint Approved; TASK-048 fresh G11 execution pending after license-report B2 remediation`) |
-| Latest product task | [`TASK-20260825-048`](../tasks/active/TASK-20260825-048-phase11-reproducibility-security-preflight.md) — In Progress; license-report B2 remediation `30c89c4` / Standard `32932454011` / Quick `32932454009` PASS; G9 `32856372581` PASS/qualifying/frozen; latest offline G11 `32929258318` FAIL/B2/preserved; fresh G11 separately gated |
+| Phase | Phase 11 — GA Qualification (`Blueprint Approved; TASK-048 fresh G11 pending after shell-scope B2 remediation`) |
+| Latest product task | [`TASK-20260825-048`](../tasks/active/TASK-20260825-048-phase11-reproducibility-security-preflight.md) — In Progress; license-report remediation `30c89c4` / Standard `32932454011` / Quick `32932454009` PASS; fresh G11 `32943456313` FAIL/B2/preserved on undeclared step-local `REPO`; shell-scope remediation `eced533` / Standard `32945056542` / Quick `32945056508` PASS; G9 `32856372581` PASS/qualifying/frozen; no further fresh G11 authorized |
 | Latest architecture decision | [`ADR-0019`](../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) — Accepted |
-| Current planning task | TASK-20260825-048 — In Progress; offline supply-chain G11 policy with repository-root license-report remediation PASS; current CVE/NVD evaluation outside portfolio boundary; separate Human fresh G11 gate pending |
+| Current planning task | TASK-20260825-048 — In Progress; offline supply-chain G11 policy with repository-root license-report and shell-scope remediation PASS; current CVE/NVD evaluation outside portfolio boundary; separate Human fresh G11 gate required |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 9 frozen at `v0.8.0-engineering-baseline`; Phase 10 frozen at `v0.9.0-rc.1`; Phase 11 GA qualification in progress; Product Release separately governed |
 | Product approval | Phase 9 Human Closure Approved; merge `ef73f60` / Master CI `32711512036` PASS; `v0.8.0-engineering-baseline` / Tag CI `32711649980` PASS; Closure Input `8e5d39d` / Standard CI `32709188522` / Quick Lane `32709188327`; remediation `5f3b1c5` / Standard CI `32710712341` / Quick Lane `32710712428` PASS |
@@ -155,7 +155,7 @@ ADR-0011 Final Approved
   -> Apache-2.0 repository policy [Human accepted]
   -> GitHub binary distribution without Maven Central [Human accepted]
   -> TASK-047 [Completed / Evidence Gate PASS; implementation `d25eac6`, status `2521500`; CI `32828844611` / Quick `32828844541`]
-  -> TASK-048 [In Progress; `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` amendment; root-selector remediation `e1464ed` / CI `32927818204` / Quick `32927818172` PASS; license-report remediation `30c89c4` / CI `32932454011` / Quick `32932454009` PASS; G9 `32856372581` PASS/qualifying/frozen; offline G11 `32929258318` FAIL/B2/preserved; fresh G11 separately gated]
+  -> TASK-048 [In Progress; `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` amendment; root-selector remediation `e1464ed` / CI `32927818204` / Quick `32927818172` PASS; license-report remediation `30c89c4` / CI `32932454011` / Quick `32932454009` PASS; fresh G11 `32943456313` FAIL/B2/preserved on undeclared step-local `REPO`; shell-scope remediation `eced533` / CI `32945056542` / Quick `32945056508` PASS; G9 `32856372581` PASS/qualifying/frozen; fresh G11 separately gated]
   -> TASK-049 through TASK-056 [Dependency ordered; locked]
   -> Phase 11 Full Campaigns / Closure / v1.0.0 / GitHub Release / GA [Not Authorized]
   -> Product Release [Not Authorized]

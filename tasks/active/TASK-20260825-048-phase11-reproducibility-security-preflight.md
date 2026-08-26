@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-048` — Reproducibility and Security Preflight |
-| Status | `In Progress — license-report B2 remediation Evidence Gate PASS at 30c89c4 (Standard 32932454011; Quick 32932454009); G9 32856372581 PASS/qualifying/frozen; offline G11 32929258318 FAIL/B2/preserved; fresh G11 remains separately gated and not authorized` |
+| Status | `In Progress — license-report remediation PASS at 30c89c4; fresh G11 32943456313 FAIL/B2/preserved on undeclared step-local REPO; shell-scope remediation eced533 / Standard 32945056542 / Quick 32945056508 PASS; no further fresh G11 authorized` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Depends On | TASK-047 Evidence Gate PASS after Human Blueprint Approval |
@@ -156,6 +156,9 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | 2026-08-26 | Human Limited G11 license-report B2 Remediation | AUTHORIZED / IN PROGRESS | Preserve plugin `2.7.1`; use root `-pl core -am`; require `target/reports/aggregate-third-party-report.html`; update v2 policy/validator/tests; fresh G11 not authorized |
 | 2026-08-26 | Human-authorized offline G11 execution | FAIL / B2 / PRESERVED | `32929258318`; artifact `9592633595`; digest `4382fcb02c8a97c42d66e7617e9276e470f772def42a02a9c1067cebd5cb7c4b`; license report goal skipped before required artifact publication; no candidate defect or retry |
 | 2026-08-26 | License-report B2 remediation Evidence Gate | PASS | `30c89c4`; Standard `32932454011`; Quick `32932454009`; HTML parseability, report/runtime-coordinate reconciliation, Maven module-annotation handling and validation-sidecar inventory checks added; no fresh G11 execution |
+| 2026-08-26 | Human-authorized fresh G11 execution | FAIL / B2 / PRESERVED | `32943456313`; artifact `9597396741`; digest `bc3ad708418d0194c05e695d4990daa1e9319480b6787493e4968f132fc17689`; license-report validation referenced undeclared step-local `REPO`; no candidate defect or retry |
+| 2026-08-26 | Sol High B2 cross-step scope review | CONFIRMED | Only the license validation step omitted `REPO`; limited workflow-only remediation approved; policy/candidate/POM unchanged |
+| 2026-08-26 | G11 shell-scope B2 remediation Evidence Gate | PASS | `eced533`; Standard `32945056542`; Quick `32945056508`; step-local variable audit, YAML/Bash, focused/full regression and frozen-boundary checks passed; fresh G11 remains Human-gated |
 
 ### Implementation Log
 
@@ -166,3 +169,11 @@ disposition, full-history and candidate-bound secret scans, tool provenance
 and strict immutable artifact publication. The v1 NVD policy and every failed
 run remain preserved. This remediation does not execute G9/G11, reclassify
 prior failures, claim CVE/NVD cleanliness or unlock TASK-049.
+
+The subsequent limited B2 remediation addresses only the workflow shell scope:
+the license-report validation step now declares its own
+`REPO="$RUNNER_TEMP/ga-security-cache/m2"`, matching the resolver and build
+steps without changing the Maven command or policy identity. A static audit
+checks every GA security `run:` block for undeclared shell variables. Commit
+`eced533` passed Standard CI `32945056542` and Quick Lane `32945056508`; the
+fresh G11 execution remains separately Human-gated.
