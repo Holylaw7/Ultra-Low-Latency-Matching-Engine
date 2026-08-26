@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-049` — GA Correctness and Deterministic Recovery |
-| Status | `Evidence Gate Pending Final Review — exact-controller G1/G2 matrix PASS` |
+| Status | `Evidence Gate Pending Read-only Final Review — exact-controller G1/G2 matrix and CI PASS` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Human Approved |
 | Depends On | TASK-048 Human Closure Approved |
@@ -98,13 +98,14 @@ divergence is B0/B1 and has no in-Task fix.
 | --- | --- | --- |
 | Implementation | Completed | TASK-048 Human Closure Approved |
 | Matrix execution | PASS | exact controller `d75a3a0`; 24/24 cases; 96 recovery observations |
-| Completion | Pending final Evidence Gate | verifier/docs-auditor + exact-SHA CI |
+| Completion | Pending final Evidence Gate | verifier/docs-auditor; Standard `32976467453` + Quick `32976467177` PASS |
 
 | Date | Reviewer / status | Record |
 | --- | --- | --- |
 | 2026-08-25 | Human / Approved | Phase 11 Blueprint and TASK-049 dependency authorization approved |
 | 2026-08-26 | Human / Authorized | TASK-048 closed; TASK-049 implementation and matrix execution authorized |
 | 2026-08-26 | Main Luna Max / Evidence | Exact-controller matrix `d75a3a0`: 24/24 cases PASS; 96 recovery observations; sidecar 4,322/4,322 validated |
+| 2026-08-26 | CI / Evidence validation | Checkpoint `c3659fa`; Standard `32976467453` PASS; Quick `32976467177` PASS; final read-only Evidence Gate remains pending |
 
 ### Implementation Log
 

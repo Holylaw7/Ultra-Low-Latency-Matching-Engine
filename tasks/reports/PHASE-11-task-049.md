@@ -2,10 +2,12 @@
 
 ## Status
 
-`Implementation Complete / G1-G2 matrix evidence PASS; final Evidence Gate
-review and exact-SHA validation pending.` TASK-049 remains in progress until
-the verifier, docs-auditor and final CI evidence are reconciled. TASK-050 is
-still locked. No Full Campaign, candidate mutation, release or GA action is
+`Implementation Complete / G1-G2 matrix evidence PASS; read-only final
+Evidence Gate review pending.` The evidence checkpoint `c3659fa` passed
+Standard CI `32976467453` and Qualification Quick Lane `32976467177` at its
+exact head SHA. TASK-049 remains in progress until the verifier,
+docs-auditor and final governance decision are reconciled. TASK-050 is still
+locked. No Full Campaign, candidate mutation, release or GA action is
 authorized by this report.
 
 ## Scope and frozen boundaries
@@ -105,6 +107,8 @@ second qualifying run.
 | `git diff --check` before report sync | PASS |
 | Frozen production-path audit | No `src/main`, POM, dependency or candidate changes |
 | `.vscode/` | untouched / untracked |
+| Exact-SHA Standard CI for evidence checkpoint `c3659fa` | [32976467453](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32976467453) — PASS |
+| Qualification Quick Lane for evidence checkpoint `c3659fa` | [32976467177](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32976467177) — PASS |
 
 The first full-reactor invocation showed one transient failure in the existing
 `MatchingEnginePipelineFailureTest`; its immediate rerun passed without any
@@ -132,8 +136,6 @@ Before TASK-049 can close, the following remain required:
 verifier read-only review
 docs-auditor read-only review
 report/plan/status reconciliation
-exact-SHA Standard CI PASS
-Qualification Quick Lane PASS
 final TASK-049 Evidence Gate decision
 ```
 
