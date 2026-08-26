@@ -104,6 +104,7 @@ class GaOfflineSupplyChainPolicyTest {
         assertTrue(yaml.contains("report.runtimeCoordinatesMatch=true"));
         assertTrue(yaml.contains("report-validation.txt"));
         assertTrue(yaml.contains("license report HTML parsing failed"));
+        assertTrue(yaml.contains("(?:\\s+--\\s+.*)?\\s*$"));
         assertTrue(yaml.contains("test ! -e core/target/reports"));
         assertFalse(yaml.contains("test -d core/target/reports"));
         assertFalse(yaml.contains("cp -R core/target/reports"));

@@ -260,7 +260,8 @@ jobs:
               raise SystemExit("license report contains duplicate dependency entries")
 
           dependency_pattern = re.compile(
-              r"^\s*([^:\s]+):([^:\s]+):([^:\s]+):(.+):(compile|runtime)\s*$")
+              r"^\s*([^:\s]+):([^:\s]+):([^:\s]+):(.+):(compile|runtime)"
+              r"(?:\s+--\s+.*)?\s*$")
           runtime_coordinates = set()
           for line in raw_path.read_text(encoding="utf-8").splitlines():
               match = dependency_pattern.match(line)
@@ -351,7 +352,9 @@ jobs:
               sbom[coordinate] = ",".join(sorted(set(identifiers)))
 
           dependencies = set()
-          pattern = re.compile(r"^\s*([^:\s]+):([^:\s]+):([^:\s]+):(.+):(compile|runtime)\s*$")
+          pattern = re.compile(
+              r"^\s*([^:\s]+):([^:\s]+):([^:\s]+):(.+):(compile|runtime)"
+              r"(?:\s+--\s+.*)?\s*$")
           for line in raw_dependencies.read_text(encoding="utf-8").splitlines():
               match = pattern.match(line)
               if not match:
