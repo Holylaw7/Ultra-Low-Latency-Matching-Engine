@@ -32,4 +32,14 @@ public record GaCorrectnessCampaignResult(
             throw new IllegalArgumentException("a passed campaign cannot contain failures");
         }
     }
+
+    /** Returns the canonical G1 gate-result path published for this campaign. */
+    public Path g1GateResultPath() {
+        return artifactDirectory.resolve("ga-g1-gate-result-v1.txt");
+    }
+
+    /** Returns the canonical G2 gate-result path published for this campaign. */
+    public Path g2GateResultPath() {
+        return artifactDirectory.resolve("ga-g2-gate-result-v1.txt");
+    }
 }

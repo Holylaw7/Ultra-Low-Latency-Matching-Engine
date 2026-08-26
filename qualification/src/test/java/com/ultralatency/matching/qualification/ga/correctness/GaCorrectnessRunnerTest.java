@@ -23,6 +23,14 @@ class GaCorrectnessRunnerTest {
         assertTrue(Files.isRegularFile(result.summaryPath()));
         assertTrue(Files.isRegularFile(result.manifestPath()));
         assertTrue(Files.isRegularFile(result.artifactHashesPath()));
+        assertTrue(Files.isRegularFile(result.g1GateResultPath()));
+        assertTrue(Files.isRegularFile(result.g2GateResultPath()));
+        assertTrue(Files.isRegularFile(result.summaryPath().resolveSibling(
+                result.summaryPath().getFileName() + ".sha256")));
+        assertTrue(Files.isRegularFile(result.manifestPath().resolveSibling(
+                result.manifestPath().getFileName() + ".sha256")));
+        assertTrue(Files.isRegularFile(result.artifactHashesPath().resolveSibling(
+                result.artifactHashesPath().getFileName() + ".sha256")));
         assertTrue(Files.readString(result.summaryPath()).contains("passed=true"));
         assertTrue(Files.readString(result.artifactHashesPath()).contains(
                 "ga-g1-g2-summary-v1.txt"));

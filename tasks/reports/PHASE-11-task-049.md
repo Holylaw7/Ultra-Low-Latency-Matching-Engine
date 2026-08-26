@@ -2,8 +2,9 @@
 
 ## Status
 
-`Implementation Complete / G1-G2 matrix evidence PASS; read-only final
-Evidence Gate review pending.` The evidence checkpoint `c3659fa` passed
+`Implementation remediation in progress / historical matrix technical
+observation preserved; canonical Evidence Gate pending.` The evidence
+checkpoint `c3659fa` passed
 Standard CI `32976467453` and Qualification Quick Lane `32976467177` at its
 exact head SHA. TASK-049 remains in progress until the verifier,
 docs-auditor and final governance decision are reconciled. TASK-050 is still
@@ -36,9 +37,9 @@ recovery total = 24 × 4 = 96
 The live observation is retained in each case as a reference; the 96-count
 matrix criterion counts the four recovery observations per case.
 
-## Authoritative exact-controller run
+## Preserved exact-controller technical observation
 
-The qualifying local evidence was generated from controller commit
+The preserved technical observation was generated from controller commit
 `d75a3a02e7d01dca6bdef997109cb47f8f1b1400`, with candidate and baseline both
 `v0.9.0-rc.1`:
 
@@ -101,8 +102,8 @@ second qualifying run.
 
 | Check | Result |
 | --- | --- |
-| Focused `GaCorrectness*` / deterministic suite | 5 tests PASS; 0 failures/errors |
-| Full reactor `mvn verify` | Immediate rerun PASS: 225 core + 77 qualification; 2 expected skips |
+| Focused canonical evidence/runner suite | 4 tests PASS; 0 failures/errors |
+| Full reactor `mvn verify` | Immediate rerun PASS: 225 core + 80 qualification; 2 expected skips |
 | Checkstyle | 0 violations |
 | `git diff --check` before report sync | PASS |
 | Frozen production-path audit | No `src/main`, POM, dependency or candidate changes |
@@ -126,19 +127,33 @@ Production Ready, GA authorization or any current CVE/security conclusion.
 The emitted `ga-g1-g2-manifest-v1` is a task-specific immutable matrix
 manifest with a complete sidecar. It is not a release manifest and does not
 grant release authority. Historical or unrelated evidence is not merged into
-this run.
+this run. A verifier review identified that the preserved run did not emit the
+frozen `ga-run-manifest-v1`/`ga-gate-result-v1` contract, so that run remains a
+valid technical observation but is non-qualifying evidence and is not being
+backfilled.
+
+The approved remediation keeps one physical execution per matrix case. The
+runner now publishes separate G1 and G2 canonical run views, each with its own
+UUID, plus an immutable `ga-g1-g2-physical-run-binding-v1` payload. The views
+share the physical case's timestamps, runtime provenance and raw inventory;
+the binding establishes that relationship without changing the frozen global
+schema. Gate results are published independently only after all case views
+are present and validated.
 
 ## Remaining Evidence Gate
 
 Before TASK-049 can close, the following remain required:
 
 ```text
+canonical remediation focused tests and full verification
+fresh Human approval for the affected 24-case matrix
+one physical execution per approved case (no 48-case duplication)
 verifier read-only review
 docs-auditor read-only review
 report/plan/status reconciliation
 final TASK-049 Evidence Gate decision
 ```
 
-Until those checks are recorded, TASK-049 remains `In Progress / Evidence
-Gate Pending Final Review`, TASK-050 remains locked, and merge/tag, `v1.0.0`,
-GitHub Release and GA remain unauthorized.
+Until those checks are recorded, TASK-049 remains `In Progress / Changes
+Required`, TASK-050 remains locked, and merge/tag, `v1.0.0`, GitHub Release and
+GA remain unauthorized.

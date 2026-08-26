@@ -149,6 +149,38 @@ Constraints:
 - `comparability.identitySha256` hashes JDK/JVM/GC/heap/OS/CPU/filesystem/
   storage/Netty allocator/JFR configuration fields required by that Gate.
 
+### G1/G2 physical-run attribution
+
+The approved TASK-049 mapping treats each matrix case as one physical
+execution.  A physical execution is not repeated merely because it contributes
+to two criterion families.  During that execution the qualification controller
+publishes two independent `ga-run-manifest-v1` views: one with `gate.id=G1` and
+`gate.version=g1-v1`, and one with `gate.id=G2` and `gate.version=g2-v1`.  The
+views have distinct canonical UUID `run.id` values, but carry the same case
+profile/seed/repetition, timestamps, runtime provenance and raw-artifact
+inventory.  Their relationship is recorded by the separate immutable
+`ga-g1-g2-physical-run-binding-v1` payload; this payload does not add unknown
+fields to the frozen run schema.
+
+The binding records `physicalExecution.id`, the two manifest paths and hashes,
+the matrix case identity, profile, seed, repetition, timestamps and the raw
+evidence-root digest.  It is published only after both manifests have been
+force/read-back/atomically published.  A G1 manifest cannot be used as G2
+evidence, and a manifest from another case, profile, seed or physical binding
+is rejected.  The binding is qualification-only linkage evidence; the canonical
+G1 and G2 gate results remain separate documents.
+
+For the approved 4-profile × 3-seed × 2-repetition matrix this produces 24
+physical executions, 24 G1 run manifests, 24 G2 run manifests, one G1 gate
+result and one G2 gate result.  The existing task-specific
+`ga-g1-g2-manifest-v1` remains a preserved payload summary and is never a
+substitute for these canonical documents.  Every view is generated from the
+same physical raw artifacts, with a per-case artifact inventory bounded by the
+canonical 1,000-member limit.  Each raw payload, inventory, canonical view,
+binding and gate-result document also publishes its adjacent `<name>.sha256`
+sidecar; sidecars are integrity metadata and are not silently admitted as
+unlisted payloads.
+
 The Human-approved G11 policy amendment adds the gate-specific
 `g11-offline-supply-chain-evidence-v1` payload while retaining
 `ga-run-manifest-v1`, `ga-gate-result-v1` and `ga-release-manifest-v1`.

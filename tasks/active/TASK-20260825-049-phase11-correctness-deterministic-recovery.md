@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-049` — GA Correctness and Deterministic Recovery |
-| Status | `Evidence Gate Pending Read-only Final Review — exact-controller G1/G2 matrix and CI PASS` |
+| Status | `In Progress / Canonical evidence remediation — fresh matrix not yet authorized` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Human Approved |
 | Depends On | TASK-048 Human Closure Approved |
@@ -30,7 +30,8 @@ or golden-semantic change is permitted.
 - [x] TradeId and EventSequence suffixes agree across recovery modes.
 - [x] Invalid trade, lost command, gap and divergence counts are zero.
 - [x] Snapshot results for prefix 1..N are not fabricated or re-emitted.
-- [x] Every matrix run has a task-specific immutable v1 manifest and sidecar validation.
+- [ ] Every physical case publishes independent G1/G2 `ga-run-manifest-v1`
+  views, a physical-run binding, and both canonical gate results.
 
 ## 5. Evidence Gate
 
@@ -46,13 +47,17 @@ Candidate divergence requires rc.2 or stops GA. Planned commit:
 
 ## 7. Background / Current Implementation
 
-Phase 8/9 prove component and selected campaign convergence, but GA lacks the
-fixed 4-profile × 3-seed × 2-repeat public-path matrix and GA v1 manifests.
+Phase 8/9 prove component and selected campaign convergence. The preserved
+TASK-049 matrix is a valid technical observation, but it lacks the frozen
+canonical run/gate contract and cannot be backfilled. Human-approved
+remediation keeps the fixed 4-profile × 3-seed × 2-repeat public-path matrix
+at 24 physical executions, with paired G1/G2 views per case.
 
 ## 8. Requirements, Inputs, Outputs and Non-Goals
 
 Input: exact candidate/JAR, fixed profiles/seeds/counts/prefixes and schema.
-Output: immutable per-run results plus G1/G2 Gate results. Non-goals: new
+Output: immutable per-physical-case raw results, paired canonical G1/G2 run
+views, physical-run bindings and independent G1/G2 Gate results. Non-goals: new
 workload semantics, Market/Amend, candidate tests/code changes or performance.
 
 ## 9. Design / Alternatives / Decision
@@ -65,7 +70,7 @@ internal-engine-only execution. ADR-0019 D9 is normative.
 
 | Path | Change |
 | --- | --- |
-| `qualification/**/ga/correctness/**` | fixed runner/evaluator |
+| `qualification/**/ga/correctness/**` | canonical writer, physical binding and evaluator integration |
 | qualification tests/resources | matrix/golden/failure fixtures |
 | qualification result directories | ignored immutable raw evidence |
 | `tasks/reports/PHASE-11-task-049.md` | hashes and G1/G2 summary |
@@ -97,8 +102,9 @@ divergence is B0/B1 and has no in-Task fix.
 | Stage | Status | Gate |
 | --- | --- | --- |
 | Implementation | Completed | TASK-048 Human Closure Approved |
-| Matrix execution | PASS | exact controller `d75a3a0`; 24/24 cases; 96 recovery observations |
-| Completion | Pending final Evidence Gate | verifier/docs-auditor; Standard `32976467453` + Quick `32976467177` PASS |
+| Matrix execution | Preserved technical observation | exact controller `d75a3a0`; 24/24 cases; 96 recovery observations; non-qualifying until canonical evidence exists |
+| Canonical remediation | In progress | paired G1/G2 views, physical bindings and gate results; fresh matrix requires separate Human approval |
+| Completion | Pending final Evidence Gate | verifier/docs-auditor; exact-SHA CI after remediation |
 
 | Date | Reviewer / status | Record |
 | --- | --- | --- |
@@ -110,7 +116,9 @@ divergence is B0/B1 and has no in-Task fix.
 ### Implementation Log
 
 Implementation is qualification-only and remains bounded by the approved
-Phase 11 Blueprint. Focused tests and the approved exact-controller G1/G2
-matrix have passed. The immutable task report records the evidence hashes;
-verifier/docs-auditor and exact-SHA CI remain before final closure. TASK-050
+Phase 11 Blueprint. The original exact-controller G1/G2 matrix remains a
+preserved technical observation, not canonical qualifying evidence. The
+remediation adds a during-run canonical writer for paired gate views and
+physical execution bindings; focused verification is passing locally. A fresh
+24-case matrix still requires a separate Human execution approval. TASK-050
 remains locked.

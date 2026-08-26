@@ -155,6 +155,17 @@ controller SHA, JDK/JVM/GC/heap, OS/CPU/filesystem/storage, Netty/Disruptor/WAL,
 start/end/elapsed, counts, latency/resource metrics, result, reason and artifact
 hash inventory. It is generated during the run and atomically published.
 
+For TASK-049, one physical matrix case produces two independent run-manifest
+views: `G1/g1-v1` and `G2/g2-v1`. They reference the same immutable raw case
+inventory and are linked by `ga-g1-g2-physical-run-binding-v1`; they do not
+share a `run.id`, and neither view can substitute for the other. The approved
+24-case matrix therefore yields 24 physical executions, 24 G1 manifests, 24
+G2 manifests, and one gate result per gate. The older task-specific
+`ga-g1-g2-manifest-v1` remains a raw/payload summary only.
+Each raw payload, inventory, canonical view, physical binding and gate result
+must also have the schema-required adjacent `<name>.sha256` sidecar; missing or
+mismatched sidecars fail closed.
+
 ### `ga-campaign-summary-v1`
 
 References immutable run-manifest hashes; it does not copy mutable run

@@ -26,6 +26,7 @@ import java.net.ServerSocket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -40,6 +41,17 @@ public final class GaCorrectnessRunner {
 
     private static final Duration COMMAND_TIMEOUT = Duration.ofSeconds(5);
     private static final Duration SHUTDOWN_TIMEOUT = Duration.ofSeconds(10);
+    private final GaCorrectnessCanonicalContext configuredContext;
+
+    /** Creates a runner that verifies the frozen candidate for the approved matrix. */
+    public GaCorrectnessRunner() {
+        this(null);
+    }
+
+    /** Creates a runner with an explicit identity context, primarily for focused tests. */
+    public GaCorrectnessRunner(final GaCorrectnessCanonicalContext context) {
+        configuredContext = context;
+    }
 
     /** Runs the approved matrix below the supplied raw artifact directory. */
     public GaCorrectnessCampaignResult run(final Path outputDirectory) throws IOException {
@@ -50,22 +62,74 @@ public final class GaCorrectnessRunner {
     public GaCorrectnessCampaignResult run(
             final GaCorrectnessMatrix matrix,
             final Path outputDirectory) throws IOException {
+        final GaCorrectnessCanonicalContext context = configuredContext == null
+                ? defaultContext(matrix, outputDirectory) : configuredContext;
+        return run(matrix, outputDirectory, context);
+    }
+
+    /** Runs one matrix while publishing canonical G1/G2 evidence for each physical case. */
+    GaCorrectnessCampaignResult run(
+            final GaCorrectnessMatrix matrix,
+            final Path outputDirectory,
+            final GaCorrectnessCanonicalContext context) throws IOException {
         Objects.requireNonNull(matrix, "matrix");
         Objects.requireNonNull(outputDirectory, "outputDirectory");
+        Objects.requireNonNull(context, "context");
+        if (!"ga-g1-g2-test-v1".equals(matrix.version()) && !context.isApprovedCandidate()) {
+            throw new IOException("approved matrix requires the frozen candidate context");
+        }
         final Path output = outputDirectory.toAbsolutePath().normalize();
         Files.createDirectories(output);
         final Path root = Files.createDirectory(output.resolve(
                 "ga-g1-g2-" + UUID.randomUUID()));
+        final Instant campaignStarted = Instant.now();
         final List<GaCorrectnessCaseResult> cases = new ArrayList<>();
+        final List<GaCorrectnessCanonicalEvidence.ViewPair> canonicalViews = new ArrayList<>();
         for (final GaCorrectnessCase matrixCase : matrix.cases()) {
             final Path caseDirectory = root.resolve(matrixCase.id());
             Files.createDirectories(caseDirectory);
+            final Instant physicalStarted = Instant.now();
+            final long physicalStartNanos = System.nanoTime();
+            final String physicalExecutionId = UUID.randomUUID().toString();
+            Map<String, String> runtime = null;
             try {
-                cases.add(runCase(matrix, matrixCase, caseDirectory));
+                runtime = GaCorrectnessRuntimeProvenance.capture(caseDirectory);
+                final GaCorrectnessCaseResult result = runCase(matrix, matrixCase, caseDirectory);
+                final Instant physicalCompleted = Instant.now();
+                final GaCorrectnessCanonicalEvidence.ViewPair views =
+                        GaCorrectnessCanonicalEvidence.publishCaseViews(
+                                caseDirectory,
+                                matrix,
+                                result,
+                                context,
+                                physicalExecutionId,
+                                physicalStarted,
+                                physicalCompleted,
+                                System.nanoTime() - physicalStartNanos,
+                                runtime);
+                cases.add(result);
+                canonicalViews.add(views);
             } catch (final IOException | RuntimeException failure) {
                 publishCaseFailure(caseDirectory, failure);
-                cases.add(GaCorrectnessCaseResult.failed(
-                        matrixCase, caseDirectory, failureDescription(failure)));
+                final GaCorrectnessCaseResult failed = GaCorrectnessCaseResult.failed(
+                        matrixCase, caseDirectory, failureDescription(failure));
+                cases.add(failed);
+                if (runtime != null) {
+                    try {
+                        canonicalViews.add(GaCorrectnessCanonicalEvidence.publishCaseViews(
+                                caseDirectory,
+                                matrix,
+                                failed,
+                                context,
+                                physicalExecutionId,
+                                physicalStarted,
+                                Instant.now(),
+                                System.nanoTime() - physicalStartNanos,
+                                runtime));
+                    } catch (final IOException | RuntimeException canonicalFailure) {
+                        publishCaseFailure(caseDirectory, canonicalFailure);
+                    }
+                }
                 break;
             }
         }
@@ -77,11 +141,25 @@ public final class GaCorrectnessRunner {
         final Path hashes = root.resolve("artifact-hashes-v1.txt");
         final String summaryText = summaryText(matrix, cases, failures, passed);
         QualificationEvidencePublication.text(summary, summaryText);
+        GaCorrectnessArtifactInventory.publishAdjacentSidecar(summary);
         final String summarySha256 = com.ultralatency.matching.qualification
                 .QualificationArtifactHasher.sha256(summary);
-        QualificationEvidencePublication.text(
-                manifest, manifestText(matrix, cases, failures, passed, summarySha256));
+        final Instant campaignCompleted = Instant.now();
+        final GaCorrectnessCanonicalEvidence.GatePair gates = canonicalViews.isEmpty()
+                ? null
+                : GaCorrectnessCanonicalEvidence.publishGateResults(
+                        root,
+                        matrix,
+                        canonicalViews,
+                        context,
+                        campaignStarted,
+                        campaignCompleted,
+                        passed);
+        QualificationEvidencePublication.text(manifest, manifestText(
+                matrix, cases, failures, passed, summarySha256, canonicalViews, gates, context));
+        GaCorrectnessArtifactInventory.publishAdjacentSidecar(manifest);
         QualificationEvidencePublication.text(hashes, artifactHashes(root, hashes));
+        GaCorrectnessArtifactInventory.publishAdjacentSidecar(hashes);
         return new GaCorrectnessCampaignResult(
                 matrix,
                 cases,
@@ -92,6 +170,15 @@ public final class GaCorrectnessRunner {
                 manifest,
                 hashes,
                 summarySha256);
+    }
+
+    private static GaCorrectnessCanonicalContext defaultContext(
+            final GaCorrectnessMatrix matrix,
+            final Path outputDirectory) throws IOException {
+        if ("ga-g1-g2-test-v1".equals(matrix.version())) {
+            return GaCorrectnessCanonicalContext.test(outputDirectory);
+        }
+        return GaCorrectnessCanonicalContext.fromSystem();
     }
 
     private static GaCorrectnessCaseResult runCase(
@@ -337,14 +424,16 @@ public final class GaCorrectnessRunner {
             final List<GaCorrectnessCaseResult> cases,
             final List<String> failures,
             final boolean passed,
-            final String summarySha256) {
+            final String summarySha256,
+            final List<GaCorrectnessCanonicalEvidence.ViewPair> canonicalViews,
+            final GaCorrectnessCanonicalEvidence.GatePair gates,
+            final GaCorrectnessCanonicalContext context) {
         final Map<String, String> fields = new LinkedHashMap<>();
         fields.put("schemaVersion", "ga-g1-g2-manifest-v1");
         fields.put("matrixVersion", matrix.version());
-        fields.put("candidate", System.getProperty("qualification.candidate", "v0.9.0-rc.1"));
-        fields.put("controllerGitSha", System.getProperty("qualification.git.sha", "working-tree"));
-        fields.put("baselineTag", System.getProperty(
-                "qualification.baseline", "v0.9.0-rc.1"));
+        fields.put("candidate", context.candidate().tag());
+        fields.put("controllerGitSha", context.controllerGitSha());
+        fields.put("baselineTag", context.candidate().tag());
         fields.put("commandCount", Integer.toString(matrix.commandCount()));
         fields.put("walSegmentSizeBytes", Integer.toString(matrix.walSegmentSizeBytes()));
         fields.put("profiles", matrix.profiles().stream()
@@ -360,6 +449,14 @@ public final class GaCorrectnessRunner {
         fields.put("passed", Boolean.toString(passed));
         fields.put("failureCount", Integer.toString(failures.size()));
         fields.put("summarySha256", summarySha256);
+        fields.put("canonicalPhysicalExecutionCount", Integer.toString(canonicalViews.size()));
+        fields.put("canonicalG1ManifestCount", Integer.toString(canonicalViews.size()));
+        fields.put("canonicalG2ManifestCount", Integer.toString(canonicalViews.size()));
+        fields.put("canonicalG1GateResultPath", gates == null
+                ? "none" : gates.g1ResultPath().getFileName().toString());
+        fields.put("canonicalG2GateResultPath", gates == null
+                ? "none" : gates.g2ResultPath().getFileName().toString());
+        fields.put("canonicalEvidenceContract", "ga-run-manifest-v1+ga-gate-result-v1");
         final StringBuilder output = new StringBuilder();
         fields.forEach((key, value) -> output.append(key).append('=').append(value).append('\n'));
         return output.toString();

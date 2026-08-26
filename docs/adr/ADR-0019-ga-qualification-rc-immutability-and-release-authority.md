@@ -109,6 +109,19 @@ Human Limited Schema Amendment on 2026-08-25 explicitly separates full
 SHA-256 digest fields. This is a lexical typing correction only; no candidate,
 Gate, campaign, release authority or schema version semantics changed.
 
+The Human-approved TASK-049 canonical mapping uses one physical execution per
+matrix case and two independent canonical run views. Each case publishes a G1
+`ga-run-manifest-v1` (`g1-v1`) and a G2 `ga-run-manifest-v1` (`g2-v1`) with
+distinct run IDs and shared runtime/raw-evidence provenance. A separate
+immutable `ga-g1-g2-physical-run-binding-v1` payload binds those views to one
+physical execution without extending the frozen global schema. The 24-case
+matrix therefore requires 24 physical executions, 24 G1 manifests, 24 G2
+manifests, and independent G1/G2 gate-result documents; the task-specific
+`ga-g1-g2-manifest-v1` remains a payload summary only.
+The canonical run, inventory, binding and gate-result payloads publish and
+verify their required adjacent SHA-256 sidecars; missing or mismatched
+sidecars are evidence-contract failures.
+
 ### D8 — Run outcomes and failures are retained
 
 Every run is `PASS`, `FAIL` or `ABORTED`. Raw evidence and manifests remain
