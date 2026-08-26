@@ -11,7 +11,7 @@
 | Evidence schemas | [GA Evidence Schemas](../../docs/release/GA-EVIDENCE-SCHEMAS.md) |
 | Security tools | [GA Security Toolchain](../../docs/release/GA-SECURITY-TOOLCHAIN.md) |
 | Tasks | `TASK-047 Completed / TASK-048 In Progress / TASK-049 through TASK-056 dependency ordered` |
-| Implementation | `Human-approved OFFLINE_SUPPLY_CHAIN_SECURITY_V1 amendment; root-selector Maven B2 remediation Evidence Gate PASS at e1464ed; fresh G11 separately gated` |
+| Implementation | `Human-approved OFFLINE_SUPPLY_CHAIN_SECURITY_V1 amendment; root-selector Maven B2 remediation Evidence Gate PASS at e1464ed; exact Gitleaks disposition remediation Evidence Gate PASS at 7be2b61 (Standard 32951233073, Quick 32951233014); fresh G11 separately gated` |
 | Campaign / Release | `Not Authorized` |
 
 ## Proposal result
@@ -51,7 +51,7 @@ commands.
 ```text
 Phase 11 Blueprint: Approved
 TASK-047: Completed / Evidence Gate PASS
-TASK-048: In Progress — offline G11 policy; root-selector Maven B2 remediation PASS at `e1464ed`; G11 `32947367541` preserved FAIL/non-qualifying after two documentation false positives; exact disposition remediation authorized; fresh G11 separately gated
+TASK-048: In Progress — offline G11 policy; root-selector Maven B2 remediation PASS at `e1464ed`; G11 `32947367541` preserved FAIL/non-qualifying after two documentation false positives; exact disposition remediation Evidence Gate PASS at `7be2b61`; fresh G11 separately gated
 TASK-049..056: Dependency ordered / locked
 Campaign execution: Not Authorized
 Candidate mutation: Not Authorized

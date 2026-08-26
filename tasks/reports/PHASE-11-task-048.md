@@ -2,8 +2,9 @@
 
 ## Status
 
-`In Progress — Human-approved G11 false-positive disposition amendment is
-authorized for qualification-only implementation; G9 32856372581 remains
+`In Progress — Human-approved G11 false-positive disposition amendment
+Evidence Gate PASS at 7be2b61 (Standard CI 32951233073; Quick Lane
+32951233014); G9 32856372581 remains
 PASS/qualifying/frozen; fresh G11 32947367541 remains FAIL/non-qualifying/
 preserved after two demonstrably non-secret full-history findings; no fresh
 G11 execution is authorized.`
@@ -382,3 +383,4 @@ fresh G11 execution can be considered.
 | 2026-08-26 | G11 shell-scope B2 remediation Evidence Gate | PASS | `eced533`; Standard CI `32945056542`; Quick Lane `32945056508`; focused/full regression, step-local variable audit, YAML/Bash, diff and frozen-boundary checks PASS; fresh G11 remains separately Human-gated |
 | 2026-08-26 | TASK-048/Phase 11 status synchronization | PASS | `e51db47`; Standard CI `32945333516`; Quick Lane `32945333468`; latest failure, remediation and next Human gate reconciled across status documents |
 | 2026-08-26 | Final B2 remediation audit checkpoint | PASS | `688d955`; Standard CI `32946223271`; Quick Lane `32946223268`; verifier and frozen-path checks PASS; fresh G11 remains separately Human-gated |
+| 2026-08-26 | G11 false-positive disposition amendment Evidence Gate | PASS | `7be2b61`; Standard CI `32951233073`; Quick Lane `32951233014`; 225 core + 72 qualification tests, 2 expected skips, Checkstyle 0, Python disposition tests 3/3, YAML/Bash/static validation, verifier, docs-auditor and frozen-path audits PASS; fresh G11 remains separately Human-gated |

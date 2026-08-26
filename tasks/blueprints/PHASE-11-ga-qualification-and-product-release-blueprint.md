@@ -13,7 +13,7 @@
 | Post-tag docs | `b8489bf` — documentation-only, not candidate production source |
 | Proposal Branch | `docs/phase11-ga-qualification-blueprint` |
 | Planned Tasks | `TASK-20260825-047` through `TASK-20260825-056` |
-| Next Gate | `Human fresh G11 Execution Gate after shell-scope B2 remediation Evidence Gate PASS; no automatic execution` |
+| Next Gate | `Human fresh G11 Execution Gate after exact Gitleaks disposition amendment Evidence Gate PASS; no automatic execution` |
 
 ## 2. Phase Objective
 

@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-048` — Reproducibility and Security Preflight |
-| Status | `In Progress — fresh G11 32947367541 FAIL/non-qualifying/preserved after two read-only-confirmed documentation false positives; Human-approved exact Gitleaks disposition amendment authorized; G9 32856372581 PASS/qualifying/frozen; no fresh G11 authorized` |
+| Status | `In Progress — fresh G11 32947367541 FAIL/non-qualifying/preserved after two read-only-confirmed documentation false positives; exact Gitleaks disposition amendment Evidence Gate PASS at 7be2b61 (Standard 32951233073, Quick 32951233014); G9 32856372581 PASS/qualifying/frozen; no fresh G11 authorized` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Depends On | TASK-047 Evidence Gate PASS after Human Blueprint Approval |
@@ -131,7 +131,7 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | --- | --- | --- |
 | Blueprint | Approved | Human Phase 11 Blueprint Approval |
 | Implementation | In Progress | TASK-047 Evidence Gate PASS |
-| Preflight | Offline supply-chain policy amendment; root-selector Maven remediation Evidence Gate PASS; fresh G11 separately gated | G9 `32856372581` PASS/qualifying/frozen; G11 `32925783003` FAIL/B2/preserved; no additional G11 execution |
+| Preflight | Offline supply-chain policy and exact Gitleaks disposition amendment Evidence Gate PASS at `7be2b61`; fresh G11 separately gated | G9 `32856372581` PASS/qualifying/frozen; G11 `32947367541` FAIL/non-qualifying/preserved; no additional G11 execution |
 
 | Date | Reviewer | Decision / log |
 | --- | --- | --- |
