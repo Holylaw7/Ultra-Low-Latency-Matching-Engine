@@ -13,7 +13,7 @@
 | Post-tag docs | `b8489bf` — documentation-only, not candidate production source |
 | Proposal Branch | `docs/phase11-ga-qualification-blueprint` |
 | Planned Tasks | `TASK-20260825-047` through `TASK-20260825-056` |
-| Next Gate | `Human fresh G11 Execution Gate after license-report B2 remediation Evidence Gate PASS; no automatic execution` |
+| Next Gate | `Human fresh G11 Execution Gate after shell-scope B2 remediation Evidence Gate PASS; no automatic execution` |
 
 ## 2. Phase Objective
 
@@ -471,7 +471,7 @@ explicit Human Phase 11 Closure Approval. Phase Closure does not create
 
 ```text
 Blueprint Status: Approved — Human Phase 11 Blueprint Approval 2026-08-25
-Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 root-selector remediation Evidence Gate PASS at `e1464ed` (Standard `32927818204`, Quick `32927818172`); license-report B2 remediation Evidence Gate PASS at `30c89c4` (Standard `32932454011`, Quick `32932454009`) after offline G11 `32929258318` FAIL/B2 preserved; G9 `32856372581` PASS/qualifying/frozen; TASK-049..056 dependency ordered and locked
+Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 root-selector remediation Evidence Gate PASS at `e1464ed` (Standard `32927818204`, Quick `32927818172`); license-report B2 remediation Evidence Gate PASS at `30c89c4` (Standard `32932454011`, Quick `32932454009`); fresh G11 `32943456313` FAIL/B2/preserved on undeclared step-local `REPO`; shell-scope remediation Evidence Gate PASS at `eced533` (Standard `32945056542`, Quick `32945056508`); G9 `32856372581` PASS/qualifying/frozen; TASK-049..056 dependency ordered and locked
 Qualification Campaigns: Not Authorized
 RC mutation: Not Authorized
 v1.0.0 / GitHub Release / GA: Not Authorized
@@ -502,6 +502,9 @@ Next Gate: STOP for separate Human fresh G11 Execution Approval; no automatic ex
 | 2026-08-26 | G11 B2 Remediation Evidence Gate | PASS | `e1464ed`; Standard `32927818204`; Quick `32927818172`; root-selector build, focused/full tests, YAML/Bash, policy hash and frozen-boundary audits PASS; fresh G11 remains separately Human-gated | Human fresh G11 Execution Approval |
 | 2026-08-26 | Human Limited G11 license-report B2 Remediation | AUTHORIZED / IN PROGRESS | Preserve `license-maven-plugin:2.7.1:aggregate-third-party-report`; root `-pl core -am`; report `target/reports/aggregate-third-party-report.html`; v2 policy/validator update; G11 `32929258318` preserved FAIL/B2 | B2 remediation Evidence Gate |
 | 2026-08-26 | License-report B2 remediation Evidence Gate | PASS | `30c89c4`; Standard `32932454011`; Quick `32932454009`; parseable root-reactor report, exact runtime-coordinate reconciliation, Maven module-annotation handling, SHA-256 validation sidecar and strict inventory checks; `32929258318` remains preserved FAIL/B2 | Human fresh G11 Execution Approval |
+| 2026-08-26 | Human-authorized fresh G11 execution | FAIL / B2 / PRESERVED | `32943456313`; artifact `9597396741`; digest `bc3ad708418d0194c05e695d4990daa1e9319480b6787493e4968f132fc17689`; license-report validation aborted on undeclared step-local `REPO`; candidate defect not observed; no retry | Sol High B2 scope review |
+| 2026-08-26 | Sol High B2 shell-scope review and remediation Evidence Gate | PASS | `eced533`; Standard `32945056542`; Quick `32945056508`; all GA security run blocks audited for local shell-variable scope; policy/candidate/POM/production/G9 unchanged | Human fresh G11 Execution Approval |
+| 2026-08-26 | TASK-048/Phase 11 status synchronization | PASS | `e51db47`; Standard `32945333516`; Quick `32945333468`; latest B2 failure and remediation state reconciled across status documents; no fresh G11 execution | Human fresh G11 Execution Approval |
 
 ## 24. Phase Closure Checklist
 

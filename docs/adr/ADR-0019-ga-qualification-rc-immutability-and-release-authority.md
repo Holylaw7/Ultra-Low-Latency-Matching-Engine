@@ -325,6 +325,25 @@ Quick Lane `32927818172` PASS. Its Evidence Gate is PASS; a fresh G11
 execution remains separately Human-gated and is not authorized by this
 remediation.
 
+#### Human-approved shell-scope B2 remediation (2026-08-26)
+
+The next Human-authorized fresh offline G11 run, `32943456313`, preserved a
+`FAIL / B2 / NON-QUALIFYING` result after candidate identity, candidate build,
+SBOM input and dependency input generation completed. The license-report
+validation step referenced `REPO` without declaring it in that independent
+shell block, so `set -u` terminated the workflow before the remaining G11
+criteria. The failure artifact is `9597396741` with digest
+`bc3ad708418d0194c05e695d4990daa1e9319480b6787493e4968f132fc17689`.
+
+A read-only cross-step audit found no second undeclared local shell variable.
+Human then approved a limited workflow-only remediation: declare
+`REPO="$RUNNER_TEMP/ga-security-cache/m2"` in the license validation step and
+add a static audit over every GA security `run:` block. The Maven command,
+policy hash, candidate, POM, dependencies, production and G9 evidence remain
+unchanged. The remediation is implemented at `eced533`, with Standard CI
+`32945056542` and Quick Lane `32945056508` PASS. This Evidence Gate does not
+authorize another G11 execution; a fresh G11 remains separately Human-gated.
+
 ### D16 — Release source and production source may be distinguished
 
 The qualified production artifact source remains `e2828f5`. Human may either:
@@ -401,3 +420,6 @@ action.
 | 2026-08-26 | Human Developer | APPROVED — Limited G11 license-report B2 Remediation | Preserve `license-maven-plugin:2.7.1:aggregate-third-party-report`; use repository-root `-pl core -am`; require `target/reports/aggregate-third-party-report.html`; `32929258318` preserved FAIL/B2; no candidate/POM/production change and no fresh G11 execution |
 | 2026-08-26 | Evidence Gate | PASS — License-report B2 Remediation | `6cea0b2`; Standard CI `32932067229`; Quick Lane `32932067238`; HTML parseability, runtime-coordinate reconciliation and immutable validation-sidecar checks added; fresh G11 remains Human-gated |
 | 2026-08-26 | Evidence Gate follow-up | PASS — License-report inventory parser compatibility | `30c89c4`; Standard CI `32932454011`; Quick Lane `32932454009`; Maven `dependency:list` module annotations are accepted without relaxing coordinate matching; fresh G11 remains Human-gated |
+| 2026-08-26 | Human Developer | APPROVED — Limited shell-scope B2 Remediation | `32943456313` preserved FAIL/B2; workflow-only step-local `REPO` correction and static variable audit; no policy/candidate/POM/production change or fresh G11 execution |
+| 2026-08-26 | Evidence Gate | PASS — G11 shell-scope B2 Remediation | `eced533`; Standard CI `32945056542`; Quick Lane `32945056508`; fresh G11 remains separately Human-gated |
+| 2026-08-26 | Evidence Gate | PASS — TASK-048/Phase 11 status synchronization | `e51db47`; Standard CI `32945333516`; Quick Lane `32945333468`; current failure/remediation state reconciled; fresh G11 remains separately Human-gated |
