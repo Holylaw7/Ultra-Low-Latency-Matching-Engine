@@ -5,11 +5,11 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-048` — Reproducibility and Security Preflight |
-| Status | `In Progress — fresh G11 32952590543 FAIL/B2/non-qualifying/preserved because candidate Gitleaks emitted an absolute /repo path; path-contract remediation f6db140 Evidence Gate PASS (Standard 32954953854, Quick 32954953801); G9 32856372581 PASS/qualifying/frozen; no fresh G11 authorized` |
+| Status | `In Progress — fresh G11 32955619875 PASS/qualifying/frozen under OFFLINE_SUPPLY_CHAIN_SECURITY_V1; prior G11 32952590543 FAIL/B2 remains preserved; path-contract remediation f6db140 Evidence Gate PASS (Standard 32954953854, Quick 32954953801); G9 32856372581 PASS/qualifying/frozen; TASK-048 final evidence review pending` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Depends On | TASK-047 Evidence Gate PASS after Human Blueprint Approval |
-| Next Gate | Human Fresh G11 Execution Gate; no automatic execution |
+| Next Gate | TASK-048 Final Evidence Review; no additional G11 execution |
 
 ## 2. Goal
 
@@ -167,6 +167,7 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | 2026-08-26 | Sol High B2 path-contract review | CONFIRMED | Absolute candidate target caused non-canonical raw metadata; native `dir .` from the mounted checkout root selected; evaluator/disposition identity remain unchanged |
 | 2026-08-26 | Human Limited G11 B2 Remediation | AUTHORIZED / IN PROGRESS | Workflow-only candidate path-contract correction; v2 policy records `repository-relative-v1` / `working-directory`; no candidate/POM/production/G9 change or fresh G11 execution |
 | 2026-08-26 | G11 path-contract B2 Remediation Evidence Gate | PASS | `f6db140`; Standard `32954953854`; Quick `32954953801`; focused/full tests, YAML/Bash, policy hash, raw-report preservation and frozen-boundary audits PASS; fresh G11 remains separately Human-gated |
+| 2026-08-26 | Human-authorized fresh G11 execution | PASS / QUALIFYING / FROZEN | `32955619875`; artifact `9601871146`; GitHub digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`; candidate-bound Gitleaks canonical path/disposition, SBOM/dependency/license/secret/provenance/inventory gates PASS; prior failures preserved; TASK-048 final evidence review pending |
 
 ### Implementation Log
 

@@ -2,12 +2,10 @@
 
 ## Status
 
-`In Progress — Human-approved G11 false-positive disposition amendment
-Evidence Gate PASS at 7be2b61 (Standard CI 32951233073; Quick Lane
-32951233014); G9 32856372581 remains
-PASS/qualifying/frozen; fresh G11 32947367541 remains FAIL/non-qualifying/
-preserved after two demonstrably non-secret full-history findings; no fresh
-G11 execution is authorized.`
+`In Progress — G9 32856372581 PASS/qualifying/frozen; fresh G11
+32955619875 PASS/qualifying/frozen under OFFLINE_SUPPLY_CHAIN_SECURITY_V1;
+prior G11 failures remain preserved; TASK-048 final evidence review pending;
+no additional G11 execution authorized.`
 
 TASK-048 implements the approved qualification-only reproducibility and
 security preflight boundary. It does not qualify the candidate, authorize a
@@ -22,7 +20,7 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
 | Peeled production SHA | `e2828f563ee41316c062385c0244ac1336731359` |
 | Historical toolchain policy | `ga-security-toolchain-v1.properties` / NVD-backed runs only / preserved unchanged |
 | Current G11 toolchain policy | `ga-security-toolchain-v2.properties` / `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` |
-| Current policy SHA-256 | `2b9ee7de9aee3e153d76ded1118434e8bc93807b2d329442e4593839b8e4b87f`; G11 disposition manifest `0854c43f9138d8073f640fe1e37f97c7d482f01bcbe3e8280534ee3cbc70466c`; candidate path-contract remediation `f6db140` Evidence Gate PASS (Standard `32954953854`, Quick `32954953801`); no fresh G11 execution authorized |
+| Current policy SHA-256 | `2b9ee7de9aee3e153d76ded1118434e8bc93807b2d329442e4593839b8e4b87f`; G11 disposition manifest `0854c43f9138d8073f640fe1e37f97c7d482f01bcbe3e8280534ee3cbc70466c`; candidate path-contract remediation `f6db140` Evidence Gate PASS (Standard `32954953854`, Quick `32954953801`); fresh G11 `32955619875` PASS/qualifying/frozen; no additional G11 execution authorized |
 | JDK archive | `microsoft-jdk-21.0.12-linux-x64.tar.gz` / `linux-x64` |
 | JDK archive SHA-256 | `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f` |
 | Artifact publication action | `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` (v7.0.1) |
@@ -83,7 +81,7 @@ tag, production source, existing workflow, dependency or runtime input changed.
 | Root-selector qualification build | PASS — `mvn -B -ntp -pl core -am package -DskipTests`; root-relative Checkstyle 0; `core/target/matching-engine-rc.jar` present |
 | v2 policy digest / command contract | PASS — current SHA-256 `2b9ee7de9aee3e153d76ded1118434e8bc93807b2d329442e4593839b8e4b87f`; disposition manifest SHA-256 `0854c43f9138d8073f640fe1e37f97c7d482f01bcbe3e8280534ee3cbc70466c`; license goal uses root `-pl core -am`, report path `target/reports/aggregate-third-party-report.html`, and candidate Gitleaks `dir .` path contract |
 | Checkstyle during focused build | 0 violations |
-| G9/G11 execution | G9 `32856372581` PASS/qualifying/frozen; offline G11 `32925783003` FAIL/B2/preserved before SBOM; B2 remediation `e1464ed` / CI `32927818204` / Quick `32927818172` PASS; no fresh G11 execution authorized |
+| G9/G11 execution | G9 `32856372581` PASS/qualifying/frozen; offline G11 `32925783003` FAIL/B2/preserved before SBOM; B2 remediation `e1464ed` / CI `32927818204` / Quick `32927818172` PASS; fresh G11 `32955619875` PASS/qualifying/frozen; prior failures preserved; no additional G11 execution authorized |
 | Full `mvn verify` | PASS — 225 core + 72 qualification tests; 2 expected skips |
 | Workflow YAML parse | PASS — both new workflows parse successfully |
 | Workflow Bash syntax | PASS — all workflow `run` blocks parse with Bash 5.3 |
@@ -112,10 +110,11 @@ by omission or substitution.
 The first B2/B3 remediation Evidence Gate at `b44fc4d` was PASS, and the fresh
 G9 run `32856372581` is qualifying/frozen. Every NVD-backed G11 attempt,
 including latest run `32870534485`, remains preserved under its original
-contract as FAIL/B3/non-qualifying. The Human-approved policy amendment does
-not reinterpret those results; it authorizes only a new implementation and
-requires a separately authorized fresh offline G11. TASK-049 remains locked.
-Full campaigns, `v1.0.0`, GitHub Release and GA remain unauthorized.
+contract as FAIL/B3/non-qualifying. The Human-approved policy amendment
+preserved those results and authorized the separate fresh offline G11
+`32955619875`, which passed under the amended contract. TASK-049 remains
+locked pending TASK-048 final review. Full campaigns, `v1.0.0`, GitHub Release
+and GA remain unauthorized.
 
 ## G9/G11 execution attempt
 
@@ -388,3 +387,4 @@ fresh G11 execution can be considered.
 | 2026-08-26 | Sol High B2 path-contract review | CONFIRMED | Absolute candidate scan target caused non-canonical metadata; native `dir .` from the mounted checkout root selected; evaluator/disposition identity remain unchanged |
 | 2026-08-26 | Human Limited G11 B2 Remediation | AUTHORIZED / IN PROGRESS | Workflow-only candidate path-contract correction; v2 policy records `repository-relative-v1` / `working-directory`; no candidate/POM/production/G9 change or fresh G11 execution |
 | 2026-08-26 | G11 path-contract B2 Remediation Evidence Gate | PASS | `f6db140`; Standard `32954953854`; Quick `32954953801`; focused/full tests, YAML/Bash, policy hash, raw-report preservation and frozen-boundary audits PASS; fresh G11 remains separately Human-gated |
+| 2026-08-26 | Human-authorized fresh G11 execution | PASS / QUALIFYING / FROZEN | Run `32955619875`; artifact `9601871146`; GitHub digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`; candidate identity, canonical Gitleaks disposition, SBOM/dependency/license/secret/provenance/inventory and SHA256SUMS checks PASS; historical failures preserved; TASK-048 final evidence review pending |

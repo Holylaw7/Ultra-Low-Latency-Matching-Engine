@@ -390,6 +390,16 @@ Human-gated. The implementation is `f6db140`; Standard CI `32954953854` and
 Quick Lane `32954953801` PASS, with focused/full tests and frozen-boundary
 audits PASS.
 
+The separately Human-authorized fresh offline G11 run `32955619875` then
+completed `PASS / QUALIFYING / FROZEN` under the amended path contract. Its
+immutable artifact is `9601871146` with GitHub-reported digest
+`sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`;
+candidate identity, repository-relative Gitleaks disposition evaluation,
+SBOM/dependency/license/secret evidence, strict inventory hashes and
+publication all passed. Historical failed runs remain preserved and TASK-048
+still requires final evidence review; no additional G11 execution is
+authorized.
+
 ### D16 — Release source and production source may be distinguished
 
 The qualified production artifact source remains `e2828f5`. Human may either:
@@ -472,6 +482,7 @@ action.
 | 2026-08-26 | Evidence Gate follow-up | PASS — Final B2 remediation audit checkpoint | `688d955`; Standard CI `32946223271`; Quick Lane `32946223268`; verifier and frozen-path checks remain PASS; fresh G11 remains separately Human-gated |
 | 2026-08-26 | Human Developer | APPROVED — Limited candidate Gitleaks path-contract B2 Remediation | `32952590543` preserved FAIL/B2; switch candidate scan to root-relative `dir .`, record `repository-relative-v1` / `working-directory` policy identity; no candidate/POM/production/G9 change or fresh G11 execution |
 | 2026-08-26 | Evidence Gate | PASS — Candidate Gitleaks path-contract B2 Remediation | `f6db140`; Standard CI `32954953854`; Quick Lane `32954953801`; native `dir .` path contract, focused/full verification and frozen-boundary audit PASS; fresh G11 remains separately Human-gated |
+| 2026-08-26 | Evidence Gate | PASS — Fresh G11 under amended path contract | `32955619875`; artifact `9601871146`; GitHub digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`; G11 qualifying/frozen; TASK-048 final evidence review pending; no additional G11 execution |
 
 The `688d955` entry is the final remediation audit checkpoint. Any later
 docs-only commit that records this checkpoint is external validation only and
