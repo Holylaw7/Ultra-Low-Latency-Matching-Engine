@@ -5,11 +5,11 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-048` — Reproducibility and Security Preflight |
-| Status | `In Progress — fresh G11 32955619875 PASS/qualifying/frozen under OFFLINE_SUPPLY_CHAIN_SECURITY_V1; prior G11 32952590543 FAIL/B2 remains preserved; path-contract remediation f6db140 Evidence Gate PASS (Standard 32954953854, Quick 32954953801); G9 32856372581 PASS/qualifying/frozen; TASK-048 final evidence review pending` |
+| Status | `Completed / Closed / Human Approved — G9 32856372581 and G11 32955619875 PASS/qualifying/frozen; all prior G11 failures preserved; final docs/evidence remediation f2d5470; Standard 32959524443 and Quick 32959524552 PASS` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Depends On | TASK-047 Evidence Gate PASS after Human Blueprint Approval |
-| Next Gate | TASK-048 Final Evidence Review; no additional G11 execution |
+| Next Gate | TASK-049 Authorized / Next; no additional G9/G11 execution |
 
 ## 2. Goal
 

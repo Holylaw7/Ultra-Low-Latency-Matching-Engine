@@ -13,7 +13,7 @@
 | Post-tag docs | `b8489bf` — documentation-only, not candidate production source |
 | Proposal Branch | `docs/phase11-ga-qualification-blueprint` |
 | Planned Tasks | `TASK-20260825-047` through `TASK-20260825-056` |
-| Next Gate | `TASK-048 Final Evidence Review; no additional G9/G11 execution` |
+| Next Gate | `TASK-049 Evidence Gate; no additional G9/G11 execution` |
 
 ## 2. Phase Objective
 
@@ -471,11 +471,11 @@ explicit Human Phase 11 Closure Approval. Phase Closure does not create
 
 ```text
 Blueprint Status: Approved — Human Phase 11 Blueprint Approval 2026-08-25
-Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 root-selector remediation Evidence Gate PASS at `e1464ed` (Standard `32927818204`, Quick `32927818172`); license-report B2 remediation Evidence Gate PASS at `30c89c4` (Standard `32932454011`, Quick `32932454009`); fresh G11 `32943456313` FAIL/B2/preserved on undeclared step-local `REPO`; shell-scope remediation Evidence Gate PASS at `eced533` (Standard `32945056542`, Quick `32945056508`); G9 `32856372581` PASS/qualifying/frozen; path-contract remediation Evidence Gate PASS at `f6db140` (Standard `32954953854`, Quick `32954953801`); G11 `32955619875` PASS/qualifying/frozen under `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` (artifact `9601871146`, GitHub digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`); all historical G11 failures remain preserved/non-qualifying; TASK-049..056 dependency ordered and locked
+Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 Completed / Closed / Human Approved with G9 `32856372581` PASS/qualifying/frozen and G11 `32955619875` PASS/qualifying/frozen under `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` (artifact `9601871146`, GitHub digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`); final docs/evidence remediation `f2d5470`; Standard `32959524443` and Quick `32959524552` PASS; all historical G11 failures remain preserved/non-qualifying; TASK-049 In Progress with approved G1/G2 implementation and matrix evidence; TASK-050..056 dependency ordered and locked
 Qualification Campaigns: Not Authorized
 RC mutation: Not Authorized
 v1.0.0 / GitHub Release / GA: Not Authorized
-Next Gate: TASK-048 Final Evidence Review; no additional G9/G11 execution
+Next Gate: TASK-049 Evidence Gate; no additional G9/G11 execution
 ```
 
 ## 23. Execution Checkpoints
@@ -508,6 +508,9 @@ Next Gate: TASK-048 Final Evidence Review; no additional G9/G11 execution
 | 2026-08-26 | Final B2 remediation audit checkpoint | PASS | `688d955`; Standard `32946223271`; Quick `32946223268`; verifier and frozen-path checks PASS; no fresh G11 execution | Human fresh G11 Execution Approval |
 | 2026-08-26 | G11 path-contract remediation Evidence Gate | PASS | `f6db140`; Standard `32954953854`; Quick `32954953801`; canonical repository-relative Gitleaks path, disposition/evaluator checks and frozen-boundary audit PASS | Fresh G11 execution (completed; no additional run authorized) |
 | 2026-08-26 | Fresh offline G11 execution under amended path contract | PASS / QUALIFYING / FROZEN | Run `32955619875`; artifact `9601871146`; GitHub digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`; 23/23 internal `SHA256SUMS`, candidate identity, SBOM/dependency/license reconciliation, secret disposition and immutable publication PASS; historical failures preserved | TASK-048 Final Evidence Review |
+| 2026-08-26 | Fresh offline G11 execution under amended path contract | PASS / QUALIFYING / FROZEN | Run `32955619875`; artifact `9601871146`; GitHub digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`; 23/23 internal `SHA256SUMS`, candidate identity, SBOM/dependency/license reconciliation, secret disposition and immutable publication PASS; historical failures preserved | TASK-048 Final Evidence Review |
+| 2026-08-26 | TASK-048 Final Evidence Review and Human Closure | PASS / CLOSED | Final docs/evidence remediation `f2d5470`; verifier/docs-auditor PASS; Markdown links 378/0; Standard `32959524443` PASS; Quick `32959524552` PASS; G9/G11 qualifying evidence and historical failures frozen | TASK-049 authorized / next |
+| 2026-08-26 | TASK-049 G1/G2 implementation and approved matrix | PASS / EVIDENCE PENDING REVIEW | Qualification-only runner/evaluator and focused tests; approved 4-profile × 3-seed × 2-repeat matrix: 24/24 cases, 96 recovery observations, 0 failures; summary SHA-256 `960e76e0569fb97109bd0d4c29f919b781bcd06317acf6afc3e99ee0415fd619`; task manifest SHA-256 `bcb39cff2b40d896c6775ece8d90a8bcb3eb90f03b2503132ebb571bc4724d24`; artifact sidecar SHA-256 `667c63ddfffbd4ee205979e9523b498bfb89cebd33a24bf706f2a4f4e0cffefd`; 4,322 entries validated; controller provenance is local working-tree pending commit/CI validation | TASK-049 Evidence Gate / reviewer audit |
 
 ## 24. Phase Closure Checklist
 

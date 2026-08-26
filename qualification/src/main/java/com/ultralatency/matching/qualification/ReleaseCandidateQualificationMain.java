@@ -5,6 +5,9 @@ import com.ultralatency.matching.app.ReleaseCandidateRuntime;
 import com.ultralatency.matching.app.RuntimeConfiguration;
 import com.ultralatency.matching.app.RuntimeConfigurationLoader;
 import com.ultralatency.matching.app.RuntimeExitCode;
+import com.ultralatency.matching.qualification.ga.correctness.GaCorrectnessCampaignResult;
+import com.ultralatency.matching.qualification.ga.correctness.GaCorrectnessMatrix;
+import com.ultralatency.matching.qualification.ga.correctness.GaCorrectnessRunner;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -62,6 +65,16 @@ public final class ReleaseCandidateQualificationMain {
             runCampaign(Path.of(arguments[2]), Path.of(arguments[4]), Path.of(arguments[6]));
             return;
         }
+        if (arguments != null && arguments.length == 3 && "ga-correctness".equals(arguments[0])
+                && "--matrix".equals(arguments[1])) {
+            runGaCorrectness(matrix(arguments[2]), Path.of("qualification-results"));
+            return;
+        }
+        if (arguments != null && arguments.length == 5 && "ga-correctness".equals(arguments[0])
+                && "--matrix".equals(arguments[1]) && "--output".equals(arguments[3])) {
+            runGaCorrectness(matrix(arguments[2]), Path.of(arguments[4]));
+            return;
+        }
         {
             System.err.println("usage: child --config <path>");
             System.err.println("       lifecycle --output <directory>");
@@ -71,6 +84,8 @@ public final class ReleaseCandidateQualificationMain {
                     + " --git-sha <sha> --baseline-tag <tag>");
             System.err.println("       campaign --manifest <a> --manifest <b>"
                     + " --output <dir>");
+            System.err.println("       ga-correctness --matrix <ga-g1-g2-v1|ga-g1-g2-test-v1>"
+                    + " [--output <dir>]");
             System.exit(64);
             return;
         }
@@ -240,6 +255,32 @@ public final class ReleaseCandidateQualificationMain {
                     + " " + String.valueOf(failure.getMessage()));
             System.exit(1);
         }
+    }
+
+    private static void runGaCorrectness(
+            final GaCorrectnessMatrix matrix,
+            final Path outputDirectory) {
+        try {
+            final GaCorrectnessCampaignResult result = new GaCorrectnessRunner().run(
+                    matrix, outputDirectory);
+            System.out.println("GA_CORRECTNESS " + (result.passed() ? "PASS" : "FAIL")
+                    + " " + result.summaryPath() + " " + result.summarySha256());
+            if (!result.passed()) {
+                System.exit(1);
+            }
+        } catch (final Exception failure) {
+            System.err.println("GA_CORRECTNESS_FAILURE " + failure.getClass().getName()
+                    + " " + String.valueOf(failure.getMessage()));
+            System.exit(1);
+        }
+    }
+
+    private static GaCorrectnessMatrix matrix(final String name) {
+        return switch (name) {
+            case GaCorrectnessMatrix.APPROVED_VERSION -> GaCorrectnessMatrix.approved();
+            case "ga-g1-g2-test-v1" -> GaCorrectnessMatrix.test();
+            default -> throw new IllegalArgumentException("unsupported G1/G2 matrix: " + name);
+        };
     }
 
     private static Path packagedArtifact() throws URISyntaxException {

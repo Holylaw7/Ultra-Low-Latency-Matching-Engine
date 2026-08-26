@@ -5,10 +5,10 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-049` — GA Correctness and Deterministic Recovery |
-| Status | `Proposed — Dependency Locked` |
+| Status | `In Progress — implementation and G1/G2 matrix execution` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
-| Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Proposed |
-| Depends On | TASK-048 Evidence Gate PASS |
+| Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Human Approved |
+| Depends On | TASK-048 Human Closure Approved |
 | Gates | G1, G2 |
 
 ## 2. Goal
@@ -96,15 +96,17 @@ divergence is B0/B1 and has no in-Task fix.
 
 | Stage | Status | Gate |
 | --- | --- | --- |
-| Implementation | Dependency locked | TASK-048 PASS |
-| Matrix execution | Locked | all G1/G2 criteria |
+| Implementation | In progress | TASK-048 Human Closure Approved |
+| Matrix execution | In progress | all G1/G2 criteria |
 | Completion | Locked | reviewers + CI |
 
 | Date | Reviewer / status | Record |
 | --- | --- | --- |
-| 2026-08-25 | Human / Pending | Blueprint Approval required |
-| 2026-08-25 | Proposed | No implementation or runs |
+| 2026-08-25 | Human / Approved | Phase 11 Blueprint and TASK-049 dependency authorization approved |
+| 2026-08-26 | Human / Authorized | TASK-048 closed; TASK-049 implementation and matrix execution authorized |
 
 ### Implementation Log
 
-No implementation has begun; the preceding dated rows are the initial log.
+Implementation is qualification-only and remains bounded by the approved
+Phase 11 Blueprint. Focused matrix tests and the approved G1/G2 matrix are
+being executed before Evidence Gate review; TASK-050 remains locked.

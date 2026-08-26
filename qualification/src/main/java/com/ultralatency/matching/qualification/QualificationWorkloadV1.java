@@ -81,7 +81,7 @@ public final class QualificationWorkloadV1 {
     }
 
     /** Returns one command for a continuous qualification run prefix. */
-    static EngineCommand commandAtForRun(
+    public static EngineCommand commandAtForRun(
             final QualificationConfiguration configuration,
             final long index) {
         if (configuration == null) {
@@ -99,7 +99,7 @@ public final class QualificationWorkloadV1 {
     }
 
     /** Compares a persisted command vector with the deterministic source without a second vector. */
-    static boolean matches(
+    public static boolean matches(
             final List<EngineCommand> commands,
             final QualificationConfiguration configuration) {
         if (commands == null || configuration == null
