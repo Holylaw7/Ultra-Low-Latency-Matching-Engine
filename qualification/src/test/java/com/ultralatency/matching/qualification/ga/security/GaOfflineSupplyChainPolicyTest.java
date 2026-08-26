@@ -31,6 +31,11 @@ class GaOfflineSupplyChainPolicyTest {
         assertFalse(parsed.values().keySet().stream().anyMatch(key -> key.startsWith("nvd")));
         assertEquals("mvn|-B|-ntp|-pl|core|-am|package|-DskipTests",
                 parsed.value("applicationJar.buildCommand"));
+        assertEquals("true", parsed.value("license.executeOnlyOnRootModule"));
+        assertEquals("true", parsed.value("license.reactorAlsoMake"));
+        assertEquals("core", parsed.value("license.reactorProject"));
+        assertEquals("target/reports/aggregate-third-party-report.html",
+                parsed.value("license.reportPath"));
     }
 
     @Test
@@ -56,6 +61,8 @@ class GaOfflineSupplyChainPolicyTest {
         final List<String> coordinates = List.of("group:artifact:1.0", "group:other:2.0");
         final List<String> artifacts = new ArrayList<>(
                 OfflineSupplyChainEvidenceValidator.REQUIRED_ARTIFACTS);
+        assertTrue(OfflineSupplyChainEvidenceValidator.REQUIRED_ARTIFACTS.contains(
+                "license/plugin-reports/aggregate-third-party-report.html"));
         OfflineSupplyChainEvidenceValidator.validate(
                 coordinates, coordinates, coordinates, artifacts);
         assertThrows(IllegalArgumentException.class,
@@ -85,6 +92,15 @@ class GaOfflineSupplyChainPolicyTest {
         assertTrue(yaml.contains("if-no-files-found: error"));
         assertTrue(yaml.contains("gitleaks/gitleaks@sha256:"));
         assertTrue(yaml.contains("-pl core -am package -DskipTests"));
+        assertTrue(yaml.contains("org.codehaus.mojo:license-maven-plugin:2.7.1:aggregate-third-party-report"));
+        assertTrue(yaml.contains("-Dlicense.executeOnlyOnRootModule=true"));
+        assertTrue(yaml.contains("-Dlicense.reactorAlsoMake=true"));
+        assertTrue(yaml.contains("-Dlicense.reactorProject=core"));
+        assertTrue(yaml.contains("target/reports/aggregate-third-party-report.html"));
+        assertTrue(yaml.contains("license/plugin-reports/aggregate-third-party-report.html"));
+        assertTrue(yaml.contains("test ! -e core/target/reports"));
+        assertFalse(yaml.contains("test -d core/target/reports"));
+        assertFalse(yaml.contains("cp -R core/target/reports"));
         assertTrue(yaml.contains("-pl core"));
         assertFalse(yaml.contains("-f core/pom.xml"));
         assertFalse(yaml.contains("dependency-check-maven"));

@@ -2,10 +2,10 @@
 
 ## Status
 
-`In Progress — G11 B2 root-selector remediation Evidence Gate PASS at
-e1464ed (Standard CI 32927818204; Quick Lane 32927818172); G9 remains
-qualifying/frozen, offline G11 run 32925783003 remains FAIL/B2/non-qualifying/
-preserved after a qualification Maven invocation defect, and no fresh G11
+`In Progress — Human-approved license-report B2 remediation in progress after
+the prior root-selector Evidence Gate PASS at e1464ed (Standard CI 32927818204;
+Quick Lane 32927818172); G9 remains qualifying/frozen, offline G11 run
+32925783003 remains FAIL/B2/non-qualifying/preserved, and no fresh G11
 execution is authorized.`
 
 TASK-048 implements the approved qualification-only reproducibility and
@@ -21,7 +21,7 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
 | Peeled production SHA | `e2828f563ee41316c062385c0244ac1336731359` |
 | Historical toolchain policy | `ga-security-toolchain-v1.properties` / NVD-backed runs only / preserved unchanged |
 | Current G11 toolchain policy | `ga-security-toolchain-v2.properties` / `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` |
-| Current policy SHA-256 | `e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc`; B2 root-selector remediation `e1464ed` / Standard `32927818204` / Quick `32927818172` PASS; no fresh G11 execution authorized |
+| Current policy SHA-256 | `f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114`; prior root-selector remediation `e1464ed` / Standard `32927818204` / Quick `32927818172` PASS; license-report B2 remediation in progress; no fresh G11 execution authorized |
 | JDK archive | `microsoft-jdk-21.0.12-linux-x64.tar.gz` / `linux-x64` |
 | JDK archive SHA-256 | `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f` |
 | Artifact publication action | `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` (v7.0.1) |
@@ -44,9 +44,9 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
 - `ga-security.yml` uses the approved pinned actions and candidate identity,
   rebuilds and hashes the application JAR, generates a CycloneDX SBOM and an
   independent runtime dependency list, enforces exact coordinate/license
-  consistency, runs pinned full-history and candidate-bound Gitleaks, then
-  strictly hashes and publishes the offline evidence. It does not invoke
-  Dependency-Check or NVD.
+  consistency, generates the root-reactor license report, runs pinned
+  full-history and candidate-bound Gitleaks, then strictly hashes and publishes
+  the offline evidence. It does not invoke Dependency-Check or NVD.
 - The approved B3 amendment replaces only JDK provisioning: both new workflows
   verify the Microsoft 21.0.12 archive sidecar and archive SHA-256 before a
   fresh extraction, then record Java/Maven runtime identity. Candidate,
@@ -79,7 +79,7 @@ tag, production source, existing workflow, dependency or runtime input changed.
 | Focused security/policy tests | PASS — 14 tests |
 | `mvn -pl qualification -am test "-Dtest=*GaSecurity*,*Reproducib*"` | PASS |
 | Root-selector qualification build | PASS — `mvn -B -ntp -pl core -am package -DskipTests`; root-relative Checkstyle 0; `core/target/matching-engine-rc.jar` present |
-| v2 policy digest / command contract | PASS — SHA-256 `e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc`; no current `-f core/pom.xml` invocation |
+| v2 policy digest / command contract | PASS — SHA-256 `f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114`; current license goal uses root `-pl core -am` and report path `target/reports/aggregate-third-party-report.html` |
 | Checkstyle during focused build | 0 violations |
 | G9/G11 execution | G9 `32856372581` PASS/qualifying/frozen; offline G11 `32925783003` FAIL/B2/preserved before SBOM; B2 remediation `e1464ed` / CI `32927818204` / Quick `32927818172` PASS; no fresh G11 execution authorized |
 | Full `mvn verify` | PASS — 225 core + 70 qualification tests; 2 expected skips |
@@ -243,7 +243,7 @@ is preserved FAIL/B3/non-qualifying. No candidate defect was observed.
 
 Human then approved `OFFLINE_SUPPLY_CHAIN_SECURITY_V1`. The historical v1
 policy remains unchanged; the current canonical v2 policy hash is
-`e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc`.
+`f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114`.
 Dependency-Check/NVD/CVE/CVSS are outside the new normative portfolio gate and
 no cleanliness claim is permitted. This amendment implementation does not
 execute G11 or authorize TASK-049.
@@ -273,6 +273,23 @@ This remediation only repairs the qualification invocation boundary. Its
 Evidence Gate is PASS, but it does not authorize another G11 execution; a
 fresh G11 still requires a separate Human execution approval.
 
+## Current license-report B2 remediation
+
+The current Human-approved limited remediation preserves the plugin goal and
+version but corrects its Maven execution-root contract. The workflow now runs
+the aggregator goal from the candidate repository root with `-pl core -am`,
+freezes `license.executeOnlyOnRootModule=true`, and expects the non-empty source
+artifact at `target/reports/aggregate-third-party-report.html`. The old
+`core/target/reports` path is rejected. The copied report is required at
+`license/plugin-reports/aggregate-third-party-report.html` and is included in
+the immutable inventory. Candidate/POM/production/G9 inputs remain unchanged.
+
+The v2 policy digest was recomputed to
+`f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114`.
+The repository-root isolated smoke generated a 15,394-byte report at the
+approved path and no legacy core report. Focused policy/workflow tests pass;
+full remediation Evidence Gate and its external CI validation remain pending.
+
 ## Completion log
 
 | Date | Stage | Result |
@@ -300,3 +317,4 @@ fresh G11 still requires a separate Human execution approval.
 | 2026-08-26 | Human-authorized offline G11 execution | `32925783003` FAIL/B2/preserved before SBOM because `-f core/pom.xml` changed Checkstyle path resolution; artifact `9591451565` / SHA-256 `2511c2276f40f83868db27591a2eb7afc644c4eeb7621a1cda8aa17af3cb40cf`; candidate defect not observed; no retry |
 | 2026-08-26 | Human Limited G11 B2 Remediation | Root-selector Maven remediation authorized (`-pl core -am` / `-pl core`), v2 policy hash recomputed to `e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc`; no candidate/POM/production change and no new G11 execution |
 | 2026-08-26 | G11 B2 Remediation Evidence Gate | PASS — `e1464ed`; Standard `32927818204`; Quick `32927818172`; focused/full regression, root-selector build, YAML/Bash, policy hash, Markdown links, diff and frozen-boundary audits PASS; fresh G11 remains separately Human-gated |
+| 2026-08-26 | Human Limited G11 license-report B2 Remediation | AUTHORIZED / IN PROGRESS | Preserve `license-maven-plugin:2.7.1:aggregate-third-party-report`; switch workflow to root `-pl core -am`; require `target/reports/aggregate-third-party-report.html`; update v2 policy identity and validator; no fresh G11 execution |

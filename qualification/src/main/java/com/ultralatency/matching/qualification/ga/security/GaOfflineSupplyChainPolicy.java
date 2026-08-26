@@ -20,7 +20,7 @@ public final class GaOfflineSupplyChainPolicy {
 
     /** SHA-256 of the approved canonical v2 toolchain properties file. */
     public static final String APPROVED_PROPERTIES_SHA256 =
-            "e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc";
+            "f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114";
 
     private static final Set<String> REQUIRED_KEYS = Set.of(
             "action.checkout.sha", "action.uploadArtifact.sha", "applicationJar.buildCommand",
@@ -41,9 +41,11 @@ public final class GaOfflineSupplyChainPolicy {
             "gitleaks.redactPercent", "gitleaks.reportFormat", "jdk.archiveFilename",
             "jdk.archiveSha256", "jdk.archiveUrl", "jdk.checksumUrl", "jdk.distribution",
             "jdk.platform", "jdk.product", "jdk.version", "license.acceptedSpdx",
-            "license.artifact", "license.encoding", "license.excludedScopes", "license.goal",
-            "license.includeOptional", "license.includeTransitiveDependencies",
-            "license.jarSha256", "maven.buildCommit", "maven.version", "runner.image",
+            "license.artifact", "license.encoding", "license.excludedScopes",
+            "license.executeOnlyOnRootModule", "license.goal", "license.includeOptional",
+            "license.includeTransitiveDependencies", "license.jarSha256", "license.reactorAlsoMake",
+            "license.reactorProject", "license.reportPath", "maven.buildCommit", "maven.version",
+            "runner.image",
             "schema.version", "secretScan.candidateBound", "secretScan.fullHistory");
 
     private final Map<String, String> values;

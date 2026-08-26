@@ -158,6 +158,9 @@ runtime dependency inventory, runtime license disposition, both full-history
 and candidate-bound secret-scan reports, tool/JDK/policy provenance, the G11
 manifest/result and strict `SHA256SUMS`. The SBOM, dependency and license
 coordinate sets must be non-empty, duplicate-free and exactly consistent.
+The license evidence also includes the non-empty root-reactor report at
+`license/plugin-reports/aggregate-third-party-report.html`; the legacy
+`core/target/reports` location is not a valid v2 artifact path.
 Missing, malformed, inconsistent, unlicensed, unapproved-license, secret-scan
 or hash/publication evidence fails closed.
 

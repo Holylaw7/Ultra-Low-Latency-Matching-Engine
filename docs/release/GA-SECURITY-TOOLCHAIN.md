@@ -28,12 +28,14 @@ The current G11 evidence unit is
    or verified findings;
 7. pinned JDK, Maven, CycloneDX, dependency-inventory, license and OCI tool
    identity/provenance;
-8. normalized regular-file inventory, no symlink/non-regular/duplicate or
+8. a non-empty root-reactor `aggregate-third-party-report.html` license
+   artifact reconciled with the runtime dependency inventory;
+9. normalized regular-file inventory, no symlink/non-regular/duplicate or
    out-of-bound path, strict `SHA256SUMS` validation and fail-closed GitHub
    artifact publication.
 
 The canonical v2 policy SHA-256 is
-`e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc`.
+`f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114`.
 Dependency-Check, NVD data/API access, CVE lookup, CVSS evaluation and database
 freshness are not normative inputs or outputs of v2. They are outside this
 portfolio-release boundary. The workflow must not emit a fake or skipped
@@ -113,12 +115,34 @@ resolver after this amendment.
 All current v2 security-workflow Maven commands execute from the candidate
 repository root so existing root-relative build configuration retains its
 meaning. The lifecycle build uses `mvn -B -ntp -pl core -am package
--DskipTests`; CycloneDX, runtime-dependency and license-report goals use the
-same root invocation with `-pl core`. The historical `mvn -f core/pom.xml`
-form belongs only to preserved pre-remediation evidence and is forbidden for
-the current v2 workflow. This qualification-only invocation correction does
-not change the candidate POM, build inputs, dependency graph or artifact
-identity.
+-DskipTests`; CycloneDX and runtime-dependency goals use the same root
+invocation with `-pl core`, while the aggregator license report uses
+`-pl core -am` so the Maven execution root generates the report. The
+historical `mvn -f core/pom.xml` form belongs only to preserved pre-remediation
+evidence and is forbidden for the current v2 workflow. This qualification-only
+invocation correction does not change the candidate POM, build inputs,
+dependency graph or artifact identity.
+
+### Current v2 license-report contract
+
+The pinned `license-maven-plugin:2.7.1:aggregate-third-party-report` goal is
+invoked directly from the repository execution root with
+`license.executeOnlyOnRootModule=true`, `-pl core -am`, and the frozen runtime
+scope options. The normative source artifact is:
+
+```text
+target/reports/aggregate-third-party-report.html
+```
+
+`core/target/reports/aggregate-third-party-report.html` is not a valid v2
+artifact path. The workflow rejects that legacy path, copies only the
+non-empty root report into
+`license/plugin-reports/aggregate-third-party-report.html`, and includes it in
+the immutable evidence inventory and strict `SHA256SUMS` validation. Missing,
+empty, or non-parseable report output fails closed. The v2 policy freezes
+`license.reactorAlsoMake=true`, `license.reactorProject=core`, and the exact
+`license.reportPath` above; these fields describe qualification invocation
+identity only and do not alter the candidate POM or dependency graph.
 
 ## Full-history checkout and G9 reproducible build contract
 

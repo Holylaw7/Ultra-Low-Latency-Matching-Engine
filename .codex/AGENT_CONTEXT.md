@@ -155,7 +155,7 @@ ADR-0011 Final Approved
   -> Apache-2.0 repository policy [Human accepted]
   -> GitHub binary distribution without Maven Central [Human accepted]
   -> TASK-047 [Completed / Evidence Gate PASS; implementation `d25eac6`, status `2521500`; CI `32828844611` / Quick `32828844541`]
-  -> TASK-048 [In Progress; `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` amendment; B2 remediation `e1464ed` / CI `32927818204` / Quick `32927818172` PASS; G9 `32856372581` PASS/qualifying/frozen; offline G11 `32925783003` FAIL/B2/preserved; fresh G11 separately gated]
+  -> TASK-048 [In Progress; `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` amendment; prior B2 remediation `e1464ed` / CI `32927818204` / Quick `32927818172` PASS; current license-report B2 remediation authorized/in progress; G9 `32856372581` PASS/qualifying/frozen; offline G11 `32925783003` FAIL/B2/preserved; fresh G11 separately gated]
   -> TASK-049 through TASK-056 [Dependency ordered; locked]
   -> Phase 11 Full Campaigns / Closure / v1.0.0 / GitHub Release / GA [Not Authorized]
   -> Product Release [Not Authorized]

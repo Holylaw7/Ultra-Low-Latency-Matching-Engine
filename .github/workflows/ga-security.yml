@@ -70,7 +70,7 @@ jobs:
           GA_CACHE_DIR="$RUNNER_TEMP/ga-security-cache"
           CANDIDATE_DIR="$RUNNER_TEMP/ga-security-candidate"
           POLICY='docs/release/ga-security-toolchain-v2.properties'
-          POLICY_SHA256='e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc'
+          POLICY_SHA256='f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114'
           mkdir -p "$GA_EVIDENCE_DIR/policy" "$GA_CACHE_DIR"
           test "$(sha256sum "$POLICY" | cut -d' ' -f1)" = "$POLICY_SHA256"
           test "$(git rev-parse --is-shallow-repository)" = false
@@ -152,14 +152,19 @@ jobs:
             -DincludeScope=runtime \
             -DoutputFile="$CACHE/runtime-dependencies.raw" \
             -DoutputAbsoluteArtifactFilename=false
-          mvn -B -ntp -Dmaven.repo.local="$REPO" -pl core \
+          mvn -B -ntp -Dmaven.repo.local="$REPO" -pl core -am \
             org.codehaus.mojo:license-maven-plugin:2.7.1:aggregate-third-party-report \
+            -Dlicense.executeOnlyOnRootModule=true \
+            -Dlicense.reactorAlsoMake=true \
+            -Dlicense.reactorProject=core \
             -Dlicense.includeTransitiveDependencies=true \
             -Dlicense.includeOptional=true -Dlicense.excludedScopes=test,provided,system \
             -Dlicense.encoding=UTF-8
-          test -d core/target/reports
-          test -n "$(find core/target/reports -type f -print -quit)"
-          cp -R core/target/reports "$EVIDENCE/license/plugin-reports"
+          test -s target/reports/aggregate-third-party-report.html
+          test ! -e core/target/reports
+          mkdir -p "$EVIDENCE/license/plugin-reports"
+          cp target/reports/aggregate-third-party-report.html \
+            "$EVIDENCE/license/plugin-reports/aggregate-third-party-report.html"
           {
             printf 'application.jarPath=application/matching-engine-rc.jar\n'
             printf 'application.jarSha256=%s\n' "$(sha256sum "$EVIDENCE/application/matching-engine-rc.jar" | cut -d' ' -f1)"
@@ -276,7 +281,7 @@ jobs:
         run: |
           set -euo pipefail
           EVIDENCE="$RUNNER_TEMP/ga-security-evidence"
-          POLICY_SHA256='e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc'
+          POLICY_SHA256='f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114'
           dependency_count="$(wc -l < "$EVIDENCE/dependency/runtime-dependencies.txt" | tr -d ' ')"
           test "$dependency_count" -gt 0
           {
@@ -324,6 +329,7 @@ jobs:
             gitleaks/working-tree.json java-version.txt javac-version.txt \
             jdk-runtime-identity.txt \
             license/runtime-license-inventory.txt \
+            license/plugin-reports/aggregate-third-party-report.html \
             maven-repository-inventory maven-version.txt \
             policy/ga-security-toolchain-v2.properties sbom/bom.json \
             sbom/normalized-components.txt tool-entry-sha256sums.txt; do
