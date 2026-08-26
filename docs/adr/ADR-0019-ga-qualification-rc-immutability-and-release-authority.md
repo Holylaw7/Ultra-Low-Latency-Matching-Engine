@@ -386,7 +386,9 @@ separator-ambiguous or out-of-root paths. The v2 policy now records the
 policy digest is recomputed. No disposition identity, candidate, production,
 POM, dependency, G9 evidence or G11 criterion changes. This remediation does
 not authorize another G11 execution; a fresh G11 remains separately
-Human-gated.
+Human-gated. The implementation is `f6db140`; Standard CI `32954953854` and
+Quick Lane `32954953801` PASS, with focused/full tests and frozen-boundary
+audits PASS.
 
 ### D16 — Release source and production source may be distinguished
 
@@ -469,6 +471,7 @@ action.
 | 2026-08-26 | Evidence Gate | PASS — TASK-048/Phase 11 status synchronization | `e51db47`; Standard CI `32945333516`; Quick Lane `32945333468`; current failure/remediation state reconciled; fresh G11 remains separately Human-gated |
 | 2026-08-26 | Evidence Gate follow-up | PASS — Final B2 remediation audit checkpoint | `688d955`; Standard CI `32946223271`; Quick Lane `32946223268`; verifier and frozen-path checks remain PASS; fresh G11 remains separately Human-gated |
 | 2026-08-26 | Human Developer | APPROVED — Limited candidate Gitleaks path-contract B2 Remediation | `32952590543` preserved FAIL/B2; switch candidate scan to root-relative `dir .`, record `repository-relative-v1` / `working-directory` policy identity; no candidate/POM/production/G9 change or fresh G11 execution |
+| 2026-08-26 | Evidence Gate | PASS — Candidate Gitleaks path-contract B2 Remediation | `f6db140`; Standard CI `32954953854`; Quick Lane `32954953801`; native `dir .` path contract, focused/full verification and frozen-boundary audit PASS; fresh G11 remains separately Human-gated |
 
 The `688d955` entry is the final remediation audit checkpoint. Any later
 docs-only commit that records this checkpoint is external validation only and

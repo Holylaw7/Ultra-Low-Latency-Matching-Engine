@@ -22,7 +22,7 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
 | Peeled production SHA | `e2828f563ee41316c062385c0244ac1336731359` |
 | Historical toolchain policy | `ga-security-toolchain-v1.properties` / NVD-backed runs only / preserved unchanged |
 | Current G11 toolchain policy | `ga-security-toolchain-v2.properties` / `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` |
-| Current policy SHA-256 | `2b9ee7de9aee3e153d76ded1118434e8bc93807b2d329442e4593839b8e4b87f`; G11 disposition manifest `0854c43f9138d8073f640fe1e37f97c7d482f01bcbe3e8280534ee3cbc70466c`; candidate path-contract remediation in progress; no fresh G11 execution authorized |
+| Current policy SHA-256 | `2b9ee7de9aee3e153d76ded1118434e8bc93807b2d329442e4593839b8e4b87f`; G11 disposition manifest `0854c43f9138d8073f640fe1e37f97c7d482f01bcbe3e8280534ee3cbc70466c`; candidate path-contract remediation `f6db140` Evidence Gate PASS (Standard `32954953854`, Quick `32954953801`); no fresh G11 execution authorized |
 | JDK archive | `microsoft-jdk-21.0.12-linux-x64.tar.gz` / `linux-x64` |
 | JDK archive SHA-256 | `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f` |
 | Artifact publication action | `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` (v7.0.1) |
@@ -387,3 +387,4 @@ fresh G11 execution can be considered.
 | 2026-08-26 | Human-authorized fresh G11 execution | FAIL / B2 / PRESERVED | Run `32952590543`; candidate-bound Gitleaks emitted absolute `/repo/tasks/reports/PHASE-10-task-043.md`, so canonical disposition evaluation failed; candidate Blob matched approved disposition; no candidate defect or retry |
 | 2026-08-26 | Sol High B2 path-contract review | CONFIRMED | Absolute candidate scan target caused non-canonical metadata; native `dir .` from the mounted checkout root selected; evaluator/disposition identity remain unchanged |
 | 2026-08-26 | Human Limited G11 B2 Remediation | AUTHORIZED / IN PROGRESS | Workflow-only candidate path-contract correction; v2 policy records `repository-relative-v1` / `working-directory`; no candidate/POM/production/G9 change or fresh G11 execution |
+| 2026-08-26 | G11 path-contract B2 Remediation Evidence Gate | PASS | `f6db140`; Standard `32954953854`; Quick `32954953801`; focused/full tests, YAML/Bash, policy hash, raw-report preservation and frozen-boundary audits PASS; fresh G11 remains separately Human-gated |

@@ -5,11 +5,11 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-048` — Reproducibility and Security Preflight |
-| Status | `In Progress — fresh G11 32952590543 FAIL/B2/non-qualifying/preserved because candidate Gitleaks emitted an absolute /repo path; path-contract remediation authorized; G9 32856372581 PASS/qualifying/frozen; no fresh G11 authorized` |
+| Status | `In Progress — fresh G11 32952590543 FAIL/B2/non-qualifying/preserved because candidate Gitleaks emitted an absolute /repo path; path-contract remediation f6db140 Evidence Gate PASS (Standard 32954953854, Quick 32954953801); G9 32856372581 PASS/qualifying/frozen; no fresh G11 authorized` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Depends On | TASK-047 Evidence Gate PASS after Human Blueprint Approval |
-| Next Gate | Limited B2 path-contract Remediation Evidence Gate; no fresh G11 execution |
+| Next Gate | Human Fresh G11 Execution Gate; no automatic execution |
 
 ## 2. Goal
 
@@ -166,6 +166,7 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | 2026-08-26 | Human-authorized fresh G11 execution | FAIL / B2 / PRESERVED | `32952590543`; candidate-bound report used `/repo/tasks/reports/PHASE-10-task-043.md`, violating the repository-relative evaluator contract; candidate Blob matched approved disposition; no candidate defect or retry |
 | 2026-08-26 | Sol High B2 path-contract review | CONFIRMED | Absolute candidate target caused non-canonical raw metadata; native `dir .` from the mounted checkout root selected; evaluator/disposition identity remain unchanged |
 | 2026-08-26 | Human Limited G11 B2 Remediation | AUTHORIZED / IN PROGRESS | Workflow-only candidate path-contract correction; v2 policy records `repository-relative-v1` / `working-directory`; no candidate/POM/production/G9 change or fresh G11 execution |
+| 2026-08-26 | G11 path-contract B2 Remediation Evidence Gate | PASS | `f6db140`; Standard `32954953854`; Quick `32954953801`; focused/full tests, YAML/Bash, policy hash, raw-report preservation and frozen-boundary audits PASS; fresh G11 remains separately Human-gated |
 
 ### Implementation Log
 
