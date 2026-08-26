@@ -170,6 +170,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          REPO="$RUNNER_TEMP/ga-security-cache/m2"
           EVIDENCE="$RUNNER_TEMP/ga-security-evidence"
           REPORT="$EVIDENCE/license/plugin-reports/aggregate-third-party-report.html"
           RAW="$RUNNER_TEMP/ga-security-cache/runtime-dependencies.raw"

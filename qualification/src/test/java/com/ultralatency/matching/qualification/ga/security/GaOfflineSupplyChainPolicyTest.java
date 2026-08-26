@@ -9,7 +9,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 
 /** Tests the amended offline G11 policy and evidence boundary. */
@@ -113,5 +117,94 @@ class GaOfflineSupplyChainPolicyTest {
         assertFalse(yaml.contains("dependency-check-maven"));
         assertFalse(yaml.contains("NVD_API_KEY"));
         assertFalse(yaml.contains("nvd.nist.gov"));
+    }
+
+    @Test
+    void everyWorkflowRunDefinesShellVariablesLocally() throws Exception {
+        final Path workflow = Path.of("..", ".github", "workflows", "ga-security.yml")
+                .toAbsolutePath().normalize();
+        if (!Files.isRegularFile(workflow)) {
+            return;
+        }
+        final String yaml = Files.readString(workflow, StandardCharsets.UTF_8);
+        final Set<String> external = Set.of(
+                "ARTIFACT_DIGEST", "ARTIFACT_ID", "ARTIFACT_URL", "GITHUB_ENV",
+                "GITHUB_PATH", "GITHUB_STEP_SUMMARY", "GITHUB_WORKSPACE", "PATH",
+                "RUNNER_TEMP");
+        final Pattern reference = Pattern.compile("\\$\\{?([A-Za-z_][A-Za-z0-9_]*)");
+        final Pattern assignment = Pattern.compile(
+                "(?:^|[;()\\s])(?:export\\s+)?([A-Za-z_][A-Za-z0-9_]*)\\s*=");
+        final Pattern declaration = Pattern.compile(
+                "\\bdeclare\\s+(?:-[A-Za-z]+\\s+)?([A-Za-z_][A-Za-z0-9_]*)");
+        final Pattern loop = Pattern.compile(
+                "\\bfor\\s+([A-Za-z_][A-Za-z0-9_]*)\\s+in\\b");
+        final Pattern read = Pattern.compile(
+                "\\bread(?:\\s+-[^\\s]+)*\\s+([A-Za-z_][A-Za-z0-9_]*)");
+        final List<String> blocks = shellRunBlocks(yaml);
+        assertTrue(blocks.size() >= 10, "expected all GA security run blocks");
+        for (int index = 0; index < blocks.size(); index++) {
+            final String block = blocks.get(index);
+            final Set<String> defined = new HashSet<>();
+            collect(assignment, block, defined);
+            collect(declaration, block, defined);
+            collect(loop, block, defined);
+            collect(read, block, defined);
+            final Matcher references = reference.matcher(block);
+            while (references.find()) {
+                final String variable = references.group(1);
+                assertTrue(defined.contains(variable) || external.contains(variable),
+                        "run block " + (index + 1)
+                                + " references undeclared shell variable " + variable);
+            }
+        }
+    }
+
+    private static void collect(
+            final Pattern pattern,
+            final String block,
+            final Set<String> values) {
+        final Matcher matcher = pattern.matcher(block);
+        while (matcher.find()) {
+            values.add(matcher.group(1));
+        }
+    }
+
+    private static List<String> shellRunBlocks(final String yaml) {
+        final List<String> blocks = new ArrayList<>();
+        StringBuilder current = null;
+        int runIndent = -1;
+        for (String line : yaml.split("\\R", -1)) {
+            final int indent = leadingSpaces(line);
+            final String trimmed = line.trim();
+            if (current == null) {
+                if ("run: |".equals(trimmed)) {
+                    current = new StringBuilder();
+                    runIndent = indent;
+                }
+            } else if (trimmed.isEmpty() || indent > runIndent) {
+                if (trimmed.isEmpty()) {
+                    current.append('\n');
+                } else {
+                    current.append(line.substring(Math.min(line.length(), runIndent + 2)))
+                            .append('\n');
+                }
+            } else {
+                blocks.add(current.toString());
+                current = null;
+                runIndent = -1;
+            }
+        }
+        if (current != null) {
+            blocks.add(current.toString());
+        }
+        return blocks;
+    }
+
+    private static int leadingSpaces(final String value) {
+        int count = 0;
+        while (count < value.length() && value.charAt(count) == ' ') {
+            count++;
+        }
+        return count;
     }
 }
