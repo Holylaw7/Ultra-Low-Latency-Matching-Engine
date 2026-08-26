@@ -160,7 +160,11 @@ manifest/result and strict `SHA256SUMS`. The SBOM, dependency and license
 coordinate sets must be non-empty, duplicate-free and exactly consistent.
 The license evidence also includes the non-empty root-reactor report at
 `license/plugin-reports/aggregate-third-party-report.html`; the legacy
-`core/target/reports` location is not a valid v2 artifact path.
+`core/target/reports` location is not a valid v2 artifact path. The workflow
+also publishes the mandatory `license/plugin-reports/report-validation.txt`
+sidecar, which records the report SHA-256, parseability, coordinate count and
+exact reconciliation result against the runtime dependency inventory. Missing,
+malformed or unreconciled report evidence fails closed.
 Missing, malformed, inconsistent, unlicensed, unapproved-license, secret-scan
 or hash/publication evidence fails closed.
 

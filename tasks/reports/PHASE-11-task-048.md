@@ -2,11 +2,10 @@
 
 ## Status
 
-`In Progress — Human-approved license-report B2 remediation in progress after
-the prior root-selector Evidence Gate PASS at e1464ed (Standard CI 32927818204;
-Quick Lane 32927818172); G9 remains qualifying/frozen, offline G11 run
-32925783003 remains FAIL/B2/non-qualifying/preserved, and no fresh G11
-execution is authorized.`
+`In Progress — Human-approved license-report B2 remediation Evidence Gate PASS
+at 30c89c4 (Standard CI 32932454011; Quick Lane 32932454009); G9 remains
+qualifying/frozen, offline G11 run 32929258318 remains FAIL/B2/non-qualifying/
+preserved, and no fresh G11 execution is authorized.`
 
 TASK-048 implements the approved qualification-only reproducibility and
 security preflight boundary. It does not qualify the candidate, authorize a
@@ -21,7 +20,7 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
 | Peeled production SHA | `e2828f563ee41316c062385c0244ac1336731359` |
 | Historical toolchain policy | `ga-security-toolchain-v1.properties` / NVD-backed runs only / preserved unchanged |
 | Current G11 toolchain policy | `ga-security-toolchain-v2.properties` / `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` |
-| Current policy SHA-256 | `f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114`; prior root-selector remediation `e1464ed` / Standard `32927818204` / Quick `32927818172` PASS; license-report B2 remediation in progress; no fresh G11 execution authorized |
+| Current policy SHA-256 | `f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114`; license-report remediation `30c89c4` / Standard `32932454011` / Quick `32932454009` PASS; no fresh G11 execution authorized |
 | JDK archive | `microsoft-jdk-21.0.12-linux-x64.tar.gz` / `linux-x64` |
 | JDK archive SHA-256 | `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f` |
 | Artifact publication action | `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` (v7.0.1) |
@@ -284,11 +283,24 @@ artifact at `target/reports/aggregate-third-party-report.html`. The old
 `license/plugin-reports/aggregate-third-party-report.html` and is included in
 the immutable inventory. Candidate/POM/production/G9 inputs remain unchanged.
 
-The v2 policy digest was recomputed to
+The v2 policy digest remains
 `f7329011958aa9c52eb6886aaadabbab8d26ff3b150f1a96d9aceead1f013114`.
 The repository-root isolated smoke generated a 15,394-byte report at the
-approved path and no legacy core report. Focused policy/workflow tests pass;
-full remediation Evidence Gate and its external CI validation remain pending.
+approved path and no legacy core report. The workflow now validates UTF-8 HTML
+structure, the pinned plugin marker, dependency headings and exact coordinate
+reconciliation against the runtime inventory, then writes a SHA-256/count
+validation sidecar into the immutable inventory. Focused policy/workflow tests,
+full `mvn verify`, Checkstyle, diff/frozen-path audits and exact-SHA Standard /
+Quick CI passed at `30c89c4` / `32932454011` / `32932454009`. This is the
+remediation Evidence Gate only; a fresh G11 execution remains separately
+Human-gated and unauthorized.
+
+The latest fresh offline G11 run, `32929258318`, remains preserved exactly as
+`FAIL / B2 / NON-QUALIFYING`: candidate build and Checkstyle completed, but
+`license-maven-plugin:2.7.1:aggregate-third-party-report` was skipped and the
+required report artifact was absent. Its GitHub artifact is `9592633595` with
+digest `4382fcb02c8a97c42d66e7617e9276e470f772def42a02a9c1067cebd5cb7c4b`.
+No candidate defect was observed and no retry was started.
 
 ## Completion log
 
@@ -318,3 +330,5 @@ full remediation Evidence Gate and its external CI validation remain pending.
 | 2026-08-26 | Human Limited G11 B2 Remediation | Root-selector Maven remediation authorized (`-pl core -am` / `-pl core`), v2 policy hash recomputed to `e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc`; no candidate/POM/production change and no new G11 execution |
 | 2026-08-26 | G11 B2 Remediation Evidence Gate | PASS — `e1464ed`; Standard `32927818204`; Quick `32927818172`; focused/full regression, root-selector build, YAML/Bash, policy hash, Markdown links, diff and frozen-boundary audits PASS; fresh G11 remains separately Human-gated |
 | 2026-08-26 | Human Limited G11 license-report B2 Remediation | AUTHORIZED / IN PROGRESS | Preserve `license-maven-plugin:2.7.1:aggregate-third-party-report`; switch workflow to root `-pl core -am`; require `target/reports/aggregate-third-party-report.html`; update v2 policy identity and validator; no fresh G11 execution |
+| 2026-08-26 | Human-authorized offline G11 execution | FAIL / B2 / PRESERVED | Run `32929258318`; artifact `9592633595` / SHA-256 `4382fcb02c8a97c42d66e7617e9276e470f772def42a02a9c1067cebd5cb7c4b`; license report goal skipped before required artifact publication; candidate defect not observed; no retry |
+| 2026-08-26 | License-report B2 remediation Evidence Gate | PASS | `30c89c4`; Standard CI `32932454011`; Quick Lane `32932454009`; root-reactor report parseability, runtime-coordinate reconciliation and Maven module-annotation handling validated; production/candidate/POM/G9 diff 0; fresh G11 remains separately Human-gated |

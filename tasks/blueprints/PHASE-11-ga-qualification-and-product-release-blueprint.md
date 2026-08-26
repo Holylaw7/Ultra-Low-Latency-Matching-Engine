@@ -13,7 +13,7 @@
 | Post-tag docs | `b8489bf` — documentation-only, not candidate production source |
 | Proposal Branch | `docs/phase11-ga-qualification-blueprint` |
 | Planned Tasks | `TASK-20260825-047` through `TASK-20260825-056` |
-| Next Gate | `TASK-048 Evidence Gate` |
+| Next Gate | `Human fresh G11 Execution Gate after license-report B2 remediation Evidence Gate PASS; no automatic execution` |
 
 ## 2. Phase Objective
 
@@ -471,11 +471,11 @@ explicit Human Phase 11 Closure Approval. Phase Closure does not create
 
 ```text
 Blueprint Status: Approved — Human Phase 11 Blueprint Approval 2026-08-25
-Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 prior root-selector Maven remediation Evidence Gate PASS at `e1464ed` (Standard `32927818204`, Quick `32927818172`); current Human-approved license-report B2 remediation in progress after offline G11 `32929258318` FAIL/B2; G9 `32856372581` PASS/qualifying/frozen; TASK-049..056 dependency ordered and locked
+Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 root-selector remediation Evidence Gate PASS at `e1464ed` (Standard `32927818204`, Quick `32927818172`); license-report B2 remediation Evidence Gate PASS at `30c89c4` (Standard `32932454011`, Quick `32932454009`) after offline G11 `32929258318` FAIL/B2 preserved; G9 `32856372581` PASS/qualifying/frozen; TASK-049..056 dependency ordered and locked
 Qualification Campaigns: Not Authorized
 RC mutation: Not Authorized
 v1.0.0 / GitHub Release / GA: Not Authorized
-Next Gate: Complete current license-report B2 Remediation Evidence Gate, then STOP for separate Human fresh G11 Execution Approval; no automatic execution
+Next Gate: STOP for separate Human fresh G11 Execution Approval; no automatic execution
 ```
 
 ## 23. Execution Checkpoints
@@ -501,6 +501,7 @@ Next Gate: Complete current license-report B2 Remediation Evidence Gate, then ST
 | 2026-08-26 | Human Limited G11 B2 Remediation | AUTHORIZED / IN PROGRESS | Workflow-only Maven selectors changed to repository-root `-pl core -am` / `-pl core`; v2 policy SHA recomputed; candidate/POM/production/G9 unchanged; no new G11 execution | B2 remediation Evidence Gate |
 | 2026-08-26 | G11 B2 Remediation Evidence Gate | PASS | `e1464ed`; Standard `32927818204`; Quick `32927818172`; root-selector build, focused/full tests, YAML/Bash, policy hash and frozen-boundary audits PASS; fresh G11 remains separately Human-gated | Human fresh G11 Execution Approval |
 | 2026-08-26 | Human Limited G11 license-report B2 Remediation | AUTHORIZED / IN PROGRESS | Preserve `license-maven-plugin:2.7.1:aggregate-third-party-report`; root `-pl core -am`; report `target/reports/aggregate-third-party-report.html`; v2 policy/validator update; G11 `32929258318` preserved FAIL/B2 | B2 remediation Evidence Gate |
+| 2026-08-26 | License-report B2 remediation Evidence Gate | PASS | `30c89c4`; Standard `32932454011`; Quick `32932454009`; parseable root-reactor report, exact runtime-coordinate reconciliation, Maven module-annotation handling, SHA-256 validation sidecar and strict inventory checks; `32929258318` remains preserved FAIL/B2 | Human fresh G11 Execution Approval |
 
 ## 24. Phase Closure Checklist
 

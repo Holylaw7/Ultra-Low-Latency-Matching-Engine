@@ -398,3 +398,6 @@ action.
 | --- | --- | --- | --- |
 | 2026-08-25 | Human Developer | APPROVED — Human Phase 11 Blueprint Approval | ADR-0019 D1-D18 and TASK-047..056 qualification scope; candidate immutability, separate campaign gates and no release authority |
 | 2026-08-26 | Human Developer | APPROVED — Limited G11 B2 Remediation | Qualification workflow Maven root-selector correction only; `32925783003` preserved FAIL/B2; no candidate/POM/production change and no new G11 execution |
+| 2026-08-26 | Human Developer | APPROVED — Limited G11 license-report B2 Remediation | Preserve `license-maven-plugin:2.7.1:aggregate-third-party-report`; use repository-root `-pl core -am`; require `target/reports/aggregate-third-party-report.html`; `32929258318` preserved FAIL/B2; no candidate/POM/production change and no fresh G11 execution |
+| 2026-08-26 | Evidence Gate | PASS — License-report B2 Remediation | `6cea0b2`; Standard CI `32932067229`; Quick Lane `32932067238`; HTML parseability, runtime-coordinate reconciliation and immutable validation-sidecar checks added; fresh G11 remains Human-gated |
+| 2026-08-26 | Evidence Gate follow-up | PASS — License-report inventory parser compatibility | `30c89c4`; Standard CI `32932454011`; Quick Lane `32932454009`; Maven `dependency:list` module annotations are accepted without relaxing coordinate matching; fresh G11 remains Human-gated |

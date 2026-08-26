@@ -138,8 +138,14 @@ target/reports/aggregate-third-party-report.html
 artifact path. The workflow rejects that legacy path, copies only the
 non-empty root report into
 `license/plugin-reports/aggregate-third-party-report.html`, and includes it in
-the immutable evidence inventory and strict `SHA256SUMS` validation. Missing,
-empty, or non-parseable report output fails closed. The v2 policy freezes
+the immutable evidence inventory and strict `SHA256SUMS` validation. The
+qualification validator parses the UTF-8 HTML structure, checks the pinned
+plugin marker and dependency headings, and reconciles the report coordinates
+with the independent runtime inventory. It writes
+`license/plugin-reports/report-validation.txt` with the report SHA-256, byte
+count, coordinate count and match result; that sidecar is itself mandatory in
+the immutable inventory. Missing, empty, malformed, non-parseable or
+unreconciled report output fails closed. The v2 policy freezes
 `license.reactorAlsoMake=true`, `license.reactorProject=core`, and the exact
 `license.reportPath` above; these fields describe qualification invocation
 identity only and do not alter the candidate POM or dependency graph.
