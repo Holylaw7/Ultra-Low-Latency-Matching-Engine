@@ -36,7 +36,7 @@ The current G11 evidence unit is
    artifact publication.
 
 The canonical v2 policy SHA-256 is
-`02225e9d08f458f3d593747ad9937bd7c777b6787f52b253328213d7a8ebc117`.
+`2b9ee7de9aee3e153d76ded1118434e8bc93807b2d329442e4593839b8e4b87f`.
 Dependency-Check, NVD data/API access, CVE lookup, CVSS evaluation and database
 freshness are not normative inputs or outputs of v2. They are outside this
 portfolio-release boundary. The workflow must not emit a fake or skipped
@@ -80,6 +80,21 @@ candidate-bound blob disposition for the immutable candidate tree. These are
 safe metadata references only. The original run `32947367541` remains
 `FAIL / NON-QUALIFYING / PRESERVED`; the amendment does not reclassify or reuse
 that artifact and does not authorize a fresh G11 execution.
+
+The candidate-bound Gitleaks scan is rooted at the exact mounted immutable
+candidate checkout (`/repo`) but invokes `dir .` from that working directory.
+This is the normative `repository-relative-v1` path contract: raw findings must
+contain repository-relative `File` values, and the evaluator rejects absolute,
+traversal, separator-ambiguous or otherwise non-canonical paths. The raw JSON
+report remains unmodified evidence; no arbitrary prefix stripping is allowed.
+The policy records this contract as
+`gitleaks.candidatePathContract=repository-relative-v1` and
+`gitleaks.candidateScanMode=working-directory`; changing either is a normative
+toolchain identity change requiring a new policy digest and validator value.
+
+The current v2 candidate invocation is the mounted-root form
+`docker ... --workdir=/repo ... dir . ...`; the v1 historical command below is
+retained unchanged for historical evidence interpretation only.
 
 ## Pinned workflow foundation
 

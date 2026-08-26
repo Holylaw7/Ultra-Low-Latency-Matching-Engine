@@ -40,6 +40,8 @@ class GaOfflineSupplyChainPolicyTest {
         assertEquals("core", parsed.value("license.reactorProject"));
         assertEquals("target/reports/aggregate-third-party-report.html",
                 parsed.value("license.reportPath"));
+        assertEquals("repository-relative-v1", parsed.value("gitleaks.candidatePathContract"));
+        assertEquals("working-directory", parsed.value("gitleaks.candidateScanMode"));
         assertEquals("docs/release/ga-gitleaks-false-positive-dispositions-v1.properties",
                 parsed.value("gitleaks.dispositionManifest"));
         assertEquals("0854c43f9138d8073f640fe1e37f97c7d482f01bcbe3e8280534ee3cbc70466c",
@@ -105,6 +107,9 @@ class GaOfflineSupplyChainPolicyTest {
         assertTrue(yaml.contains("sha256sum --check --strict SHA256SUMS"));
         assertTrue(yaml.contains("if-no-files-found: error"));
         assertTrue(yaml.contains("gitleaks/gitleaks@sha256:"));
+        assertTrue(yaml.contains("--workdir=/repo"));
+        assertTrue(yaml.contains("dir . --max-target-megabytes=10"));
+        assertFalse(yaml.contains("dir /repo --max-target-megabytes=10"));
         assertTrue(yaml.contains("-pl core -am package -DskipTests"));
         assertTrue(yaml.contains("org.codehaus.mojo:license-maven-plugin:2.7.1:aggregate-third-party-report"));
         assertTrue(yaml.contains("-Dlicense.executeOnlyOnRootModule=true"));

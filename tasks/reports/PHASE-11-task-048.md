@@ -22,7 +22,7 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
 | Peeled production SHA | `e2828f563ee41316c062385c0244ac1336731359` |
 | Historical toolchain policy | `ga-security-toolchain-v1.properties` / NVD-backed runs only / preserved unchanged |
 | Current G11 toolchain policy | `ga-security-toolchain-v2.properties` / `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` |
-| Current policy SHA-256 | `02225e9d08f458f3d593747ad9937bd7c777b6787f52b253328213d7a8ebc117`; G11 disposition manifest `0854c43f9138d8073f640fe1e37f97c7d482f01bcbe3e8280534ee3cbc70466c`; false-positive disposition remediation in progress; no fresh G11 execution authorized |
+| Current policy SHA-256 | `2b9ee7de9aee3e153d76ded1118434e8bc93807b2d329442e4593839b8e4b87f`; G11 disposition manifest `0854c43f9138d8073f640fe1e37f97c7d482f01bcbe3e8280534ee3cbc70466c`; candidate path-contract remediation in progress; no fresh G11 execution authorized |
 | JDK archive | `microsoft-jdk-21.0.12-linux-x64.tar.gz` / `linux-x64` |
 | JDK archive SHA-256 | `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f` |
 | Artifact publication action | `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` (v7.0.1) |
@@ -81,7 +81,7 @@ tag, production source, existing workflow, dependency or runtime input changed.
 | Focused security/policy tests | PASS — Java policy/security tests plus 3 Python disposition tests |
 | `mvn -pl qualification -am test "-Dtest=*GaSecurity*,*Reproducib*"` | PASS |
 | Root-selector qualification build | PASS — `mvn -B -ntp -pl core -am package -DskipTests`; root-relative Checkstyle 0; `core/target/matching-engine-rc.jar` present |
-| v2 policy digest / command contract | PASS — current SHA-256 `02225e9d08f458f3d593747ad9937bd7c777b6787f52b253328213d7a8ebc117`; disposition manifest SHA-256 `0854c43f9138d8073f640fe1e37f97c7d482f01bcbe3e8280534ee3cbc70466c`; license goal uses root `-pl core -am` and report path `target/reports/aggregate-third-party-report.html` |
+| v2 policy digest / command contract | PASS — current SHA-256 `2b9ee7de9aee3e153d76ded1118434e8bc93807b2d329442e4593839b8e4b87f`; disposition manifest SHA-256 `0854c43f9138d8073f640fe1e37f97c7d482f01bcbe3e8280534ee3cbc70466c`; license goal uses root `-pl core -am`, report path `target/reports/aggregate-third-party-report.html`, and candidate Gitleaks `dir .` path contract |
 | Checkstyle during focused build | 0 violations |
 | G9/G11 execution | G9 `32856372581` PASS/qualifying/frozen; offline G11 `32925783003` FAIL/B2/preserved before SBOM; B2 remediation `e1464ed` / CI `32927818204` / Quick `32927818172` PASS; no fresh G11 execution authorized |
 | Full `mvn verify` | PASS — 225 core + 72 qualification tests; 2 expected skips |
@@ -384,3 +384,6 @@ fresh G11 execution can be considered.
 | 2026-08-26 | TASK-048/Phase 11 status synchronization | PASS | `e51db47`; Standard CI `32945333516`; Quick Lane `32945333468`; latest failure, remediation and next Human gate reconciled across status documents |
 | 2026-08-26 | Final B2 remediation audit checkpoint | PASS | `688d955`; Standard CI `32946223271`; Quick Lane `32946223268`; verifier and frozen-path checks PASS; fresh G11 remains separately Human-gated |
 | 2026-08-26 | G11 false-positive disposition amendment Evidence Gate | PASS | `7be2b61`; Standard CI `32951233073`; Quick Lane `32951233014`; 225 core + 72 qualification tests, 2 expected skips, Checkstyle 0, Python disposition tests 3/3, YAML/Bash/static validation, verifier, docs-auditor and frozen-path audits PASS; fresh G11 remains separately Human-gated |
+| 2026-08-26 | Human-authorized fresh G11 execution | FAIL / B2 / PRESERVED | Run `32952590543`; candidate-bound Gitleaks emitted absolute `/repo/tasks/reports/PHASE-10-task-043.md`, so canonical disposition evaluation failed; candidate Blob matched approved disposition; no candidate defect or retry |
+| 2026-08-26 | Sol High B2 path-contract review | CONFIRMED | Absolute candidate scan target caused non-canonical metadata; native `dir .` from the mounted checkout root selected; evaluator/disposition identity remain unchanged |
+| 2026-08-26 | Human Limited G11 B2 Remediation | AUTHORIZED / IN PROGRESS | Workflow-only candidate path-contract correction; v2 policy records `repository-relative-v1` / `working-directory`; no candidate/POM/production/G9 change or fresh G11 execution |

@@ -5,11 +5,11 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-048` — Reproducibility and Security Preflight |
-| Status | `In Progress — fresh G11 32947367541 FAIL/non-qualifying/preserved after two read-only-confirmed documentation false positives; exact Gitleaks disposition amendment Evidence Gate PASS at 7be2b61 (Standard 32951233073, Quick 32951233014); G9 32856372581 PASS/qualifying/frozen; no fresh G11 authorized` |
+| Status | `In Progress — fresh G11 32952590543 FAIL/B2/non-qualifying/preserved because candidate Gitleaks emitted an absolute /repo path; path-contract remediation authorized; G9 32856372581 PASS/qualifying/frozen; no fresh G11 authorized` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Depends On | TASK-047 Evidence Gate PASS after Human Blueprint Approval |
-| Next Gate | Human fresh G11 Execution Gate; no automatic execution |
+| Next Gate | Limited B2 path-contract Remediation Evidence Gate; no fresh G11 execution |
 
 ## 2. Goal
 
@@ -163,6 +163,9 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | 2026-08-26 | TASK-048/Phase 11 status synchronization | PASS | `e51db47`; Standard `32945333516`; Quick `32945333468`; latest failure/remediation state synchronized; fresh G11 remains Human-gated |
 | 2026-08-26 | Final B2 remediation audit checkpoint | PASS | `688d955`; Standard `32946223271`; Quick `32946223268`; docs/evidence state synchronized; fresh G11 remains Human-gated |
 | 2026-08-26 | Human false-positive disposition amendment | APPROVED / IN PROGRESS | Run `32947367541` preserved FAIL/non-qualifying after two documentation findings; exact fingerprint/path/commit-or-candidate/blob/rule/line disposition manifest and mandatory candidate-bound evaluation authorized; no fresh G11 execution |
+| 2026-08-26 | Human-authorized fresh G11 execution | FAIL / B2 / PRESERVED | `32952590543`; candidate-bound report used `/repo/tasks/reports/PHASE-10-task-043.md`, violating the repository-relative evaluator contract; candidate Blob matched approved disposition; no candidate defect or retry |
+| 2026-08-26 | Sol High B2 path-contract review | CONFIRMED | Absolute candidate target caused non-canonical raw metadata; native `dir .` from the mounted checkout root selected; evaluator/disposition identity remain unchanged |
+| 2026-08-26 | Human Limited G11 B2 Remediation | AUTHORIZED / IN PROGRESS | Workflow-only candidate path-contract correction; v2 policy records `repository-relative-v1` / `working-directory`; no candidate/POM/production/G9 change or fresh G11 execution |
 
 ### Implementation Log
 
@@ -173,6 +176,14 @@ disposition, full-history and candidate-bound secret scans, tool provenance
 and strict immutable artifact publication. The v1 NVD policy and every failed
 run remain preserved. This remediation does not execute G9/G11, reclassify
 prior failures, claim CVE/NVD cleanliness or unlock TASK-049.
+
+The latest fresh G11 run `32952590543` reached both Gitleaks scans but failed
+closed when the candidate-bound `dir /repo` invocation emitted an absolute
+`File` path. The candidate file and Blob identity match the existing approved
+disposition; only the scanner path representation violated the canonical
+evaluator contract. The authorized remediation invokes `dir .` from the exact
+`/repo` checkout root, preserves the raw report, rejects all out-of-root or
+non-canonical paths, and records the path contract in the v2 policy.
 
 The subsequent limited B2 remediation addresses only the workflow shell scope:
 the license-report validation step now declares its own

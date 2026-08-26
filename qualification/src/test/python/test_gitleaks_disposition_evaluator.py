@@ -59,6 +59,28 @@ class GitleaksDispositionEvaluatorTest(unittest.TestCase):
             self.assertNotEqual(0, result.returncode)
             self.assertIn("unapproved CANDIDATE", result.stderr)
 
+    def test_absolute_candidate_path_fails_closed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            report = Path(directory) / "absolute.json"
+            finding = json.loads(CANDIDATE.read_text(encoding="utf-8"))[0]
+            finding["File"] = "/repo/tasks/reports/PHASE-10-task-043.md"
+            finding["Fingerprint"] = "/repo/tasks/reports/PHASE-10-task-043.md:generic-api-key:28"
+            report.write_text(json.dumps([finding]), encoding="utf-8")
+            result = self.run_evaluator(candidate=report)
+            self.assertNotEqual(0, result.returncode)
+            self.assertIn("non-canonical metadata", result.stderr)
+
+    def test_parent_escape_candidate_path_fails_closed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            report = Path(directory) / "escape.json"
+            finding = json.loads(CANDIDATE.read_text(encoding="utf-8"))[0]
+            finding["File"] = "../tasks/reports/PHASE-10-task-043.md"
+            finding["Fingerprint"] = "../tasks/reports/PHASE-10-task-043.md:generic-api-key:28"
+            report.write_text(json.dumps([finding]), encoding="utf-8")
+            result = self.run_evaluator(candidate=report)
+            self.assertNotEqual(0, result.returncode)
+            self.assertIn("non-canonical metadata", result.stderr)
+
     def test_mutated_disposition_fails_closed(self):
         with tempfile.TemporaryDirectory() as directory:
             manifest = Path(directory) / "mutated.properties"

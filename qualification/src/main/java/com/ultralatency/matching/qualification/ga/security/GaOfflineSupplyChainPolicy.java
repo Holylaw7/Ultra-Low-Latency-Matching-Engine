@@ -20,7 +20,7 @@ public final class GaOfflineSupplyChainPolicy {
 
     /** SHA-256 of the approved canonical v2 toolchain properties file. */
     public static final String APPROVED_PROPERTIES_SHA256 =
-            "02225e9d08f458f3d593747ad9937bd7c777b6787f52b253328213d7a8ebc117";
+            "2b9ee7de9aee3e153d76ded1118434e8bc93807b2d329442e4593839b8e4b87f";
 
     private static final Set<String> REQUIRED_KEYS = Set.of(
             "action.checkout.sha", "action.uploadArtifact.sha", "applicationJar.buildCommand",
@@ -36,7 +36,8 @@ public final class GaOfflineSupplyChainPolicy {
             "dependencyInventory.artifact", "dependencyInventory.goal",
             "dependencyInventory.includeScope", "dependencyInventory.jarSha256",
             "dependencyInventory.outputType", "evidence.schema", "gate.id", "gate.version",
-            "gitleaks.config", "gitleaks.container", "gitleaks.digest", "gitleaks.exitCode",
+            "gitleaks.candidatePathContract", "gitleaks.candidateScanMode", "gitleaks.config",
+            "gitleaks.container", "gitleaks.digest", "gitleaks.exitCode",
             "gitleaks.dispositionManifest", "gitleaks.dispositionManifestSha256",
             "gitleaks.dispositionSchema",
             "gitleaks.historyLogOpts", "gitleaks.maxTargetMegabytes",
@@ -120,6 +121,8 @@ public final class GaOfflineSupplyChainPolicy {
         require("G11", parsed.get("gate.id"));
         require("OFFLINE_SUPPLY_CHAIN_SECURITY_V1", parsed.get("gate.version"));
         require("g11-offline-supply-chain-evidence-v1", parsed.get("evidence.schema"));
+        require("repository-relative-v1", parsed.get("gitleaks.candidatePathContract"));
+        require("working-directory", parsed.get("gitleaks.candidateScanMode"));
         require("docs/release/ga-gitleaks-false-positive-dispositions-v1.properties",
                 parsed.get("gitleaks.dispositionManifest"));
         require("ga-gitleaks-false-positive-disposition-v1",

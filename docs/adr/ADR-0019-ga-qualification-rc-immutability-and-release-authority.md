@@ -366,6 +366,28 @@ unchanged. The remediation is implemented at `eced533`, with Standard CI
 `32945056542` and Quick Lane `32945056508` PASS. This Evidence Gate does not
 authorize another G11 execution; a fresh G11 remains separately Human-gated.
 
+#### Human-approved candidate Gitleaks path-contract B2 remediation (2026-08-26)
+
+The Human-authorized fresh offline G11 run `32952590543` preserved a
+`FAIL / B2 / NON-QUALIFYING` result after the candidate-bound Gitleaks scan
+completed. Its raw candidate finding used the absolute mounted path
+`/repo/tasks/reports/PHASE-10-task-043.md`, while the approved disposition and
+evaluator contract require the repository-relative path
+`tasks/reports/PHASE-10-task-043.md`. The candidate file exists in immutable
+production SHA `e2828f5`, and its resolved Blob SHA-1 matches the approved
+disposition; no candidate defect was observed. The run remains preserved and
+is not reclassified or reused.
+
+Human approved a limited qualification-workflow remediation only: invoke the
+candidate-bound scan from the mounted checkout root with `dir .`, preserve the
+raw report, and keep the evaluator fail-closed for absolute, traversal,
+separator-ambiguous or out-of-root paths. The v2 policy now records the
+`repository-relative-v1` path contract and `working-directory` scan mode; its
+policy digest is recomputed. No disposition identity, candidate, production,
+POM, dependency, G9 evidence or G11 criterion changes. This remediation does
+not authorize another G11 execution; a fresh G11 remains separately
+Human-gated.
+
 ### D16 — Release source and production source may be distinguished
 
 The qualified production artifact source remains `e2828f5`. Human may either:
@@ -446,6 +468,7 @@ action.
 | 2026-08-26 | Evidence Gate | PASS — G11 shell-scope B2 Remediation | `eced533`; Standard CI `32945056542`; Quick Lane `32945056508`; fresh G11 remains separately Human-gated |
 | 2026-08-26 | Evidence Gate | PASS — TASK-048/Phase 11 status synchronization | `e51db47`; Standard CI `32945333516`; Quick Lane `32945333468`; current failure/remediation state reconciled; fresh G11 remains separately Human-gated |
 | 2026-08-26 | Evidence Gate follow-up | PASS — Final B2 remediation audit checkpoint | `688d955`; Standard CI `32946223271`; Quick Lane `32946223268`; verifier and frozen-path checks remain PASS; fresh G11 remains separately Human-gated |
+| 2026-08-26 | Human Developer | APPROVED — Limited candidate Gitleaks path-contract B2 Remediation | `32952590543` preserved FAIL/B2; switch candidate scan to root-relative `dir .`, record `repository-relative-v1` / `working-directory` policy identity; no candidate/POM/production/G9 change or fresh G11 execution |
 
 The `688d955` entry is the final remediation audit checkpoint. Any later
 docs-only commit that records this checkpoint is external validation only and

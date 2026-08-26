@@ -72,10 +72,12 @@ jobs:
           POLICY='docs/release/ga-security-toolchain-v2.properties'
           DISPOSITION='docs/release/ga-gitleaks-false-positive-dispositions-v1.properties'
           DISPOSITION_SHA256='0854c43f9138d8073f640fe1e37f97c7d482f01bcbe3e8280534ee3cbc70466c'
-          POLICY_SHA256='02225e9d08f458f3d593747ad9937bd7c777b6787f52b253328213d7a8ebc117'
+          POLICY_SHA256='2b9ee7de9aee3e153d76ded1118434e8bc93807b2d329442e4593839b8e4b87f'
           mkdir -p "$GA_EVIDENCE_DIR/policy" "$GA_EVIDENCE_DIR/gitleaks" "$GA_CACHE_DIR"
           test "$(sha256sum "$POLICY" | cut -d' ' -f1)" = "$POLICY_SHA256"
           test "$(sha256sum "$DISPOSITION" | cut -d' ' -f1)" = "$DISPOSITION_SHA256"
+          grep -Fx 'gitleaks.candidatePathContract=repository-relative-v1' "$POLICY"
+          grep -Fx 'gitleaks.candidateScanMode=working-directory' "$POLICY"
           grep -Fx 'gitleaks.dispositionManifest=docs/release/ga-gitleaks-false-positive-dispositions-v1.properties' "$POLICY"
           grep -Fx 'gitleaks.dispositionSchema=ga-gitleaks-false-positive-disposition-v1' "$POLICY"
           test "$(git rev-parse --is-shallow-repository)" = false
@@ -414,7 +416,7 @@ jobs:
           docker run --rm --network=none --workdir=/repo \
             --volume="$CANDIDATE:/repo:ro" \
             --volume="$EVIDENCE/gitleaks:/out" "$IMAGE" \
-            dir /repo --max-target-megabytes=10 --redact=100 --report-format=json \
+            dir . --max-target-megabytes=10 --redact=100 --report-format=json \
             --report-path=/out/working-tree.json --exit-code=1 --no-banner --no-color
           CANDIDATE_EXIT=$?
           set -e
@@ -436,7 +438,7 @@ jobs:
         run: |
           set -euo pipefail
           EVIDENCE="$RUNNER_TEMP/ga-security-evidence"
-          POLICY_SHA256='02225e9d08f458f3d593747ad9937bd7c777b6787f52b253328213d7a8ebc117'
+          POLICY_SHA256='2b9ee7de9aee3e153d76ded1118434e8bc93807b2d329442e4593839b8e4b87f'
           DISPOSITION_SHA256="$(sha256sum "$EVIDENCE/gitleaks/approved-dispositions.properties" | cut -d' ' -f1)"
           DISPOSITION_EVALUATION_SHA256="$(sha256sum "$EVIDENCE/gitleaks/disposition-evaluation.txt" | cut -d' ' -f1)"
           test -s "$EVIDENCE/gitleaks/approved-dispositions.properties"
