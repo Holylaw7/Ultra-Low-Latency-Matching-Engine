@@ -320,7 +320,10 @@ lifecycle build and `-pl core` for SBOM, runtime-dependency and license goals.
 The v2 policy digest was recomputed to
 `e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc`.
 Candidate/POM/production/G9 inputs and G11 criteria remain unchanged, and the
-remediation does not authorize another G11 execution.
+remediation is implemented at `e1464ed` with Standard CI `32927818204` and
+Quick Lane `32927818172` PASS. Its Evidence Gate is PASS; a fresh G11
+execution remains separately Human-gated and is not authorized by this
+remediation.
 
 ### D16 — Release source and production source may be distinguished
 

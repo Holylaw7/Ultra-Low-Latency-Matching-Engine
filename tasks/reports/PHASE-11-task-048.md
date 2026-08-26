@@ -2,7 +2,11 @@
 
 ## Status
 
-`In Progress / CHANGES REQUIRED — Human-approved OFFLINE_SUPPLY_CHAIN_SECURITY_V1 policy amendment; G9 remains qualifying/frozen, latest offline G11 run 32925783003 remains FAIL/B2/non-qualifying/preserved after a qualification Maven invocation defect, and no additional G11 execution is authorized.`
+`In Progress — G11 B2 root-selector remediation Evidence Gate PASS at
+e1464ed (Standard CI 32927818204; Quick Lane 32927818172); G9 remains
+qualifying/frozen, offline G11 run 32925783003 remains FAIL/B2/non-qualifying/
+preserved after a qualification Maven invocation defect, and no fresh G11
+execution is authorized.`
 
 TASK-048 implements the approved qualification-only reproducibility and
 security preflight boundary. It does not qualify the candidate, authorize a
@@ -17,7 +21,7 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
 | Peeled production SHA | `e2828f563ee41316c062385c0244ac1336731359` |
 | Historical toolchain policy | `ga-security-toolchain-v1.properties` / NVD-backed runs only / preserved unchanged |
 | Current G11 toolchain policy | `ga-security-toolchain-v2.properties` / `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` |
-| Current policy SHA-256 | `e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc`; B2 root-selector remediation in progress; no additional G11 execution authorized |
+| Current policy SHA-256 | `e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc`; B2 root-selector remediation `e1464ed` / Standard `32927818204` / Quick `32927818172` PASS; no fresh G11 execution authorized |
 | JDK archive | `microsoft-jdk-21.0.12-linux-x64.tar.gz` / `linux-x64` |
 | JDK archive SHA-256 | `f2a84ad31ebeaf3a26252dd86a4a8e1b74aefb6bfc8e55fd20190110d1353c0f` |
 | Artifact publication action | `actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` (v7.0.1) |
@@ -77,7 +81,7 @@ tag, production source, existing workflow, dependency or runtime input changed.
 | Root-selector qualification build | PASS — `mvn -B -ntp -pl core -am package -DskipTests`; root-relative Checkstyle 0; `core/target/matching-engine-rc.jar` present |
 | v2 policy digest / command contract | PASS — SHA-256 `e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc`; no current `-f core/pom.xml` invocation |
 | Checkstyle during focused build | 0 violations |
-| G9/G11 execution | G9 `32856372581` PASS/qualifying/frozen; latest offline G11 `32925783003` FAIL/B2/preserved before SBOM; no additional G11 execution authorized |
+| G9/G11 execution | G9 `32856372581` PASS/qualifying/frozen; offline G11 `32925783003` FAIL/B2/preserved before SBOM; B2 remediation `e1464ed` / CI `32927818204` / Quick `32927818172` PASS; no fresh G11 execution authorized |
 | Full `mvn verify` | PASS — 225 core + 70 qualification tests; 2 expected skips |
 | Workflow YAML parse | PASS — both new workflows parse successfully |
 | Workflow Bash syntax | PASS — all workflow `run` blocks parse with Bash 5.3 |
@@ -256,15 +260,18 @@ digest `2511c2276f40f83868db27591a2eb7afc644c4eeb7621a1cda8aa17af3cb40cf`,
 and the complete failed result remain preserved as `FAIL / B2 /
 NON-QUALIFYING`; no candidate defect was observed and no retry was started.
 
-Human then authorized a limited qualification-workflow remediation. Current
+Human then authorized a limited qualification-workflow remediation. It was
+implemented at `e1464ed`; Standard CI `32927818204` and Qualification Quick
+Lane `32927818172` both passed. Current
 v2 Maven commands execute from the repository root: the lifecycle build uses
 `-pl core -am package -DskipTests`, while SBOM, runtime-dependency and
 license-report goals use `-pl core`. The candidate POM, Checkstyle files,
 production source, dependency graph and G9 workflow remain unchanged. The v2
 policy properties digest was recomputed as
 `e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc`.
-This remediation only repairs the qualification invocation boundary; it does
-not authorize another G11 execution.
+This remediation only repairs the qualification invocation boundary. Its
+Evidence Gate is PASS, but it does not authorize another G11 execution; a
+fresh G11 still requires a separate Human execution approval.
 
 ## Completion log
 
@@ -292,3 +299,4 @@ not authorize another G11 execution.
 | 2026-08-26 | Human G11 Qualification Policy Amendment | Approved mandatory `OFFLINE_SUPPLY_CHAIN_SECURITY_V1`; v1/NVD contract and failures preserved; v2 implementation authorized; fresh G11 not authorized |
 | 2026-08-26 | Human-authorized offline G11 execution | `32925783003` FAIL/B2/preserved before SBOM because `-f core/pom.xml` changed Checkstyle path resolution; artifact `9591451565` / SHA-256 `2511c2276f40f83868db27591a2eb7afc644c4eeb7621a1cda8aa17af3cb40cf`; candidate defect not observed; no retry |
 | 2026-08-26 | Human Limited G11 B2 Remediation | Root-selector Maven remediation authorized (`-pl core -am` / `-pl core`), v2 policy hash recomputed to `e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc`; no candidate/POM/production change and no new G11 execution |
+| 2026-08-26 | G11 B2 Remediation Evidence Gate | PASS — `e1464ed`; Standard `32927818204`; Quick `32927818172`; focused/full regression, root-selector build, YAML/Bash, policy hash, Markdown links, diff and frozen-boundary audits PASS; fresh G11 remains separately Human-gated |

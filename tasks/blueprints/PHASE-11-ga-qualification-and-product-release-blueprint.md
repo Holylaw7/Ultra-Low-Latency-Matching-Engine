@@ -471,11 +471,11 @@ explicit Human Phase 11 Closure Approval. Phase Closure does not create
 
 ```text
 Blueprint Status: Approved — Human Phase 11 Blueprint Approval 2026-08-25
-Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 OFFLINE_SUPPLY_CHAIN_SECURITY_V1 policy amendment with root-selector Maven remediation after offline G11 `32925783003` FAIL/B2; G9 `32856372581` PASS/qualifying/frozen; TASK-049..056 dependency ordered and locked
+Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 OFFLINE_SUPPLY_CHAIN_SECURITY_V1 policy amendment and root-selector Maven remediation Evidence Gate PASS at `e1464ed` (Standard `32927818204`, Quick `32927818172`) after offline G11 `32925783003` FAIL/B2; G9 `32856372581` PASS/qualifying/frozen; TASK-049..056 dependency ordered and locked
 Qualification Campaigns: Not Authorized
 RC mutation: Not Authorized
 v1.0.0 / GitHub Release / GA: Not Authorized
-Next Gate: B2 workflow-remediation Evidence Gate, then STOP for separate Human fresh G11 Execution Approval; no automatic execution
+Next Gate: STOP for separate Human fresh G11 Execution Approval; no automatic execution
 ```
 
 ## 23. Execution Checkpoints
@@ -499,6 +499,7 @@ Next Gate: B2 workflow-remediation Evidence Gate, then STOP for separate Human f
 | 2026-08-26 | Human G11 Qualification Policy Amendment | AUTHORIZED / IMPLEMENTATION IN PROGRESS | Mandatory `OFFLINE_SUPPLY_CHAIN_SECURITY_V1`; v1/NVD evidence preserved; v2 policy/evidence contract; current CVE/NVD evaluation outside portfolio boundary; no fresh G11 execution | Amendment Evidence Gate |
 | 2026-08-26 | Human-authorized offline G11 execution | FAIL / B2 / PRESERVED | Run `32925783003`; artifact `9591451565` / SHA-256 `2511c2276f40f83868db27591a2eb7afc644c4eeb7621a1cda8aa17af3cb40cf`; `mvn -f core/pom.xml` broke root-relative Checkstyle resolution before SBOM; candidate defect not observed; no retry | Sol High B2 review |
 | 2026-08-26 | Human Limited G11 B2 Remediation | AUTHORIZED / IN PROGRESS | Workflow-only Maven selectors changed to repository-root `-pl core -am` / `-pl core`; v2 policy SHA recomputed; candidate/POM/production/G9 unchanged; no new G11 execution | B2 remediation Evidence Gate |
+| 2026-08-26 | G11 B2 Remediation Evidence Gate | PASS | `e1464ed`; Standard `32927818204`; Quick `32927818172`; root-selector build, focused/full tests, YAML/Bash, policy hash and frozen-boundary audits PASS; fresh G11 remains separately Human-gated | Human fresh G11 Execution Approval |
 
 ## 24. Phase Closure Checklist
 
