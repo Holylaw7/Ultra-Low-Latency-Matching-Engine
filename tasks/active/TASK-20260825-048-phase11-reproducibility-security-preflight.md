@@ -5,11 +5,11 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-048` — Reproducibility and Security Preflight |
-| Status | `In Progress — Human-approved OFFLINE_SUPPLY_CHAIN_SECURITY_V1 policy amendment implementation; G9 32856372581 PASS/qualifying/frozen; latest G11 32870534485 FAIL/B3/preserved; fresh offline G11 not authorized` |
+| Status | `In Progress / CHANGES REQUIRED — G9 32856372581 PASS/qualifying/frozen; latest offline G11 32925783003 FAIL/B2/preserved; root-selector Maven remediation authorized; no additional G11 execution authorized` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Depends On | TASK-047 Evidence Gate PASS after Human Blueprint Approval |
-| Next Gate | Offline supply-chain amendment Evidence Gate; then STOP for a separate Human fresh G11 Execution Gate |
+| Next Gate | B2 workflow-remediation Evidence Gate; then STOP for a separate Human fresh G11 Execution Gate |
 
 ## 2. Goal
 
@@ -128,7 +128,7 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | --- | --- | --- |
 | Blueprint | Approved | Human Phase 11 Blueprint Approval |
 | Implementation | In Progress | TASK-047 Evidence Gate PASS |
-| Preflight | Offline supply-chain policy amendment implementation; fresh G11 separately gated | G9 `32856372581` PASS/qualifying/frozen; G11 `32870534485` FAIL/B3/preserved; no G11 rerun |
+| Preflight | Offline supply-chain policy amendment implementation; root-selector Maven remediation in progress; fresh G11 separately gated | G9 `32856372581` PASS/qualifying/frozen; G11 `32925783003` FAIL/B2/preserved; no additional G11 execution |
 
 | Date | Reviewer | Decision / log |
 | --- | --- | --- |
@@ -148,6 +148,8 @@ non-reproducible candidate is not rolled back; it blocks GA.
 | 2026-08-25 | B3 remediation Evidence Gate | PASS — `bdceeb588f163465040b315da2ae1fa4a444bc31`; Standard `32862255686` PASS; Quick `32862256047` PASS; G11 replacement remains separately Human-gated |
 | 2026-08-25 | Human Limited Data-Feed Amendment | Approved Dependency-Check `13.0.0` plus official NVD JSON 2.0 feed; API key no longer required; feed metadata/archive integrity and <=24h freshness remain mandatory; no G11 execution |
 | 2026-08-26 | Human G11 Qualification Policy Amendment | Approved `OFFLINE_SUPPLY_CHAIN_SECURITY_V1`; NVD/Dependency-Check removed from normative portfolio G11; historical failures preserved; fresh G11 not authorized |
+| 2026-08-26 | Human-authorized G11 execution | Offline G11 `32925783003` FAIL/B2/preserved before SBOM due `mvn -f core/pom.xml` Checkstyle path resolution; artifact `9591451565` / SHA-256 `2511c2276f40f83868db27591a2eb7afc644c4eeb7621a1cda8aa17af3cb40cf`; candidate defect not observed; no retry |
+| 2026-08-26 | Human Limited G11 B2 Remediation | Authorized qualification-workflow-only switch to repository-root `-pl core -am` / `-pl core` Maven selectors; v2 policy hash recomputation; no candidate/POM/production change and no new G11 execution |
 
 ### Implementation Log
 

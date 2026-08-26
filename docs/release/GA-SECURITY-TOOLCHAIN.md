@@ -33,7 +33,7 @@ The current G11 evidence unit is
    artifact publication.
 
 The canonical v2 policy SHA-256 is
-`7ab79aa16313ed363a6c2576a0b18dcaa545666f2478d092c1cf44b581be9c30`.
+`e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc`.
 Dependency-Check, NVD data/API access, CVE lookup, CVSS evaluation and database
 freshness are not normative inputs or outputs of v2. They are outside this
 portfolio-release boundary. The workflow must not emit a fake or skipped
@@ -107,6 +107,18 @@ not fall back to JDK 21.0.11 or another distribution. The old runs
 The canonical properties file retains the historical `action.setupJava.sha`
 field for provenance compatibility, but neither new GA workflow invokes that
 resolver after this amendment.
+
+### Current v2 Maven root-selector contract
+
+All current v2 security-workflow Maven commands execute from the candidate
+repository root so existing root-relative build configuration retains its
+meaning. The lifecycle build uses `mvn -B -ntp -pl core -am package
+-DskipTests`; CycloneDX, runtime-dependency and license-report goals use the
+same root invocation with `-pl core`. The historical `mvn -f core/pom.xml`
+form belongs only to preserved pre-remediation evidence and is forbidden for
+the current v2 workflow. This qualification-only invocation correction does
+not change the candidate POM, build inputs, dependency graph or artifact
+identity.
 
 ## Full-history checkout and G9 reproducible build contract
 

@@ -70,7 +70,7 @@ jobs:
           GA_CACHE_DIR="$RUNNER_TEMP/ga-security-cache"
           CANDIDATE_DIR="$RUNNER_TEMP/ga-security-candidate"
           POLICY='docs/release/ga-security-toolchain-v2.properties'
-          POLICY_SHA256='7ab79aa16313ed363a6c2576a0b18dcaa545666f2478d092c1cf44b581be9c30'
+          POLICY_SHA256='e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc'
           mkdir -p "$GA_EVIDENCE_DIR/policy" "$GA_CACHE_DIR"
           test "$(sha256sum "$POLICY" | cut -d' ' -f1)" = "$POLICY_SHA256"
           test "$(git rev-parse --is-shallow-repository)" = false
@@ -137,24 +137,24 @@ jobs:
           mkdir -p "$EVIDENCE/application" "$EVIDENCE/sbom" "$EVIDENCE/dependency" \
             "$EVIDENCE/license" "$EVIDENCE/gitleaks"
           cd "$CANDIDATE"
-          mvn -B -ntp -f core/pom.xml package -DskipTests -Dmaven.repo.local="$REPO"
+          mvn -B -ntp -Dmaven.repo.local="$REPO" -pl core -am package -DskipTests
           test -s core/target/matching-engine-rc.jar
           cp core/target/matching-engine-rc.jar "$EVIDENCE/application/matching-engine-rc.jar"
-          mvn -B -ntp -f core/pom.xml \
+          mvn -B -ntp -Dmaven.repo.local="$REPO" -pl core \
             org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeBom \
-            -Dmaven.repo.local="$REPO" -DschemaVersion=1.6 -DprojectType=application \
+            -DschemaVersion=1.6 -DprojectType=application \
             -DincludeBomSerialNumber=false -DincludeCompileScope=true -DincludeProvidedScope=false \
             -DincludeRuntimeScope=true -DincludeSystemScope=false -DincludeTestScope=false \
             -DincludeLicenseText=false -DoutputFormat=json -DoutputName=bom \
             -DoutputDirectory="$EVIDENCE/sbom" -Dcyclonedx.skipAttach=true
-          mvn -B -ntp -f core/pom.xml \
+          mvn -B -ntp -Dmaven.repo.local="$REPO" -pl core \
             org.apache.maven.plugins:maven-dependency-plugin:3.8.1:list \
-            -Dmaven.repo.local="$REPO" -DincludeScope=runtime \
+            -DincludeScope=runtime \
             -DoutputFile="$CACHE/runtime-dependencies.raw" \
             -DoutputAbsoluteArtifactFilename=false
-          mvn -B -ntp -f core/pom.xml \
+          mvn -B -ntp -Dmaven.repo.local="$REPO" -pl core \
             org.codehaus.mojo:license-maven-plugin:2.7.1:aggregate-third-party-report \
-            -Dmaven.repo.local="$REPO" -Dlicense.includeTransitiveDependencies=true \
+            -Dlicense.includeTransitiveDependencies=true \
             -Dlicense.includeOptional=true -Dlicense.excludedScopes=test,provided,system \
             -Dlicense.encoding=UTF-8
           test -d core/target/reports
@@ -276,7 +276,7 @@ jobs:
         run: |
           set -euo pipefail
           EVIDENCE="$RUNNER_TEMP/ga-security-evidence"
-          POLICY_SHA256='7ab79aa16313ed363a6c2576a0b18dcaa545666f2478d092c1cf44b581be9c30'
+          POLICY_SHA256='e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc'
           dependency_count="$(wc -l < "$EVIDENCE/dependency/runtime-dependencies.txt" | tr -d ' ')"
           test "$dependency_count" -gt 0
           {

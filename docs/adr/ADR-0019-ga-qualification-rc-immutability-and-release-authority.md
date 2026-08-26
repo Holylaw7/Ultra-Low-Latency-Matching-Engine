@@ -304,6 +304,24 @@ G11 execution or unlock TASK-049. It is superseded by the 2026-08-26 offline
 G11 portfolio policy amendment above and is retained only to interpret prior
 FAIL/B3 evidence.
 
+#### Human-approved Limited G11 B2 remediation (2026-08-26)
+
+Fresh offline G11 run `32925783003` failed before SBOM/dependency/license
+qualification because the workflow invoked Maven as `mvn -f core/pom.xml`.
+That qualification-only invocation changed Maven's project base and broke the
+candidate's frozen root-relative Checkstyle path. The run and artifact
+`9591451565` (digest
+`2511c2276f40f83868db27591a2eb7afc644c4eeb7621a1cda8aa17af3cb40cf`) remain
+`FAIL / B2 / NON-QUALIFYING / PRESERVED`; no candidate defect was observed.
+
+Human authorized a limited workflow remediation only. Current v2 security
+commands execute from the repository root, using `-pl core -am` for the
+lifecycle build and `-pl core` for SBOM, runtime-dependency and license goals.
+The v2 policy digest was recomputed to
+`e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc`.
+Candidate/POM/production/G9 inputs and G11 criteria remain unchanged, and the
+remediation does not authorize another G11 execution.
+
 ### D16 — Release source and production source may be distinguished
 
 The qualified production artifact source remains `e2828f5`. Human may either:
@@ -376,3 +394,4 @@ action.
 | Date | Reviewer | Decision | Scope |
 | --- | --- | --- | --- |
 | 2026-08-25 | Human Developer | APPROVED — Human Phase 11 Blueprint Approval | ADR-0019 D1-D18 and TASK-047..056 qualification scope; candidate immutability, separate campaign gates and no release authority |
+| 2026-08-26 | Human Developer | APPROVED — Limited G11 B2 Remediation | Qualification workflow Maven root-selector correction only; `32925783003` preserved FAIL/B2; no candidate/POM/production change and no new G11 execution |

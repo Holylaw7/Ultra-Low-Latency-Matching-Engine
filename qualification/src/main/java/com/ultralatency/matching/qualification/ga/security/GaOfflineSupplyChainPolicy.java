@@ -20,7 +20,7 @@ public final class GaOfflineSupplyChainPolicy {
 
     /** SHA-256 of the approved canonical v2 toolchain properties file. */
     public static final String APPROVED_PROPERTIES_SHA256 =
-            "7ab79aa16313ed363a6c2576a0b18dcaa545666f2478d092c1cf44b581be9c30";
+            "e834d18b0cb51624edbac40e6294bf575ebf73bab3a8cbf469423fba150de4fc";
 
     private static final Set<String> REQUIRED_KEYS = Set.of(
             "action.checkout.sha", "action.uploadArtifact.sha", "applicationJar.buildCommand",

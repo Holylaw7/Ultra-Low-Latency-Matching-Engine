@@ -29,6 +29,8 @@ class GaOfflineSupplyChainPolicyTest {
         assertTrue(parsed.acceptedRuntimeLicenses().contains("Apache-2.0"));
         assertFalse(parsed.values().keySet().stream().anyMatch(key -> key.startsWith("dependencyCheck")));
         assertFalse(parsed.values().keySet().stream().anyMatch(key -> key.startsWith("nvd")));
+        assertEquals("mvn|-B|-ntp|-pl|core|-am|package|-DskipTests",
+                parsed.value("applicationJar.buildCommand"));
     }
 
     @Test
@@ -82,6 +84,9 @@ class GaOfflineSupplyChainPolicyTest {
         assertTrue(yaml.contains("sha256sum --check --strict SHA256SUMS"));
         assertTrue(yaml.contains("if-no-files-found: error"));
         assertTrue(yaml.contains("gitleaks/gitleaks@sha256:"));
+        assertTrue(yaml.contains("-pl core -am package -DskipTests"));
+        assertTrue(yaml.contains("-pl core"));
+        assertFalse(yaml.contains("-f core/pom.xml"));
         assertFalse(yaml.contains("dependency-check-maven"));
         assertFalse(yaml.contains("NVD_API_KEY"));
         assertFalse(yaml.contains("nvd.nist.gov"));

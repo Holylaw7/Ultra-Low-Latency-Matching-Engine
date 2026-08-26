@@ -11,7 +11,7 @@
 | Evidence schemas | [GA Evidence Schemas](../../docs/release/GA-EVIDENCE-SCHEMAS.md) |
 | Security tools | [GA Security Toolchain](../../docs/release/GA-SECURITY-TOOLCHAIN.md) |
 | Tasks | `TASK-047 Completed / TASK-048 In Progress / TASK-049 through TASK-056 dependency ordered` |
-| Implementation | `Human-approved OFFLINE_SUPPLY_CHAIN_SECURITY_V1 amendment implementation; fresh G11 separately gated` |
+| Implementation | `Human-approved OFFLINE_SUPPLY_CHAIN_SECURITY_V1 amendment; root-selector Maven B2 remediation in progress; fresh G11 separately gated` |
 | Campaign / Release | `Not Authorized` |
 
 ## Proposal result
@@ -45,10 +45,10 @@ commands.
 ```text
 Phase 11 Blueprint: Approved
 TASK-047: Completed / Evidence Gate PASS
-TASK-048: In Progress / Offline G11 policy amendment implementation
+TASK-048: In Progress / CHANGES REQUIRED — offline G11 policy amendment; root-selector Maven B2 remediation authorized after `32925783003` FAIL/preserved
 TASK-049..056: Dependency ordered / locked
 Campaign execution: Not Authorized
 Candidate mutation: Not Authorized
 v1.0.0 / GitHub Release / GA: Not Authorized
-Next: Amendment Evidence Gate, then separate Human fresh G11 execution gate
+Next: B2 remediation Evidence Gate, then separate Human fresh G11 execution gate
 ```
