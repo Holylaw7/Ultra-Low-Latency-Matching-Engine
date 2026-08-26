@@ -58,9 +58,11 @@ campaign, mutate `v0.9.0-rc.1`, or grant release authority.
   or Dependency-Check-passed claim is permitted.
 
 No production source/test, POM, dependency, candidate source, G9 workflow or
-runtime path was modified. Only the new GA G11 workflow changed under the
-approved qualification amendment. The Windows development host did not execute
-G11; GitHub G9/G11 results and immutable artifacts are recorded below.
+runtime path was modified. Qualification-only changes included the GA G11
+workflow, the offline G11 evaluator, exact-fingerprint disposition manifest,
+and their qualification tests; frozen production/candidate/build inputs
+remained unchanged. The Windows development host did not execute G11; GitHub
+G9/G11 results and immutable artifacts are recorded below.
 
 The approved default-branch workflow installation was deliberately narrow: the
 master merge `0575c76` contains only the two new Phase 11 workflow files. Their
