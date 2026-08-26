@@ -165,6 +165,135 @@ jobs:
           mkdir -p "$EVIDENCE/license/plugin-reports"
           cp target/reports/aggregate-third-party-report.html \
             "$EVIDENCE/license/plugin-reports/aggregate-third-party-report.html"
+
+      - name: Validate root-reactor license report
+        shell: bash
+        run: |
+          set -euo pipefail
+          EVIDENCE="$RUNNER_TEMP/ga-security-evidence"
+          REPORT="$EVIDENCE/license/plugin-reports/aggregate-third-party-report.html"
+          RAW="$RUNNER_TEMP/ga-security-cache/runtime-dependencies.raw"
+          python3 - "$REPORT" "$RAW" "$EVIDENCE/license/plugin-reports/report-validation.txt" <<'PY'
+          from html.parser import HTMLParser
+          from hashlib import sha256
+          from pathlib import Path
+          import re
+          import sys
+
+          report_path = Path(sys.argv[1])
+          raw_path = Path(sys.argv[2])
+          validation_path = Path(sys.argv[3])
+          if not report_path.is_file() or report_path.is_symlink():
+              raise SystemExit("license report must be a regular file")
+          report_bytes = report_path.read_bytes()
+          if not report_bytes:
+              raise SystemExit("license report is empty")
+          try:
+              report_text = report_bytes.decode("utf-8")
+          except UnicodeDecodeError as error:
+              raise SystemExit("license report is not UTF-8") from error
+
+          class ReportParser(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.html_start = False
+                  self.html_end = False
+                  self.body_start = False
+                  self.body_end = False
+                  self.title_parts = []
+                  self.in_title = False
+                  self.h2_parts = []
+                  self.in_h2 = False
+                  self.coordinates = []
+                  self.tables = 0
+
+              def handle_starttag(self, tag, attrs):
+                  if tag == "html":
+                      self.html_start = True
+                  elif tag == "body":
+                      self.body_start = True
+                  elif tag == "title":
+                      self.in_title = True
+                  elif tag == "table":
+                      self.tables += 1
+                  elif tag == "h2":
+                      self.in_h2 = True
+                      self.h2_parts = []
+
+              def handle_endtag(self, tag):
+                  if tag == "html":
+                      self.html_end = True
+                  elif tag == "body":
+                      self.body_end = True
+                  elif tag == "title":
+                      self.in_title = False
+                  elif tag == "h2" and self.in_h2:
+                      value = " ".join("".join(self.h2_parts).split())
+                      if re.fullmatch(r"[^:\s]+:[^:\s]+:[^:\s]+", value):
+                          self.coordinates.append(value)
+                      self.in_h2 = False
+
+              def handle_data(self, data):
+                  if self.in_title:
+                      self.title_parts.append(data)
+                  if self.in_h2:
+                      self.h2_parts.append(data)
+
+          parser = ReportParser()
+          try:
+              parser.feed(report_text)
+              parser.close()
+          except Exception as error:
+              raise SystemExit("license report HTML parsing failed") from error
+          title = " ".join("".join(parser.title_parts).split())
+          if not (parser.html_start and parser.html_end and parser.body_start
+                  and parser.body_end and parser.tables > 0 and title):
+              raise SystemExit("license report has incomplete HTML structure")
+          if "Third Parties" not in title:
+              raise SystemExit("license report title is not recognized")
+          if "license-maven-plugin:2.7.1:aggregate-third-party-report" not in report_text:
+              raise SystemExit("license report generator marker is missing")
+          if parser.in_title or parser.in_h2 or len(parser.coordinates) == 0:
+              raise SystemExit("license report has no parseable dependency entries")
+          report_coordinates = set(parser.coordinates)
+          if len(report_coordinates) != len(parser.coordinates):
+              raise SystemExit("license report contains duplicate dependency entries")
+
+          dependency_pattern = re.compile(
+              r"^\s*([^:\s]+):([^:\s]+):([^:\s]+):(.+):(compile|runtime)\s*$")
+          runtime_coordinates = set()
+          for line in raw_path.read_text(encoding="utf-8").splitlines():
+              match = dependency_pattern.match(line)
+              if not match:
+                  continue
+              middle = match.group(4).split(":")
+              coordinate = f"{match.group(1)}:{match.group(2)}:{middle[-1]}"
+              if coordinate in runtime_coordinates:
+                  raise SystemExit("runtime dependency inventory contains duplicates")
+              runtime_coordinates.add(coordinate)
+          if not runtime_coordinates:
+              raise SystemExit("runtime dependency inventory is empty")
+          if report_coordinates != runtime_coordinates:
+              missing = sorted(runtime_coordinates - report_coordinates)
+              extra = sorted(report_coordinates - runtime_coordinates)
+              raise SystemExit(f"license/runtime dependency mismatch: missing={missing}, extra={extra}")
+
+          validation_path.write_text(
+              "".join((
+                  "report.path=license/plugin-reports/aggregate-third-party-report.html\n",
+                  f"report.sha256={sha256(report_bytes).hexdigest()}\n",
+                  f"report.bytes={len(report_bytes)}\n",
+                  "report.parseable=true\n",
+                  f"report.coordinateCount={len(report_coordinates)}\n",
+                  f"runtimeInventory.coordinateCount={len(runtime_coordinates)}\n",
+                  "report.runtimeCoordinatesMatch=true\n",
+              )),
+              encoding="ascii",
+              newline="\n",
+          )
+          PY
+          test -s "$EVIDENCE/license/plugin-reports/report-validation.txt"
+
           {
             printf 'application.jarPath=application/matching-engine-rc.jar\n'
             printf 'application.jarSha256=%s\n' "$(sha256sum "$EVIDENCE/application/matching-engine-rc.jar" | cut -d' ' -f1)"
@@ -330,6 +459,7 @@ jobs:
             jdk-runtime-identity.txt \
             license/runtime-license-inventory.txt \
             license/plugin-reports/aggregate-third-party-report.html \
+            license/plugin-reports/report-validation.txt \
             maven-repository-inventory maven-version.txt \
             policy/ga-security-toolchain-v2.properties sbom/bom.json \
             sbom/normalized-components.txt tool-entry-sha256sums.txt; do

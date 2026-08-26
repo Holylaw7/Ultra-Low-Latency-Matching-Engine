@@ -98,6 +98,12 @@ class GaOfflineSupplyChainPolicyTest {
         assertTrue(yaml.contains("-Dlicense.reactorProject=core"));
         assertTrue(yaml.contains("target/reports/aggregate-third-party-report.html"));
         assertTrue(yaml.contains("license/plugin-reports/aggregate-third-party-report.html"));
+        assertTrue(yaml.contains("Validate root-reactor license report"));
+        assertTrue(yaml.contains("from html.parser import HTMLParser"));
+        assertTrue(yaml.contains("report.parseable=true"));
+        assertTrue(yaml.contains("report.runtimeCoordinatesMatch=true"));
+        assertTrue(yaml.contains("report-validation.txt"));
+        assertTrue(yaml.contains("license report HTML parsing failed"));
         assertTrue(yaml.contains("test ! -e core/target/reports"));
         assertFalse(yaml.contains("test -d core/target/reports"));
         assertFalse(yaml.contains("cp -R core/target/reports"));

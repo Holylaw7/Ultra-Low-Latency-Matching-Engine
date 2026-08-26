@@ -22,6 +22,7 @@ public final class OfflineSupplyChainEvidenceValidator {
             "javac-version.txt",
             "jdk-runtime-identity.txt",
             "license/plugin-reports/aggregate-third-party-report.html",
+            "license/plugin-reports/report-validation.txt",
             "license/runtime-license-inventory.txt",
             "maven-repository-inventory",
             "maven-version.txt",
