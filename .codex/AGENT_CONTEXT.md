@@ -1,6 +1,6 @@
 # AGENT_CONTEXT — Matching Engine Current State
 
-> Last Updated: 2026-08-26
+> Last Updated: 2026-08-29
 > Purpose: compact current-state index; detailed history lives in Tasks, Stage
 > Reports, ADRs and Git.
 
@@ -10,14 +10,14 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
-| Phase | Phase 11 — GA Qualification (`Blueprint Approved; TASK-048 Closed; TASK-049 canonical evidence remediation in progress`) |
-| Latest product task | [`TASK-20260825-049`](../tasks/active/TASK-20260825-049-phase11-correctness-deterministic-recovery.md) — In Progress / canonical evidence remediation; preserved exact-controller `d75a3a0` matrix is technical/non-qualifying; fresh 24-case matrix not authorized; TASK-050 locked |
+| Phase | Phase 11 — GA Qualification (`Blueprint Approved; TASK-048 Closed; TASK-049 fresh G1/G2 matrix PASS / evidence frozen; Final Evidence Review pending`) |
+| Latest product task | [`TASK-20260825-049`](../tasks/active/TASK-20260825-049-phase11-correctness-deterministic-recovery.md) — In Progress / fresh G1/G2 matrix PASS and evidence frozen; preserved exact-controller `d75a3a0` matrix remains technical/non-qualifying; TASK-050 locked |
 | Latest architecture decision | [`ADR-0019`](../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) — Accepted |
-| Current planning task | TASK-20260825-049 — In Progress; qualification-only runner now emits paired G1/G2 canonical views and physical bindings; fresh matrix awaits separate Human approval; TASK-050 remains locked |
+| Current planning task | TASK-20260825-049 — In Progress; one Human-authorized 24-case matrix produced paired G1/G2 canonical views and physical bindings with PASS gate results; Final Evidence Review pending; TASK-050 remains locked |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 9 frozen at `v0.8.0-engineering-baseline`; Phase 10 frozen at `v0.9.0-rc.1`; Phase 11 GA qualification in progress; Product Release separately governed |
 | Product approval | Phase 9 Human Closure Approved; merge `ef73f60` / Master CI `32711512036` PASS; `v0.8.0-engineering-baseline` / Tag CI `32711649980` PASS; Closure Input `8e5d39d` / Standard CI `32709188522` / Quick Lane `32709188327`; remediation `5f3b1c5` / Standard CI `32710712341` / Quick Lane `32710712428` PASS |
-| Phase 11 current gate | TASK-048 Closed / Human Approved (`f2d5470`, Standard `32959524443`, Quick `32959524552`); TASK-049 preserved exact-controller `d75a3a0` matrix is 24/24 technical PASS but non-qualifying because canonical run/gate evidence was absent; paired-view remediation is in progress and TASK-050 remains locked |
+| Phase 11 current gate | TASK-048 Closed / Human Approved (`f2d5470`, Standard `32959524443`, Quick `32959524552`); TASK-049 fresh matrix is 24/24 physical PASS with 96/96 recovery observations, paired canonical G1/G2 evidence, 24 bindings and 48 unique run IDs; evidence frozen and Final Evidence Review pending; TASK-050 remains locked |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `docs/phase11-ga-qualification-blueprint` |
 | Engineering baseline commit | `e2828f5` (Phase 10 merge; Master CI `32816928409` PASS) |
@@ -156,11 +156,11 @@ ADR-0011 Final Approved
   -> Apache-2.0 repository policy [Human accepted]
   -> GitHub binary distribution without Maven Central [Human accepted]
   -> TASK-047 [Completed / Evidence Gate PASS; implementation `d25eac6`, status `2521500`; CI `32828844611` / Quick `32828844541`]
-  -> TASK-048 [In Progress; `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` amendment; root-selector remediation `e1464ed` / CI `32927818204` / Quick `32927818172` PASS; license-report remediation `30c89c4` / CI `32932454011` / Quick `32932454009` PASS; fresh G11 `32943456313` FAIL/B2/preserved on undeclared step-local `REPO`; shell-scope remediation `eced533` / CI `32945056542` / Quick `32945056508` PASS; evidence/status sync `e51db47` / CI `32945333516` / Quick `32945333468` PASS; docs reconciliation `2c20f4f` / CI `32945964869` / Quick `32945964878` PASS; final B2 audit checkpoint `688d955` / CI `32946223271` / Quick `32946223268` PASS; G9 `32856372581` PASS/qualifying/frozen; fresh G11 `32952590543` FAIL/B2/preserved on absolute candidate Gitleaks path; native `dir .` remediation `f6db140` / CI `32954953854` / Quick `32954953801` PASS; fresh G11 `32955619875` PASS/qualifying/frozen with artifact `9601871146`; TASK-048 final evidence review pending]
+  -> TASK-048 [Completed / Closed / Human Approved; `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` amendment and all workflow remediations reconciled; G9 `32856372581` PASS/qualifying/frozen; fresh G11 `32955619875` PASS/qualifying/frozen with artifact `9601871146`; historical failures preserved; final docs/evidence remediation `f2d5470`; Standard `32959524443` / Quick `32959524552` PASS]
   -> TASK-048 false-positive disposition amendment [Human approved; Evidence Gate PASS at `7be2b61`; fresh G11 not authorized]
   -> TASK-048 fresh G11 `32952590543` [FAIL/B2/preserved; candidate-bound Gitleaks emitted absolute `/repo` path; candidate Blob matched approved disposition; no candidate defect; path-contract remediation `f6db140` Evidence Gate PASS]
-  -> TASK-048 fresh G11 `32955619875` [PASS/qualifying/frozen; `OFFLINE_SUPPLY_CHAIN_SECURITY_V1`; artifact `9601871146` digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`; candidate identity and candidate-bound Gitleaks path contract passed; TASK-048 final evidence review pending]
-  -> TASK-049 [In Progress / canonical evidence remediation; preserved exact-controller `d75a3a0` matrix remains a 24/24 technical observation and non-qualifying evidence; paired G1/G2 canonical views and physical bindings implemented with focused tests; fresh 24-case matrix not authorized]
+  -> TASK-048 fresh G11 `32955619875` [PASS/qualifying/frozen; `OFFLINE_SUPPLY_CHAIN_SECURITY_V1`; artifact `9601871146` digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`; candidate identity and candidate-bound Gitleaks path contract passed; TASK-048 Closed]
+  -> TASK-049 [In Progress / Fresh G1/G2 matrix PASS / evidence frozen; preserved exact-controller `d75a3a0` matrix remains a 24/24 technical observation and non-qualifying evidence; controller `b3df93d`; 24 physical cases, 24 G1 manifests, 24 G2 manifests, 24 bindings and 48 unique run IDs; Final Evidence Review pending]
   -> TASK-050 through TASK-056 [Dependency ordered; locked]
   -> Phase 11 Full Campaigns / Closure / v1.0.0 / GitHub Release / GA [Not Authorized]
   -> Product Release [Not Authorized]

@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-049` — GA Correctness and Deterministic Recovery |
-| Status | `In Progress / Canonical evidence remediation — fresh matrix not yet authorized` |
+| Status | `In Progress / Fresh G1/G2 matrix PASS — evidence frozen; Final Evidence Review pending` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Human Approved |
 | Depends On | TASK-048 Human Closure Approved |
@@ -30,8 +30,9 @@ or golden-semantic change is permitted.
 - [x] TradeId and EventSequence suffixes agree across recovery modes.
 - [x] Invalid trade, lost command, gap and divergence counts are zero.
 - [x] Snapshot results for prefix 1..N are not fabricated or re-emitted.
-- [ ] Every physical case publishes independent G1/G2 `ga-run-manifest-v1`
-  views, a physical-run binding, and both canonical gate results.
+- [x] Every physical case publishes independent G1/G2 `ga-run-manifest-v1`
+  views, a physical-run binding, and both canonical gate results; the fresh
+  matrix produced 24/24 paired views and independent gate results.
 
 ## 5. Evidence Gate
 
@@ -102,9 +103,9 @@ divergence is B0/B1 and has no in-Task fix.
 | Stage | Status | Gate |
 | --- | --- | --- |
 | Implementation | Completed | TASK-048 Human Closure Approved |
-| Matrix execution | Preserved technical observation | exact controller `d75a3a0`; 24/24 cases; 96 recovery observations; non-qualifying until canonical evidence exists |
-| Canonical remediation | In progress | paired G1/G2 views, physical bindings and gate results; fresh matrix requires separate Human approval |
-| Completion | Pending final Evidence Gate | verifier/docs-auditor; exact-SHA CI after remediation |
+| Matrix execution | PASS / evidence frozen | controller `b3df93d`; 24/24 physical cases; 96 recovery observations; paired canonical evidence and gate results |
+| Canonical remediation | Completed | paired G1/G2 views, physical bindings, independent gate results and exact-SHA replay validation |
+| Completion | Pending Human Final Evidence Review | post-sync verifier/docs-auditor and final governance decision |
 
 | Date | Reviewer / status | Record |
 | --- | --- | --- |
@@ -112,6 +113,8 @@ divergence is B0/B1 and has no in-Task fix.
 | 2026-08-26 | Human / Authorized | TASK-048 closed; TASK-049 implementation and matrix execution authorized |
 | 2026-08-26 | Main Luna Max / Evidence | Exact-controller matrix `d75a3a0`: 24/24 cases PASS; 96 recovery observations; sidecar 4,322/4,322 validated |
 | 2026-08-26 | CI / Evidence validation | Checkpoint `c3659fa`; Standard `32976467453` PASS; Quick `32976467177` PASS; final read-only Evidence Gate remains pending |
+| 2026-08-29 | Main Luna Max / Evidence | Human-authorized replacement matrix under controller `b3df93d`: 24/24 physical cases, 96/96 recovery observations, paired G1/G2 canonical evidence and gate results PASS; evidence frozen |
+| 2026-08-29 | Read-only verifier | 24 G1 manifests, 24 G2 manifests, 24 bindings, 48 unique run IDs, 8,840 root inventory entries and complete sidecars — PASS |
 
 ### Implementation Log
 
@@ -119,6 +122,8 @@ Implementation is qualification-only and remains bounded by the approved
 Phase 11 Blueprint. The original exact-controller G1/G2 matrix remains a
 preserved technical observation, not canonical qualifying evidence. The
 remediation adds a during-run canonical writer for paired gate views and
-physical execution bindings; focused verification is passing locally. A fresh
-24-case matrix still requires a separate Human execution approval. TASK-050
-remains locked.
+physical execution bindings; focused verification and exact-SHA validation are
+passing. The single Human-authorized fresh matrix completed 24 physical cases
+with 24 G1 views, 24 G2 views, 24 bindings and independent PASS gate results.
+Evidence is frozen for Final Evidence Review; no additional matrix execution
+is authorized and TASK-050 remains locked.

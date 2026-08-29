@@ -2,14 +2,16 @@
 
 ## Status
 
-`Implementation remediation in progress / historical matrix technical
-observation preserved; canonical Evidence Gate pending.` The evidence
-checkpoint `c3659fa` passed
-Standard CI `32976467453` and Qualification Quick Lane `32976467177` at its
-exact head SHA. TASK-049 remains in progress until the verifier,
-docs-auditor and final governance decision are reconciled. TASK-050 is still
-locked. No Full Campaign, candidate mutation, release or GA action is
-authorized by this report.
+`Fresh G1/G2 matrix PASS / evidence frozen; final Evidence Review pending.`
+The canonical evidence remediation is complete at controller
+`b3df93de02ef0ff5f08c71857d7621020131361f`; its exact-SHA replay validation
+passed Standard CI `33251723478` and Qualification Quick Lane `33251723392`.
+The single Human-authorized replacement matrix completed 24 physical
+executions with paired canonical G1/G2 views and passed all matrix and
+evidence-integrity checks. TASK-049 remains in progress until the post-sync
+verifier/docs-auditor review and Human Final Evidence Review are complete.
+TASK-050 is still locked. No additional matrix execution, candidate mutation,
+release or GA action is authorized by this report.
 
 ## Scope and frozen boundaries
 
@@ -98,6 +100,37 @@ working-tree controller run remains separate local validation evidence; it is
 not substituted for this exact-controller run and is not used to claim a
 second qualifying run.
 
+## Fresh canonical matrix evidence
+
+The Human-authorized replacement matrix completed once at:
+
+```text
+qualification-results/ga-g1-g2-replacement-java21-20260829/
+  ga-g1-g2-727bbfab-db2f-4db4-a406-09b11ee956b5/
+```
+
+Its immutable final-review inputs are:
+
+| Evidence | Result |
+| --- | --- |
+| Controller | `b3df93de02ef0ff5f08c71857d7621020131361f` |
+| Physical executions | `24 / 24 PASS` |
+| Recovery observations | `96 / 96` |
+| G1 canonical manifests | `24 / 24` |
+| G2 canonical manifests | `24 / 24` |
+| Physical bindings | `24 / 24` |
+| Unique canonical run IDs | `48` |
+| G1 gate result | `PASS` |
+| G2 gate result | `PASS` |
+| Root inventory | `8,840 / 8,840` |
+| Case `SHA256SUMS` entries | `4,320` |
+| Sidecars | `4,421`, all matching |
+| Matrix summary SHA-256 | `960e76e0569fb97109bd0d4c29f919b781bcd06317acf6afc3e99ee0415fd619` |
+
+The prior Java-17 pre-run abort and the earlier `d75a3a0` technical matrix
+remain preserved non-qualifying evidence. They were not backfilled,
+overwritten or reused.
+
 ## Verification already completed
 
 | Check | Result |
@@ -110,6 +143,10 @@ second qualifying run.
 | `.vscode/` | untouched / untracked |
 | Exact-SHA Standard CI for evidence checkpoint `c3659fa` | [32976467453](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32976467453) — PASS |
 | Qualification Quick Lane for evidence checkpoint `c3659fa` | [32976467177](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32976467177) — PASS |
+| Fresh canonical evidence verifier | 24 cases, 24/24 G1, 24/24 G2, 24 bindings, 48 unique run IDs — PASS |
+| Root inventory/hash audit | 8,840 entries and required root sidecars — PASS |
+| Case `SHA256SUMS`/sidecar audit | 4,320 inventory entries and 4,421 sidecars — PASS |
+| Candidate-bound frozen-path audit | Candidate/tag/controller identity consistent; production/POM diff 0 |
 
 The first full-reactor invocation showed one transient failure in the existing
 `MatchingEnginePipelineFailureTest`; its immediate rerun passed without any
@@ -142,18 +179,16 @@ are present and validated.
 
 ## Remaining Evidence Gate
 
-Before TASK-049 can close, the following remain required:
+The implementation, exact-SHA validation, single fresh matrix execution and
+pre-sync verifier are complete. The remaining closure inputs are limited to:
 
 ```text
-canonical remediation focused tests and full verification
-fresh Human approval for the affected 24-case matrix
-one physical execution per approved case (no 48-case duplication)
-verifier read-only review
-docs-auditor read-only review
-report/plan/status reconciliation
-final TASK-049 Evidence Gate decision
+post-sync verifier read-only review
+docs-auditor post-sync review
+Human TASK-049 Final Evidence Review / Closure Approval
 ```
 
-Until those checks are recorded, TASK-049 remains `In Progress / Changes
-Required`, TASK-050 remains locked, and merge/tag, `v1.0.0`, GitHub Release and
+No additional G1/G2 execution is required or authorized. Until those closure
+checks are recorded, TASK-049 remains `In Progress — Final Evidence Review
+Pending`, TASK-050 remains locked, and merge/tag, `v1.0.0`, GitHub Release and
 GA remain unauthorized.

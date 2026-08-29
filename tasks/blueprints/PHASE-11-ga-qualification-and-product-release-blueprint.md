@@ -13,7 +13,7 @@
 | Post-tag docs | `b8489bf` — documentation-only, not candidate production source |
 | Proposal Branch | `docs/phase11-ga-qualification-blueprint` |
 | Planned Tasks | `TASK-20260825-047` through `TASK-20260825-056` |
-| Next Gate | `TASK-049 canonical evidence remediation; fresh G1/G2 matrix requires separate Human approval` |
+| Next Gate | `TASK-049 post-matrix Final Evidence Review; Human TASK-049 Closure pending` |
 
 ## 2. Phase Objective
 
@@ -471,11 +471,11 @@ explicit Human Phase 11 Closure Approval. Phase Closure does not create
 
 ```text
 Blueprint Status: Approved — Human Phase 11 Blueprint Approval 2026-08-25
-Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 Completed / Closed / Human Approved with G9 `32856372581` PASS/qualifying/frozen and G11 `32955619875` PASS/qualifying/frozen under `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` (artifact `9601871146`, GitHub digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`); final docs/evidence remediation `f2d5470`; Standard `32959524443` and Quick `32959524552` PASS; all historical G11 failures remain preserved/non-qualifying; TASK-049 In Progress with preserved `d75a3a0` technical/non-qualifying matrix evidence and Human-approved paired G1/G2 canonical-evidence remediation; TASK-050..056 dependency ordered and locked
+Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 Completed / Closed / Human Approved with G9 `32856372581` PASS/qualifying/frozen and G11 `32955619875` PASS/qualifying/frozen under `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` (artifact `9601871146`, GitHub digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`); final docs/evidence remediation `f2d5470`; Standard `32959524443` and Quick `32959524552` PASS; all historical G11 failures remain preserved/non-qualifying; TASK-049 In Progress with the preserved `d75a3a0` technical/non-qualifying matrix evidence, completed canonical remediation at controller `b3df93d`, and one fresh 24-case matrix PASS/evidence frozen (24 G1 manifests, 24 G2 manifests, 24 bindings, 48 unique run IDs, root inventory 8,840/8,840); TASK-050..056 dependency ordered and locked
 Qualification Campaigns: Not Authorized
 RC mutation: Not Authorized
 v1.0.0 / GitHub Release / GA: Not Authorized
-Next Gate: TASK-049 canonical-evidence remediation Evidence Gate; fresh G1/G2 matrix requires separate Human approval
+Next Gate: TASK-049 post-matrix Final Evidence Review; Human TASK-049 Closure pending
 ```
 
 ## 23. Execution Checkpoints
@@ -511,6 +511,9 @@ Next Gate: TASK-049 canonical-evidence remediation Evidence Gate; fresh G1/G2 ma
 | 2026-08-26 | Fresh offline G11 execution under amended path contract | PASS / QUALIFYING / FROZEN | Run `32955619875`; artifact `9601871146`; GitHub digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`; 23/23 internal `SHA256SUMS`, candidate identity, SBOM/dependency/license reconciliation, secret disposition and immutable publication PASS; historical failures preserved | TASK-048 Final Evidence Review |
 | 2026-08-26 | TASK-048 Final Evidence Review and Human Closure | PASS / CLOSED | Final docs/evidence remediation `f2d5470`; verifier/docs-auditor PASS; Markdown links 378/0; Standard `32959524443` PASS; Quick `32959524552` PASS; G9/G11 qualifying evidence and historical failures frozen | TASK-049 authorized / next |
 | 2026-08-26 | TASK-049 G1/G2 implementation and approved matrix | CHANGES REQUIRED / canonical evidence remediation | Exact-controller `d75a3a02e7d01dca6bdef997109cb47f8f1b1400` remains a preserved technical observation: 24/24 cases and 96 recovery observations passed, with 4,322/4,322 custom sidecar entries and CI checkpoint `c3659fa` (Standard `32976467453`, Quick `32976467177`). It did not emit the frozen canonical `ga-run-manifest-v1`/`ga-gate-result-v1` contract and cannot be backfilled. Human-approved remediation adds one physical execution per case, paired G1/G2 manifests, `ga-g1-g2-physical-run-binding-v1`, and independent gate results; fresh matrix execution remains separately Human-gated | TASK-049 canonical remediation Evidence Gate |
+| 2026-08-29 | TASK-049 canonical evidence remediation Evidence Gate | PASS | Controller `b3df93de02ef0ff5f08c71857d7621020131361f`; exact-SHA replay Standard `33251723478` and Quick `33251723392` PASS; canonical writer, paired views, physical bindings and frozen-boundary audits PASS | Human fresh G1/G2 matrix approval |
+| 2026-08-29 | TASK-049 fresh G1/G2 matrix | PASS / EVIDENCE FROZEN | One replacement execution: 24/24 physical cases, 96/96 recovery observations, 24 G1 manifests, 24 G2 manifests, 24 bindings, 48 unique run IDs, G1/G2 gate results PASS; root inventory 8,840/8,840; case `SHA256SUMS` entries 4,320; sidecars 4,421 | Post-sync verifier/docs-auditor and Human TASK-049 Final Evidence Review |
+| 2026-08-29 | TASK-049 pre-sync Final Evidence Review | CHANGES REQUIRED — documentation/status drift only | Technical evidence and verifier PASS; stale status references required the Human-approved limited doc sync; no matrix rerun or candidate change | Post-sync verifier/docs-auditor |
 
 ## 24. Phase Closure Checklist
 
