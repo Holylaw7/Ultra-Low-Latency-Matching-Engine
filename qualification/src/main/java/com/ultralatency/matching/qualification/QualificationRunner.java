@@ -4,6 +4,9 @@ import com.ultralatency.matching.engine.EngineCommand;
 import com.ultralatency.matching.network.netty.durable.DurableNetworkConfiguration;
 import com.ultralatency.matching.network.netty.recovery.RecoverableDurableMatchingEngineTcpServer;
 import com.ultralatency.matching.network.netty.recovery.RecoverableNetworkConfiguration;
+import com.ultralatency.matching.integration.durable.DurableConfiguration;
+import com.ultralatency.matching.persistence.wal.WalCommandCodec;
+import com.ultralatency.matching.persistence.wal.WalDurabilityMode;
 import com.ultralatency.matching.persistence.wal.CommandWalReader;
 import com.ultralatency.matching.persistence.wal.WalConfiguration;
 import com.ultralatency.matching.recovery.online.RecoveryMode;
@@ -159,7 +162,39 @@ public final class QualificationRunner {
             final Path walDirectory,
             final Path snapshotDirectory,
             final int port) {
-        final DurableNetworkConfiguration durable = DurableNetworkConfiguration.defaults(walDirectory);
+        return server(walDirectory, snapshotDirectory, port,
+                com.ultralatency.matching.persistence.wal.WalConfiguration
+                        .DEFAULT_SEGMENT_SIZE_BYTES);
+    }
+
+    /**
+     * Creates the qualification-only recoverable server with an explicit legal WAL segment size.
+     * The overload keeps the existing transport and runtime composition unchanged while allowing
+     * the G3 matrix to exercise the production-supported lower segment bound.
+     */
+    public static RecoverableDurableMatchingEngineTcpServer server(
+            final Path walDirectory,
+            final Path snapshotDirectory,
+            final int port,
+            final int walSegmentSize) {
+        if (walSegmentSize < WalCommandCodec.MIN_SEGMENT_SIZE_BYTES) {
+            throw new IllegalArgumentException("WAL segment size is below the supported minimum");
+        }
+        final WalConfiguration wal = new WalConfiguration(
+                Objects.requireNonNull(walDirectory, "walDirectory"),
+                walSegmentSize,
+                WalDurabilityMode.SYNC_EACH_APPEND);
+        final DurableConfiguration defaults = DurableConfiguration.defaults(walDirectory);
+        final DurableConfiguration durableConfiguration = new DurableConfiguration(
+                wal,
+                defaults.pipelineConfiguration(),
+                defaults.shutdownTimeout());
+        final DurableNetworkConfiguration durable = new DurableNetworkConfiguration(
+                java.net.InetAddress.getLoopbackAddress(),
+                port,
+                DurableNetworkConfiguration.DEFAULT_LOW_WATERMARK,
+                DurableNetworkConfiguration.DEFAULT_HIGH_WATERMARK,
+                durableConfiguration);
         final DurableNetworkConfiguration configured = new DurableNetworkConfiguration(
                 durable.bindAddress(),
                 port,

@@ -8,6 +8,12 @@ import com.ultralatency.matching.app.RuntimeExitCode;
 import com.ultralatency.matching.qualification.ga.correctness.GaCorrectnessCampaignResult;
 import com.ultralatency.matching.qualification.ga.correctness.GaCorrectnessMatrix;
 import com.ultralatency.matching.qualification.ga.correctness.GaCorrectnessRunner;
+import com.ultralatency.matching.qualification.ga.durability.GaDurabilityCampaignResult;
+import com.ultralatency.matching.qualification.ga.durability.GaDurabilityMatrix;
+import com.ultralatency.matching.qualification.ga.durability.GaDurabilityRunner;
+import com.ultralatency.matching.qualification.ga.durability.GaOverloadCampaignResult;
+import com.ultralatency.matching.qualification.ga.durability.GaOverloadMatrix;
+import com.ultralatency.matching.qualification.ga.durability.GaOverloadRunner;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -75,6 +81,26 @@ public final class ReleaseCandidateQualificationMain {
             runGaCorrectness(matrix(arguments[2]), Path.of(arguments[4]));
             return;
         }
+        if (arguments != null && arguments.length == 3 && "ga-durability".equals(arguments[0])
+                && "--matrix".equals(arguments[1])) {
+            runGaDurability(durabilityMatrix(arguments[2]), Path.of("qualification-results"));
+            return;
+        }
+        if (arguments != null && arguments.length == 5 && "ga-durability".equals(arguments[0])
+                && "--matrix".equals(arguments[1]) && "--output".equals(arguments[3])) {
+            runGaDurability(durabilityMatrix(arguments[2]), Path.of(arguments[4]));
+            return;
+        }
+        if (arguments != null && arguments.length == 3 && "ga-overload".equals(arguments[0])
+                && "--matrix".equals(arguments[1])) {
+            runGaOverload(overloadMatrix(arguments[2]), Path.of("qualification-results"));
+            return;
+        }
+        if (arguments != null && arguments.length == 5 && "ga-overload".equals(arguments[0])
+                && "--matrix".equals(arguments[1]) && "--output".equals(arguments[3])) {
+            runGaOverload(overloadMatrix(arguments[2]), Path.of(arguments[4]));
+            return;
+        }
         {
             System.err.println("usage: child --config <path>");
             System.err.println("       lifecycle --output <directory>");
@@ -85,6 +111,10 @@ public final class ReleaseCandidateQualificationMain {
             System.err.println("       campaign --manifest <a> --manifest <b>"
                     + " --output <dir>");
             System.err.println("       ga-correctness --matrix <ga-g1-g2-v1|ga-g1-g2-test-v1>"
+                    + " [--output <dir>]");
+            System.err.println("       ga-durability --matrix <ga-g3-g7-v1|ga-g3-g7-test-v1>"
+                    + " [--output <dir>]");
+            System.err.println("       ga-overload --matrix <ga-g7-overload-v1|ga-g7-overload-test-v1>"
                     + " [--output <dir>]");
             System.exit(64);
             return;
@@ -275,11 +305,63 @@ public final class ReleaseCandidateQualificationMain {
         }
     }
 
+    private static void runGaDurability(
+            final GaDurabilityMatrix matrix,
+            final Path outputDirectory) {
+        try {
+            final GaDurabilityCampaignResult result = new GaDurabilityRunner().run(
+                    matrix, outputDirectory);
+            System.out.println("GA_DURABILITY " + (result.passed() ? "PASS" : "FAIL")
+                    + " " + result.summaryPath());
+            if (!result.passed()) {
+                System.exit(1);
+            }
+        } catch (final Exception failure) {
+            System.err.println("GA_DURABILITY_FAILURE " + failure.getClass().getName()
+                    + " " + String.valueOf(failure.getMessage()));
+            System.exit(1);
+        }
+    }
+
+    private static void runGaOverload(
+            final GaOverloadMatrix matrix,
+            final Path outputDirectory) {
+        try {
+            final GaOverloadCampaignResult result = new GaOverloadRunner().run(
+                    matrix, outputDirectory);
+            System.out.println("GA_OVERLOAD " + (result.passed() ? "PASS" : "FAIL")
+                    + " " + result.summaryPath());
+            if (!result.passed()) {
+                System.exit(1);
+            }
+        } catch (final Exception failure) {
+            System.err.println("GA_OVERLOAD_FAILURE " + failure.getClass().getName()
+                    + " " + String.valueOf(failure.getMessage()));
+            System.exit(1);
+        }
+    }
+
     private static GaCorrectnessMatrix matrix(final String name) {
         return switch (name) {
             case GaCorrectnessMatrix.APPROVED_VERSION -> GaCorrectnessMatrix.approved();
             case "ga-g1-g2-test-v1" -> GaCorrectnessMatrix.test();
             default -> throw new IllegalArgumentException("unsupported G1/G2 matrix: " + name);
+        };
+    }
+
+    private static GaDurabilityMatrix durabilityMatrix(final String name) {
+        return switch (name) {
+            case GaDurabilityMatrix.APPROVED_VERSION -> GaDurabilityMatrix.approved();
+            case "ga-g3-g7-test-v1" -> GaDurabilityMatrix.test();
+            default -> throw new IllegalArgumentException("unsupported G3 matrix: " + name);
+        };
+    }
+
+    private static GaOverloadMatrix overloadMatrix(final String name) {
+        return switch (name) {
+            case GaOverloadMatrix.APPROVED_VERSION -> GaOverloadMatrix.approved();
+            case "ga-g7-overload-test-v1" -> GaOverloadMatrix.test();
+            default -> throw new IllegalArgumentException("unsupported G7 matrix: " + name);
         };
     }
 

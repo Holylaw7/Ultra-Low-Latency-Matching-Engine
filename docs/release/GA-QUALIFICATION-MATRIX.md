@@ -55,9 +55,11 @@ and each Snapshot mode must match the PURE_WAL suffix exactly.
 
 ## G3 exact durability and corruption matrix
 
-Storage layouts use WAL segment sizes 4,096, 65,536 and 1,048,576 bytes. The
-lifecycle campaign contains exactly 50 graceful and 50 forced child-process
-terminations; every cycle applies 10,000 `LIFECYCLE_MIX` commands, seed
+Storage layouts use WAL segment sizes 4,128, 65,536 and 1,048,576 bytes. The
+Human-approved TASK-050 A1 amendment removes the former 4,096-byte case because
+it violates the frozen production minimum. The lifecycle campaign contains
+exactly 50 graceful and 50 forced child-process terminations; every cycle
+applies 10,000 `LIFECYCLE_MIX` commands, seed
 20260823, and forced termination occurs only after the final complete response.
 
 The following fixtures are mandatory for every applicable segment size:

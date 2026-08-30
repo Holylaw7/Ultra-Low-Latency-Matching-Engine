@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 /**
- * Qualification-only child JVM entry point for TASK-038.
+ * Qualification-only child JVM entry point for TASK-050.
  *
  * <p>The process exposes only the real Protocol v1 listener. Lifecycle control is a private
  * parent-to-child stdin channel and never enters the production runtime contract.</p>
@@ -20,8 +20,8 @@ public final class QualificationChildProcessMain {
 
     /** Starts one recoverable server and waits for an explicit graceful-stop command. */
     public static void main(final String[] arguments) {
-        if (arguments.length != 3) {
-            System.err.println("usage: <walDirectory> <snapshotDirectory> <port>");
+        if (arguments.length != 3 && arguments.length != 4) {
+            System.err.println("usage: <walDirectory> <snapshotDirectory> <port> [walSegmentSize]");
             System.exit(64);
             return;
         }
@@ -35,8 +35,19 @@ public final class QualificationChildProcessMain {
             System.exit(64);
             return;
         }
+        final int walSegmentSize;
+        try {
+            walSegmentSize = arguments.length == 4
+                    ? Integer.parseInt(arguments[3])
+                    : com.ultralatency.matching.persistence.wal.WalConfiguration
+                            .DEFAULT_SEGMENT_SIZE_BYTES;
+        } catch (final NumberFormatException exception) {
+            System.err.println("invalid WAL segment size: " + arguments[3]);
+            System.exit(64);
+            return;
+        }
         final RecoverableDurableMatchingEngineTcpServer server =
-                QualificationRunner.server(walDirectory, snapshotDirectory, port);
+                QualificationRunner.server(walDirectory, snapshotDirectory, port, walSegmentSize);
         try {
             server.start();
             final int boundPort = server.localAddress().orElseThrow().getPort();

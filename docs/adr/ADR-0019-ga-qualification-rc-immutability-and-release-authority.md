@@ -150,10 +150,12 @@ termination and restart convergence. JDK/OS `force(true)` remains the stated
 boundary. Hardware power-loss safety is not claimed unless a future separately
 approved hardware campaign proves it.
 
-The storage matrix uses segment sizes 4,096, 65,536 and 1,048,576 bytes. Each
-of 50 graceful and 50 forced cycles applies exactly 10,000
-`LIFECYCLE_MIX` commands with seed 20260823 before shutdown/termination. The
-exact corruption fixtures in the GA Matrix are mandatory. Dynamic
+The storage matrix uses segment sizes 4,128, 65,536 and 1,048,576 bytes. The
+Human-approved TASK-050 A1 amendment removes the former 4,096-byte case because
+it violates the frozen production minimum. Each of 50 graceful and 50 forced
+cycles applies exactly 10,000 `LIFECYCLE_MIX` commands with seed 20260823
+before shutdown/termination. The exact corruption fixtures in the GA Matrix
+are mandatory. Dynamic
 `force(true)` failure injection remains **not verified**: G3 accepts the frozen
 implementation-path/terminal-state review and dynamic rotation failure. Adding
 a force-injection production seam would mutate the candidate and require rc.2.

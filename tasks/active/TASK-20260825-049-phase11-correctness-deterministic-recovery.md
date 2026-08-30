@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-049` — GA Correctness and Deterministic Recovery |
-| Status | `In Progress / Fresh G1/G2 matrix PASS — evidence frozen; Final Evidence Review pending` |
+| Status | `Completed / Human Closed; G1/G2 PASS / QUALIFYING / FROZEN` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Human Approved |
 | Depends On | TASK-048 Human Closure Approved |
@@ -44,7 +44,9 @@ CI. Any mismatch is B0/B1, not a threshold exception.
 
 Harness mismeasurement is B2 and reruns G1/G2/G12 after remediation.
 Candidate divergence requires rc.2 or stops GA. Planned commit:
-`test(ga): qualify correctness and deterministic recovery`. Still locked.
+`test(ga): qualify correctness and deterministic recovery`. Closed after the
+fresh canonical matrix and Human Final Evidence Review; no additional matrix is
+authorized.
 
 ## 7. Background / Current Implementation
 
@@ -105,7 +107,7 @@ divergence is B0/B1 and has no in-Task fix.
 | Implementation | Completed | TASK-048 Human Closure Approved |
 | Matrix execution | PASS / evidence frozen | controller `b3df93d`; 24/24 physical cases; 96 recovery observations; paired canonical evidence and gate results |
 | Canonical remediation | Completed | paired G1/G2 views, physical bindings, independent gate results and exact-SHA replay validation |
-| Completion | Pending Human Final Evidence Review | post-sync verifier/docs-auditor and final governance decision |
+| Completion | Human Closed | post-sync verifier/docs-auditor and Human TASK-049 Closure approved |
 
 | Date | Reviewer / status | Record |
 | --- | --- | --- |
@@ -115,6 +117,7 @@ divergence is B0/B1 and has no in-Task fix.
 | 2026-08-26 | CI / Evidence validation | Checkpoint `c3659fa`; Standard `32976467453` PASS; Quick `32976467177` PASS; final read-only Evidence Gate remains pending |
 | 2026-08-29 | Main Luna Max / Evidence | Human-authorized replacement matrix under controller `b3df93d`: 24/24 physical cases, 96/96 recovery observations, paired G1/G2 canonical evidence and gate results PASS; evidence frozen |
 | 2026-08-29 | Read-only verifier | 24 G1 manifests, 24 G2 manifests, 24 bindings, 48 unique run IDs, 8,840 root inventory entries and complete sidecars — PASS |
+| 2026-08-29 | Human / Final Evidence Review and Closure | TASK-049 CLOSED; G1/G2 PASS / QUALIFYING / FROZEN; TASK-050 unlocked for its separate Human scope gate |
 
 ### Implementation Log
 
@@ -125,5 +128,7 @@ remediation adds a during-run canonical writer for paired gate views and
 physical execution bindings; focused verification and exact-SHA validation are
 passing. The single Human-authorized fresh matrix completed 24 physical cases
 with 24 G1 views, 24 G2 views, 24 bindings and independent PASS gate results.
-Evidence is frozen for Final Evidence Review; no additional matrix execution
-is authorized and TASK-050 remains locked.
+Evidence is frozen after Human Closure; no additional matrix execution is
+authorized. TASK-050 is unlocked only for its separately approved
+qualification-only implementation scope; its formal G3/G7 campaign remains
+Human-gated.

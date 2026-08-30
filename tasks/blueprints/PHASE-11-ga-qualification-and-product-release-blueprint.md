@@ -13,7 +13,7 @@
 | Post-tag docs | `b8489bf` — documentation-only, not candidate production source |
 | Proposal Branch | `docs/phase11-ga-qualification-blueprint` |
 | Planned Tasks | `TASK-20260825-047` through `TASK-20260825-056` |
-| Next Gate | `TASK-049 post-matrix Final Evidence Review; Human TASK-049 Closure pending` |
+| Next Gate | `TASK-050 Limited Remediation Evidence Review; formal G3/G7 campaign separately Human-gated` |
 
 ## 2. Phase Objective
 
@@ -162,7 +162,7 @@ component.
 | 1 | `TASK-20260825-047` | GA contracts, candidate verifier, evidence schemas and Gate evaluator | Blueprint Approval | No |
 | 2 | `TASK-20260825-048` | G9/G11 reproducibility and security preflight | 047 PASS | No |
 | 3 | `TASK-20260825-049` | G1/G2 correctness, determinism and recovery evidence | 048 PASS | No |
-| 4 | `TASK-20260825-050` | G3/G7 durability, crash and overload evidence | 049 PASS | No |
+| 4 | `TASK-20260825-050` | G3/G7 durability, crash and overload evidence | 049 Human Closure PASS | **Stop before formal campaign; separate Human approval** |
 | 5 | `TASK-20260825-051` | G4/G5 performance/capacity harness and Quick evidence | 050 PASS | **Stop before Full campaign** |
 | 6 | `TASK-20260825-052` | G6/G8 soak/observability harness and Quick evidence | 051 pre-campaign PASS | **Stop before 2h run** |
 | 7 | `TASK-20260825-053` | Execute approved G4/G5 campaign | Human performance/capacity approval | No automatic replacement |
@@ -471,11 +471,11 @@ explicit Human Phase 11 Closure Approval. Phase Closure does not create
 
 ```text
 Blueprint Status: Approved — Human Phase 11 Blueprint Approval 2026-08-25
-Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 Completed / Closed / Human Approved with G9 `32856372581` PASS/qualifying/frozen and G11 `32955619875` PASS/qualifying/frozen under `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` (artifact `9601871146`, GitHub digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`); final docs/evidence remediation `f2d5470`; Standard `32959524443` and Quick `32959524552` PASS; all historical G11 failures remain preserved/non-qualifying; TASK-049 In Progress with the preserved `d75a3a0` technical/non-qualifying matrix evidence, completed canonical remediation at controller `b3df93d`, and one fresh 24-case matrix PASS/evidence frozen (24 G1 manifests, 24 G2 manifests, 24 bindings, 48 unique run IDs, root inventory 8,840/8,840); TASK-050..056 dependency ordered and locked
+Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 Completed / Closed / Human Approved with G9 `32856372581` PASS/qualifying/frozen and G11 `32955619875` PASS/qualifying/frozen under `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` (artifact `9601871146`, GitHub digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`); final docs/evidence remediation `f2d5470`; Standard `32959524443` and Quick `32959524552` PASS; all historical G11 failures remain preserved/non-qualifying; TASK-049 CLOSED by Human with fresh 24-case matrix PASS/evidence frozen (24 G1 manifests, 24 G2 manifests, 24 bindings, 48 unique run IDs, root inventory 8,840/8,840); TASK-050 IN PROGRESS / CHANGES REQUIRED with Human-approved A1 removal of illegal 4,096-byte WAL input in favor of the 4,128-byte production minimum, real child-process forced-lifecycle coverage, completed G3 corruption/snapshot fixtures, strict G7 observable semantics and canonical campaign publication; its formal G3/G7 campaign remains not authorized; TASK-051..056 dependency ordered and locked
 Qualification Campaigns: Not Authorized
 RC mutation: Not Authorized
 v1.0.0 / GitHub Release / GA: Not Authorized
-Next Gate: TASK-049 post-matrix Final Evidence Review; Human TASK-049 Closure pending
+Next Gate: TASK-050 Limited Remediation Evidence Review; formal G3/G7 campaign requires a separate Human execution approval
 ```
 
 ## 23. Execution Checkpoints
@@ -514,6 +514,8 @@ Next Gate: TASK-049 post-matrix Final Evidence Review; Human TASK-049 Closure pe
 | 2026-08-29 | TASK-049 canonical evidence remediation Evidence Gate | PASS | Controller `b3df93de02ef0ff5f08c71857d7621020131361f`; exact-SHA replay Standard `33251723478` and Quick `33251723392` PASS; canonical writer, paired views, physical bindings and frozen-boundary audits PASS | Human fresh G1/G2 matrix approval |
 | 2026-08-29 | TASK-049 fresh G1/G2 matrix | PASS / EVIDENCE FROZEN | One replacement execution: 24/24 physical cases, 96/96 recovery observations, 24 G1 manifests, 24 G2 manifests, 24 bindings, 48 unique run IDs, G1/G2 gate results PASS; root inventory 8,840/8,840; case `SHA256SUMS` entries 4,320; sidecars 4,421 | Post-sync verifier/docs-auditor and Human TASK-049 Final Evidence Review |
 | 2026-08-29 | TASK-049 pre-sync Final Evidence Review | CHANGES REQUIRED — documentation/status drift only | Technical evidence and verifier PASS; stale status references required the Human-approved limited doc sync; no matrix rerun or candidate change | Post-sync verifier/docs-auditor |
+| 2026-08-29 | TASK-049 post-sync Final Evidence Review and Human Closure | PASS / CLOSED | Final doc sync `3d995fd`; Standard `33259817512` and Quick `33259817565` PASS; verifier/docs-auditor PASS; G1/G2 PASS / QUALIFYING / FROZEN; historical pre-remediation and Java-17 pre-run evidence preserved | TASK-050 scope review |
+| 2026-08-30 | TASK-050 Scope Review and Limited Remediation Approval | CHANGES REQUIRED / AUTHORIZED | A1 removes illegal 4,096-byte WAL case for 4,128 minimum; real child-process forced lifecycle; G3 coverage completion; strict G7 probes; canonical `ga-campaign-summary-v1`; docs/status synchronization; formal G3/G7 campaign remains separately Human-gated | TASK-050 Remediation Evidence Gate |
 
 ## 24. Phase Closure Checklist
 

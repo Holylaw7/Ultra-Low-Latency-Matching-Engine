@@ -2,16 +2,17 @@
 
 ## Status
 
-`Fresh G1/G2 matrix PASS / evidence frozen; final Evidence Review pending.`
+`TASK-049 CLOSED / Human-approved; G1/G2 PASS / QUALIFYING / FROZEN.`
 The canonical evidence remediation is complete at controller
 `b3df93de02ef0ff5f08c71857d7621020131361f`; its exact-SHA replay validation
 passed Standard CI `33251723478` and Qualification Quick Lane `33251723392`.
 The single Human-authorized replacement matrix completed 24 physical
 executions with paired canonical G1/G2 views and passed all matrix and
-evidence-integrity checks. TASK-049 remains in progress until the post-sync
-verifier/docs-auditor review and Human Final Evidence Review are complete.
-TASK-050 is still locked. No additional matrix execution, candidate mutation,
-release or GA action is authorized by this report.
+evidence-integrity checks. Post-sync verifier/docs-auditor review and Human
+Final Evidence Review/Closure are complete. TASK-050 is now eligible only for
+its separately approved scope review and qualification-only implementation;
+no additional matrix execution, candidate mutation, release or GA action is
+authorized by this report.
 
 ## Scope and frozen boundaries
 
@@ -177,18 +178,11 @@ the binding establishes that relationship without changing the frozen global
 schema. Gate results are published independently only after all case views
 are present and validated.
 
-## Remaining Evidence Gate
+## Final Evidence Review and Closure
 
-The implementation, exact-SHA validation, single fresh matrix execution and
-pre-sync verifier are complete. The remaining closure inputs are limited to:
-
-```text
-post-sync verifier read-only review
-docs-auditor post-sync review
-Human TASK-049 Final Evidence Review / Closure Approval
-```
-
-No additional G1/G2 execution is required or authorized. Until those closure
-checks are recorded, TASK-049 remains `In Progress — Final Evidence Review
-Pending`, TASK-050 remains locked, and merge/tag, `v1.0.0`, GitHub Release and
-GA remain unauthorized.
+Post-sync verifier and docs-auditor reviews passed, and Human TASK-049 Final
+Evidence Review/Closure was approved. No additional G1/G2 execution is
+required or authorized. TASK-049 is closed with G1/G2 PASS / QUALIFYING /
+FROZEN. TASK-050 is eligible only for its separately approved
+qualification-only implementation; merge/tag, `v1.0.0`, GitHub Release and GA
+remain unauthorized.

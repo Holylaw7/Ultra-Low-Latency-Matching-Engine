@@ -103,7 +103,7 @@ public record GaCorrectnessCanonicalContext(
     }
 
     /** Returns whether the context identifies the Human-approved RC candidate. */
-    boolean isApprovedCandidate() {
+    public boolean isApprovedCandidate() {
         return DEFAULT_TAG.equals(candidate.tag())
                 && DEFAULT_TAG_OBJECT.equals(candidate.tagObjectSha())
                 && DEFAULT_PRODUCTION.equals(candidate.productionSha())
