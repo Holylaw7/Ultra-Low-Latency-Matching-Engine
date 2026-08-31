@@ -122,6 +122,12 @@ class GaDurabilityRunnerTest {
         }
     }
 
+    @Test
+    void abortedCorruptionPackRetainsInfrastructureClassification() {
+        assertEquals("B2", GaDurabilityRunner.classifySemanticFailure(false));
+        assertEquals("B3", GaDurabilityRunner.classifySemanticFailure(true));
+    }
+
     private static GaCorrectnessCanonicalContext testContext(final Path repository) {
         return new GaCorrectnessCanonicalContext(
                 repository,

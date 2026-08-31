@@ -6,7 +6,7 @@
 | --- | --- |
 | TASK-049 | Human closed; G1/G2 PASS / QUALIFYING / FROZEN |
 | TASK-050 scope | Human approved |
-| Harness implementation | Round 4 qualification-only remediation implemented locally; commit/push and the next Evidence Gate are pending Human approval |
+| Harness implementation | Round 4 remediation committed/pushed at `f07d6bab50704eb172e853744ddd72a20d5df025`; Standard `33387118548` and Quick `33387118673` PASS exact-SHA; Independent Verifier returned CHANGES REQUIRED; Round 5 remediation is Human-authorized locally and commit/push are pending |
 | Formal G3/G7 campaign | Not authorized and not run |
 | Candidate | `v0.9.0-rc.1` immutable |
 | TASK-051 | Locked |
@@ -64,9 +64,9 @@ ga-overload --matrix <ga-g7-overload-v1|ga-g7-overload-test-v1> [--output <dir>]
 The final local reactor verification also passes:
 
 ```text
-mvn verify: 225 core tests + 102 qualification tests
+mvn verify: 225 core tests + 108 qualification tests
 failures: 0
-expected skips: 2 (100 qualification tests executed)
+expected skips: 2 (106 qualification tests executed)
 Checkstyle violations: 0
 ```
 
@@ -146,9 +146,37 @@ formal saturation evidence remains deferred to the Human-gated campaign.
 
 Round 4 also records the Human-approved Standard CI checkout-history exception
 and synchronizes this report's status. Production, POM/dependencies, candidate,
-G1/G2/G9/G11 evidence and the G9/G7 campaign authorization state remain
+G1/G2/G9/G11 evidence and the G3/G7 campaign authorization state remain
 unchanged. The local Round 4 Evidence Gate is pending the separately approved
 commit/push and remote validation.
+
+## Round 4 verifier findings and Round 5 remediation
+
+Round 4 was committed and pushed at
+`f07d6bab50704eb172e853744ddd72a20d5df025`; Standard `33387118548` and Quick
+`33387118673` both passed with exact-SHA binding. The bounded Independent
+Verifier completed its review and returned `CHANGES REQUIRED`. It confirmed
+the checkout exception, legal WAL matrix, child-process lifecycle, G3/G7
+harness coverage, live `RESOURCE_BOUND` readiness and frozen boundaries, but
+identified four pre-campaign findings: this status record needed to reflect
+the pushed Round 4 state; G7 semantic exceptions needed to remain `FAIL / B2`
+rather than broad-catch `ABORTED / B3`; premature or incomplete pipelined EOF
+could not be accepted as a pass; and a mixed aborted corruption pack must
+retain `ABORTED / B3` classification. Formal dynamic G3/G7 evidence remains
+deferred to the separately Human-gated campaign. Human Round 5 remediation is
+now authorized locally for those four findings only; its commit/push and next
+Evidence Gate are pending, and no formal campaign is authorized.
+
+Round 5 implementation keeps semantic G7 failures in the typed
+`FAIL / B2` path instead of allowing the broad infrastructure catch to relabel
+them `ABORTED / B3`. The pipelined probe now requires a complete protocol
+response boundary; a complete bounded-rejection frame is a valid terminal
+boundary, while EOF before such a frame is incomplete and cannot pass. G3
+preserves `ABORTED / B3` precedence when an interrupted corruption pack
+accompanies a lifecycle semantic failure, while a completed semantic failure
+remains `FAIL / B2`. Focused regression tests cover these classification and
+boundary invariants. Round 5 remains an uncommitted local qualification-only
+change pending Human Commit/Push approval.
 
 ## Explicit pending items
 
@@ -174,7 +202,9 @@ Historical failures and all earlier qualifying evidence remain preserved under
 their original contracts. No formal G3/G7 campaign or release action was
 started by this implementation checkpoint. Round 3 is preserved at
 `ee31e9a82cea9eb302024eb76f1179002e6b4508`; Round 3.1 is preserved at
-`b04786420bafd838ac4e0b378a674f766430f3bb`; Round 4 is a local
-qualification-only remediation awaiting its separately authorized commit/push
-and remote Evidence Gate. Formal G3/G7 execution remains separately
-Human-gated and unauthorized.
+`b04786420bafd838ac4e0b378a674f766430f3bb`; Round 4 is preserved at
+`f07d6bab50704eb172e853744ddd72a20d5df025` with Standard `33387118548` and
+Quick `33387118673` PASS; its verifier result is preserved as
+`CHANGES REQUIRED`. Round 5 is a local qualification-only remediation
+awaiting its separately authorized commit/push and remote Evidence Gate.
+Formal G3/G7 execution remains separately Human-gated and unauthorized.

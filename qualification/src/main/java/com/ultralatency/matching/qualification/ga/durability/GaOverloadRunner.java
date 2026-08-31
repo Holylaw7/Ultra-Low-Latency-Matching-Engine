@@ -107,6 +107,9 @@ public final class GaOverloadRunner {
                     failure = "B2";
                 }
                 raw = scenarioRaw(scenario, matrix, passed, null);
+            } catch (final SemanticQualificationFailure failureCause) {
+                failure = "B2";
+                raw = scenarioRaw(scenario, matrix, "FAIL", failureCause);
             } catch (final Exception failureCause) {
                 failure = "B3";
                 aborted = true;
@@ -253,7 +256,7 @@ public final class GaOverloadRunner {
                 directory);
         try {
             if (matrix.pipelinedRequestCount() != 2) {
-                throw new IOException("G7 pipelined probe requires exactly two requests");
+                throw semanticFailure("G7 pipelined probe requires exactly two requests");
             }
             final EngineCommand first = QualificationWorkloadV1.commandAtForRun(workload, 0);
             final EngineCommand second = QualificationWorkloadV1.commandAtForRun(workload, 1);
@@ -261,34 +264,40 @@ public final class GaOverloadRunner {
             output.write(encode(first, 1));
             output.write(encode(second, 2));
             output.flush();
-            boolean firstResponseObserved = false;
+            boolean completeResponseBoundaryObserved = false;
             int boundedRejections = 0;
             try {
                 for (int responseIndex = 0; responseIndex < 2; responseIndex++) {
                     final byte[] response = readWireFrame(socket);
                     if (isInFlightRejection(response)) {
                         boundedRejections++;
+                        completeResponseBoundaryObserved = true;
                     } else if (unsigned(response[5]) == ProtocolConstants.COMMAND_RESULT_TYPE
                             && longAt(response, 16) == 1L) {
                         consumeMatchFrames(socket, response, 1L);
-                        firstResponseObserved = true;
+                        completeResponseBoundaryObserved = true;
                     } else {
-                        throw new IOException("pipelined response was not a bounded rejection");
+                        throw semanticFailure("pipelined response was not a bounded rejection");
                     }
-                    if (firstResponseObserved && boundedRejections == 1) {
+                    // The frozen server closes the session after a complete in-flight
+                    // rejection.  The rejection frame itself is the terminal protocol
+                    // boundary; do not require a second frame or mistake the expected close
+                    // for an incomplete response.
+                    if (boundedRejections == 1) {
                         break;
                     }
                 }
-            } catch (final IOException expectedClose) {
-                if (!isDeterministicFrameClose(expectedClose)) {
-                    throw expectedClose;
-                }
-                firstResponseObserved = false;
+            } catch (final EOFException incompleteResponse) {
+                throw semanticFailure(
+                        "pipelined response ended before a complete response boundary",
+                        incompleteResponse);
             }
             server.shutdown(SHUTDOWN_TIMEOUT);
             final int persisted = com.ultralatency.matching.persistence.wal.CommandWalReader
                     .read(wal).size();
-            return boundedRejections == 1 && persisted == 1;
+            return completePipelinedResponseBoundary(
+                    completeResponseBoundaryObserved, boundedRejections)
+                    && persisted == 1;
         } finally {
             server.shutdown(SHUTDOWN_TIMEOUT);
             socket.close();
@@ -461,7 +470,7 @@ public final class GaOverloadRunner {
             }
             output.write(buffer, 0, read);
             if (output.size() > ManagementProtocol.MAX_RESPONSE_BYTES) {
-                throw new IOException("management response exceeded bound");
+                throw semanticFailure("management response exceeded bound");
             }
         }
         return output.toByteArray();
@@ -753,7 +762,7 @@ public final class GaOverloadRunner {
         final int length = ByteBuffer.wrap(header, 8, Integer.BYTES)
                 .order(ByteOrder.BIG_ENDIAN).getInt();
         if (length < ProtocolConstants.HEADER_LENGTH || length > ProtocolConstants.MAX_FRAME_LENGTH) {
-            throw new IOException("invalid bounded response length");
+            throw semanticFailure("invalid bounded response length");
         }
         final byte[] frame = new byte[length];
         System.arraycopy(header, 0, frame, 0, header.length);
@@ -786,16 +795,23 @@ public final class GaOverloadRunner {
         return failure instanceof EOFException;
     }
 
+    /** Requires a complete protocol response and exactly one bounded rejection before PASS. */
+    static boolean completePipelinedResponseBoundary(
+            final boolean completeResponseBoundaryObserved,
+            final int boundedRejections) {
+        return completeResponseBoundaryObserved && boundedRejections == 1;
+    }
+
     private static void consumeMatchFrames(
             final Socket socket,
             final byte[] commandResponse,
             final long requestId) throws IOException {
         if (commandResponse.length != ProtocolConstants.COMMAND_RESULT_FRAME_LENGTH) {
-            throw new IOException("invalid command result frame");
+            throw semanticFailure("invalid command result frame");
         }
         final int matches = intAt(commandResponse, 36);
         if (matches < 0 || matches > ProtocolConstants.MAX_FRAME_LENGTH) {
-            throw new IOException("invalid match count");
+            throw semanticFailure("invalid match count");
         }
         for (int index = 0; index < matches; index++) {
             final byte[] match = readWireFrame(socket);
@@ -803,8 +819,31 @@ public final class GaOverloadRunner {
                     || longAt(match, 16) != requestId
                     || intAt(match, 32) != index
                     || intAt(match, 36) != matches) {
-                throw new IOException("pipelined response ordering is not deterministic");
+                throw semanticFailure("pipelined response ordering is not deterministic");
             }
+        }
+    }
+
+    private static SemanticQualificationFailure semanticFailure(final String message) {
+        return new SemanticQualificationFailure(message);
+    }
+
+    private static SemanticQualificationFailure semanticFailure(
+            final String message,
+            final Throwable cause) {
+        return new SemanticQualificationFailure(message, cause);
+    }
+
+    private static final class SemanticQualificationFailure extends IOException {
+
+        private static final long serialVersionUID = 1L;
+
+        private SemanticQualificationFailure(final String message) {
+            super(message);
+        }
+
+        private SemanticQualificationFailure(final String message, final Throwable cause) {
+            super(message, cause);
         }
     }
 

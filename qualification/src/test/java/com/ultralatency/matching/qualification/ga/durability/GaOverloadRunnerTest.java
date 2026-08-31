@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.ultralatency.matching.qualification.ga.GaCandidateVerifier;
 import com.ultralatency.matching.qualification.ga.GaEvidenceCodec;
+import com.ultralatency.matching.qualification.ga.GaEvidenceStore;
 import com.ultralatency.matching.qualification.ga.GaGateEvaluator;
 import com.ultralatency.matching.qualification.ga.correctness.GaCorrectnessCanonicalContext;
 import java.io.EOFException;
@@ -25,6 +26,35 @@ class GaOverloadRunnerTest {
                 new EOFException("peer closed after rejection")));
         assertFalse(GaOverloadRunner.isDeterministicFrameClose(
                 new SocketTimeoutException("no response")));
+    }
+
+    @Test
+    void pipelinedPassRequiresCompleteResponseBoundary() {
+        assertTrue(GaOverloadRunner.completePipelinedResponseBoundary(true, 1));
+        assertFalse(GaOverloadRunner.completePipelinedResponseBoundary(false, 1));
+        assertFalse(GaOverloadRunner.completePipelinedResponseBoundary(true, 0));
+    }
+
+    @Test
+    void semanticPipelinedConfigurationFailureIsFailB2(@TempDir final Path output) throws Exception {
+        final GaOverloadMatrix matrix = new GaOverloadMatrix(
+                "ga-g7-pipelined-semantic-failure-test-v1",
+                2,
+                GaOverloadMatrix.APPROVED_MAX_REQUEST_FRAME_BYTES,
+                GaOverloadMatrix.APPROVED_MAX_MANAGEMENT_REQUEST_BYTES,
+                GaOverloadMatrix.APPROVED_SESSION_ATTEMPTS,
+                3,
+                java.util.List.of(GaOverloadScenario.PIPELINED_REQUEST));
+        final GaOverloadCampaignResult result = new GaOverloadRunner(testContext(output))
+                .run(matrix, output);
+
+        final GaDurabilityEvidence.RunReference reference = result.runs().get(0);
+        assertFalse(reference.passed());
+        assertEquals("FAIL", reference.outcome());
+        final Map<String, String> fields = GaEvidenceStore.read(
+                reference.manifestPath(), GaEvidenceCodec.Schema.RUN);
+        assertEquals("B2", fields.get("evidence.failureCode"));
+        assertEquals("FAIL", fields.get("evidence.outcome"));
     }
 
     @Test

@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-050` — Durability, Crash and Overload Qualification |
-| Status | `In Progress / CHANGES REQUIRED — Round 4 qualification-only remediation implemented locally; commit/push and Evidence Gate pending` |
+| Status | `In Progress / CHANGES REQUIRED — Round 5 qualification-only remediation implemented locally; commit/push and Evidence Gate pending` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Human Approved |
 | Depends On | TASK-049 Human Closure Approved |
@@ -113,7 +113,7 @@ the exact Matrix and accepted force limitation prevent both.
 
 | Stage | Status | Gate |
 | --- | --- | --- |
-| Implementation | Round 4 qualification-only remediation implemented locally / commit and remote Evidence Gate pending | TASK-050 Human implementation approval |
+| Implementation | Round 5 qualification-only remediation implemented locally / commit and remote Evidence Gate pending | TASK-050 Human implementation approval |
 | Formal matrix | Not authorized / not run | separate Human G3/G7 execution approval |
 | Completion | Locked | reviewers + CI |
 
@@ -125,6 +125,8 @@ the exact Matrix and accepted force limitation prevent both.
 | 2026-08-31 | Human / Round 3.1 failure triage and remediation | Standard CI `33374002293` failed because the shallow checkout omitted the frozen baseline object; classified as B2 qualification/test--CI integration defect; explicit full-history checkout remediation authorized and implemented at `b04786420bafd838ac4e0b378a674f766430f3bb`; Standard `33377267636` and Quick `33377267660` passed; the exception is recorded in ADR-0019 |
 | 2026-08-31 | Independent Verifier / Round 3.1 review | `CHANGES REQUIRED`: dynamic G3/G7 outputs deferred to the formal Human-gated campaign; runner abnormal-path ABORTED wiring and live RESOURCE_BOUND harness readiness required; no candidate or production defect observed |
 | 2026-08-31 | Human / Round 4 Limited Remediation | Authorized governance/status synchronization, real runner `ABORTED` lifecycle integration, FAIL-vs-ABORTED distinction and live runtime RESOURCE_BOUND probe; formal G3/G7 campaign remains unauthorized; commit/push awaits a separate Human approval |
+| 2026-08-31 | Human / Round 4 Independent Verifier review | `CHANGES REQUIRED`: stale Round 4 status, G7 semantic failures incorrectly mapped to `ABORTED / B3`, pipelined EOF could be accepted without a complete response boundary, and G3 mixed corruption-pack interruption could be classified `ABORTED / B2`; no candidate or production defect observed |
+| 2026-08-31 | Human / Round 5 Limited Remediation | Authorized qualification-only correction of FAIL/B2 versus ABORTED/B3 classification, complete pipelined response-boundary enforcement, G3 interruption precedence and Round 4 status synchronization; formal G3/G7 campaign remains unauthorized; commit/push awaits a separate Human approval |
 
 ### Implementation Log
 
@@ -152,6 +154,13 @@ inventory. Every durability payload is covered by an adjacent sidecar and the
 validated `SHA256SUMS` inventory; manifest and inventory membership must agree
 exactly, and unlisted or symbolic entries fail closed. Campaign/gate
 publication validates candidate and controller identity against the execution
-context. No formal G3/G7 campaign is authorized by this checkpoint. Round 4
-is local-only pending its separately authorized commit/push and remote Evidence
-Gate.
+context. Round 4 was committed/pushed at `f07d6bab50704eb172e853744ddd72a20d5df025`
+with Standard `33387118548` and Quick `33387118673` exact-SHA PASS; its
+Independent Verifier returned `CHANGES REQUIRED` for four findings. Round 5
+now routes semantic G7 violations to `FAIL / B2`, reserves `ABORTED / B3` for
+runner/infrastructure interruptions, requires a complete pipelined response
+boundary before PASS, preserves `ABORTED / B3` precedence for interrupted G3
+corruption packs, and synchronizes the Round 4 status record. Focused Round 5
+tests pass locally; no formal G3/G7 campaign is authorized by this checkpoint.
+Round 5 remains local-only pending its separately authorized commit/push and
+remote Evidence Gate.

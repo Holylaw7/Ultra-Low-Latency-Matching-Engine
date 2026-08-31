@@ -261,9 +261,16 @@ public final class GaDurabilityRunner {
                 }
             }
         } catch (final SemanticQualificationFailure failureCause) {
-            failure = "B2";
-            raw = lifecycleFailureRaw(matrix, segmentSize, cycle, first, end, forced,
-                    "FAIL", failureCause);
+            final boolean corruptionPackAborted = corruptionPack != null
+                    && corruptionPack.aborted();
+            failure = classifySemanticFailure(corruptionPackAborted);
+            if (corruptionPackAborted) {
+                raw = lifecycleFailureRaw(matrix, segmentSize, cycle, first, end, forced,
+                        "ABORTED", failureCause) + corruptionPack.rawSummary();
+            } else {
+                raw = lifecycleFailureRaw(matrix, segmentSize, cycle, first, end, forced,
+                        "FAIL", failureCause);
+            }
         } catch (final IOException | RuntimeException failureCause) {
             failure = "B3";
             raw = lifecycleFailureRaw(matrix, segmentSize, cycle, first, end, forced,
@@ -1060,6 +1067,11 @@ public final class GaDurabilityRunner {
 
     private static SemanticQualificationFailure semanticFailure(final String message) {
         return new SemanticQualificationFailure(message);
+    }
+
+    /** Keeps an aborted corruption pack dominant over a semantic lifecycle failure. */
+    static String classifySemanticFailure(final boolean corruptionPackAborted) {
+        return corruptionPackAborted ? "B3" : "B2";
     }
 
     private static final class SemanticQualificationFailure extends IOException {
