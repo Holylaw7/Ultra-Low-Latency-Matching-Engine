@@ -6,7 +6,7 @@
 | --- | --- |
 | TASK-049 | Human closed; G1/G2 PASS / QUALIFYING / FROZEN |
 | TASK-050 scope | Human approved |
-| Harness implementation | Round 3.1 checkout-contract remediation implemented locally; commit/remote Evidence Gate pending |
+| Harness implementation | Round 4 qualification-only remediation implemented locally; commit/push and the next Evidence Gate are pending Human approval |
 | Formal G3/G7 campaign | Not authorized and not run |
 | Candidate | `v0.9.0-rc.1` immutable |
 | TASK-051 | Locked |
@@ -117,9 +117,38 @@ was observed.  Quick Lane `33374002245` passed the same SHA but runs only the
 quick smoke test.
 
 The Human-approved Round 3.1 remediation adds an explicit full-history
-checkout contract to Standard CI.  The change is implemented locally and its
-commit/remote Evidence Gate remains pending; no formal G3/G7 campaign is
-authorized.
+checkout contract to Standard CI. It was committed and pushed at
+`b04786420bafd838ac4e0b378a674f766430f3bb`; Standard `33377267636` and Quick
+`33377267660` both passed with exact-SHA binding. The earlier Standard failure
+`33374002293` remains preserved as a B2, non-qualifying result. This checkout
+exception is recorded in ADR-0019; no formal G3/G7 campaign is authorized.
+
+## Round 4 lifecycle and resource-bound remediation
+
+The Independent Verifier review of `b04786420bafd838ac4e0b378a674f766430f3bb`
+returned `CHANGES REQUIRED`. Dynamic 50/50 G3 and live G7 qualification output
+remain deferred to the separately Human-gated formal campaign; their absence
+is not a pre-campaign PASS or FAIL. The blocking pre-campaign finding was that
+runner exceptions were still published as `FAIL / B2` even though the runner
+could not complete a qualification determination. Round 4 now routes those
+abnormal/infrastructure paths through the existing canonical `ABORTED` writer
+with failure code `B3`, while explicit semantic assertion failures remain
+`FAIL`. Raw evidence, inventories, adjacent sidecars and gate/campaign
+ABORTED propagation remain fail-closed.
+
+The verifier also found that the prior `RESOURCE_BOUND` scenario only
+constructed configuration and evidence files. Round 4 adds a qualification-only
+live runtime pipeline-saturation probe: it starts the bounded pipeline, holds
+the consumer, records the first deterministic `FULL` result and bounded
+accepted count, then releases and shuts down the probe. The observation is
+published as an immutable artifact and included in the existing inventory;
+formal saturation evidence remains deferred to the Human-gated campaign.
+
+Round 4 also records the Human-approved Standard CI checkout-history exception
+and synchronizes this report's status. Production, POM/dependencies, candidate,
+G1/G2/G9/G11 evidence and the G9/G7 campaign authorization state remain
+unchanged. The local Round 4 Evidence Gate is pending the separately approved
+commit/push and remote validation.
 
 ## Explicit pending items
 
@@ -144,7 +173,8 @@ G1/G2/G9/G11 evidence mutation: 0
 Historical failures and all earlier qualifying evidence remain preserved under
 their original contracts. No formal G3/G7 campaign or release action was
 started by this implementation checkpoint. Round 3 is preserved at
-`ee31e9a82cea9eb302024eb76f1179002e6b4508`; Round 3.1 is currently a local
-qualification-only change awaiting its separately authorized commit/push and
-remote Evidence Gate. Formal G3/G7 execution remains separately
-Human-authorized.
+`ee31e9a82cea9eb302024eb76f1179002e6b4508`; Round 3.1 is preserved at
+`b04786420bafd838ac4e0b378a674f766430f3bb`; Round 4 is a local
+qualification-only remediation awaiting its separately authorized commit/push
+and remote Evidence Gate. Formal G3/G7 execution remains separately
+Human-gated and unauthorized.

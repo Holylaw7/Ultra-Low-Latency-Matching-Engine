@@ -415,6 +415,21 @@ publication all passed. Historical failed runs remain preserved and TASK-048
 still requires final evidence review; no additional G11 execution is
 authorized.
 
+#### Human-approved TASK-050 Standard checkout-history exception (2026-08-31)
+
+The Round 3.1 qualification remediation changed the existing Standard CI
+checkout contract to `fetch-depth: 0` so the frozen-boundary verifier can
+resolve the immutable production baseline object
+`e2828f563ee41316c062385c0244ac1336731359`. This was a qualification-only
+exception to the otherwise frozen workflow boundary, authorized after
+Standard CI `33374002293` failed because the default shallow checkout omitted
+that historical object. The change is recorded at remediation SHA
+`b04786420bafd838ac4e0b378a674f766430f3bb`; Standard CI `33377267636` and
+Quick Lane `33377267660` both passed with exact-SHA binding. It changes neither
+production semantics nor candidate/build inputs and does not authorize the
+formal G3/G7 campaign. The historical Standard failure remains preserved as
+non-qualifying evidence.
+
 ### D16 — Release source and production source may be distinguished
 
 The qualified production artifact source remains `e2828f5`. Human may either:

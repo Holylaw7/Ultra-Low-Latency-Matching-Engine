@@ -161,6 +161,46 @@ class GaDurabilityEvidenceTest {
     }
 
     @Test
+    void semanticFailureAndInfrastructureAbortRemainDistinct(@TempDir final Path output)
+            throws Exception {
+        final GaCorrectnessCanonicalContext context = context(output);
+        final GaDurabilityEvidence.RunReference semanticFailure = GaDurabilityEvidence.publishRun(
+                output.resolve("semantic-failure"),
+                "G3",
+                "g3-v1",
+                20_260_823L,
+                24,
+                4_128,
+                "workload-v1",
+                context,
+                STARTED,
+                COMPLETED,
+                false,
+                "B2",
+                "status=FAIL\n");
+        final GaDurabilityEvidence.RunReference infrastructureAbort =
+                GaDurabilityEvidence.publishAbortedRun(
+                        output.resolve("infrastructure-abort"),
+                        "G3",
+                        "g3-v1",
+                        20_260_823L,
+                        24,
+                        4_128,
+                        "workload-v1",
+                        context,
+                        STARTED,
+                        COMPLETED,
+                        "B3",
+                        "status=ABORTED\n",
+                        null);
+
+        assertEquals("FAIL", semanticFailure.outcome());
+        assertEquals("ABORTED", infrastructureAbort.outcome());
+        assertFalse(semanticFailure.aborted());
+        assertTrue(infrastructureAbort.aborted());
+    }
+
+    @Test
     void duplicateMembershipProducesFailGateNotPass(@TempDir final Path output) throws Exception {
         final GaCorrectnessCanonicalContext context = context(output);
         final GaDurabilityEvidence.RunReference reference = validReference(output, context);

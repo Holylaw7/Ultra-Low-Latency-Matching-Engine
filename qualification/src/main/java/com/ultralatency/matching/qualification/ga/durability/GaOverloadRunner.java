@@ -100,6 +100,7 @@ public final class GaOverloadRunner {
             boolean passed = false;
             String failure = "NONE";
             String raw;
+            boolean aborted = false;
             try {
                 passed = executeScenario(scenario, matrix, scenarioDirectory);
                 if (!passed) {
@@ -107,24 +108,42 @@ public final class GaOverloadRunner {
                 }
                 raw = scenarioRaw(scenario, matrix, passed, null);
             } catch (final Exception failureCause) {
-                failure = "B2";
-                raw = scenarioRaw(scenario, matrix, false, failureCause);
+                failure = "B3";
+                aborted = true;
+                raw = scenarioRaw(scenario, matrix, "ABORTED", failureCause);
             }
-            runs.add(GaDurabilityEvidence.publishRun(
-                    scenarioDirectory,
-                    GATE,
-                    GATE_VERSION,
-                    20_260_823L,
-                    1,
-                    WalCommandCodec.MIN_SEGMENT_SIZE_BYTES,
-                    QualificationWorkloadV1.VERSION,
-                    context,
-                    runStarted,
-                    Instant.now(),
-                    passed,
-                    failure,
-                    raw,
-                    matrixConfiguration));
+            if (aborted) {
+                runs.add(GaDurabilityEvidence.publishAbortedRun(
+                        scenarioDirectory,
+                        GATE,
+                        GATE_VERSION,
+                        20_260_823L,
+                        1,
+                        WalCommandCodec.MIN_SEGMENT_SIZE_BYTES,
+                        QualificationWorkloadV1.VERSION,
+                        context,
+                        runStarted,
+                        Instant.now(),
+                        failure,
+                        raw,
+                        matrixConfiguration));
+            } else {
+                runs.add(GaDurabilityEvidence.publishRun(
+                        scenarioDirectory,
+                        GATE,
+                        GATE_VERSION,
+                        20_260_823L,
+                        1,
+                        WalCommandCodec.MIN_SEGMENT_SIZE_BYTES,
+                        QualificationWorkloadV1.VERSION,
+                        context,
+                        runStarted,
+                        Instant.now(),
+                        passed,
+                        failure,
+                        raw,
+                        matrixConfiguration));
+            }
         }
         final List<GaDurabilityEvidence.Criterion> criteria = matrix.scenarios().stream()
                 .map(scenario -> criterionFor(scenario, runs))
@@ -467,17 +486,17 @@ public final class GaOverloadRunner {
             final Path directory,
             final GaOverloadMatrix matrix) throws IOException {
         Files.createDirectories(directory);
-        final long entryCount;
         for (int index = 0; index < 8; index++) {
             Files.writeString(directory.resolve("bounded-" + index + ".evidence"),
                     "bounded\n", java.nio.file.StandardOpenOption.CREATE_NEW);
         }
+        final boolean liveRuntimeBounded = liveRuntimeResourceBound(directory, matrix);
+        final long entryCount;
         try (var paths = Files.walk(directory)) {
             entryCount = paths.count();
         }
         // Exercise the same application-level bounds that protect the runtime from an
-        // oversized pipeline or an excessive management admission count.  These probes only
-        // construct the immutable configuration; they do not start another runtime or alter it.
+        // oversized pipeline or an excessive management admission count.
         final boolean pipelineBounded = rejectsRuntimeConfiguration(
                 directory.resolve("pipeline-bound"),
                 com.ultralatency.matching.app.RuntimeConfiguration.MAX_PIPELINE_CAPACITY * 2,
@@ -485,10 +504,87 @@ public final class GaOverloadRunner {
         final boolean managementBounded = rejectsRuntimeConfiguration(
                 directory.resolve("management-bound"), 2, 65);
         return entryCount <= GaDurabilityEvidence.maxArtifactCount()
+                && liveRuntimeBounded
                 && pipelineBounded
                 && managementBounded
                 && matrix.maxRequestFrameBytes() <= ProtocolConstants.MAX_FRAME_LENGTH
                 && matrix.maxManagementRequestBytes() == ManagementProtocol.MAX_REQUEST_BYTES;
+    }
+
+    /** Runs a live bounded-pipeline saturation probe and records its observable result. */
+    private static boolean liveRuntimeResourceBound(
+            final Path directory,
+            final GaOverloadMatrix matrix) throws IOException {
+        final Path probeDirectory = directory.resolve("live-runtime");
+        Files.createDirectories(probeDirectory);
+        final CountDownLatch entered = new CountDownLatch(1);
+        final CountDownLatch release = new CountDownLatch(1);
+        final MatchingEnginePipeline pipeline = new MatchingEnginePipeline(
+                new PipelineConfiguration(matrix.pipelineCapacity(), PipelineWaitMode.BLOCKING),
+                result -> {
+                    entered.countDown();
+                    try {
+                        release.await(30, TimeUnit.SECONDS);
+                    } catch (final InterruptedException interrupted) {
+                        Thread.currentThread().interrupt();
+                        throw new IllegalStateException("resource-bound probe interrupted",
+                                interrupted);
+                    }
+                },
+                failure -> { });
+        int accepted = 0;
+        boolean fullObserved = false;
+        PipelineState stateBeforeRelease = PipelineState.NEW;
+        try {
+            pipeline.start();
+            final QualificationConfiguration workload = new QualificationConfiguration(
+                    QualificationProfile.LIFECYCLE_MIX,
+                    20_260_823L,
+                    Math.min(QualificationConfiguration.MAX_COMMAND_COUNT,
+                            matrix.pipelineCapacity() + 2),
+                    COMMAND_TIMEOUT,
+                    probeDirectory);
+            if (pipeline.tryPublish(QualificationWorkloadV1.commandAtForRun(workload, 0))
+                    != PipelinePublishOutcome.ACCEPTED
+                    || !entered.await(2, TimeUnit.SECONDS)) {
+                return false;
+            }
+            accepted = 1;
+            for (int index = 1; index < workload.commandCount(); index++) {
+                final PipelinePublishOutcome outcome = pipeline.tryPublish(
+                        QualificationWorkloadV1.commandAtForRun(workload, index));
+                if (outcome == PipelinePublishOutcome.FULL) {
+                    fullObserved = true;
+                    break;
+                }
+                accepted++;
+            }
+            stateBeforeRelease = pipeline.state();
+            final boolean bounded = fullObserved
+                    && accepted <= matrix.pipelineCapacity()
+                    && stateBeforeRelease == PipelineState.RUNNING;
+            final String observation = "schemaVersion=ga-g7-resource-bound-v1\n"
+                    + "probe=LIVE_RUNTIME_PIPELINE_SATURATION\n"
+                    + "pipelineCapacity=" + matrix.pipelineCapacity() + "\n"
+                    + "acceptedBeforeFull=" + accepted + "\n"
+                    + "fullObserved=" + fullObserved + "\n"
+                    + "stateBeforeRelease=" + stateBeforeRelease + "\n"
+                    + "bounded=" + bounded + "\n";
+            Files.writeString(probeDirectory.resolve("resource-bound-live-observation-v1.txt"),
+                    observation,
+                    java.nio.charset.StandardCharsets.US_ASCII,
+                    java.nio.file.StandardOpenOption.CREATE_NEW);
+            return bounded;
+        } catch (final InterruptedException interrupted) {
+            Thread.currentThread().interrupt();
+            throw new IOException("resource-bound probe interrupted", interrupted);
+        } finally {
+            release.countDown();
+            if (pipeline.state() == PipelineState.RUNNING
+                    || pipeline.state() == PipelineState.DRAINING) {
+                pipeline.shutdown(SHUTDOWN_TIMEOUT);
+            }
+        }
     }
 
     private static boolean rejectsRuntimeConfiguration(
@@ -738,6 +834,14 @@ public final class GaOverloadRunner {
             final GaOverloadMatrix matrix,
             final boolean passed,
             final Throwable failure) {
+        return scenarioRaw(scenario, matrix, passed ? "PASS" : "FAIL", failure);
+    }
+
+    private static String scenarioRaw(
+            final GaOverloadScenario scenario,
+            final GaOverloadMatrix matrix,
+            final String outcome,
+            final Throwable failure) {
         final StringBuilder text = new StringBuilder();
         final String observable = switch (scenario) {
             case SECOND_SESSION -> "ERROR_SERVER_BUSY_ON_SECOND_SESSION";
@@ -746,7 +850,7 @@ public final class GaOverloadRunner {
             case PIPELINE_FULL -> "PIPELINE_FULL_WITH_NO_UNBOUNDED_QUEUE";
             case MANAGEMENT_BOUND -> "REQUEST_BOUND_AND_RESPONSE_BOUND_ENFORCED";
             case DURABLE_FULL -> "DURABLE_THEN_FULL_TERMINAL_FAILURE_PRESERVED";
-            case RESOURCE_BOUND -> "RUNTIME_AND_EVIDENCE_RESOURCE_BOUNDS_ENFORCED";
+            case RESOURCE_BOUND -> "LIVE_RUNTIME_PIPELINE_SATURATION_AND_EVIDENCE_RESOURCE_BOUNDS_ENFORCED";
         };
         text.append("schemaVersion=ga-g7-scenario-v1\n")
                 .append("matrixVersion=").append(matrix.version()).append('\n')
@@ -761,7 +865,7 @@ public final class GaOverloadRunner {
                         ? "QUALIFICATION_COORDINATOR_BOUNDARY_ONLY"
                         : "PUBLIC_OR_COMPONENT_BOUNDARY")
                 .append('\n')
-                .append("outcome=").append(passed ? "PASS" : "FAIL").append('\n')
+                .append("outcome=").append(outcome).append('\n')
                 .append("claim.unboundedQueue=NOT_CLAIMED\n")
                 .append("claim.secondProducer=NOT_CLAIMED\n");
         if (failure != null) {

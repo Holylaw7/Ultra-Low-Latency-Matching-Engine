@@ -91,7 +91,11 @@ public final class GaDurabilityRunner {
             if (packCorruption && cycle == 1) {
                 final Path cycleDirectory = lifecycleDirectory(root, segmentSize, cycle,
                         cycle > matrix.gracefulCycles());
-                corruptionPack = runCorruptionPack(matrix, cycleDirectory);
+                try {
+                    corruptionPack = runCorruptionPack(matrix, cycleDirectory);
+                } catch (final IOException | RuntimeException failureCause) {
+                    corruptionPack = abortedCorruptionPack(failureCause);
+                }
                 currentPack = corruptionPack;
             }
             runs.add(runLifecycleCycle(matrix, root, segmentSize, cycle, context,
@@ -214,7 +218,7 @@ public final class GaDurabilityRunner {
                     child.gracefulShutdown(COMMAND_TIMEOUT);
                 }
                 if (forced != child.forceTerminationObserved()) {
-                    throw new IOException("lifecycle termination path did not match the matrix");
+                    throw semanticFailure("lifecycle termination path did not match the matrix");
                 }
             } finally {
                 child.close();
@@ -227,7 +231,7 @@ public final class GaDurabilityRunner {
                     walDirectory, snapshotDirectory, segmentSize, COMMAND_TIMEOUT);
             final long recoveryPid = recoveryChild.pid();
             if (recoveryPid == child.pid()) {
-                throw new IOException("recovery process did not cross a process boundary");
+                throw semanticFailure("recovery process did not cross a process boundary");
             }
             final int recoveryExitCode;
             try {
@@ -241,7 +245,7 @@ public final class GaDurabilityRunner {
             if (!responseBoundaryObserved || persisted.size() != matrix.commandsPerCycle()
                     || recovered.walEndSequence() != matrix.commandsPerCycle()
                     || recovered.nextCommandSequence() != matrix.commandsPerCycle() + 1L) {
-                throw new IOException("restart sequence did not converge at cycle " + cycle);
+                throw semanticFailure("restart sequence did not converge at cycle " + cycle);
             }
             passed = corruptionPack == null || corruptionPack.passed();
             raw = lifecycleRaw(matrix, segmentSize, cycle, first, end, forced,
@@ -250,11 +254,50 @@ public final class GaDurabilityRunner {
                     child.forceTerminationObserved());
             if (corruptionPack != null) {
                 raw += corruptionPack.rawSummary();
+                if (corruptionPack.aborted()) {
+                    failure = "B3";
+                } else if (!corruptionPack.passed()) {
+                    failure = "B0";
+                }
             }
-        } catch (final IOException | RuntimeException failureCause) {
+        } catch (final SemanticQualificationFailure failureCause) {
             failure = "B2";
             raw = lifecycleFailureRaw(matrix, segmentSize, cycle, first, end, forced,
-                    failureCause);
+                    "FAIL", failureCause);
+        } catch (final IOException | RuntimeException failureCause) {
+            failure = "B3";
+            raw = lifecycleFailureRaw(matrix, segmentSize, cycle, first, end, forced,
+                    "ABORTED", failureCause);
+            return GaDurabilityEvidence.publishAbortedRun(
+                    cycleDirectory,
+                    GATE,
+                    GATE_VERSION,
+                    matrix.seed(),
+                    matrix.commandsPerCycle(),
+                    segmentSize,
+                    QualificationWorkloadV1.VERSION,
+                    context,
+                    started,
+                    Instant.now(),
+                    failure,
+                    raw,
+                    matrixConfiguration);
+        }
+        if (corruptionPack != null && corruptionPack.aborted()) {
+            return GaDurabilityEvidence.publishAbortedRun(
+                    cycleDirectory,
+                    GATE,
+                    GATE_VERSION,
+                    matrix.seed(),
+                    matrix.commandsPerCycle(),
+                    segmentSize,
+                    QualificationWorkloadV1.VERSION,
+                    context,
+                    started,
+                    Instant.now(),
+                    failure,
+                    raw,
+                    matrixConfiguration);
         }
         return GaDurabilityEvidence.publishRun(
                 cycleDirectory,
@@ -299,12 +342,28 @@ public final class GaDurabilityRunner {
                         + "expectedOutcome=FAIL_CLOSED\n"
                         + "observedOutcome=" + (passed ? "FAIL_CLOSED" : "UNEXPECTED_ACCEPT") + "\n";
             } catch (final IOException | RuntimeException failureCause) {
-                failure = "B2";
+                failure = "B3";
                 raw = "schemaVersion=ga-g3-corruption-fixture-v1\n"
                         + "fixture=" + fixture + "\n"
                         + "segmentSizeBytes=" + segmentSize + "\n"
                         + "observedOutcome=ERROR\n"
+                        + "status=ABORTED\n"
                         + "failureType=" + failureCause.getClass().getName() + "\n";
+                runs.add(GaDurabilityEvidence.publishAbortedRun(
+                        fixtureDirectory,
+                        GATE,
+                        GATE_VERSION,
+                        matrix.seed(),
+                        2,
+                        segmentSize,
+                        QualificationWorkloadV1.VERSION,
+                        context,
+                        started,
+                        Instant.now(),
+                        failure,
+                        raw,
+                        matrixConfiguration));
+                continue;
             }
             runs.add(GaDurabilityEvidence.publishRun(
                     fixtureDirectory,
@@ -334,6 +393,7 @@ public final class GaDurabilityRunner {
         Files.createDirectories(packDirectory);
         final List<String> observations = new ArrayList<>();
         boolean passed = true;
+        boolean aborted = false;
         int count = 0;
         for (int segmentSize : matrix.walSegmentSizes()) {
             if (segmentSize < WalCommandCodec.MIN_SEGMENT_SIZE_BYTES) {
@@ -345,6 +405,7 @@ public final class GaDurabilityRunner {
                         "segment-%d/%s", segmentSize,
                         fixture.name().toLowerCase(Locale.ROOT)));
                 boolean fixturePassed = false;
+                boolean fixtureAborted = false;
                 String failure = "NONE";
                 try {
                     fixturePassed = executeFixture(fixture, fixtureDirectory, segmentSize,
@@ -353,12 +414,15 @@ public final class GaDurabilityRunner {
                         failure = "B0";
                     }
                 } catch (final IOException | RuntimeException exception) {
-                    failure = "B2";
+                    failure = "B3";
+                    aborted = true;
+                    fixtureAborted = true;
                 }
                 passed &= fixturePassed;
                 observations.add("fixture=" + fixture
                         + ";segmentSizeBytes=" + segmentSize
-                        + ";outcome=" + (fixturePassed ? "FAIL_CLOSED" : "FAIL")
+                        + ";outcome=" + (fixtureAborted ? "ABORTED"
+                                : fixturePassed ? "FAIL_CLOSED" : "FAIL")
                         + ";failureCode=" + failure);
             }
         }
@@ -369,15 +433,26 @@ public final class GaDurabilityRunner {
                 .append("expectedFixtureCount=").append(matrix.corruptionExecutionCount())
                 .append('\n')
                 .append("observedFixtureCount=").append(count).append('\n')
-                .append("outcome=").append(passed ? "PASS" : "FAIL").append('\n');
+                .append("outcome=").append(aborted ? "ABORTED" : passed ? "PASS" : "FAIL")
+                .append('\n');
         observations.forEach(value -> text.append(value).append('\n'));
         QualificationEvidencePublication.text(result, text.toString());
-        return new CorruptionPack(count, passed,
+        return new CorruptionPack(count, passed, aborted,
                 "corruptionPack.path=" + relativePath(lifecycleDirectory, packDirectory)
                         + "\ncorruptionPack.result="
                         + relativePath(lifecycleDirectory, result) + "\n"
                         + "corruptionPack.count=" + count + "\n"
-                        + "corruptionPack.outcome=" + (passed ? "PASS" : "FAIL") + "\n");
+                        + "corruptionPack.outcome="
+                        + (aborted ? "ABORTED" : passed ? "PASS" : "FAIL") + "\n");
+    }
+
+    private static CorruptionPack abortedCorruptionPack(final Throwable failure) {
+        return new CorruptionPack(
+                0,
+                false,
+                true,
+                "corruptionPack.outcome=ABORTED\n"
+                        + "corruptionPack.failureType=" + failure.getClass().getName() + "\n");
     }
 
     private static boolean executeFixture(
@@ -909,6 +984,7 @@ public final class GaDurabilityRunner {
             final int first,
             final int end,
             final boolean forced,
+            final String outcome,
             final Throwable failure) {
         return "schemaVersion=ga-g3-lifecycle-cycle-v1\n"
                 + "matrixVersion=" + matrix.version() + "\n"
@@ -917,7 +993,7 @@ public final class GaDurabilityRunner {
                 + "firstCommandIndex=" + first + "\n"
                 + "lastCommandIndex=" + (end - 1) + "\n"
                 + "termination=" + (forced ? "FORCED_AFTER_COMPLETED_RESPONSE" : "GRACEFUL") + "\n"
-                + "status=FAIL\n"
+                + "status=" + outcome + "\n"
                 + "failureType=" + failure.getClass().getName() + "\n"
                 + "claim.exactlyOnce=NOT_CLAIMED\n"
                 + "claim.hardwarePowerLoss=NOT_CLAIMED\n";
@@ -982,6 +1058,23 @@ public final class GaDurabilityRunner {
         }).count();
     }
 
-    private record CorruptionPack(int executionCount, boolean passed, String rawSummary) {
+    private static SemanticQualificationFailure semanticFailure(final String message) {
+        return new SemanticQualificationFailure(message);
+    }
+
+    private static final class SemanticQualificationFailure extends IOException {
+
+        private static final long serialVersionUID = 1L;
+
+        private SemanticQualificationFailure(final String message) {
+            super(message);
+        }
+    }
+
+    private record CorruptionPack(
+            int executionCount,
+            boolean passed,
+            boolean aborted,
+            String rawSummary) {
     }
 }

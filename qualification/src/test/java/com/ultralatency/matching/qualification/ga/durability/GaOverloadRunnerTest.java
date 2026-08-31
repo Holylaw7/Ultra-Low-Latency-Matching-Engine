@@ -66,6 +66,31 @@ class GaOverloadRunnerTest {
                 .allMatch(raw -> raw.contains("observableContract=")));
     }
 
+    @Test
+    void resourceBoundUsesLiveRuntimeSaturationEvidence(@TempDir final Path output)
+            throws Exception {
+        final GaOverloadMatrix matrix = new GaOverloadMatrix(
+                "ga-g7-resource-bound-test-v1",
+                2,
+                GaOverloadMatrix.APPROVED_MAX_REQUEST_FRAME_BYTES,
+                GaOverloadMatrix.APPROVED_MAX_MANAGEMENT_REQUEST_BYTES,
+                GaOverloadMatrix.APPROVED_SESSION_ATTEMPTS,
+                GaOverloadMatrix.APPROVED_PIPELINED_REQUEST_COUNT,
+                java.util.List.of(GaOverloadScenario.RESOURCE_BOUND));
+        final GaOverloadCampaignResult result = new GaOverloadRunner(testContext(output))
+                .run(matrix, output);
+
+        assertTrue(result.passed(), result.runs()::toString);
+        final Path runDirectory = result.runs().get(0).manifestPath().getParent();
+        final String observation = Files.readString(runDirectory.resolve("live-runtime")
+                .resolve("resource-bound-live-observation-v1.txt"));
+        assertTrue(observation.contains("probe=LIVE_RUNTIME_PIPELINE_SATURATION"));
+        assertTrue(observation.contains("fullObserved=true"));
+        assertTrue(observation.contains("bounded=true"));
+        assertTrue(Files.readString(runDirectory.resolve("raw-evidence-v1.txt"))
+                .contains("LIVE_RUNTIME_PIPELINE_SATURATION"));
+    }
+
     private static GaCorrectnessCanonicalContext testContext(final Path repository) {
         return new GaCorrectnessCanonicalContext(
                 repository,

@@ -1,11 +1,13 @@
 package com.ultralatency.matching.qualification.ga.durability;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.ultralatency.matching.qualification.ga.GaCandidateVerifier;
 import com.ultralatency.matching.qualification.ga.GaEvidenceCodec;
+import com.ultralatency.matching.qualification.ga.GaEvidenceStore;
 import com.ultralatency.matching.qualification.ga.GaGateEvaluator;
 import com.ultralatency.matching.qualification.ga.correctness.GaCorrectnessCanonicalContext;
 import java.nio.file.Files;
@@ -81,6 +83,43 @@ class GaDurabilityRunnerTest {
         assertEquals(1 + GaDurabilityFixture.values().length, result.runs().size());
         assertTrue(result.runs().stream().allMatch(
                 GaDurabilityEvidence.RunReference::passed));
+    }
+
+    @Test
+    void runnerPublishesChildStartupFailureAsAbortedEvidence(@TempDir final Path output)
+            throws Exception {
+        final String previousClassPath = System.getProperty("surefire.test.class.path");
+        System.setProperty("surefire.test.class.path",
+                output.resolve("missing-qualification-classpath").toString());
+        try {
+            final GaDurabilityMatrix matrix = new GaDurabilityMatrix(
+                    "ga-g3-aborted-startup-test-v1",
+                    java.util.List.of(8_192),
+                    1,
+                    0,
+                    1,
+                    GaDurabilityMatrix.APPROVED_SEED,
+                    java.util.List.of(GaDurabilityFixture.SEGMENT_MAGIC));
+            final GaDurabilityCampaignResult result = new GaDurabilityRunner(testContext(output))
+                    .run(matrix, output);
+
+            final GaDurabilityEvidence.RunReference lifecycle = result.runs().get(0);
+            assertFalse(lifecycle.passed());
+            assertTrue(lifecycle.aborted());
+            assertEquals("ABORTED", lifecycle.outcome());
+            final Map<String, String> fields = GaEvidenceStore.read(
+                    lifecycle.manifestPath(), GaEvidenceCodec.Schema.RUN);
+            assertEquals("B3", fields.get("evidence.failureCode"));
+            assertEquals("ABORTED", fields.get("evidence.outcome"));
+            assertTrue(Files.readString(lifecycle.manifestPath().getParent()
+                    .resolve("raw-evidence-v1.txt")).contains("status=ABORTED"));
+        } finally {
+            if (previousClassPath == null) {
+                System.clearProperty("surefire.test.class.path");
+            } else {
+                System.setProperty("surefire.test.class.path", previousClassPath);
+            }
+        }
     }
 
     private static GaCorrectnessCanonicalContext testContext(final Path repository) {
