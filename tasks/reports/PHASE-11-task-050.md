@@ -5,12 +5,24 @@
 | Item | State |
 | --- | --- |
 | TASK-049 | Human closed; G1/G2 PASS / QUALIFYING / FROZEN |
-| TASK-050 scope | Human approved |
-| Harness implementation | Round 4 remediation committed/pushed at `f07d6bab50704eb172e853744ddd72a20d5df025`; Standard `33387118548` and Quick `33387118673` PASS exact-SHA; Independent Verifier returned CHANGES REQUIRED; Round 5 remediation is committed/pushed at `59453b4f2480b286fa7109368a563bb2e3ef75b6` with Standard `33390678107` and Quick `33390678078` PASS exact-SHA; its verifier found documentation state drift only; final documentation sync is local/pending commit and the Remediation Evidence Gate remains pending |
-| Formal G3/G7 campaign | Not authorized and not run |
+| TASK-050 scope | Human approved; formal G3/G7 campaign executed exactly once under the separately approved campaign gate |
+| Harness implementation | Round 4 remediation committed/pushed at `f07d6bab50704eb172e853744ddd72a20d5df025`; Standard `33387118548` and Quick `33387118673` PASS exact-SHA; Independent Verifier returned CHANGES REQUIRED; Round 5 remediation is committed/pushed at `59453b4f2480b286fa7109368a563bb2e3ef75b6` with Standard `33390678107` and Quick `33390678078` PASS exact-SHA; final documentation sync is `c4c25997a838b9e0a3aee1d43ac1595256695301`; technical and delta evidence reviews PASS |
+| Formal G3/G7 campaign | Executed exactly once; G3/G7 PASS / QUALIFYING / FROZEN; campaign evidence preserved/frozen |
 | Candidate | `v0.9.0-rc.1` immutable |
-| TASK-051 | Locked |
+| TASK-051 | Eligible for Human review; implementation not authorized |
+| TASK-052 / TASK-053 | Not authorized |
 | Product release / GA | Not authorized |
+
+## Current Human closure state
+
+TASK-050 is Human closed. G3 and G7 are `PASS / QUALIFYING / FROZEN`, and
+the formal campaign evidence is preserved and frozen. Historical failed or
+aborted observations remain preserved under their original non-qualifying
+status; no TASK-050 evidence is to be regenerated, backfilled or reclassified.
+
+TASK-051 is eligible for a separate Human Authorization Review, but its
+implementation and any formal G4/G5 campaign remain unauthorized. TASK-053
+owns the later formal G4/G5 campaign gate.
 
 ## Implemented qualification boundary
 
@@ -169,8 +181,9 @@ deferred to the separately Human-gated campaign. Human Round 5 remediation was
 committed/pushed at `59453b4f2480b286fa7109368a563bb2e3ef75b6` with Standard
 `33390678107` and Quick `33390678078` exact-SHA PASS. Its Independent Verifier
 returned `CHANGES REQUIRED` solely for documentation state drift; the final
-documentation-only sync is now local and pending Human Commit/Push approval,
-and the Remediation Evidence Gate remains pending.
+documentation-only sync is preserved at
+`c4c25997a838b9e0a3aee1d43ac1595256695301`, and bounded delta verification
+closed that sole finding with the Remediation Evidence Gate passing.
 
 Round 5 implementation keeps semantic G7 failures in the typed
 `FAIL / B2` path instead of allowing the broad infrastructure catch to relabel
@@ -185,15 +198,17 @@ boundary invariants. Round 5 is committed/pushed at
 the remaining documentation-only sync is local and pending Human Commit/Push
 approval.
 
-## Explicit pending items
+## Current closure boundary
 
 The Human-approved A1 amendment removed the invalid 4,096-byte WAL segment
 value. The minimum qualifying value is now the frozen production
 `WalCommandCodec.MIN_SEGMENT_SIZE_BYTES` (4,128 bytes); the runner rejects any
 lower value rather than mutating the production contract.
 
-Formal G3/G7 execution remains a separate one-shot Human gate. This checkpoint
-does not produce qualifying campaign evidence and does not unlock TASK-051.
+Formal G3/G7 execution was separately Human-authorized, executed exactly once,
+independently verified and closed. TASK-050 is now closed; no additional
+campaign, remediation or evidence activity is authorized. TASK-051 remains
+eligible for Human review but not authorized for implementation.
 
 ## Boundary audit
 
@@ -206,15 +221,16 @@ G1/G2/G9/G11 evidence mutation: 0
 ```
 
 Historical failures and all earlier qualifying evidence remain preserved under
-their original contracts. No formal G3/G7 campaign or release action was
-started by this implementation checkpoint. Round 3 is preserved at
+their original contracts. The statements above describe the historical
+implementation checkpoint; the later formally authorized campaign and final
+closure are recorded in the current Human closure state above. Round 3 is preserved at
 `ee31e9a82cea9eb302024eb76f1179002e6b4508`; Round 3.1 is preserved at
 `b04786420bafd838ac4e0b378a674f766430f3bb`; Round 4 is preserved at
 `f07d6bab50704eb172e853744ddd72a20d5df025` with Standard `33387118548` and
 Quick `33387118673` PASS; its verifier result is preserved as
 `CHANGES REQUIRED` for documentation state drift only. Round 5 is preserved at
 `59453b4f2480b286fa7109368a563bb2e3ef75b6` with Standard `33390678107` and
-Quick `33390678078` PASS; its final documentation-only sync is local and
-awaiting its separately authorized commit/push, while the Remediation Evidence
-Gate remains pending.
-Formal G3/G7 execution remains separately Human-gated and unauthorized.
+Quick `33390678078` PASS; its final documentation-only sync is preserved at
+`c4c25997a838b9e0a3aee1d43ac1595256695301`; the Remediation Evidence Gate
+and final TASK-050 closure review both passed. The formal G3/G7 campaign was
+executed exactly once and its evidence remains preserved/frozen.
