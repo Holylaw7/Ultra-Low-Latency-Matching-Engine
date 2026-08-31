@@ -6,7 +6,7 @@
 | --- | --- |
 | TASK-049 | Human closed; G1/G2 PASS / QUALIFYING / FROZEN |
 | TASK-050 scope | Human approved |
-| Harness implementation | Round 4 remediation committed/pushed at `f07d6bab50704eb172e853744ddd72a20d5df025`; Standard `33387118548` and Quick `33387118673` PASS exact-SHA; Independent Verifier returned CHANGES REQUIRED; Round 5 remediation is Human-authorized locally and commit/push are pending |
+| Harness implementation | Round 4 remediation committed/pushed at `f07d6bab50704eb172e853744ddd72a20d5df025`; Standard `33387118548` and Quick `33387118673` PASS exact-SHA; Independent Verifier returned CHANGES REQUIRED; Round 5 remediation is committed/pushed at `59453b4f2480b286fa7109368a563bb2e3ef75b6` with Standard `33390678107` and Quick `33390678078` PASS exact-SHA; its verifier found documentation state drift only; final documentation sync is local/pending commit and the Remediation Evidence Gate remains pending |
 | Formal G3/G7 campaign | Not authorized and not run |
 | Candidate | `v0.9.0-rc.1` immutable |
 | TASK-051 | Locked |
@@ -147,8 +147,10 @@ formal saturation evidence remains deferred to the Human-gated campaign.
 Round 4 also records the Human-approved Standard CI checkout-history exception
 and synchronizes this report's status. Production, POM/dependencies, candidate,
 G1/G2/G9/G11 evidence and the G3/G7 campaign authorization state remain
-unchanged. The local Round 4 Evidence Gate is pending the separately approved
-commit/push and remote validation.
+unchanged. Round 4 was subsequently committed/pushed at
+`f07d6bab50704eb172e853744ddd72a20d5df025` with Standard `33387118548` and
+Quick `33387118673` exact-SHA PASS; its Independent Verifier returned
+`CHANGES REQUIRED` for the findings documented below.
 
 ## Round 4 verifier findings and Round 5 remediation
 
@@ -163,9 +165,12 @@ the pushed Round 4 state; G7 semantic exceptions needed to remain `FAIL / B2`
 rather than broad-catch `ABORTED / B3`; premature or incomplete pipelined EOF
 could not be accepted as a pass; and a mixed aborted corruption pack must
 retain `ABORTED / B3` classification. Formal dynamic G3/G7 evidence remains
-deferred to the separately Human-gated campaign. Human Round 5 remediation is
-now authorized locally for those four findings only; its commit/push and next
-Evidence Gate are pending, and no formal campaign is authorized.
+deferred to the separately Human-gated campaign. Human Round 5 remediation was
+committed/pushed at `59453b4f2480b286fa7109368a563bb2e3ef75b6` with Standard
+`33390678107` and Quick `33390678078` exact-SHA PASS. Its Independent Verifier
+returned `CHANGES REQUIRED` solely for documentation state drift; the final
+documentation-only sync is now local and pending Human Commit/Push approval,
+and the Remediation Evidence Gate remains pending.
 
 Round 5 implementation keeps semantic G7 failures in the typed
 `FAIL / B2` path instead of allowing the broad infrastructure catch to relabel
@@ -175,8 +180,10 @@ boundary, while EOF before such a frame is incomplete and cannot pass. G3
 preserves `ABORTED / B3` precedence when an interrupted corruption pack
 accompanies a lifecycle semantic failure, while a completed semantic failure
 remains `FAIL / B2`. Focused regression tests cover these classification and
-boundary invariants. Round 5 remains an uncommitted local qualification-only
-change pending Human Commit/Push approval.
+boundary invariants. Round 5 is committed/pushed at
+`59453b4f2480b286fa7109368a563bb2e3ef75b6` with both exact-SHA CI checks PASS;
+the remaining documentation-only sync is local and pending Human Commit/Push
+approval.
 
 ## Explicit pending items
 
@@ -205,6 +212,9 @@ started by this implementation checkpoint. Round 3 is preserved at
 `b04786420bafd838ac4e0b378a674f766430f3bb`; Round 4 is preserved at
 `f07d6bab50704eb172e853744ddd72a20d5df025` with Standard `33387118548` and
 Quick `33387118673` PASS; its verifier result is preserved as
-`CHANGES REQUIRED`. Round 5 is a local qualification-only remediation
-awaiting its separately authorized commit/push and remote Evidence Gate.
+`CHANGES REQUIRED` for documentation state drift only. Round 5 is preserved at
+`59453b4f2480b286fa7109368a563bb2e3ef75b6` with Standard `33390678107` and
+Quick `33390678078` PASS; its final documentation-only sync is local and
+awaiting its separately authorized commit/push, while the Remediation Evidence
+Gate remains pending.
 Formal G3/G7 execution remains separately Human-gated and unauthorized.
