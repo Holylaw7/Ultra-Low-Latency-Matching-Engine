@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-050` — Durability, Crash and Overload Qualification |
-| Status | `In Progress / CHANGES REQUIRED — Limited qualification remediation implemented; Remediation Evidence Gate pending` |
+| Status | `In Progress / CHANGES REQUIRED — Round 3.1 checkout-contract remediation implemented locally; commit/remote Evidence Gate pending` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Human Approved |
 | Depends On | TASK-049 Human Closure Approved |
@@ -78,6 +78,7 @@ Rejected: force test hook, arbitrary process kill and code-review-only G3.
 | qualification tests/resources | exact corruption, lifecycle and boundedness fixtures |
 | ignored result directories | immutable raw cycle evidence |
 | `docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md`, `docs/release/GA-QUALIFICATION-MATRIX.md`, Phase 11 Blueprint | Human-approved A1 legal-WAL clarification only |
+| `.github/workflows/ci.yml` | Standard checkout history required by the frozen-boundary qualification test |
 | `tasks/reports/PHASE-11-task-050.md` | G3/G7 report |
 
 ## 11. Detailed Test / Benchmark Plan
@@ -112,7 +113,7 @@ the exact Matrix and accepted force limitation prevent both.
 
 | Stage | Status | Gate |
 | --- | --- | --- |
-| Implementation | Limited remediation implemented / Evidence Gate pending Human review | TASK-050 Human implementation approval |
+| Implementation | Round 3.1 checkout-contract remediation implemented locally / commit and remote Evidence Gate pending | TASK-050 Human implementation approval |
 | Formal matrix | Not authorized / not run | separate Human G3/G7 execution approval |
 | Completion | Locked | reviewers + CI |
 
@@ -121,6 +122,7 @@ the exact Matrix and accepted force limitation prevent both.
 | 2026-08-25 | Human / Approved | TASK-050 scope and qualification-only implementation approved; formal campaign remains locked |
 | 2026-08-30 | Main Luna Max / Implementation | Added G3 WAL lifecycle/corruption harness, G7 bounded-overload harness, CLI dispatch and focused tests; no formal campaign executed |
 | 2026-08-30 | Human / Amendment and remediation scope | Removed illegal 4,096-byte case in favor of frozen production minimum 4,128; required real child-process forced termination, completed G3 coverage, strict G7 observables and canonical `ga-campaign-summary-v1`; formal campaign remains unauthorized |
+| 2026-08-31 | Human / Round 3.1 failure triage and remediation | Standard CI `33374002293` failed because the shallow checkout omitted the frozen baseline object; classified as B2 qualification/test--CI integration defect; explicit full-history checkout remediation authorized and implemented locally; commit/push and remote Evidence Gate remain pending |
 
 ### Implementation Log
 
@@ -134,13 +136,17 @@ restart convergence checks. G7 records scenario-specific observable contracts
 and rejects arbitrary timeout/close outcomes as proof of a bound. No formal
 G3/G7 campaign, candidate mutation or production change has been performed.
 
-Round 3 evidence-contract remediation is implemented locally and remains
-pending its Human Evidence Gate. Every durability payload is now covered by
-an adjacent sidecar and the validated `SHA256SUMS` inventory; manifest and
-inventory membership must agree exactly, and unlisted or symbolic entries
-fail closed. Campaign/gate publication validates candidate and controller
-identity against the execution context and exposes an explicit `ABORTED`
-run path using the existing global evidence schema. A deterministic
-qualification-only frozen-boundary verifier checks production sources, tests
-and POMs against the approved production commit. No formal campaign,
-commit or push is authorized by this checkpoint.
+Round 3 evidence-contract remediation was committed/pushed at `ee31e9a`; its
+Standard CI failed at `33374002293` because the default shallow checkout did
+not contain the frozen baseline object, while Quick Lane `33374002245` passed
+the exact SHA. Round 3.1 adds the explicit Standard checkout history contract
+and is currently local-only, pending its separately authorized commit/push and
+remote Evidence Gate. Every durability payload is now covered by an adjacent
+sidecar and the validated `SHA256SUMS` inventory; manifest and inventory
+membership must agree exactly, and unlisted or symbolic entries fail closed.
+Campaign/gate publication validates candidate and controller identity against
+the execution context and exposes an explicit `ABORTED` run path using the
+existing global evidence schema. A deterministic qualification-only
+frozen-boundary verifier checks production sources, tests and POMs against the
+approved production commit. No formal G3/G7 campaign is authorized by this
+checkpoint. Round 3.1 has not yet been committed or pushed.

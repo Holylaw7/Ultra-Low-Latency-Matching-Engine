@@ -10,14 +10,14 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
-| Phase | Phase 11 — GA Qualification (`Blueprint Approved; TASK-048/TASK-049 Human Closed; TASK-050 Round 3 limited remediation in progress; formal G3/G7 campaign not authorized`) |
-| Latest product task | [`TASK-20260825-050`](../tasks/active/TASK-20260825-050-phase11-durability-crash-overload.md) — In Progress / CHANGES REQUIRED; Round 3 qualification-only evidence remediation implemented locally, Remediation Evidence Gate pending Human review |
+| Phase | Phase 11 — GA Qualification (`Blueprint Approved; TASK-048/TASK-049 Human Closed; TASK-050 Round 3.1 checkout-contract remediation in progress; formal G3/G7 campaign not authorized`) |
+| Latest product task | [`TASK-20260825-050`](../tasks/active/TASK-20260825-050-phase11-durability-crash-overload.md) — In Progress / CHANGES REQUIRED; Round 3.1 Standard checkout remediation implemented locally after exact-SHA Standard CI `33374002293` B2 failure; commit/remote Evidence Gate pending |
 | Latest architecture decision | [`ADR-0019`](../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) — Accepted |
-| Current planning task | TASK-20260825-050 — In Progress / CHANGES REQUIRED; A1 legal-WAL correction, real forced lifecycle, G3/G7 coverage, canonical campaign publication and Round 3 evidence binding implemented; formal campaign not authorized |
+| Current planning task | TASK-20260825-050 — In Progress / CHANGES REQUIRED; A1 legal-WAL correction, real forced lifecycle, G3/G7 coverage, canonical campaign publication, Round 3 evidence binding and Round 3.1 Standard checkout contract implemented locally; formal campaign not authorized |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 9 frozen at `v0.8.0-engineering-baseline`; Phase 10 frozen at `v0.9.0-rc.1`; Phase 11 GA qualification in progress; Product Release separately governed |
 | Product approval | Phase 9 Human Closure Approved; merge `ef73f60` / Master CI `32711512036` PASS; `v0.8.0-engineering-baseline` / Tag CI `32711649980` PASS; Closure Input `8e5d39d` / Standard CI `32709188522` / Quick Lane `32709188327`; remediation `5f3b1c5` / Standard CI `32710712341` / Quick Lane `32710712428` PASS |
-| Phase 11 current gate | TASK-048/TASK-049 Human Closed; G1/G2/G9/G11 PASS / QUALIFYING / FROZEN; TASK-050 Round 3 Remediation Evidence Gate pending Human review; formal G3/G7 execution not authorized |
+| Phase 11 current gate | TASK-048/TASK-049 Human Closed; G1/G2/G9/G11 PASS / QUALIFYING / FROZEN; TASK-050 Round 3.1 local remediation after Standard CI `33374002293` FAIL/B2 and Quick `33374002245` PASS; commit/remote Evidence Gate pending; formal G3/G7 execution not authorized |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `docs/phase11-ga-qualification-blueprint` |
 | Engineering baseline commit | `e2828f5` (Phase 10 merge; Master CI `32816928409` PASS) |
@@ -161,7 +161,7 @@ ADR-0011 Final Approved
   -> TASK-048 fresh G11 `32952590543` [FAIL/B2/preserved; candidate-bound Gitleaks emitted absolute `/repo` path; candidate Blob matched approved disposition; no candidate defect; path-contract remediation `f6db140` Evidence Gate PASS]
   -> TASK-048 fresh G11 `32955619875` [PASS/qualifying/frozen; `OFFLINE_SUPPLY_CHAIN_SECURITY_V1`; artifact `9601871146` digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`; candidate identity and candidate-bound Gitleaks path contract passed; TASK-048 Closed]
   -> TASK-049 [Completed / Human Closed; fresh 24-case matrix PASS with paired canonical G1/G2 evidence; historical pre-remediation evidence preserved non-qualifying]
-  -> TASK-050 [In Progress / CHANGES REQUIRED; Human-approved A1 4,128-byte minimum, real child-process forced lifecycle, G3 corruption/snapshot coverage, strict G7 probes, canonical campaign evidence and Round 3 sidecar/identity/ABORTED/frozen-boundary checks implemented; local verification PASS; Remediation Evidence Gate pending; formal campaign not authorized]
+  -> TASK-050 [In Progress / CHANGES REQUIRED; Human-approved A1 4,128-byte minimum, real child-process forced lifecycle, G3 corruption/snapshot coverage, strict G7 probes, canonical campaign evidence and Round 3 sidecar/identity/ABORTED/frozen-boundary checks implemented; Standard `33374002293` exposed a shallow-checkout baseline-object B2 defect; Round 3.1 full-history checkout remediation implemented locally; commit/remote Evidence Gate pending; formal campaign not authorized]
   -> TASK-051 through TASK-056 [Dependency ordered; locked]
   -> Phase 11 Full Campaigns / Closure / v1.0.0 / GitHub Release / GA [Not Authorized]
   -> Product Release [Not Authorized]

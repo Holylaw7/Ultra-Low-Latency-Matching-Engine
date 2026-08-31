@@ -6,7 +6,7 @@
 | --- | --- |
 | TASK-049 | Human closed; G1/G2 PASS / QUALIFYING / FROZEN |
 | TASK-050 scope | Human approved |
-| Harness implementation | Limited remediation implemented; Remediation Evidence Gate pending Human review |
+| Harness implementation | Round 3.1 checkout-contract remediation implemented locally; commit/remote Evidence Gate pending |
 | Formal G3/G7 campaign | Not authorized and not run |
 | Candidate | `v0.9.0-rc.1` immutable |
 | TASK-051 | Locked |
@@ -72,10 +72,9 @@ Checkstyle violations: 0
 
 ## Round 3 evidence-contract remediation
 
-The approved Round 3 remediation is implemented locally, but its Evidence
-Gate remains pending Human review and the required commit/remote review
-steps.  It is qualification-only and does not authorize the formal G3/G7
-campaign.
+The approved Round 3 remediation was committed and pushed at
+`ee31e9a82cea9eb302024eb76f1179002e6b4508`.  It remains qualification-only
+and does not authorize the formal G3/G7 campaign.
 
 The canonical durability publisher now binds every manifest to the complete
 run inventory: each payload and the inventory itself has an adjacent
@@ -101,9 +100,26 @@ evidence, candidate/controller mismatch, explicit ABORTED propagation and
 frozen-boundary identity checks.  These tests are qualification fixtures and
 are not formal G3/G7 campaign evidence.
 
-Two full-run observations have reproduced the already-known transient
+Two earlier full-run observations reproduced the already-known transient
 `MatchingEnginePipelineFailureTest` failure. Each focused rerun passed 6/6, and
-the final full reactor run passed without any production or test change.
+the final full reactor run passed without any production or test change.  That
+historical symptom is distinct from the current Standard CI failure below.
+
+## Round 3.1 Standard checkout-contract remediation
+
+Standard CI run `33374002293` evaluated the exact Round 3 SHA and failed in
+`GaFrozenBoundaryVerifierTest.checksTheCurrentRepositoryWithoutChangingIt`.
+The verifier could not resolve the immutable production baseline
+`e2828f563ee41316c062385c0244ac1336731359` because the Standard workflow's
+checkout was shallow.  The failure is classified as a deterministic B2
+qualification/test--CI integration defect; no candidate or production defect
+was observed.  Quick Lane `33374002245` passed the same SHA but runs only the
+quick smoke test.
+
+The Human-approved Round 3.1 remediation adds an explicit full-history
+checkout contract to Standard CI.  The change is implemented locally and its
+commit/remote Evidence Gate remains pending; no formal G3/G7 campaign is
+authorized.
 
 ## Explicit pending items
 
@@ -127,5 +143,8 @@ G1/G2/G9/G11 evidence mutation: 0
 
 Historical failures and all earlier qualifying evidence remain preserved under
 their original contracts. No formal G3/G7 campaign or release action was
-started by this implementation checkpoint.  No commit or push has been made
-for Round 3; formal G3/G7 execution remains separately Human-authorized.
+started by this implementation checkpoint. Round 3 is preserved at
+`ee31e9a82cea9eb302024eb76f1179002e6b4508`; Round 3.1 is currently a local
+qualification-only change awaiting its separately authorized commit/push and
+remote Evidence Gate. Formal G3/G7 execution remains separately
+Human-authorized.
