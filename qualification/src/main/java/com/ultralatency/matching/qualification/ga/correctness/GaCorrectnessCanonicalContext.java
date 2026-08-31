@@ -1,6 +1,7 @@
 package com.ultralatency.matching.qualification.ga.correctness;
 
 import com.ultralatency.matching.qualification.ga.GaCandidateVerifier;
+import com.ultralatency.matching.qualification.ga.GaFrozenBoundaryVerifier;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -72,6 +73,7 @@ public record GaCorrectnessCanonicalContext(
         if (configuredController != null && !configuredController.equals(controller)) {
             throw new IOException("qualification controller SHA must match repository HEAD");
         }
+        GaFrozenBoundaryVerifier.verify(repository, verified.productionSha(), controller);
         return new GaCorrectnessCanonicalContext(
                 repository,
                 controller,

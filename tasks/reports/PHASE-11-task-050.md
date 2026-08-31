@@ -64,11 +64,42 @@ ga-overload --matrix <ga-g7-overload-v1|ga-g7-overload-test-v1> [--output <dir>]
 The final local reactor verification also passes:
 
 ```text
-mvn verify: 225 core tests + 94 qualification tests
+mvn verify: 225 core tests + 102 qualification tests
 failures: 0
-expected skips: 2
+expected skips: 2 (100 qualification tests executed)
 Checkstyle violations: 0
 ```
+
+## Round 3 evidence-contract remediation
+
+The approved Round 3 remediation is implemented locally, but its Evidence
+Gate remains pending Human review and the required commit/remote review
+steps.  It is qualification-only and does not authorize the formal G3/G7
+campaign.
+
+The canonical durability publisher now binds every manifest to the complete
+run inventory: each payload and the inventory itself has an adjacent
+SHA-256 sidecar, every inventory entry is rehashed during validation, the
+manifest inventory must exactly match `SHA256SUMS`, and unlisted or symbolic
+filesystem entries fail closed.  Candidate and controller identities are
+validated against the execution context before a campaign or gate can be
+published.
+
+The existing `ga-run-manifest-v1` contract already supports `ABORTED`; the
+publisher now exposes an explicit aborted-run path and propagates that
+outcome through campaign and gate evidence.  An aborted member can never be
+evaluated as a PASS, while its raw evidence remains published for audit.
+
+The qualification context also performs a deterministic frozen-boundary
+check over the repository production source, tests, root POM and core POM
+between the approved production commit and the controller commit.  Any
+unexpected change aborts qualification; no production or candidate file was
+modified by this remediation.
+
+Round 3 regression coverage includes missing/tampered payload and inventory
+evidence, candidate/controller mismatch, explicit ABORTED propagation and
+frozen-boundary identity checks.  These tests are qualification fixtures and
+are not formal G3/G7 campaign evidence.
 
 Two full-run observations have reproduced the already-known transient
 `MatchingEnginePipelineFailureTest` failure. Each focused rerun passed 6/6, and
@@ -96,4 +127,5 @@ G1/G2/G9/G11 evidence mutation: 0
 
 Historical failures and all earlier qualifying evidence remain preserved under
 their original contracts. No formal G3/G7 campaign or release action was
-started by this implementation checkpoint.
+started by this implementation checkpoint.  No commit or push has been made
+for Round 3; formal G3/G7 execution remains separately Human-authorized.

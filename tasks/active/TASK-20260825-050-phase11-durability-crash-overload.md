@@ -133,3 +133,14 @@ boundary for forced termination, strict corruption/snapshot coverage and
 restart convergence checks. G7 records scenario-specific observable contracts
 and rejects arbitrary timeout/close outcomes as proof of a bound. No formal
 G3/G7 campaign, candidate mutation or production change has been performed.
+
+Round 3 evidence-contract remediation is implemented locally and remains
+pending its Human Evidence Gate. Every durability payload is now covered by
+an adjacent sidecar and the validated `SHA256SUMS` inventory; manifest and
+inventory membership must agree exactly, and unlisted or symbolic entries
+fail closed. Campaign/gate publication validates candidate and controller
+identity against the execution context and exposes an explicit `ABORTED`
+run path using the existing global evidence schema. A deterministic
+qualification-only frozen-boundary verifier checks production sources, tests
+and POMs against the approved production commit. No formal campaign,
+commit or push is authorized by this checkpoint.
