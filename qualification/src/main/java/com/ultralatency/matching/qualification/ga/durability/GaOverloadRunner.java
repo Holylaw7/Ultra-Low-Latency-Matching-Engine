@@ -277,7 +277,9 @@ public final class GaOverloadRunner {
                         consumeMatchFrames(socket, response, 1L);
                         completeResponseBoundaryObserved = true;
                     } else {
-                        throw semanticFailure("pipelined response was not a bounded rejection");
+                        throw semanticFailure(pipelinedResponseDiagnostic(
+                                responseIndex, response, completeResponseBoundaryObserved,
+                                boundedRejections));
                     }
                     // The frozen server closes the session after a complete in-flight
                     // rejection.  The rejection frame itself is the terminal protocol
@@ -452,17 +454,66 @@ public final class GaOverloadRunner {
             final boolean rejectedConnectionClosed = rejected.getInputStream().read() < 0;
             final long rejectionCount = management.managementRejected();
             final boolean rejectionCounterObserved = rejectionCount > 0;
-            held.close();
+            held.getOutputStream().write("LIVE\n".getBytes(
+                    java.nio.charset.StandardCharsets.US_ASCII));
+            held.getOutputStream().flush();
+            final ManagementResponseRead releaseRead = readManagementResponse(held);
+            final byte[] releaseResponse = releaseRead.bytes();
+            final boolean releaseObserved = releaseRead.eofObserved()
+                    && releaseResponse.length > 0
+                    && releaseResponse[releaseResponse.length - 1] == '\n';
+            if (!releaseObserved) {
+                throw semanticFailure(managementBoundDiagnostic(new ManagementBoundObservation(
+                        oversizedRequestRejected,
+                        requestBoundMatches,
+                        rejectedConnectionClosed,
+                        rejectionCounterObserved,
+                        null,
+                        null,
+                        0,
+                        rejectionCount,
+                        management.managementRequests(),
+                        releaseObserved,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        -1,
+                        -1,
+                        -1,
+                        -1)));
+            }
             rejected.close();
+            final long statusRejectionCountBefore = management.managementRejected();
+            final long statusRequestCountBefore = management.managementRequests();
+            boolean statusConnectionEstablished = false;
+            boolean statusRequestIssued = false;
+            boolean statusResponseReadStarted = false;
+            ManagementResponseRead statusRead = null;
             final Socket status = connect(address);
+            statusConnectionEstablished = true;
             try {
                 status.getOutputStream().write("STATUS\n".getBytes(
                         java.nio.charset.StandardCharsets.US_ASCII));
                 status.getOutputStream().flush();
-                final byte[] response = readManagementResponse(status);
+                statusRequestIssued = true;
+                statusResponseReadStarted = true;
+                statusRead = readManagementResponse(status);
+                final byte[] response = statusRead.bytes();
                 final boolean statusResponseCompleted = response.length > 0;
                 final boolean statusResponseWithinBound =
                         response.length <= ManagementProtocol.MAX_RESPONSE_BYTES;
+                final long statusRejectionCountAfter = management.managementRejected();
+                final long statusRequestCountAfter = management.managementRequests();
+                final boolean statusRequestObserved = statusRequestCountAfter
+                        > statusRequestCountBefore;
+                final boolean statusConnectionRejected = statusRejectionCountAfter
+                        > statusRejectionCountBefore;
+                final boolean statusResponseLineTerminated = response.length > 0
+                        && response[response.length - 1] == '\n';
                 final ManagementBoundObservation observation = new ManagementBoundObservation(
                         oversizedRequestRejected,
                         requestBoundMatches,
@@ -472,7 +523,19 @@ public final class GaOverloadRunner {
                         statusResponseWithinBound,
                         response.length,
                         rejectionCount,
-                        management.managementRequests());
+                        management.managementRequests(),
+                        releaseObserved,
+                        statusConnectionEstablished,
+                        statusRequestIssued,
+                        statusRequestObserved,
+                        statusResponseReadStarted,
+                        statusRead.eofObserved(),
+                        statusResponseLineTerminated,
+                        statusConnectionRejected,
+                        statusRejectionCountBefore,
+                        statusRejectionCountAfter,
+                        statusRequestCountBefore,
+                        statusRequestCountAfter);
                 if (!observation.passed()) {
                     throw semanticFailure(managementBoundDiagnostic(observation));
                 }
@@ -487,7 +550,8 @@ public final class GaOverloadRunner {
         }
     }
 
-    private static byte[] readManagementResponse(final Socket socket) throws IOException {
+    private static ManagementResponseRead readManagementResponse(final Socket socket)
+            throws IOException {
         final InputStream input = socket.getInputStream();
         final java.io.ByteArrayOutputStream output = new java.io.ByteArrayOutputStream();
         final byte[] buffer = new byte[ManagementProtocol.MAX_RESPONSE_BYTES];
@@ -501,7 +565,7 @@ public final class GaOverloadRunner {
                 throw semanticFailure("management response exceeded bound");
             }
         }
-        return output.toByteArray();
+        return new ManagementResponseRead(output.toByteArray(), true);
     }
 
     private static int freePort() throws IOException {
@@ -818,6 +882,96 @@ public final class GaOverloadRunner {
                 && shortAt(frame, 24) == ProtocolErrorCode.INVALID_FIELD.code();
     }
 
+    /**
+     * Returns a complete identity/protocol diagnosis for an unexpected pipelined response.
+     * This method only observes the already-read frame; it does not alter acceptance semantics
+     * or read another frame.
+     */
+    static String pipelinedResponseDiagnostic(
+            final int responseIndex,
+            final byte[] frame,
+            final boolean completeResponseBoundaryObservedBefore,
+            final int boundedRejectionsBefore) {
+        Objects.requireNonNull(frame, "frame");
+        final int frameType = frame.length > 5 ? unsigned(frame[5]) : -1;
+        final boolean requestIdObserved = frame.length >= 24;
+        final long requestId = requestIdObserved ? longAt(frame, 16) : -1L;
+        final boolean errorCodeObserved = frame.length >= 26;
+        final int errorCode = errorCodeObserved ? shortAt(frame, 24) : -1;
+        final boolean commandOutcomeObserved = frame.length > 32;
+        final int commandOutcomeCode = commandOutcomeObserved ? unsigned(frame[32]) : -1;
+        final boolean decodedAsInFlightRejection = frame.length >= ProtocolConstants.ERROR_FRAME_LENGTH
+                && isInFlightRejection(frame);
+        final boolean decodedAsCommandResult = frameType == ProtocolConstants.COMMAND_RESULT_TYPE;
+        final boolean commandResultRequestIdMatches = requestIdObserved && requestId == 1L;
+        final boolean commandResultPredicate = decodedAsCommandResult
+                && commandResultRequestIdMatches;
+        return "PIPELINED_RESPONSE_DIAGNOSTIC"
+                + ";responseIndex=" + responseIndex
+                + ";frameLength=" + frame.length
+                + ";responseBoundary=COMPLETE_FRAME"
+                + ";responseReadCompleted=true"
+                + ";completeResponseBoundaryObservedBefore="
+                + completeResponseBoundaryObservedBefore
+                + ";boundedRejectionsBefore=" + boundedRejectionsBefore
+                + ";frameType=" + frameType + "(" + pipelinedFrameTypeName(frameType) + ")"
+                + ";payloadKind=" + pipelinedPayloadKind(frameType)
+                + ";requestId=" + (requestIdObserved ? Long.toString(requestId) : "NOT_OBSERVED")
+                + ";errorCode=" + (errorCodeObserved
+                        ? errorCode + "(" + protocolErrorName(errorCode) + ")"
+                        : "NOT_OBSERVED")
+                + ";commandOutcomeCode=" + (commandOutcomeObserved
+                        ? Integer.toString(commandOutcomeCode) : "NOT_OBSERVED")
+                + ";decodedAsInFlightRejection=" + decodedAsInFlightRejection
+                + ";decodedAsCommandResult=" + decodedAsCommandResult
+                + ";commandResultRequestIdMatches=" + commandResultRequestIdMatches
+                + ";commandResultPredicate=" + commandResultPredicate
+                + ";firstFailedPredicate=" + firstPipelinedFailurePredicate(
+                        frameType, requestIdObserved, requestId, errorCodeObserved, errorCode)
+                + ";failedPredicates=inFlightRejection=" + decodedAsInFlightRejection
+                + ",commandResultForRequestId1=" + commandResultPredicate;
+    }
+
+    private static String firstPipelinedFailurePredicate(
+            final int frameType,
+            final boolean requestIdObserved,
+            final long requestId,
+            final boolean errorCodeObserved,
+            final int errorCode) {
+        if (frameType != ProtocolConstants.ERROR_TYPE) {
+            return "inFlightRejection.frameTypeIsERROR";
+        }
+        if (!requestIdObserved || requestId < 2L) {
+            return "inFlightRejection.requestIdAtLeast2";
+        }
+        if (!errorCodeObserved || errorCode != ProtocolErrorCode.INVALID_FIELD.code()) {
+            return "inFlightRejection.errorCodeIsINVALID_FIELD";
+        }
+        return "none";
+    }
+
+    private static String pipelinedFrameTypeName(final int frameType) {
+        return switch (frameType) {
+            case ProtocolConstants.COMMAND_RESULT_TYPE -> "COMMAND_RESULT";
+            case ProtocolConstants.MATCH_RESULT_TYPE -> "MATCH_RESULT";
+            case ProtocolConstants.ERROR_TYPE -> "ERROR";
+            default -> "UNKNOWN";
+        };
+    }
+
+    private static String pipelinedPayloadKind(final int frameType) {
+        return pipelinedFrameTypeName(frameType);
+    }
+
+    private static String protocolErrorName(final int errorCode) {
+        for (final ProtocolErrorCode known : ProtocolErrorCode.values()) {
+            if (known.code() == errorCode) {
+                return known.name();
+            }
+        }
+        return "UNKNOWN";
+    }
+
     /** Returns whether a frame-bound close is an observed deterministic EOF. */
     static boolean isDeterministicFrameClose(final IOException failure) {
         return failure instanceof EOFException;
@@ -872,13 +1026,60 @@ public final class GaOverloadRunner {
             Boolean statusResponseWithinBound,
             int statusResponseBytes,
             long rejectionCount,
-            long requestCount) {
+            long requestCount,
+            Boolean releaseObserved,
+            Boolean statusConnectionEstablished,
+            Boolean statusRequestIssued,
+            Boolean statusRequestObserved,
+            Boolean statusResponseReadStarted,
+            Boolean statusResponseEofObserved,
+            Boolean statusResponseLineTerminated,
+            Boolean statusConnectionRejected,
+            long statusRejectionCountBefore,
+            long statusRejectionCountAfter,
+            long statusRequestCountBefore,
+            long statusRequestCountAfter) {
+
+        ManagementBoundObservation(
+                final Boolean oversizedRequestRejected,
+                final Boolean requestBoundMatches,
+                final Boolean rejectedConnectionClosed,
+                final Boolean rejectionCounterObserved,
+                final Boolean statusResponseCompleted,
+                final Boolean statusResponseWithinBound,
+                final int statusResponseBytes,
+                final long rejectionCount,
+                final long requestCount) {
+            this(
+                    oversizedRequestRejected,
+                    requestBoundMatches,
+                    rejectedConnectionClosed,
+                    rejectionCounterObserved,
+                    statusResponseCompleted,
+                    statusResponseWithinBound,
+                    statusResponseBytes,
+                    rejectionCount,
+                    requestCount,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    -1,
+                    -1,
+                    -1,
+                    -1);
+        }
 
         boolean passed() {
             return Boolean.TRUE.equals(oversizedRequestRejected)
                     && Boolean.TRUE.equals(requestBoundMatches)
                     && Boolean.TRUE.equals(rejectedConnectionClosed)
                     && Boolean.TRUE.equals(rejectionCounterObserved)
+                    && Boolean.TRUE.equals(releaseObserved)
                     && Boolean.TRUE.equals(statusResponseCompleted)
                     && Boolean.TRUE.equals(statusResponseWithinBound);
         }
@@ -895,6 +1096,7 @@ public final class GaOverloadRunner {
                 observation.rejectedConnectionClosed());
         appendFailedInvariant(failures, "rejectionCounterObserved",
                 observation.rejectionCounterObserved());
+        appendFailedInvariant(failures, "releaseObserved", observation.releaseObserved());
         appendFailedInvariant(failures, "statusResponseCompleted",
                 observation.statusResponseCompleted());
         appendFailedInvariant(failures, "statusResponseWithinBound",
@@ -917,7 +1119,57 @@ public final class GaOverloadRunner {
                 + ";statusResponseBytes=" + observation.statusResponseBytes()
                 + ";rejectionCount=" + observation.rejectionCount()
                 + ";requestCount=" + observation.requestCount()
+                + ";releaseObserved=" + diagnosticValue(observation.releaseObserved())
+                + ";statusConnectionEstablished=" + diagnosticValue(
+                        observation.statusConnectionEstablished())
+                + ";statusRequestIssued=" + diagnosticValue(observation.statusRequestIssued())
+                + ";statusRequestObserved=" + diagnosticValue(
+                        observation.statusRequestObserved())
+                + ";statusResponseReadStarted=" + diagnosticValue(
+                        observation.statusResponseReadStarted())
+                + ";statusResponseEofObserved=" + diagnosticValue(
+                        observation.statusResponseEofObserved())
+                + ";statusResponseLineTerminated=" + diagnosticValue(
+                        observation.statusResponseLineTerminated())
+                + ";statusConnectionRejected=" + diagnosticValue(
+                        observation.statusConnectionRejected())
+                + ";statusRejectionCountBefore=" + observation.statusRejectionCountBefore()
+                + ";statusRejectionCountAfter=" + observation.statusRejectionCountAfter()
+                + ";statusRequestCountBefore=" + observation.statusRequestCountBefore()
+                + ";statusRequestCountAfter=" + observation.statusRequestCountAfter()
+                + ";firstMissingStatusStage=" + firstMissingStatusStage(observation)
                 + ";failingInvariants=" + failures;
+    }
+
+    private static String firstMissingStatusStage(final ManagementBoundObservation observation) {
+        if (!Boolean.TRUE.equals(observation.releaseObserved())) {
+            return "serverReleaseCompletion";
+        }
+        if (!Boolean.TRUE.equals(observation.statusConnectionEstablished())) {
+            return "statusConnectionEstablished";
+        }
+        if (!Boolean.TRUE.equals(observation.statusRequestIssued())) {
+            return "statusRequestIssued";
+        }
+        if (Boolean.TRUE.equals(observation.statusConnectionRejected())) {
+            return "statusConnectionAdmission";
+        }
+        if (!Boolean.TRUE.equals(observation.statusRequestObserved())) {
+            return "statusRequestObserved";
+        }
+        if (!Boolean.TRUE.equals(observation.statusResponseReadStarted())) {
+            return "statusResponseReadStarted";
+        }
+        if (observation.statusResponseBytes() == 0) {
+            return "statusResponsePayload";
+        }
+        if (!Boolean.TRUE.equals(observation.statusResponseLineTerminated())) {
+            return "statusResponseBoundary";
+        }
+        return "NONE";
+    }
+
+    private record ManagementResponseRead(byte[] bytes, boolean eofObserved) {
     }
 
     private static void appendFailedInvariant(
