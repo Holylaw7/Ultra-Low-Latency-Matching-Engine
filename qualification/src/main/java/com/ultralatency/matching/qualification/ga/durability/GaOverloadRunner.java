@@ -395,67 +395,95 @@ public final class GaOverloadRunner {
             final GaOverloadMatrix matrix) throws IOException {
         final byte[] oversized = new byte[matrix.maxManagementRequestBytes() + 1];
         oversized[oversized.length - 1] = '\n';
+        boolean oversizedRequestRejected = false;
         try {
             ManagementProtocol.decode(oversized);
-            return false;
         } catch (final IllegalArgumentException expected) {
-            if (ManagementProtocol.MAX_REQUEST_BYTES != matrix.maxManagementRequestBytes()) {
-                return false;
-            }
-            final Path walDirectory = directory.resolve("management-wal");
-            final Path snapshotDirectory = directory.resolve("management-snapshots");
-            Files.createDirectories(walDirectory);
-            Files.createDirectories(snapshotDirectory);
-            final int managementPort = freePort();
-            final int protocolPort = freePortDifferent(managementPort);
-            final com.ultralatency.matching.app.RuntimeConfiguration configuration =
-                    new com.ultralatency.matching.app.RuntimeConfiguration(
-                            walDirectory,
-                            snapshotDirectory,
-                            com.ultralatency.matching.recovery.online.RecoveryMode.PURE_WAL,
-                            WalCommandCodec.MIN_SEGMENT_SIZE_BYTES,
-                            WalDurabilityMode.SYNC_EACH_APPEND,
-                            matrix.pipelineCapacity(),
-                            PipelineWaitMode.BLOCKING,
-                            InetAddress.getLoopbackAddress(),
-                            protocolPort,
-                            DurableNetworkConfiguration.DEFAULT_LOW_WATERMARK,
-                            DurableNetworkConfiguration.DEFAULT_HIGH_WATERMARK,
-                            true,
-                            InetAddress.getLoopbackAddress(),
-                            managementPort,
-                            1,
-                            Duration.ofMillis(250),
-                            SHUTDOWN_TIMEOUT);
-            final com.ultralatency.matching.operations.ManagementServer management =
-                    new com.ultralatency.matching.operations.ManagementServer(
-                            configuration, RuntimeStatusSnapshot::initial, failure -> { });
-            management.start();
-            final InetSocketAddress address = management.localAddress().orElseThrow();
-            final Socket held = connect(address);
-            final Socket rejected = connect(address);
+            oversizedRequestRejected = true;
+        }
+        final boolean requestBoundMatches = ManagementProtocol.MAX_REQUEST_BYTES
+                == matrix.maxManagementRequestBytes();
+        if (!oversizedRequestRejected || !requestBoundMatches) {
+            throw semanticFailure(managementBoundDiagnostic(new ManagementBoundObservation(
+                    oversizedRequestRejected,
+                    requestBoundMatches,
+                    null,
+                    null,
+                    null,
+                    null,
+                    -1,
+                    -1,
+                    -1)));
+        }
+        final Path walDirectory = directory.resolve("management-wal");
+        final Path snapshotDirectory = directory.resolve("management-snapshots");
+        Files.createDirectories(walDirectory);
+        Files.createDirectories(snapshotDirectory);
+        final int managementPort = freePort();
+        final int protocolPort = freePortDifferent(managementPort);
+        final com.ultralatency.matching.app.RuntimeConfiguration configuration =
+                new com.ultralatency.matching.app.RuntimeConfiguration(
+                        walDirectory,
+                        snapshotDirectory,
+                        com.ultralatency.matching.recovery.online.RecoveryMode.PURE_WAL,
+                        WalCommandCodec.MIN_SEGMENT_SIZE_BYTES,
+                        WalDurabilityMode.SYNC_EACH_APPEND,
+                        matrix.pipelineCapacity(),
+                        PipelineWaitMode.BLOCKING,
+                        InetAddress.getLoopbackAddress(),
+                        protocolPort,
+                        DurableNetworkConfiguration.DEFAULT_LOW_WATERMARK,
+                        DurableNetworkConfiguration.DEFAULT_HIGH_WATERMARK,
+                        true,
+                        InetAddress.getLoopbackAddress(),
+                        managementPort,
+                        1,
+                        Duration.ofMillis(250),
+                        SHUTDOWN_TIMEOUT);
+        final com.ultralatency.matching.operations.ManagementServer management =
+                new com.ultralatency.matching.operations.ManagementServer(
+                        configuration, RuntimeStatusSnapshot::initial, failure -> { });
+        management.start();
+        final InetSocketAddress address = management.localAddress().orElseThrow();
+        final Socket held = connect(address);
+        final Socket rejected = connect(address);
+        try {
+            rejected.setSoTimeout(1_000);
+            final boolean rejectedConnectionClosed = rejected.getInputStream().read() < 0;
+            final long rejectionCount = management.managementRejected();
+            final boolean rejectionCounterObserved = rejectionCount > 0;
+            held.close();
+            rejected.close();
+            final Socket status = connect(address);
             try {
-                rejected.setSoTimeout(1_000);
-                final boolean closed = rejected.getInputStream().read() < 0;
-                final boolean bound = management.managementRejected() > 0;
-                held.close();
-                rejected.close();
-                final Socket status = connect(address);
-                try {
-                    status.getOutputStream().write("STATUS\n".getBytes(
-                            java.nio.charset.StandardCharsets.US_ASCII));
-                    status.getOutputStream().flush();
-                    final byte[] response = readManagementResponse(status);
-                    return closed && bound && response.length > 0
-                            && response.length <= ManagementProtocol.MAX_RESPONSE_BYTES;
-                } finally {
-                    status.close();
+                status.getOutputStream().write("STATUS\n".getBytes(
+                        java.nio.charset.StandardCharsets.US_ASCII));
+                status.getOutputStream().flush();
+                final byte[] response = readManagementResponse(status);
+                final boolean statusResponseCompleted = response.length > 0;
+                final boolean statusResponseWithinBound =
+                        response.length <= ManagementProtocol.MAX_RESPONSE_BYTES;
+                final ManagementBoundObservation observation = new ManagementBoundObservation(
+                        oversizedRequestRejected,
+                        requestBoundMatches,
+                        rejectedConnectionClosed,
+                        rejectionCounterObserved,
+                        statusResponseCompleted,
+                        statusResponseWithinBound,
+                        response.length,
+                        rejectionCount,
+                        management.managementRequests());
+                if (!observation.passed()) {
+                    throw semanticFailure(managementBoundDiagnostic(observation));
                 }
+                return true;
             } finally {
-                held.close();
-                rejected.close();
-                management.shutdown(SHUTDOWN_TIMEOUT);
+                status.close();
             }
+        } finally {
+            held.close();
+            rejected.close();
+            management.shutdown(SHUTDOWN_TIMEOUT);
         }
     }
 
@@ -832,6 +860,80 @@ public final class GaOverloadRunner {
             final String message,
             final Throwable cause) {
         return new SemanticQualificationFailure(message, cause);
+    }
+
+    /** Captures each pre-existing MANAGEMENT_BOUND invariant for failure diagnosis. */
+    record ManagementBoundObservation(
+            Boolean oversizedRequestRejected,
+            Boolean requestBoundMatches,
+            Boolean rejectedConnectionClosed,
+            Boolean rejectionCounterObserved,
+            Boolean statusResponseCompleted,
+            Boolean statusResponseWithinBound,
+            int statusResponseBytes,
+            long rejectionCount,
+            long requestCount) {
+
+        boolean passed() {
+            return Boolean.TRUE.equals(oversizedRequestRejected)
+                    && Boolean.TRUE.equals(requestBoundMatches)
+                    && Boolean.TRUE.equals(rejectedConnectionClosed)
+                    && Boolean.TRUE.equals(rejectionCounterObserved)
+                    && Boolean.TRUE.equals(statusResponseCompleted)
+                    && Boolean.TRUE.equals(statusResponseWithinBound);
+        }
+    }
+
+    /** Returns a deterministic, single-line diagnosis without changing pass semantics. */
+    static String managementBoundDiagnostic(final ManagementBoundObservation observation) {
+        Objects.requireNonNull(observation, "observation");
+        final StringBuilder failures = new StringBuilder();
+        appendFailedInvariant(failures, "oversizedRequestRejected",
+                observation.oversizedRequestRejected());
+        appendFailedInvariant(failures, "requestBoundMatches", observation.requestBoundMatches());
+        appendFailedInvariant(failures, "rejectedConnectionClosed",
+                observation.rejectedConnectionClosed());
+        appendFailedInvariant(failures, "rejectionCounterObserved",
+                observation.rejectionCounterObserved());
+        appendFailedInvariant(failures, "statusResponseCompleted",
+                observation.statusResponseCompleted());
+        appendFailedInvariant(failures, "statusResponseWithinBound",
+                observation.statusResponseWithinBound());
+        if (failures.length() == 0) {
+            failures.append("NONE");
+        }
+        return "MANAGEMENT_BOUND_DIAGNOSTIC"
+                + ";oversizedRequestRejected=" + diagnosticValue(
+                        observation.oversizedRequestRejected())
+                + ";requestBoundMatches=" + diagnosticValue(observation.requestBoundMatches())
+                + ";rejectedConnectionClosed=" + diagnosticValue(
+                        observation.rejectedConnectionClosed())
+                + ";rejectionCounterObserved=" + diagnosticValue(
+                        observation.rejectionCounterObserved())
+                + ";statusResponseCompleted=" + diagnosticValue(
+                        observation.statusResponseCompleted())
+                + ";statusResponseWithinBound=" + diagnosticValue(
+                        observation.statusResponseWithinBound())
+                + ";statusResponseBytes=" + observation.statusResponseBytes()
+                + ";rejectionCount=" + observation.rejectionCount()
+                + ";requestCount=" + observation.requestCount()
+                + ";failingInvariants=" + failures;
+    }
+
+    private static void appendFailedInvariant(
+            final StringBuilder failures,
+            final String name,
+            final Boolean value) {
+        if (!Boolean.TRUE.equals(value)) {
+            if (failures.length() > 0) {
+                failures.append(',');
+            }
+            failures.append(name).append('=').append(diagnosticValue(value));
+        }
+    }
+
+    private static String diagnosticValue(final Boolean value) {
+        return value == null ? "NOT_OBSERVED" : value.toString();
     }
 
     private static final class SemanticQualificationFailure extends IOException {

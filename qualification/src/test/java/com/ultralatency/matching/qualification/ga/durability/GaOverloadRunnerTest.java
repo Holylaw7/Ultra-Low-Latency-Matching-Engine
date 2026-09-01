@@ -36,6 +36,34 @@ class GaOverloadRunnerTest {
     }
 
     @Test
+    void managementBoundDiagnosticIdentifiesFailedInvariant() {
+        final GaOverloadRunner.ManagementBoundObservation observation =
+                new GaOverloadRunner.ManagementBoundObservation(
+                        true, true, true, true, false, true, 0, 1, 0);
+
+        assertFalse(observation.passed());
+        final String diagnostic = GaOverloadRunner.managementBoundDiagnostic(observation);
+        assertTrue(diagnostic.contains("statusResponseCompleted=false"));
+        assertTrue(diagnostic.contains("statusResponseBytes=0"));
+        assertTrue(diagnostic.contains("rejectionCount=1"));
+        assertTrue(diagnostic.contains("failingInvariants=statusResponseCompleted=false"));
+    }
+
+    @Test
+    void managementBoundDiagnosticDistinguishesUnobservedState() {
+        final GaOverloadRunner.ManagementBoundObservation observation =
+                new GaOverloadRunner.ManagementBoundObservation(
+                        true, false, null, null, null, null, -1, -1, -1);
+
+        assertFalse(observation.passed());
+        final String diagnostic = GaOverloadRunner.managementBoundDiagnostic(observation);
+        assertTrue(diagnostic.contains("requestBoundMatches=false"));
+        assertTrue(diagnostic.contains("rejectedConnectionClosed=NOT_OBSERVED"));
+        assertTrue(diagnostic.contains("failingInvariants=requestBoundMatches=false"));
+        assertTrue(diagnostic.contains("rejectedConnectionClosed=NOT_OBSERVED"));
+    }
+
+    @Test
     void semanticPipelinedConfigurationFailureIsFailB2(@TempDir final Path output) throws Exception {
         final GaOverloadMatrix matrix = new GaOverloadMatrix(
                 "ga-g7-pipelined-semantic-failure-test-v1",
