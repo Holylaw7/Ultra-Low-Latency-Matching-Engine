@@ -12,16 +12,28 @@ Standard CI 33496808343: PASS / EXACT-SHA
 Quick Lane 33496808322: PASS / EXACT-SHA
 G4 canonical Quick: PASS / QUICK_READINESS_ONLY / run c8954804-fe13-46fb-af45-d88097f0930d / controller 1bdab634de6c580327b1c9677a45fb08526331f1
 G5 canonical Quick: PASS / QUICK_READINESS_ONLY / run 013ca2c2-2f31-48b5-aa6b-9fd98147c331 / controller 1bdab634de6c580327b1c9677a45fb08526331f1
-Reviewer Gate: CHANGES REQUIRED
-Docs Auditor: CHANGES REQUIRED
-Independent Verifier: NO FORMAL VERDICT / STOPPED AFTER DOCS FINDING
-Benchmark Reviewer: NO FORMAL VERDICT / STOPPED AFTER DOCS FINDING
-Governance synchronization: PENDING HUMAN REVIEW
+Governance synchronization object: 55be8de37ad3143c4222ccdf8b24b815f66a9aee
+Reviewer checkpoint represented by that object:
+  Docs Auditor: CHANGES REQUIRED
+  Independent Verifier: NO FORMAL VERDICT / STOPPED AFTER DOCS FINDING
+  Benchmark Reviewer: NO FORMAL VERDICT / STOPPED AFTER DOCS FINDING
+Post-checkpoint reviewer execution record (historical; not an immutable current-state field):
+  Docs Auditor: PASS
+  Independent Verifier: CHANGES REQUIRED
+  Benchmark Reviewer: NOT RUN (gated after verifier)
+Current aggregate reviewer gate: IN PROGRESS / CHANGES REQUIRED
+Reviewer-state representation synchronization: PENDING HUMAN REVIEW
 Formal G4 campaign: NOT EXECUTED
 Formal G5 campaign: NOT EXECUTED
 Pre-Campaign Evidence Gate: NOT PASSED
 TASK-053: NOT AUTHORIZED
 ```
+
+The reviewer entries are deliberately time-scoped. The checkpoint snapshot is
+the repository governance state represented by `55be8de...`; the subsequent
+reviewer execution is historical execution evidence and is not backfilled into
+that immutable checkpoint or treated as a permanent live-status field. The
+aggregate TASK-051 reviewer gate remains `IN PROGRESS / CHANGES REQUIRED`.
 
 The G4/G5 implementation and bounded reviewer remediation were performed under
 the Human-authorized TASK-051 scope and are present in the pushed history. The
@@ -140,10 +152,10 @@ or release operation was performed.
 
 ## Next gate
 
-`Human / Sol High TASK-051 Docs-only Governance Delta Evidence Review`.
+`Human / Sol High TASK-051 Reviewer-state Representation Evidence Review`.
 
 TASK-051 remains `IN PROGRESS / CHANGES REQUIRED`; implementation and Quick
 readiness do not close the task or authorize formal G4/G5. The remaining
-blocker is governance/documentation state synchronization; the Independent
-Verifier and Benchmark Reviewer have no formal verdict because review stopped
-after the Docs Auditor finding.
+blocker is governance representation: checkpoint-time reviewer state and
+post-checkpoint reviewer execution evidence must remain distinct. No technical
+qualification rerun or provenance rewrite is required.
