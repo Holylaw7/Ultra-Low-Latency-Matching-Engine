@@ -430,6 +430,31 @@ production semantics nor candidate/build inputs and does not authorize the
 formal G3/G7 campaign. The historical Standard failure remains preserved as
 non-qualifying evidence.
 
+#### Human-approved TASK-050 post-closure qualification-harness B2 remediation exception (2026-09-01)
+
+After TASK-050 was closed, Human authorized a narrowly bounded,
+qualification-only remediation for a false-negative lifecycle/observation
+race in the G7 harness. This section records previously granted Human
+decisions; it does not reopen TASK-050, authorize another TASK-050 campaign,
+or change frozen evidence.
+
+The recorded scope is limited to:
+
+- `GaOverloadRunner.java` and `GaOverloadRunnerTest.java`;
+- `MANAGEMENT_BOUND` diagnostic instrumentation;
+- the observable server-release completion barrier;
+- `PIPELINED_REQUEST` diagnostic instrumentation; and
+- associated qualification-only regression tests.
+
+The reviewed implementation controller is
+`5b4998d8855d4e418b2e897129571c8c16de700d`. The historical Standard run
+`33485052068` remains `FAIL / B2 / PRESERVED`; later validation does not
+reclassify or replace it. No production, POM, dependency, workflow,
+candidate, or formal G7 campaign mutation was authorized by this exception.
+No evidence of candidate impact or formal G7 false-PASS impact was
+established, so TASK-050 remains `CLOSED`, G3/G7 remain
+`PASS / QUALIFYING / FROZEN`, and `rc.2` is not required.
+
 ### D16 — Release source and production source may be distinguished
 
 The qualified production artifact source remains `e2828f5`. Human may either:
@@ -513,6 +538,7 @@ action.
 | 2026-08-26 | Human Developer | APPROVED — Limited candidate Gitleaks path-contract B2 Remediation | `32952590543` preserved FAIL/B2; switch candidate scan to root-relative `dir .`, record `repository-relative-v1` / `working-directory` policy identity; no candidate/POM/production/G9 change or fresh G11 execution |
 | 2026-08-26 | Evidence Gate | PASS — Candidate Gitleaks path-contract B2 Remediation | `f6db140`; Standard CI `32954953854`; Quick Lane `32954953801`; native `dir .` path contract, focused/full verification and frozen-boundary audit PASS; fresh G11 remains separately Human-gated |
 | 2026-08-26 | Evidence Gate | PASS — Fresh G11 under amended path contract | `32955619875`; artifact `9601871146`; GitHub digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`; G11 qualifying/frozen; TASK-048 final evidence review pending; no additional G11 execution |
+| 2026-09-01 | Human | APPROVED — TASK-050 post-closure qualification-harness B2 remediation exception | `GaOverloadRunner.java` / `GaOverloadRunnerTest.java`; `MANAGEMENT_BOUND` release barrier and diagnostics plus `PIPELINED_REQUEST` diagnostics; TASK-050 remains CLOSED and formal G3/G7 evidence remains frozen |
 
 The `688d955` entry is the final remediation audit checkpoint. Any later
 docs-only commit that records this checkpoint is external validation only and

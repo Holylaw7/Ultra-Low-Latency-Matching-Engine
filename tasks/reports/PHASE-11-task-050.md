@@ -207,8 +207,26 @@ lower value rather than mutating the production contract.
 
 Formal G3/G7 execution was separately Human-authorized, executed exactly once,
 independently verified and closed. TASK-050 is now closed; no additional
-campaign, remediation or evidence activity is authorized. TASK-051 remains
-eligible for Human review but not authorized for implementation.
+campaign or TASK-050 evidence regeneration is authorized. A narrowly bounded
+post-closure qualification-harness B2 remediation exception was subsequently
+Human-authorized and is recorded in ADR-0019; it does not reopen TASK-050 or
+authorize another campaign. TASK-051 is now IN PROGRESS / CHANGES REQUIRED,
+while formal G4/G5 remains separately Human-gated.
+
+## Post-closure qualification-harness exception
+
+On 2026-09-01 Human recorded a post-closure exception for the previously
+authorized qualification-only `GaOverloadRunner.java` and
+`GaOverloadRunnerTest.java` changes: `MANAGEMENT_BOUND` diagnostics, the
+observable server-release completion barrier, `PIPELINED_REQUEST` diagnostics
+and associated regression tests. The reviewed controller is
+`5b4998d8855d4e418b2e897129571c8c16de700d`.
+
+This is a governance synchronization of an existing Human authorization
+chain, not a new TASK-050 feature or campaign. No candidate or production
+impact was observed, no formal G7 false-PASS impact was established, and
+`rc.2` is not required. G3/G7 remain `PASS / QUALIFYING / FROZEN`; the
+historical Standard `33485052068` remains preserved `FAIL / B2`.
 
 ## Boundary audit
 

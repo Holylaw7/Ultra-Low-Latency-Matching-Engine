@@ -3,6 +3,7 @@ package com.ultralatency.matching.qualification.ga.performance;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.Duration;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -43,11 +44,58 @@ class GaPerformanceEvaluatorTest {
     }
 
     @Test
+    void allRunConjunctionAcceptsEveryRunWhenThreeRunsPass() {
+        final GaPerformanceMatrix matrix = multiRunMatrix();
+        final GaPerformanceObservation passing = observation(
+                8, 8_000_000L, new long[]{1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L});
+
+        final GaPerformanceEvaluator.Evaluation evaluation =
+                GaPerformanceEvaluator.evaluateCampaign(matrix, List.of(passing, passing, passing));
+
+        assertTrue(evaluation.passed());
+    }
+
+    @Test
+    void allRunConjunctionRejectsFailureAtEveryRunPosition() {
+        final GaPerformanceMatrix matrix = multiRunMatrix();
+        final GaPerformanceObservation passing = observation(
+                8, 8_000_000L, new long[]{1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L});
+        final GaPerformanceObservation failing = observation(
+                8, 16_000_001L, new long[]{1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L});
+
+        for (int failingIndex = 0; failingIndex < matrix.runCount(); failingIndex++) {
+            final int currentFailingIndex = failingIndex;
+            final List<GaPerformanceObservation> observations = List.of(
+                    currentFailingIndex == 0 ? failing : passing,
+                    currentFailingIndex == 1 ? failing : passing,
+                    currentFailingIndex == 2 ? failing : passing);
+            final GaPerformanceEvaluator.Evaluation evaluation =
+                    GaPerformanceEvaluator.evaluateCampaign(matrix, observations);
+
+            assertFalse(evaluation.passed(), "failure at run " + (currentFailingIndex + 1));
+            assertTrue(evaluation.criteria().stream().anyMatch(criterion ->
+                    criterion.id().equals("run." + (currentFailingIndex + 1) + ".result")
+                            && !criterion.passed()));
+        }
+    }
+
+    @Test
     void wrongRunCountFailsCampaignInsteadOfReplacingRuns() {
         final GaPerformanceEvaluator.Evaluation evaluation =
                 GaPerformanceEvaluator.evaluateCampaign(GaPerformanceMatrix.approved(), List.of());
         assertFalse(evaluation.passed());
         assertFalse(evaluation.formalEligible());
+    }
+
+    private static GaPerformanceMatrix multiRunMatrix() {
+        return new GaPerformanceMatrix(
+                "ga-g4-performance-multi-run-test-v1",
+                GaPerformanceMatrix.APPROVED_PROFILE,
+                GaPerformanceMatrix.APPROVED_SEED,
+                3,
+                Duration.ofMillis(1),
+                2,
+                8);
     }
 
     private static GaPerformanceObservation observation(
