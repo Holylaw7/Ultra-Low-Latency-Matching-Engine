@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Task ID / Title | `TASK-20260825-051` — Performance SLO and Capacity Foundation |
-| Status | `In Progress — Bounded Reviewer Remediation Local Complete / Pending Commit` |
+| Status | `In Progress — Changes Required / Governance Synchronization Pending` |
 | Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Approved |
 | Depends On | TASK-050 Evidence Gate PASS |
@@ -41,14 +41,17 @@ docs-auditor; exact-SHA Standard/GA Quick CI.
 
 ## 6. Exception / Rollback / Approval
 
-No threshold, workload, JVM/GC or candidate change to obtain PASS. Revert
-qualification-only patch on B2. The TASK-051 implementation is committed and
-pushed in the current review history at
-`5b4998d8855d4e418b2e897129571c8c16de700d`; Standard CI `33491317454` and
-Quick Lane `33491317436` passed with exact-SHA binding. The current target
-Quick artifacts are not yet established: existing local Quick manifests bind
-historical controller `638d893a3f830c89ffe99914897094968de6bbd4` and remain
-historical only. Full G4/G5 campaign execution remains separately Human-gated.
+No threshold, workload, JVM/GC or candidate change to obtain PASS. The TASK-051
+qualification remediation/review object is committed and pushed at
+`1bdab634de6c580327b1c9677a45fb08526331f1`; Standard CI `33496808343` and
+Quick Lane `33496808322` passed with exact-SHA binding. Current canonical Quick
+readiness is established for G4 run
+`c8954804-fe13-46fb-af45-d88097f0930d` and G5 run
+`013ca2c2-2f31-48b5-aa6b-9fd98147c331`, both bound to `1bdab634...`.
+The intermediate `5b4998d8855d4e418b2e897129571c8c16de700d` controller and
+historical `638d893a3f830c89ffe99914897094968de6bbd4` Quick manifests remain
+preserved as historical evidence. Full G4/G5 campaign execution remains
+separately Human-gated.
 
 The current review object also contains the separately recorded TASK-050
 post-closure qualification-harness B2 exception in ADR-0019. It does not
@@ -114,18 +117,22 @@ exact environment identity, raw samples and benchmark review mitigate them.
 
 | Stage | Status | Gate |
 | --- | --- | --- |
-| Implementation/Quick | Committed / pushed; final-target canonical Quick pending | Human TASK-051 implementation authorization |
-| Reviewer remediation | Local complete / pending commit | Human bounded reviewer remediation Evidence Gate |
+| Implementation/Quick | Committed / pushed; canonical G4/G5 Quick PASS / QUICK_READINESS_ONLY | Human TASK-051 implementation authorization |
+| Reviewer remediation | Committed / pushed at `1bdab634...`; bounded remediation Evidence Gate PASS | Human bounded reviewer remediation Evidence Gate |
+| Governance synchronization | Pending Human review; separate docs-only object | Human / Sol High governance delta review |
 | Full campaign | Not Authorized | explicit Human approval |
 
 | Date | Reviewer / status | Record |
 | --- | --- | --- |
 | 2026-08-25 | Human / Approved | Blueprint and TASK-051 implementation scope approved |
-| 2026-09-01 | Human / In progress | Implementation review object `5b4998d`; Standard `33491317454` and Quick `33491317436` PASS; reviewer reconciliation accepted; bounded coverage and governance remediation local validation PASS; final commit and controller-bound Quick evidence pending |
+| 2026-09-01 | Human / In progress | Qualification remediation/review object `1bdab634`; Standard `33496808343` and Quick `33496808322` PASS; G4/G5 canonical Quick readiness bound to current object; Docs Auditor CHANGES REQUIRED; Independent Verifier and Benchmark Reviewer have no formal verdict after review stopped |
 
 ### Implementation Log
 
-Formal G4/G5 execution has not begun. TASK-051 implementation is committed
-and pushed, and the bounded reviewer remediation is locally complete but
-uncommitted. The pre-campaign Evidence Gate remains open pending the final
-remediation commit and target-controller Quick evidence.
+Formal G4/G5 execution has not begun. TASK-051 implementation and bounded
+reviewer remediation are committed and pushed at the qualification object
+`1bdab634...`; current-controller Quick readiness is preserved. The
+pre-campaign Evidence Gate remains open because the Docs Auditor returned
+`CHANGES REQUIRED`; the other two reviewer executions stopped without formal
+verdicts. A later documentation-only synchronization is a separate governance
+object and must not replace the qualification object.

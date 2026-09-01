@@ -9,7 +9,7 @@
 | Harness implementation | Round 4 remediation committed/pushed at `f07d6bab50704eb172e853744ddd72a20d5df025`; Standard `33387118548` and Quick `33387118673` PASS exact-SHA; Independent Verifier returned CHANGES REQUIRED; Round 5 remediation is committed/pushed at `59453b4f2480b286fa7109368a563bb2e3ef75b6` with Standard `33390678107` and Quick `33390678078` PASS exact-SHA; final documentation sync is `c4c25997a838b9e0a3aee1d43ac1595256695301`; technical and delta evidence reviews PASS |
 | Formal G3/G7 campaign | Executed exactly once; G3/G7 PASS / QUALIFYING / FROZEN; campaign evidence preserved/frozen |
 | Candidate | `v0.9.0-rc.1` immutable |
-| TASK-051 | Eligible for Human review; implementation not authorized |
+| TASK-051 | IN PROGRESS / CHANGES REQUIRED; qualification remediation/review object `1bdab634de6c580327b1c9677a45fb08526331f1` committed/pushed; formal G4/G5 not authorized |
 | TASK-052 / TASK-053 | Not authorized |
 | Product release / GA | Not authorized |
 
@@ -20,9 +20,10 @@ the formal campaign evidence is preserved and frozen. Historical failed or
 aborted observations remain preserved under their original non-qualifying
 status; no TASK-050 evidence is to be regenerated, backfilled or reclassified.
 
-TASK-051 is eligible for a separate Human Authorization Review, but its
-implementation and any formal G4/G5 campaign remain unauthorized. TASK-053
-owns the later formal G4/G5 campaign gate.
+TASK-051 is IN PROGRESS / CHANGES REQUIRED with its qualification
+remediation/review object committed and pushed at
+`1bdab634de6c580327b1c9677a45fb08526331f1`. Formal G4/G5 remains
+unauthorized; TASK-053 owns the later formal G4/G5 campaign gate.
 
 ## Implemented qualification boundary
 
@@ -195,8 +196,8 @@ accompanies a lifecycle semantic failure, while a completed semantic failure
 remains `FAIL / B2`. Focused regression tests cover these classification and
 boundary invariants. Round 5 is committed/pushed at
 `59453b4f2480b286fa7109368a563bb2e3ef75b6` with both exact-SHA CI checks PASS;
-the remaining documentation-only sync is local and pending Human Commit/Push
-approval.
+the documentation-only synchronization was subsequently completed at
+`c4c25997a838b9e0a3aee1d43ac1595256695301`.
 
 ## Current closure boundary
 
@@ -219,8 +220,10 @@ On 2026-09-01 Human recorded a post-closure exception for the previously
 authorized qualification-only `GaOverloadRunner.java` and
 `GaOverloadRunnerTest.java` changes: `MANAGEMENT_BOUND` diagnostics, the
 observable server-release completion barrier, `PIPELINED_REQUEST` diagnostics
-and associated regression tests. The reviewed controller is
-`5b4998d8855d4e418b2e897129571c8c16de700d`.
+and associated regression tests. The historical intermediate remediation/review
+controller is `5b4998d8855d4e418b2e897129571c8c16de700d`; the current TASK-051
+qualification remediation/review object is
+`1bdab634de6c580327b1c9677a45fb08526331f1`.
 
 This is a governance synchronization of an existing Human authorization
 chain, not a new TASK-050 feature or campaign. No candidate or production

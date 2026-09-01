@@ -6,26 +6,31 @@
 TASK-051: IN PROGRESS / CHANGES REQUIRED
 Implementation: COMMITTED / PUSHED
 G4/G5 pre-campaign harness: LOCAL READY
-Current review object: 5b4998d8855d4e418b2e897129571c8c16de700d
-Standard CI 33491317454: PASS / EXACT-SHA
-Quick Lane 33491317436: PASS / EXACT-SHA
-Independent Verifier: CHANGES REQUIRED
-Benchmark Reviewer: PASS
+Current qualification remediation/review object: 1bdab634de6c580327b1c9677a45fb08526331f1
+Historical intermediate remediation/review controller: 5b4998d8855d4e418b2e897129571c8c16de700d
+Standard CI 33496808343: PASS / EXACT-SHA
+Quick Lane 33496808322: PASS / EXACT-SHA
+G4 canonical Quick: PASS / QUICK_READINESS_ONLY / run c8954804-fe13-46fb-af45-d88097f0930d / controller 1bdab634de6c580327b1c9677a45fb08526331f1
+G5 canonical Quick: PASS / QUICK_READINESS_ONLY / run 013ca2c2-2f31-48b5-aa6b-9fd98147c331 / controller 1bdab634de6c580327b1c9677a45fb08526331f1
+Reviewer Gate: CHANGES REQUIRED
 Docs Auditor: CHANGES REQUIRED
-Bounded reviewer remediation: LOCAL COMPLETE / PENDING COMMIT
-Quick evidence for current review object: NOT YET ESTABLISHED
+Independent Verifier: NO FORMAL VERDICT / STOPPED AFTER DOCS FINDING
+Benchmark Reviewer: NO FORMAL VERDICT / STOPPED AFTER DOCS FINDING
+Governance synchronization: PENDING HUMAN REVIEW
 Formal G4 campaign: NOT EXECUTED
 Formal G5 campaign: NOT EXECUTED
 Pre-Campaign Evidence Gate: NOT PASSED
 TASK-053: NOT AUTHORIZED
 ```
 
-The G4/G5 implementation was performed under the Human-authorized TASK-051
-scope and is present in the reviewed history.  The current review object is
-`5b4998d8855d4e418b2e897129571c8c16de700d`; the frozen candidate remains
-`v0.9.0-rc.1`.  The current object also carries a separately Human-authorized
-TASK-050 post-closure qualification-harness exception recorded in ADR-0019;
-that exception does not reopen TASK-050.
+The G4/G5 implementation and bounded reviewer remediation were performed under
+the Human-authorized TASK-051 scope and are present in the pushed history. The
+current qualification remediation/review object is
+`1bdab634de6c580327b1c9677a45fb08526331f1`; the frozen candidate remains
+`v0.9.0-rc.1`. The intermediate `5b4998d8855d4e418b2e897129571c8c16de700d`
+controller remains historical. The current object also carries a separately
+Human-authorized TASK-050 post-closure qualification-harness exception recorded
+in ADR-0019; that exception does not reopen TASK-050.
 
 ## Implemented qualification-only scope
 
@@ -49,8 +54,8 @@ readiness gate results.  No global schema semantics were changed.
 ## Quick evidence and provenance
 
 The packaged local Quick artifacts below are valid historical readiness
-evidence, but their manifests bind controller
-`638d893a3f830c89ffe99914897094968de6bbd4`, not the current review object:
+evidence. Their manifests bind historical controller
+`638d893a3f830c89ffe99914897094968de6bbd4` and remain preserved:
 
 ```text
 G4:
@@ -66,14 +71,23 @@ qualification-results/g5-quick-7816532a-50be-400c-903e-8ef469432978/
 PASS / readiness-only / non-formal
 ```
 
-Each run directory contains the raw evidence, latency samples,
-adjacent sidecars, and inventory chain.  These outputs do not authorize
-or represent TASK-053 formal campaign evidence.  No canonical Quick artifact
-with controller `5b4998d8855d4e418b2e897129571c8c16de700d` is currently
-present.  Remote Quick Lane `33491317436` is an exact-SHA CI smoke result;
-the workflow does not upload canonical G4/G5 artifacts.  New target-bound
-Quick evidence must therefore be generated only after a final remediation
-controller SHA is established and under a separate Human-authorized step.
+Each run directory contains the raw evidence, latency samples, adjacent
+sidecars, and inventory chain. These historical outputs do not authorize or
+represent TASK-053 formal campaign evidence. The current target-bound canonical
+Quick evidence is:
+
+```text
+G4: qualification-results/g4-quick-02deea80-77af-458b-9372-01ebc4fc4723/
+    run c8954804-fe13-46fb-af45-d88097f0930d
+    PASS / QUICK_READINESS_ONLY / controller 1bdab634de6c580327b1c9677a45fb08526331f1
+G5: qualification-results/g5-quick-bc630b84-c980-46eb-8d93-dcdcb6268e17/
+    run 013ca2c2-2f31-48b5-aa6b-9fd98147c331
+    PASS / QUICK_READINESS_ONLY / controller 1bdab634de6c580327b1c9677a45fb08526331f1
+```
+
+Remote Quick Lane `33496808322` is an exact-SHA CI smoke result; the workflow
+does not upload these canonical G4/G5 artifacts. Neither the historical nor
+current Quick outputs authorize or represent formal G4/G5 qualification.
 
 ## Local validation
 
@@ -118,17 +132,18 @@ qualification/src/test/java/com/ultralatency/matching/qualification/ga/durabilit
 
 Production sources, POMs/dependencies, workflows, candidate bytes and
 tag identity, G1/G2/G3/G7/G9/G11 evidence, and TASK-050 evidence remain
-untouched.  `.vscode/` remains untracked and untouched.  No commit,
-push, or CI rerun is authorized by this report beyond the already completed
-exact-SHA validation listed above.  No formal campaign, TASK-053 work, or
-release operation was performed.
+untouched. `.vscode/` remains untracked and untouched. The current
+qualification remediation/review object is the pushed `1bdab634...`; a later
+governance-only synchronization, if authorized, is a separate object and must
+not replace this qualification provenance. No formal campaign, TASK-053 work,
+or release operation was performed.
 
 ## Next gate
 
-`Human TASK-051 Bounded Reviewer Remediation Evidence Review`.
+`Human / Sol High TASK-051 Docs-only Governance Delta Evidence Review`.
 
 TASK-051 remains `IN PROGRESS / CHANGES REQUIRED`; implementation and Quick
-readiness do not close the task or authorize formal G4/G5.  The current
-reviewer reconciliation requires direct G4/G5 coverage tests, a post-closure
-TASK-050 exception record, governance synchronization, and new Quick
-artifacts bound to the final remediation controller SHA.
+readiness do not close the task or authorize formal G4/G5. The remaining
+blocker is governance/documentation state synchronization; the Independent
+Verifier and Benchmark Reviewer have no formal verdict because review stopped
+after the Docs Auditor finding.

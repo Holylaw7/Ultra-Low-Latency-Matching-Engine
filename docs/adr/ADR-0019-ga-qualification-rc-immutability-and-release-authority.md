@@ -4,10 +4,11 @@
 
 **Approved — Human Phase 11 Blueprint Approval, 2026-08-25**
 
-This ADR authorizes the approved Phase 11 qualification design and TASK-047 as
-the next implementation task. It does not authorize Full Campaign execution,
-production changes, candidate mutation, CI changes to existing workflows, tag
-creation, GitHub Release publication or a General Availability declaration.
+This ADR authorizes the approved Phase 11 qualification design and its
+dependency-ordered qualification-only task sequence. It does not authorize Full
+Campaign execution, production changes, candidate mutation, CI changes to
+existing workflows, tag creation, GitHub Release publication or a General
+Availability declaration.
 
 ## Context
 
@@ -446,14 +447,21 @@ The recorded scope is limited to:
 - `PIPELINED_REQUEST` diagnostic instrumentation; and
 - associated qualification-only regression tests.
 
-The reviewed implementation controller is
-`5b4998d8855d4e418b2e897129571c8c16de700d`. The historical Standard run
+The historical intermediate remediation/review controller is
+`5b4998d8855d4e418b2e897129571c8c16de700d`. The current TASK-051
+qualification remediation/review object is
+`1bdab634de6c580327b1c9677a45fb08526331f1`. The historical Standard run
 `33485052068` remains `FAIL / B2 / PRESERVED`; later validation does not
 reclassify or replace it. No production, POM, dependency, workflow,
 candidate, or formal G7 campaign mutation was authorized by this exception.
 No evidence of candidate impact or formal G7 false-PASS impact was
 established, so TASK-050 remains `CLOSED`, G3/G7 remain
 `PASS / QUALIFYING / FROZEN`, and `rc.2` is not required.
+
+The qualification remediation/review object and any later documentation-only
+governance synchronization object are distinct. A future docs-sync commit has
+its own actual Git SHA, which must not be predicted or written before that
+commit exists and must not replace `1bdab634...` as qualification provenance.
 
 ### D16 — Release source and production source may be distinguished
 
