@@ -9,8 +9,9 @@
 | Harness implementation | Round 4 remediation committed/pushed at `f07d6bab50704eb172e853744ddd72a20d5df025`; Standard `33387118548` and Quick `33387118673` PASS exact-SHA; Independent Verifier returned CHANGES REQUIRED; Round 5 remediation is committed/pushed at `59453b4f2480b286fa7109368a563bb2e3ef75b6` with Standard `33390678107` and Quick `33390678078` PASS exact-SHA; final documentation sync is `c4c25997a838b9e0a3aee1d43ac1595256695301`; technical and delta evidence reviews PASS |
 | Formal G3/G7 campaign | Executed exactly once; G3/G7 PASS / QUALIFYING / FROZEN; campaign evidence preserved/frozen |
 | Candidate | `v0.9.0-rc.1` immutable |
-| TASK-051 | IN PROGRESS / CHANGES REQUIRED; qualification remediation/review object `1bdab634de6c580327b1c9677a45fb08526331f1` committed/pushed; formal G4/G5 not authorized |
-| TASK-052 / TASK-053 | Not authorized |
+| TASK-051 | Human closed; G4/G5 pre-campaign foundation and reviewer evidence accepted; formal G4/G5 not authorized |
+| TASK-052 | IN PROGRESS; Human scope approved; qualification-only implementation local/uncommitted; technical local Evidence PASS; governance synchronization in progress; pre-soak Evidence Gate not passed |
+| TASK-053 | Not authorized |
 | Product release / GA | Not authorized |
 
 ## Current Human closure state
@@ -20,10 +21,17 @@ the formal campaign evidence is preserved and frozen. Historical failed or
 aborted observations remain preserved under their original non-qualifying
 status; no TASK-050 evidence is to be regenerated, backfilled or reclassified.
 
-TASK-051 is IN PROGRESS / CHANGES REQUIRED with its qualification
-remediation/review object committed and pushed at
-`1bdab634de6c580327b1c9677a45fb08526331f1`. Formal G4/G5 remains
-unauthorized; TASK-053 owns the later formal G4/G5 campaign gate.
+TASK-051 is Human closed with its qualification remediation/review object
+committed and pushed at `1bdab634de6c580327b1c9677a45fb08526331f1`. Formal
+G4/G5 remains unauthorized; TASK-053 owns the later formal G4/G5 campaign
+gate.
+
+TASK-052 is now IN PROGRESS under Human-approved qualification-only scope. Its
+G6/G8 foundation and shared Quick readiness path are implemented locally and
+technical local evidence is PASS; the implementation remains uncommitted,
+governance synchronization is in progress, and the pre-soak Evidence Gate is
+not passed. TASK-052 Quick evidence is separate from TASK-050's frozen G3/G7
+campaign evidence. Formal Stage A/B and TASK-054 remain unauthorized.
 
 ## Implemented qualification boundary
 
@@ -211,8 +219,9 @@ independently verified and closed. TASK-050 is now closed; no additional
 campaign or TASK-050 evidence regeneration is authorized. A narrowly bounded
 post-closure qualification-harness B2 remediation exception was subsequently
 Human-authorized and is recorded in ADR-0019; it does not reopen TASK-050 or
-authorize another campaign. TASK-051 is now IN PROGRESS / CHANGES REQUIRED,
-while formal G4/G5 remains separately Human-gated.
+authorize another campaign. TASK-051 is now Human closed, while formal G4/G5
+remains separately Human-gated. TASK-052 is a separate, currently in-progress
+qualification-only foundation and does not alter TASK-050's closed state.
 
 ## Post-closure qualification-harness exception
 

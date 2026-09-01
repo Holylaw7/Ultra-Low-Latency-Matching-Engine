@@ -17,7 +17,7 @@ public final class QualificationJfrRecording implements AutoCloseable {
         this.destination = destination;
     }
 
-    /** Starts a disk-backed recording with GC and thread lifecycle events enabled. */
+    /** Starts a disk-backed recording with the frozen TASK-052 JDK 21 event families enabled. */
     public static QualificationJfrRecording start(final Path destination) throws IOException {
         return start(destination, false);
     }
@@ -42,16 +42,17 @@ public final class QualificationJfrRecording implements AutoCloseable {
         final Recording recording = new Recording();
         recording.enable("jdk.GarbageCollection").withoutStackTrace();
         recording.enable("jdk.GCHeapSummary").withoutStackTrace();
+        recording.enable("jdk.CPULoad").withoutStackTrace();
+        recording.enable("jdk.ResidentSetSize").withoutStackTrace();
+        recording.enable("jdk.JavaThreadStatistics").withoutStackTrace();
         recording.enable("jdk.ThreadStart").withoutStackTrace();
         recording.enable("jdk.ThreadEnd").withoutStackTrace();
-        if (allocationSampling) {
-            recording.enable("jdk.ObjectAllocationSample")
-                    .with("throttle", "100/s")
-                    .withoutStackTrace();
-            recording.enable("jdk.ThreadAllocationStatistics")
-                    .with("period", "1 s")
-                    .withoutStackTrace();
-        }
+        recording.enable("jdk.ObjectAllocationSample")
+                .with("throttle", "100/s")
+                .withoutStackTrace();
+        recording.enable("jdk.ThreadAllocationStatistics")
+                .with("period", "1 s")
+                .withoutStackTrace();
         recording.setToDisk(true);
         recording.setDestination(normalized);
         recording.start();

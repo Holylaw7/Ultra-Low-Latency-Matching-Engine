@@ -2,15 +2,15 @@
 
 ## 1. Metadata
 
-| Field | Value |
-| --- | --- |
-| Task ID / Title | `TASK-20260825-052` — Soak and Observability Foundation |
-| Status | `Proposed — Dependency Locked` |
-| Phase / ADR | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
-| Blueprint | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Proposed |
-| Depends On | TASK-051 pre-campaign Evidence Gate PASS |
-| Gates | G6, G8 pre-campaign |
-| Manual Gate | Stop before two-hour soak |
+| Field           | Value                                                                                                    |
+| --------------- | -------------------------------------------------------------------------------------------------------- |
+| Task ID / Title | `TASK-20260825-052` — Soak and Observability Foundation                                                  |
+| Status          | `In Progress — Local Evidence / Governance Synchronization`                                             |
+| Phase / ADR     | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
+| Blueprint       | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Human scope reviewed |
+| Depends On      | TASK-051 pre-campaign Evidence Gate PASS — satisfied                                                    |
+| Gates           | G6, G8 pre-campaign                                                                                      |
+| Manual Gate     | Stop before two-hour soak                                                                                |
 
 ## 2. Goal
 
@@ -20,8 +20,8 @@ lifecycle validation. Do not execute the two-hour or six-hour runs.
 
 ## 3. Frozen Campaign
 
-`MEMORY_STEADY_STATE_V1`, seed 20260823, packaged public path, 200 accepted/s.
-Stage A: 2h and >=1.44M accepted. Stage B: 6h and >=4.32M accepted. Stage B
+`MEMORY_STEADY_STATE_V1`, seed 20260823, packaged public path, 200 commands/s.
+Stage A: 2h and >=1,440,000 accepted. Stage B: 6h and >=4,320,000 accepted. Stage B
 requires a new Human approval after Stage A review.
 
 ## 4. Acceptance Criteria
@@ -29,7 +29,7 @@ requires a new Human approval after Stage A review.
 - [ ] Run configuration is immutable once started.
 - [ ] Checkpoint/replay/transcript/probe and resource guards are independent.
 - [ ] Chronological post-GC, thread/file/temp and first/final P99 drift guards
-  are deterministic; drift threshold is <=20%.
+      are deterministic; drift threshold is <=20%.
 - [ ] Management/JFR/GC/exit evidence never reads mutable engine state.
 - [ ] Quick/smoke evidence cannot substitute for a soak.
 - [ ] Pre-soak reviewers and exact-SHA CI PASS, then stop.
@@ -40,6 +40,40 @@ Focused guard/manifest/abort tests, Quick lifecycle run, full regression,
 Checkstyle, candidate/frozen audit, verifier, mandatory benchmark-reviewer,
 docs-auditor and exact-SHA CI.
 
+## Current Governance State
+
+```text
+TASK-051 dependency:
+SATISFIED
+
+Human scope:
+APPROVED
+
+TASK-052:
+IN PROGRESS
+
+Implementation:
+QUALIFICATION-ONLY / LOCAL / UNCOMMITTED
+
+Technical local Evidence:
+PASS
+
+Governance synchronization:
+IN PROGRESS
+
+Pre-Soak Evidence Gate:
+NOT PASSED
+
+TASK-053:
+NOT AUTHORIZED
+
+Formal Stage A/B:
+NOT AUTHORIZED
+
+TASK-054:
+NOT AUTHORIZED
+```
+
 ## 6. Exception / Rollback / Approval
 
 No System.gc(), workload pressure, threshold change or automatic extension to
@@ -49,8 +83,10 @@ B1. Planned commit: `test(ga): add soak and observability qualification`.
 ## 7. Background / Current Implementation
 
 Phase 9/10 provide one-hour campaigns and management/JFR evidence, not the
-pre-declared two-/six-hour GA stability Gate. No staged GA soak controller or
-G8 Gate result currently exists.
+pre-declared two-/six-hour GA stability Gate. TASK-052's staged GA soak and
+G8 foundation is implemented locally and has passed its qualification test,
+focused-matrix and Quick readiness validation. The pre-soak Evidence Gate is
+not passed, and no formal soak has been executed.
 
 ## 8. Requirements, Inputs, Outputs and Non-Goals
 
@@ -68,12 +104,12 @@ run.
 
 ## 10. Planned File Changes
 
-| Path | Change |
-| --- | --- |
-| `qualification/**/ga/soak/**` | staged runner, resource/latency guards |
-| `qualification/**/ga/observability/**` | management/JFR/GC evidence evaluator |
-| qualification tests/resources | clock/window/abort/identity fixtures |
-| `tasks/reports/PHASE-11-task-052.md` | pre-soak report |
+| Path                                   | Change                                 |
+| -------------------------------------- | -------------------------------------- |
+| `qualification/**/ga/soak/**`          | staged runner, resource/latency guards |
+| `qualification/**/ga/observability/**` | management/JFR/GC evidence evaluator   |
+| qualification tests/resources          | clock/window/abort/identity fixtures   |
+| `tasks/reports/PHASE-11-task-052.md`   | pre-soak report                        |
 
 ## 11. Detailed Test / Profile Plan
 
@@ -104,17 +140,21 @@ GA. Blueprint approval does not authorize either soak.
 Harness retention, artificial GC or cross-window sample mixing could hide drift;
 bounded workload and chronological per-run guards prevent this.
 
-| Stage | Status | Gate |
-| --- | --- | --- |
-| Implementation/Quick | Dependency locked | TASK-051 pre-campaign PASS |
-| 2h soak | Not Authorized | explicit Human approval |
-| 6h soak | Not Authorized | 2h review + new Human approval |
+| Stage                | Status            | Gate                           |
+| -------------------- | ----------------- | ------------------------------ |
+| Implementation/Quick | In progress — local evidence / governance synchronization | TASK-051 PASS; Human scope approved |
+| 2h soak              | Not Authorized    | explicit Human approval        |
+| 6h soak              | Not Authorized    | 2h review + new Human approval |
 
-| Date | Reviewer / status | Record |
-| --- | --- | --- |
-| 2026-08-25 | Human / Pending | Blueprint Approval required |
-| 2026-08-25 | Proposed | No soak execution |
+| Date       | Reviewer / status | Record                      |
+| ---------- | ----------------- | --------------------------- |
+| 2026-08-25 | Human / Pending   | Blueprint Approval required |
+| 2026-08-25 | Proposed          | No soak execution           |
 
 ### Implementation Log
 
-No implementation has begun; the preceding dated rows are the initial log.
+The 2026-08-25 rows above are historical planning checkpoints. Current state:
+Human scope approved; qualification-only implementation is local and
+uncommitted; technical local evidence is PASS; governance synchronization is
+in progress; the pre-soak Evidence Gate and both formal soak campaigns remain
+unauthorized.

@@ -18,6 +18,8 @@ import com.ultralatency.matching.qualification.ga.capacity.GaCapacityQuickResult
 import com.ultralatency.matching.qualification.ga.capacity.GaCapacityRunner;
 import com.ultralatency.matching.qualification.ga.performance.GaPerformanceQuickResult;
 import com.ultralatency.matching.qualification.ga.performance.GaPerformanceRunner;
+import com.ultralatency.matching.qualification.ga.soak.GaSoakQuickResult;
+import com.ultralatency.matching.qualification.ga.soak.GaSoakRunner;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -127,6 +129,17 @@ public final class ReleaseCandidateQualificationMain {
             runGaCapacityQuick(Path.of(arguments[4]));
             return;
         }
+        if (arguments != null && arguments.length == 3 && "ga-soak".equals(arguments[0])
+                && "--lane".equals(arguments[1]) && "quick".equals(arguments[2])) {
+            runGaSoakQuick(Path.of("qualification-results"));
+            return;
+        }
+        if (arguments != null && arguments.length == 5 && "ga-soak".equals(arguments[0])
+                && "--lane".equals(arguments[1]) && "quick".equals(arguments[2])
+                && "--output".equals(arguments[3])) {
+            runGaSoakQuick(Path.of(arguments[4]));
+            return;
+        }
         {
             System.err.println("usage: child --config <path>");
             System.err.println("       lifecycle --output <directory>");
@@ -144,6 +157,7 @@ public final class ReleaseCandidateQualificationMain {
                     + " [--output <dir>]");
             System.err.println("       ga-performance --lane quick [--output <dir>]");
             System.err.println("       ga-capacity --lane quick [--output <dir>]");
+            System.err.println("       ga-soak --lane quick [--output <dir>]");
             System.exit(64);
             return;
         }
@@ -397,6 +411,23 @@ public final class ReleaseCandidateQualificationMain {
             }
         } catch (final Exception failure) {
             System.err.println("GA_CAPACITY_QUICK_FAILURE " + failure.getClass().getName()
+                    + " " + String.valueOf(failure.getMessage()));
+            System.exit(1);
+        }
+    }
+
+    private static void runGaSoakQuick(final Path outputDirectory) {
+        try {
+            final GaSoakQuickResult result = new GaSoakRunner().runQuick(outputDirectory);
+            System.out.println("GA_SOAK QUICK "
+                    + (result.g6Evaluation().passed() && result.g8Evaluation().passed()
+                    ? "PASS" : "FAIL") + " " + result.evidenceRoot()
+                    + " " + result.g6RunId() + " " + result.g8RunId());
+            if (!result.g6Evaluation().passed() || !result.g8Evaluation().passed()) {
+                System.exit(1);
+            }
+        } catch (final Exception failure) {
+            System.err.println("GA_SOAK_QUICK_FAILURE " + failure.getClass().getName()
                     + " " + String.valueOf(failure.getMessage()));
             System.exit(1);
         }

@@ -1,5 +1,6 @@
 package com.ultralatency.matching.qualification;
 
+import com.ultralatency.matching.qualification.ga.observability.GaManagementEvidence;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -52,10 +53,32 @@ public final class ReleaseCandidateManagementClient {
 
     /** Requires the bounded READY response shape used by lifecycle evidence. */
     public static void requireReady(final String response) throws IOException {
-        Objects.requireNonNull(response, "response");
-        if (!response.contains("\"schemaVersion\":1")
-                || !response.contains("\"ready\":true")) {
+        final GaManagementEvidence evidence;
+        try {
+            evidence = GaManagementEvidence.parse(response);
+        } catch (final IllegalArgumentException failure) {
+            throw new IOException("management READY response was malformed", failure);
+        }
+        if (evidence.kind() != GaManagementEvidence.Kind.READY
+                || !Boolean.TRUE.equals(evidence.ready())) {
             throw new IOException("management READY response was not ready: " + response);
+        }
+    }
+
+    /** Sends and strictly parses one existing public management endpoint response. */
+    public static GaManagementEvidence requestEvidence(
+            final int port,
+            final String command,
+            final Duration timeout) throws IOException {
+        final String response = request(port, command, timeout);
+        try {
+            final GaManagementEvidence evidence = GaManagementEvidence.parse(response);
+            if (!evidence.kind().name().equals(command)) {
+                throw new IOException("management response kind does not match request");
+            }
+            return evidence;
+        } catch (final IllegalArgumentException failure) {
+            throw new IOException("management response failed strict schema validation", failure);
         }
     }
 
