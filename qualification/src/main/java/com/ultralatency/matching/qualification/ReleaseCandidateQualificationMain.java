@@ -14,6 +14,10 @@ import com.ultralatency.matching.qualification.ga.durability.GaDurabilityRunner;
 import com.ultralatency.matching.qualification.ga.durability.GaOverloadCampaignResult;
 import com.ultralatency.matching.qualification.ga.durability.GaOverloadMatrix;
 import com.ultralatency.matching.qualification.ga.durability.GaOverloadRunner;
+import com.ultralatency.matching.qualification.ga.capacity.GaCapacityQuickResult;
+import com.ultralatency.matching.qualification.ga.capacity.GaCapacityRunner;
+import com.ultralatency.matching.qualification.ga.performance.GaPerformanceQuickResult;
+import com.ultralatency.matching.qualification.ga.performance.GaPerformanceRunner;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -101,6 +105,28 @@ public final class ReleaseCandidateQualificationMain {
             runGaOverload(overloadMatrix(arguments[2]), Path.of(arguments[4]));
             return;
         }
+        if (arguments != null && arguments.length == 3 && "ga-performance".equals(arguments[0])
+                && "--lane".equals(arguments[1]) && "quick".equals(arguments[2])) {
+            runGaPerformanceQuick(Path.of("qualification-results"));
+            return;
+        }
+        if (arguments != null && arguments.length == 5 && "ga-performance".equals(arguments[0])
+                && "--lane".equals(arguments[1]) && "quick".equals(arguments[2])
+                && "--output".equals(arguments[3])) {
+            runGaPerformanceQuick(Path.of(arguments[4]));
+            return;
+        }
+        if (arguments != null && arguments.length == 3 && "ga-capacity".equals(arguments[0])
+                && "--lane".equals(arguments[1]) && "quick".equals(arguments[2])) {
+            runGaCapacityQuick(Path.of("qualification-results"));
+            return;
+        }
+        if (arguments != null && arguments.length == 5 && "ga-capacity".equals(arguments[0])
+                && "--lane".equals(arguments[1]) && "quick".equals(arguments[2])
+                && "--output".equals(arguments[3])) {
+            runGaCapacityQuick(Path.of(arguments[4]));
+            return;
+        }
         {
             System.err.println("usage: child --config <path>");
             System.err.println("       lifecycle --output <directory>");
@@ -116,6 +142,8 @@ public final class ReleaseCandidateQualificationMain {
                     + " [--output <dir>]");
             System.err.println("       ga-overload --matrix <ga-g7-overload-v1|ga-g7-overload-test-v1>"
                     + " [--output <dir>]");
+            System.err.println("       ga-performance --lane quick [--output <dir>]");
+            System.err.println("       ga-capacity --lane quick [--output <dir>]");
             System.exit(64);
             return;
         }
@@ -336,6 +364,39 @@ public final class ReleaseCandidateQualificationMain {
             }
         } catch (final Exception failure) {
             System.err.println("GA_OVERLOAD_FAILURE " + failure.getClass().getName()
+                    + " " + String.valueOf(failure.getMessage()));
+            System.exit(1);
+        }
+    }
+
+    private static void runGaPerformanceQuick(final Path outputDirectory) {
+        try {
+            final GaPerformanceQuickResult result = new GaPerformanceRunner().runQuick(
+                    outputDirectory);
+            System.out.println("GA_PERFORMANCE QUICK "
+                    + (result.evaluation().passed() ? "PASS" : "FAIL") + " "
+                    + result.manifestPath() + " " + result.gateResultPath());
+            if (!result.evaluation().passed()) {
+                System.exit(1);
+            }
+        } catch (final Exception failure) {
+            System.err.println("GA_PERFORMANCE_QUICK_FAILURE " + failure.getClass().getName()
+                    + " " + String.valueOf(failure.getMessage()));
+            System.exit(1);
+        }
+    }
+
+    private static void runGaCapacityQuick(final Path outputDirectory) {
+        try {
+            final GaCapacityQuickResult result = new GaCapacityRunner().runQuick(outputDirectory);
+            System.out.println("GA_CAPACITY QUICK "
+                    + (result.evaluation().passed() ? "PASS" : "FAIL") + " "
+                    + result.manifestPath() + " " + result.gateResultPath());
+            if (!result.evaluation().passed()) {
+                System.exit(1);
+            }
+        } catch (final Exception failure) {
+            System.err.println("GA_CAPACITY_QUICK_FAILURE " + failure.getClass().getName()
                     + " " + String.valueOf(failure.getMessage()));
             System.exit(1);
         }
