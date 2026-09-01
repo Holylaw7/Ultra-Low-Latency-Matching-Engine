@@ -3,17 +3,19 @@
 ## Current status
 
 ```text
-TASK-051: IN PROGRESS / CHANGES REQUIRED
+TASK-051: CLOSED
 Implementation: COMMITTED / PUSHED
-G4/G5 pre-campaign harness: LOCAL READY
+G4/G5 pre-campaign harness: COMPLETE / LOCAL READY
 Current qualification remediation/review object: 1bdab634de6c580327b1c9677a45fb08526331f1
 Historical intermediate remediation/review controller: 5b4998d8855d4e418b2e897129571c8c16de700d
-Standard CI 33496808343: PASS / EXACT-SHA
-Quick Lane 33496808322: PASS / EXACT-SHA
+Standard CI 33501819205: PASS / EXACT-SHA
+Quick Lane 33501819240: PASS / EXACT-SHA
 G4 canonical Quick: PASS / QUICK_READINESS_ONLY / run c8954804-fe13-46fb-af45-d88097f0930d / controller 1bdab634de6c580327b1c9677a45fb08526331f1
 G5 canonical Quick: PASS / QUICK_READINESS_ONLY / run 013ca2c2-2f31-48b5-aa6b-9fd98147c331 / controller 1bdab634de6c580327b1c9677a45fb08526331f1
-Governance synchronization object: 55be8de37ad3143c4222ccdf8b24b815f66a9aee
-Reviewer checkpoint represented by that object:
+Reviewer Gate: PASS / HUMAN ACCEPTED
+Pre-Campaign Evidence Gate: PASS / HUMAN CLOSED
+Historical governance checkpoint object: 55be8de37ad3143c4222ccdf8b24b815f66a9aee
+Reviewer checkpoint snapshot represented by that historical object:
   Docs Auditor: CHANGES REQUIRED
   Independent Verifier: NO FORMAL VERDICT / STOPPED AFTER DOCS FINDING
   Benchmark Reviewer: NO FORMAL VERDICT / STOPPED AFTER DOCS FINDING
@@ -21,11 +23,11 @@ Post-checkpoint reviewer execution record (historical; not an immutable current-
   Docs Auditor: PASS
   Independent Verifier: CHANGES REQUIRED
   Benchmark Reviewer: NOT RUN (gated after verifier)
-Current aggregate reviewer gate: IN PROGRESS / CHANGES REQUIRED
-Reviewer-state representation synchronization: PENDING HUMAN REVIEW
+The later reviewer remediation and final Human closure superseded that
+intermediate execution record; no reviewer verdict is being predicted by this
+checkpoint.
 Formal G4 campaign: NOT EXECUTED
 Formal G5 campaign: NOT EXECUTED
-Pre-Campaign Evidence Gate: NOT PASSED
 TASK-053: NOT AUTHORIZED
 ```
 
@@ -33,7 +35,8 @@ The reviewer entries are deliberately time-scoped. The checkpoint snapshot is
 the repository governance state represented by `55be8de...`; the subsequent
 reviewer execution is historical execution evidence and is not backfilled into
 that immutable checkpoint or treated as a permanent live-status field. The
-aggregate TASK-051 reviewer gate remains `IN PROGRESS / CHANGES REQUIRED`.
+later bounded remediation, exact-SHA validation and reviewer evidence were
+accepted by Human, closing TASK-051 and its pre-campaign Evidence Gate.
 
 The G4/G5 implementation and bounded reviewer remediation were performed under
 the Human-authorized TASK-051 scope and are present in the pushed history. The
@@ -150,12 +153,11 @@ governance-only synchronization, if authorized, is a separate object and must
 not replace this qualification provenance. No formal campaign, TASK-053 work,
 or release operation was performed.
 
-## Next gate
+## Closure and boundary
 
-`Human / Sol High TASK-051 Reviewer-state Representation Evidence Review`.
-
-TASK-051 remains `IN PROGRESS / CHANGES REQUIRED`; implementation and Quick
-readiness do not close the task or authorize formal G4/G5. The remaining
-blocker is governance representation: checkpoint-time reviewer state and
-post-checkpoint reviewer execution evidence must remain distinct. No technical
-qualification rerun or provenance rewrite is required.
+Human closed TASK-051 after accepting the qualification implementation,
+controller-bound Quick readiness, exact-SHA CI, reviewer remediation and the
+checkpoint/live-state representation. TASK-051 closure means the G4/G5
+pre-campaign foundation is ready; it does not authorize or claim formal G4/G5
+qualification. Formal G4/G5 remains unexecuted and TASK-053 remains
+unauthorized. The next active task is TASK-052 under its separate Human gate.

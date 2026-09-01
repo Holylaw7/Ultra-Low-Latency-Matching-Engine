@@ -10,7 +10,7 @@
 | Formal G3/G7 campaign | Executed exactly once; G3/G7 PASS / QUALIFYING / FROZEN; campaign evidence preserved/frozen |
 | Candidate | `v0.9.0-rc.1` immutable |
 | TASK-051 | Human closed; G4/G5 pre-campaign foundation and reviewer evidence accepted; formal G4/G5 not authorized |
-| TASK-052 | IN PROGRESS; Human scope approved; qualification-only implementation local/uncommitted; technical local Evidence PASS; governance synchronization in progress; pre-soak Evidence Gate not passed |
+| TASK-052 | IN PROGRESS / CHANGES REQUIRED; Human scope approved; qualification-only implementation committed/pushed at `9140ab8215c2b170b925aadd02502d4d131a2f99`; final shared Quick PASS / QUICK_READINESS_ONLY; technical Evidence PASS; post-commit governance synchronization in progress; pre-soak Evidence Gate not passed |
 | TASK-053 | Not authorized |
 | Product release / GA | Not authorized |
 
@@ -27,11 +27,13 @@ G4/G5 remains unauthorized; TASK-053 owns the later formal G4/G5 campaign
 gate.
 
 TASK-052 is now IN PROGRESS under Human-approved qualification-only scope. Its
-G6/G8 foundation and shared Quick readiness path are implemented locally and
-technical local evidence is PASS; the implementation remains uncommitted,
-governance synchronization is in progress, and the pre-soak Evidence Gate is
-not passed. TASK-052 Quick evidence is separate from TASK-050's frozen G3/G7
-campaign evidence. Formal Stage A/B and TASK-054 remain unauthorized.
+G6/G8 foundation and shared Quick readiness path are committed and pushed at
+`9140ab8215c2b170b925aadd02502d4d131a2f99`; technical local evidence is PASS,
+and the final controller-bound shared Quick is PASS / QUICK_READINESS_ONLY.
+The post-commit governance synchronization remains in progress and the
+pre-soak Evidence Gate is not passed. TASK-052 Quick evidence is separate
+from TASK-050's frozen G3/G7 campaign evidence. Formal Stage A/B and TASK-054
+remain unauthorized.
 
 ## Implemented qualification boundary
 
