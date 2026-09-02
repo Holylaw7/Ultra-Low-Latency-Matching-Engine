@@ -139,14 +139,19 @@ public final class GaSoakEvidencePublisher {
         final String configuration = QualificationIdentity.digest(configurationFields);
         final String g6RunId = UUID.randomUUID().toString();
         final String g8RunId = UUID.randomUUID().toString();
+        // G6 and G8 are two views of one physical workload.  Both manifests
+        // therefore carry the same observed accepted-command count; using the
+        // matrix floor for G8 would hide a count mismatch between the two
+        // canonical chains.
+        final long sharedAcceptedCommands = g6Observation.acceptedCommands();
         final Map<String, String> g6Fields = manifestFields(
                 "G6", G6_QUICK_VERSION, g6RunId, matrix, g6Observation, context,
                 runtime, configuration, comparability, started, completed, inventory, artifacts,
-                g6Evaluation.outcome(), g6Evaluation.failureCode());
+                g6Evaluation.outcome(), g6Evaluation.failureCode(), sharedAcceptedCommands);
         final Map<String, String> g8Fields = manifestFields(
                 "G8", G8_QUICK_VERSION, g8RunId, matrix, g8Observation, context,
                 runtime, configuration, comparability, started, completed, inventory, artifacts,
-                g8Evaluation.outcome(), g8Evaluation.failureCode());
+                g8Evaluation.outcome(), g8Evaluation.failureCode(), sharedAcceptedCommands);
         final Path g6Manifest = root.resolve("g6-run-manifest-v1.txt");
         final Path g8Manifest = root.resolve("g8-run-manifest-v1.txt");
         final String g6Digest = GaEvidenceStore.publish(
@@ -214,9 +219,11 @@ public final class GaSoakEvidencePublisher {
             final Path inventory,
             final Map<String, Path> artifacts,
             final String outcome,
-            final String failureCode) throws IOException {
-        final long accepted = observation instanceof GaSoakObservation soak
-                ? soak.acceptedCommands() : matrix.acceptedFloor();
+            final String failureCode,
+            final long acceptedCommands) throws IOException {
+        if (acceptedCommands < 0L) {
+            throw new IllegalArgumentException("accepted command count must be non-negative");
+        }
         final Map<String, String> fields = new TreeMap<>();
         fields.put("artifact.inventory.path", relative(inventory.getParent(), inventory));
         fields.put("artifact.inventory.sha256", QualificationArtifactHasher.sha256(inventory));
@@ -246,7 +253,7 @@ public final class GaSoakEvidencePublisher {
         fields.put("evidence.startedAtUtc", started.toString());
         fields.put("gate.id", gate);
         fields.put("gate.version", gateVersion);
-        fields.put("run.commandCount", Long.toString(accepted));
+        fields.put("run.commandCount", Long.toString(acceptedCommands));
         fields.put("run.id", runId);
         fields.put("run.profile", matrix.profile());
         fields.put("run.seed", Long.toString(matrix.seed()));

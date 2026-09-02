@@ -69,6 +69,20 @@ public final class GaSoakEvaluator {
                 Integer.toString(matrix.offeredRatePerSecond()), "EQ",
                 Integer.toString(GaSoakMatrix.APPROVED_OFFERED_RATE_PER_SECOND),
                 matrix.offeredRatePerSecond() == GaSoakMatrix.APPROVED_OFFERED_RATE_PER_SECOND));
+        final long nominalOffers = nominalOfferOpportunities(matrix);
+        criteria.add(new Criterion("quick.nominalOfferOpportunities",
+                Long.toString(observation.nominalOfferOpportunities()), "EQ",
+                Long.toString(nominalOffers),
+                observation.nominalOfferOpportunities() == nominalOffers));
+        criteria.add(new Criterion("quick.actualOfferedCommands",
+                Long.toString(observation.actualOfferedCommands()), "EQ",
+                Long.toString(nominalOffers),
+                observation.actualOfferedCommands() == nominalOffers));
+        criteria.add(new Criterion("quick.missedOfferOpportunities",
+                Long.toString(observation.missedOfferOpportunities()), "ZERO", "0",
+                observation.missedOfferOpportunities() == 0L));
+        criteria.add(exact("quick.offeredSchedule",
+                observation.offeredScheduleSatisfied(matrix), "true"));
         criteria.add(greaterOrEqual("quick.acceptedFloor", observation.acceptedCommands(),
                 matrix.acceptedFloor()));
         criteria.add(exact("quick.gracefulShutdown", observation.gracefulShutdown(), "true"));
@@ -100,7 +114,10 @@ public final class GaSoakEvaluator {
         criteria.add(exact("shutdown.graceful", observation.gracefulShutdown(), "true"));
         criteria.add(exact("evidence.complete", observation.terminalEvidenceComplete(), "true"));
         criteria.add(exact("latency.windows.complete", observation.completeLatencyWindows(), "true"));
-        if (observation.completeLatencyWindows()) {
+        criteria.add(exact("latency.windows.owned", observation.latencyWindowsOwnedByAcceptedOrdinals(),
+                "true"));
+        if (observation.completeLatencyWindows()
+                && observation.latencyWindowsOwnedByAcceptedOrdinals()) {
             final long first = observation.firstLatencyWindow().p99Nanos();
             final long last = observation.finalLatencyWindow().p99Nanos();
             criteria.add(p99DriftCriterion(first, last));
@@ -129,6 +146,15 @@ public final class GaSoakEvaluator {
             throw new IllegalArgumentException("duration/count values must be non-negative");
         }
         return elapsedNanos >= requiredDurationNanos && acceptedCommands >= acceptedFloor;
+    }
+
+    private static long nominalOfferOpportunities(final GaSoakMatrix matrix) {
+        try {
+            return Math.multiplyExact(matrix.duration().getSeconds(),
+                    (long) matrix.offeredRatePerSecond());
+        } catch (final ArithmeticException overflow) {
+            return Long.MAX_VALUE;
+        }
     }
 
     /** Returns the exact integer-safe frozen P99 drift predicate. */
@@ -176,7 +202,16 @@ public final class GaSoakEvaluator {
         return criteria.stream().anyMatch(item -> !item.passed()
                 && (item.id().endsWith(".bound") || item.id().endsWith(".stage")
                 || item.id().equals("stage.identity")))
-                ? "B0" : configurationFailure(criteria) ? "B2" : "B1";
+                ? "B0" : qualificationContractFailure(criteria) || configurationFailure(criteria)
+                ? "B2" : "B1";
+    }
+
+    private static boolean qualificationContractFailure(final List<Criterion> criteria) {
+        final boolean complete = criteria.stream()
+                .filter(item -> item.id().equals("latency.windows.complete"))
+                .allMatch(Criterion::passed);
+        return complete && criteria.stream().anyMatch(item -> !item.passed()
+                && item.id().equals("latency.windows.owned"));
     }
 
     private static boolean configurationFailure(final List<Criterion> criteria) {

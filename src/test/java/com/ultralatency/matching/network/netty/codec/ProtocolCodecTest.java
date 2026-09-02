@@ -17,6 +17,7 @@ import com.ultralatency.matching.network.protocol.CommandResultResponse;
 import com.ultralatency.matching.network.protocol.ErrorResponse;
 import com.ultralatency.matching.network.protocol.MatchResultResponse;
 import com.ultralatency.matching.network.protocol.ProtocolCommandOutcome;
+import com.ultralatency.matching.network.protocol.ProtocolConstants;
 import com.ultralatency.matching.network.protocol.ProtocolErrorCode;
 import com.ultralatency.matching.network.protocol.ProtocolRequest;
 import com.ultralatency.matching.network.protocol.ProtocolResponse;
@@ -91,6 +92,17 @@ class ProtocolCodecTest {
     }
 
     @Test
+    void explicitV2RequestEncodingRetainsTheSamePayloadSemantics() {
+        final CancelOrderRequest request = new CancelOrderRequest(
+                ClientRequestId.of(7), OrderId.of(42));
+
+        final byte[] encoded = encodeRequest(request, ProtocolConstants.PIPELINED_VERSION);
+
+        assertEquals(ProtocolConstants.PIPELINED_VERSION, encoded[4] & 0xFF);
+        assertEquals(request, decodeRequest(encoded));
+    }
+
+    @Test
     void encodesExactResponseGoldenBytes() {
         final ProtocolResponse command = new CommandResultResponse(
                 ClientRequestId.of(7),
@@ -115,6 +127,25 @@ class ProtocolCodecTest {
         assertEquals(COMMAND_RESULT_HEX, HexFormat.of().formatHex(encodeResponse(command)));
         assertEquals(MATCH_RESULT_HEX, HexFormat.of().formatHex(encodeResponse(match)));
         assertEquals(ERROR_HEX, HexFormat.of().formatHex(encodeResponse(error)));
+    }
+
+    @Test
+    void responseEncoderUsesTheSelectedProtocolVersion() {
+        final CommandResultResponse response = new CommandResultResponse(
+                ClientRequestId.of(7),
+                Sequence.of(9),
+                ProtocolCommandOutcome.ACCEPTED,
+                0);
+        final EmbeddedChannel channel = new EmbeddedChannel(new ProtocolResponseEncoder());
+        channel.attr(ProtocolVersionAttributes.VERSION).set(ProtocolConstants.PIPELINED_VERSION);
+        channel.writeOutbound(response);
+        final ByteBuf encoded = channel.readOutbound();
+        try {
+            assertEquals(ProtocolConstants.PIPELINED_VERSION, encoded.getUnsignedByte(4));
+        } finally {
+            encoded.release();
+            channel.finishAndReleaseAll();
+        }
     }
 
     @Test
@@ -147,6 +178,25 @@ class ProtocolCodecTest {
     }
 
     @Test
+    void protocolVersionCannotChangeWithinOneSession() {
+        final CancelOrderRequest request = new CancelOrderRequest(
+                ClientRequestId.of(7), OrderId.of(42));
+        final byte[] v2 = encodeRequest(request, ProtocolConstants.PIPELINED_VERSION);
+        final byte[] v1 = encodeRequest(request, ProtocolConstants.VERSION);
+        final EmbeddedChannel channel = new EmbeddedChannel(
+                new ProtocolFrameDecoder(), new ProtocolRequestDecoder());
+        try {
+            channel.writeInbound(Unpooled.wrappedBuffer(v2));
+            assertEquals(request, channel.readInbound());
+            assertThrows(
+                    ProtocolCodecException.class,
+                    () -> channel.writeInbound(Unpooled.wrappedBuffer(v1)));
+        } finally {
+            channel.finishAndReleaseAll();
+        }
+    }
+
+    @Test
     void rejectsInvalidHeaderAndNumericFields() {
         final byte[] submit = HexFormat.of().parseHex(SUBMIT_HEX);
         final byte[] invalidMagic = submit.clone();
@@ -154,7 +204,7 @@ class ProtocolCodecTest {
         assertThrows(ProtocolCodecException.class, () -> decodeRequest(invalidMagic));
 
         final byte[] invalidVersion = submit.clone();
-        invalidVersion[4] = 2;
+        invalidVersion[4] = 3;
         assertThrows(ProtocolCodecException.class, () -> decodeRequest(invalidVersion));
 
         final byte[] invalidType = submit.clone();
@@ -197,7 +247,13 @@ class ProtocolCodecTest {
     }
 
     private static byte[] encodeRequest(final ProtocolRequest request) {
-        final EmbeddedChannel channel = new EmbeddedChannel(new ProtocolRequestEncoder());
+        return encodeRequest(request, ProtocolConstants.VERSION);
+    }
+
+    private static byte[] encodeRequest(
+            final ProtocolRequest request,
+            final int protocolVersion) {
+        final EmbeddedChannel channel = new EmbeddedChannel(new ProtocolRequestEncoder(protocolVersion));
         channel.writeOutbound(request);
         final ByteBuf encoded = channel.readOutbound();
         try {

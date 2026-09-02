@@ -1,15 +1,24 @@
 package com.ultralatency.matching.network.protocol;
 
 /**
- * Wire constants for binary network protocol version one.
+ * Wire constants for the binary network protocol.
  */
 public final class ProtocolConstants {
 
     /** Protocol magic bytes represented as a big-endian integer. */
     public static final int MAGIC = 0x554C4D45;
 
-    /** Supported protocol version. */
+    /** Existing protocol version with one active request in flight. */
     public static final int VERSION = 1;
+
+    /** Explicit pipelined protocol version. */
+    public static final int PIPELINED_VERSION = 2;
+
+    /** Default bounded v2 request window. */
+    public static final int DEFAULT_PIPELINED_MAX_IN_FLIGHT = 64;
+
+    /** Hard upper bound for a v2 request window. */
+    public static final int MAX_PIPELINED_IN_FLIGHT = 1024;
 
     /** Common header length in bytes. */
     public static final int HEADER_LENGTH = 16;

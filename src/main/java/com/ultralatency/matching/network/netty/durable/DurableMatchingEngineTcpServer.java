@@ -18,6 +18,7 @@ import com.ultralatency.matching.network.netty.codec.ProtocolCodecException;
 import com.ultralatency.matching.network.netty.codec.ProtocolFrameDecoder;
 import com.ultralatency.matching.network.netty.codec.ProtocolRequestDecoder;
 import com.ultralatency.matching.network.netty.codec.ProtocolResponseEncoder;
+import com.ultralatency.matching.network.netty.codec.ProtocolVersionAttributes;
 import com.ultralatency.matching.network.netty.gateway.NetworkGatewayState;
 import com.ultralatency.matching.network.protocol.CancelOrderRequest;
 import com.ultralatency.matching.network.protocol.ClientRequestId;
@@ -300,6 +301,12 @@ public final class DurableMatchingEngineTcpServer {
 
     void onRequest(final ChannelHandlerContext context, final ProtocolRequest request) {
         if (state != NetworkGatewayState.RUNNING || context.channel() != activeChannel) {
+            return;
+        }
+        if (ProtocolVersionAttributes.isPipelined(context.channel())) {
+            writeAndClose(
+                    context.channel(),
+                    new ErrorResponse(request.requestId().value(), ProtocolErrorCode.UNSUPPORTED_VERSION));
             return;
         }
         if (inFlight != null) {

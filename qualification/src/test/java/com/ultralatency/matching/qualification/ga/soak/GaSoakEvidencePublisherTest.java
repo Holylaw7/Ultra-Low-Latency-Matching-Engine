@@ -40,7 +40,8 @@ class GaSoakEvidencePublisherTest {
                 GaSoakMatrix.QUICK_DURATION.toNanos(), 10_000L, 10_000L, 0, 0, 0,
                 new long[0], new long[0],
                 new long[0], List.<GaSoakResourceSample>of(), List.<GaNaturalGcSample>of(),
-                true, true, true, true, true, true, true, true, true, true);
+                true, true, true, true, true, true, true, true, true, true,
+                12_000L, 12_000L, 0L);
         final GaObservabilityObservation g8 = new GaObservabilityObservation(
                 g6.physicalExecutionId(), GaSoakMatrix.Stage.QUICK, List.of(),
                 GaGcEvidence.quick("NONE"), GaJfrEvidence.valid(temporaryDirectory.resolve("jfr")),

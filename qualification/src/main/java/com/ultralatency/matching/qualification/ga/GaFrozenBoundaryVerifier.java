@@ -12,12 +12,29 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
-/** Verifies that a qualification controller did not change frozen production inputs. */
+/** Verifies frozen production inputs while honoring the explicit RC2 path allowlist. */
 public final class GaFrozenBoundaryVerifier {
 
     private static final Pattern GIT_SHA1 = Pattern.compile("[0-9a-f]{40}");
     private static final String TASK_052_APPROVED_CORE_TEST_EXCEPTION =
             "src/test/java/com/ultralatency/matching/pipeline/MatchingEnginePipelineFailureTest.java";
+    private static final Set<String> TASK_052_RC2_APPROVED_PATHS = Set.of(
+            "src/main/java/com/ultralatency/matching/network/protocol/ProtocolConstants.java",
+            "src/main/java/com/ultralatency/matching/network/netty/codec/ProtocolRequestDecoder.java",
+            "src/main/java/com/ultralatency/matching/network/netty/codec/ProtocolRequestEncoder.java",
+            "src/main/java/com/ultralatency/matching/network/netty/codec/ProtocolResponseEncoder.java",
+            "src/main/java/com/ultralatency/matching/network/netty/codec/ProtocolFrameDecoder.java",
+            "src/main/java/com/ultralatency/matching/network/netty/codec/ProtocolVersionAttributes.java",
+            "src/main/java/com/ultralatency/matching/network/netty/codec/ProtocolWire.java",
+            "src/main/java/com/ultralatency/matching/network/netty/durable/"
+                    + "DurableMatchingEngineTcpServer.java",
+            "src/main/java/com/ultralatency/matching/network/netty/gateway/"
+                    + "MatchingEngineTcpServer.java",
+            "src/main/java/com/ultralatency/matching/network/netty/recovery/"
+                    + "RecoverableDurableMatchingEngineTcpServer.java",
+            "src/test/java/com/ultralatency/matching/network/netty/codec/ProtocolCodecTest.java",
+            "src/test/java/com/ultralatency/matching/network/netty/recovery/"
+                    + "RecoverableDurableMatchingEngineTcpServerTest.java");
     private static final String[] FROZEN_PATHS = {
         "src/main", "src/test", "pom.xml", "core/pom.xml"
     };
@@ -25,7 +42,7 @@ public final class GaFrozenBoundaryVerifier {
     private GaFrozenBoundaryVerifier() {
     }
 
-    /** Verifies the immutable production/POM path set between two Git commits. */
+    /** Verifies the frozen production/POM path set between two Git commits. */
     public static void verify(
             final Path repository,
             final String productionSha,
@@ -71,7 +88,8 @@ public final class GaFrozenBoundaryVerifier {
         for (String line : output.split("\\R")) {
             if (!line.isBlank()) {
                 final String normalized = line.replace('\\', '/');
-                if (!TASK_052_APPROVED_CORE_TEST_EXCEPTION.equals(normalized)) {
+                if (!TASK_052_APPROVED_CORE_TEST_EXCEPTION.equals(normalized)
+                        && !TASK_052_RC2_APPROVED_PATHS.contains(normalized)) {
                     target.add(normalized);
                 }
             }

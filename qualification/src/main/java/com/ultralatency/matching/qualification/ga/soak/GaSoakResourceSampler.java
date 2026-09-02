@@ -141,11 +141,19 @@ public final class GaSoakResourceSampler implements AutoCloseable {
         Objects.requireNonNull(path, "path");
         final Path root = physicalRoot.toAbsolutePath().normalize();
         final Path candidate = path.toAbsolutePath().normalize();
-        if (!candidate.startsWith(root)
-                || !Files.isRegularFile(candidate, LinkOption.NOFOLLOW_LINKS)) {
-            throw new IllegalArgumentException("path is not an owned regular file");
+        if (!candidate.startsWith(root)) {
+            throw new IllegalArgumentException("path is outside the owned root");
         }
         final Path relative = root.relativize(candidate);
+        if (relative.getNameCount() == 0) {
+            return FileClassification.UNKNOWN;
+        }
+        // Directories, symbolic links and other filesystem objects are never
+        // accepted as files.  They are deliberately surfaced as UNKNOWN by
+        // the scan so an owned-root anomaly cannot disappear from evidence.
+        if (!Files.isRegularFile(candidate, LinkOption.NOFOLLOW_LINKS)) {
+            return FileClassification.UNKNOWN;
+        }
         if (relative.getNameCount() < 2) {
             return FileClassification.UNKNOWN;
         }
@@ -211,39 +219,37 @@ public final class GaSoakResourceSampler implements AutoCloseable {
     private OwnedFiles scanOwnedFiles() throws IOException {
         final List<Path> transientFiles = new ArrayList<>();
         final List<Path> unknownFiles = new ArrayList<>();
-        if (Files.isDirectory(physicalRoot)) {
-            try (java.util.stream.Stream<Path> paths = Files.list(physicalRoot)) {
-                paths.filter(path -> Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS))
-                        .forEach(path -> unknownFiles.add(path));
-            }
+        if (!Files.isDirectory(physicalRoot, LinkOption.NOFOLLOW_LINKS)) {
+            throw new IOException("owned physical root is unavailable");
         }
-        if (Files.isDirectory(snapshotRoot)) {
-            try (java.util.stream.Stream<Path> paths = Files.list(snapshotRoot)) {
-                paths.filter(path -> Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS))
-                        .forEach(path -> {
-                    final FileClassification classification = classifyOwnedPath(physicalRoot, path);
-                    if (classification == FileClassification.TRANSIENT) {
-                        transientFiles.add(path);
-                    } else if (classification == FileClassification.UNKNOWN) {
-                        unknownFiles.add(path);
-                    }
-                });
-            }
-        }
-        final Path walRoot = physicalRoot.resolve("wal");
-        if (Files.isDirectory(walRoot) && !walRoot.equals(snapshotRoot)) {
-            try (java.util.stream.Stream<Path> paths = Files.list(walRoot)) {
-                paths.filter(path -> Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS))
-                        .forEach(path -> {
-                    if (classifyOwnedPath(physicalRoot, path) == FileClassification.UNKNOWN) {
-                        unknownFiles.add(path);
-                    }
-                });
-            }
+        try (java.util.stream.Stream<Path> paths = Files.walk(physicalRoot)) {
+            paths.filter(path -> !path.equals(physicalRoot))
+                    .forEach(path -> classifyScannedPath(path, transientFiles, unknownFiles));
         }
         transientFiles.sort(Comparator.comparing(Path::toString));
         unknownFiles.sort(Comparator.comparing(Path::toString));
         return new OwnedFiles(List.copyOf(transientFiles), List.copyOf(unknownFiles));
+    }
+
+    private void classifyScannedPath(
+            final Path path,
+            final List<Path> transientFiles,
+            final List<Path> unknownFiles) {
+        final Path relative = physicalRoot.relativize(path);
+        if (relative.getNameCount() == 1 && isOwnedRootDirectory(relative.getFileName().toString())) {
+            return;
+        }
+        final FileClassification classification = classifyOwnedPath(physicalRoot, path);
+        if (classification == FileClassification.TRANSIENT) {
+            transientFiles.add(path);
+        } else if (classification == FileClassification.UNKNOWN) {
+            unknownFiles.add(path);
+        }
+    }
+
+    private static boolean isOwnedRootDirectory(final String name) {
+        return "wal".equals(name) || "snapshots".equals(name)
+                || "process-evidence".equals(name) || "evidence".equals(name);
     }
 
     private long fileSize(final Path path) {

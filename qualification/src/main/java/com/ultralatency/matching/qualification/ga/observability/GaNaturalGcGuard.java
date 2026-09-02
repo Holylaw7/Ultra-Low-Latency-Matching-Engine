@@ -129,7 +129,9 @@ public final class GaNaturalGcGuard {
         if (sorted.size() % 2 == 1) {
             return sorted.get(middle);
         }
-        return sorted.get(middle - 1) / 2L + sorted.get(middle) / 2L;
+        final long lower = sorted.get(middle - 1);
+        final long upper = sorted.get(middle);
+        return (lower / 2L) + (upper / 2L) + ((lower & 1L) + (upper & 1L)) / 2L;
     }
 
     private static long safeAdd(final long first, final long second) {

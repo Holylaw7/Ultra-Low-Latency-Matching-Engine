@@ -102,6 +102,87 @@ public final class GaResourceGuards {
         return evaluate(metric, samples);
     }
 
+    /**
+     * Evaluates windows selected from a chronological one-Hz sample stream.
+     *
+     * <p>The ordinary {@link #evaluate(Metric, List, String, Stage)} overload is
+     * retained for compact unit fixtures.  A real formal observation should use
+     * this overload so the warmup boundary, terminal boundary and cadence are
+     * explicit evidence rather than an assumption based on list position.</p>
+     *
+     * @param warmupSequenceExclusive last sequence belonging to warmup
+     * @param terminalSequenceInclusive last sequence admitted before shutdown
+     * @param expectedCadenceNanos expected interval between adjacent samples
+     * @param cadenceToleranceNanos permitted absolute scheduling tolerance
+     * @return fail-closed resource evaluation
+     */
+    public static Evaluation evaluateChronological(
+            final Metric metric,
+            final List<GaSoakResourceSample> samples,
+            final String physicalExecutionId,
+            final Stage stage,
+            final long warmupSequenceExclusive,
+            final long terminalSequenceInclusive,
+            final long expectedCadenceNanos,
+            final long cadenceToleranceNanos) {
+        Objects.requireNonNull(metric, "metric");
+        Objects.requireNonNull(samples, "samples");
+        Objects.requireNonNull(physicalExecutionId, "physicalExecutionId");
+        Objects.requireNonNull(stage, "stage");
+        if (warmupSequenceExclusive < -1L || terminalSequenceInclusive <= warmupSequenceExclusive
+                || expectedCadenceNanos <= 0L || cadenceToleranceNanos < 0L) {
+            throw new IllegalArgumentException("invalid chronological resource boundaries");
+        }
+        final Evaluation identity = validateIdentity(metric, samples, physicalExecutionId, stage);
+        if (identity != null) {
+            return identity;
+        }
+        final List<GaSoakResourceSample> selected = samples.stream()
+                .filter(sample -> sample.sequence() > warmupSequenceExclusive
+                        && sample.sequence() <= terminalSequenceInclusive)
+                .toList();
+        if (selected.size() < WINDOW_SIZE * 2) {
+            return new Evaluation(metric, false, 0L, 0L, "ABORTED", "B3");
+        }
+        if (!cadenceMatches(selected, expectedCadenceNanos, cadenceToleranceNanos)) {
+            return new Evaluation(metric, false, 0L, 0L, "FAIL", "B0");
+        }
+        final long first = median(selected.subList(0, WINDOW_SIZE), metric);
+        final long last = median(selected.subList(selected.size() - WINDOW_SIZE, selected.size()), metric);
+        final boolean passed = driftPasses(first, last);
+        return new Evaluation(metric, passed, first, last, passed ? "PASS" : "FAIL",
+                passed ? "NONE" : "B1");
+    }
+
+    /** Returns whether adjacent samples meet an explicit cadence/tolerance contract. */
+    public static boolean cadenceMatches(
+            final List<GaSoakResourceSample> samples,
+            final long expectedCadenceNanos,
+            final long cadenceToleranceNanos) {
+        Objects.requireNonNull(samples, "samples");
+        if (expectedCadenceNanos <= 0L || cadenceToleranceNanos < 0L) {
+            throw new IllegalArgumentException("cadence values must be positive/non-negative");
+        }
+        if (samples.size() < 2) {
+            return true;
+        }
+        final long minimum = expectedCadenceNanos > cadenceToleranceNanos
+                ? expectedCadenceNanos - cadenceToleranceNanos : 0L;
+        final long maximum = Long.MAX_VALUE - expectedCadenceNanos < cadenceToleranceNanos
+                ? Long.MAX_VALUE : expectedCadenceNanos + cadenceToleranceNanos;
+        for (int index = 1; index < samples.size(); index++) {
+            final GaSoakResourceSample previous = Objects.requireNonNull(samples.get(index - 1),
+                    "resource sample");
+            final GaSoakResourceSample current = Objects.requireNonNull(samples.get(index),
+                    "resource sample");
+            final long delta = current.monotonicNanos() - previous.monotonicNanos();
+            if (delta < minimum || delta > maximum) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /** Returns the exact integer-safe <=20% drift predicate. */
     public static boolean driftPasses(final long baseline, final long finalValue) {
         if (baseline < 0 || finalValue < 0) {
@@ -125,7 +206,7 @@ public final class GaResourceGuards {
         if (sorted.size() % 2 == 1) {
             return sorted.get(middle);
         }
-        return sorted.get(middle - 1) / 2L + sorted.get(middle) / 2L;
+        return average(sorted.get(middle - 1), sorted.get(middle));
     }
 
     /** Evaluates one pair of values as a named resource metric. */
@@ -147,5 +228,32 @@ public final class GaResourceGuards {
             case TRANSIENT_FILE_BYTES -> GaSoakResourceSample::transientFileBytes;
         };
         return median(values.stream().map(extractor::applyAsLong).toList());
+    }
+
+    private static Evaluation validateIdentity(
+            final Metric metric,
+            final List<GaSoakResourceSample> samples,
+            final String physicalExecutionId,
+            final Stage stage) {
+        final Set<Long> sequences = new HashSet<>();
+        long previousTimestamp = -1L;
+        long previousSequence = -1L;
+        for (GaSoakResourceSample sample : samples) {
+            if (sample == null || !physicalExecutionId.equals(sample.physicalExecutionId())
+                    || stage != sample.stage() || sample.monotonicNanos() < previousTimestamp
+                    || sample.sequence() < previousSequence || !sequences.add(sample.sequence())) {
+                return new Evaluation(metric, false, 0L, 0L, "FAIL", "B0");
+            }
+            previousTimestamp = sample.monotonicNanos();
+            previousSequence = sample.sequence();
+        }
+        return null;
+    }
+
+    /** Returns the floor of the average without overflowing a long. */
+    private static long average(final long lower, final long upper) {
+        // Both operands are non-negative and lower <= upper.  Splitting before
+        // adding keeps the calculation within the long range even at MAX_VALUE.
+        return (lower / 2L) + (upper / 2L) + ((lower & 1L) + (upper & 1L)) / 2L;
     }
 }

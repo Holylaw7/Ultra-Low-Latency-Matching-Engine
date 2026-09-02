@@ -139,8 +139,11 @@ public record GaManagementEvidence(
 
     /** Returns whether this endpoint has a valid lifecycle state/value combination. */
     public boolean hasValidStateSemantics() {
-        if (kind == Kind.LIVE || kind == Kind.READY) {
-            return true;
+        if (kind == Kind.LIVE) {
+            return hasRequiredFields() && Boolean.TRUE.equals(live);
+        }
+        if (kind == Kind.READY) {
+            return hasRequiredFields() && Boolean.TRUE.equals(ready);
         }
         if (!hasRequiredFields() || !Set.of(
                 "NEW", "CONFIG_VALIDATED", "STARTING", "READY", "STOPPING", "STOPPED",

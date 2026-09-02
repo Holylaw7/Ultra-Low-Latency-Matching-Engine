@@ -17,6 +17,7 @@ import com.ultralatency.matching.network.netty.durable.DurableNetworkConfigurati
 import com.ultralatency.matching.network.protocol.CancelOrderRequest;
 import com.ultralatency.matching.network.protocol.ClientRequestId;
 import com.ultralatency.matching.network.protocol.ProtocolConstants;
+import com.ultralatency.matching.network.protocol.SubmitLimitRequest;
 import com.ultralatency.matching.persistence.wal.CommandWalWriter;
 import com.ultralatency.matching.persistence.wal.WalConfiguration;
 import com.ultralatency.matching.recovery.online.RecoveryMode;
@@ -74,6 +75,95 @@ class RecoverableDurableMatchingEngineTcpServerTest {
     }
 
     @Test
+    void explicitV2AllowsBoundedPipeliningAndKeepsResponseOrder() throws Exception {
+        final Path walDirectory = temporaryDirectory.resolve("wal-v2");
+        final RecoverableDurableMatchingEngineTcpServer server = server(
+                walDirectory,
+                RecoveryMode.PURE_WAL,
+                "snapshots-v2",
+                2);
+
+        server.start();
+        try {
+            assertEquals(2, server.pipelinedMaxInFlight());
+            final InetAddress address = server.localAddress().orElseThrow().getAddress();
+            final int port = server.localAddress().orElseThrow().getPort();
+            try (Socket socket = new Socket(address, port)) {
+                socket.setSoTimeout(2_000);
+                final OutputStream output = socket.getOutputStream();
+                final byte[] first = encode(
+                        new CancelOrderRequest(ClientRequestId.of(1), OrderId.of(101)),
+                        ProtocolConstants.PIPELINED_VERSION);
+                final byte[] second = encode(
+                        new CancelOrderRequest(ClientRequestId.of(2), OrderId.of(102)),
+                        ProtocolConstants.PIPELINED_VERSION);
+                output.write(first);
+                output.write(second);
+                output.flush();
+
+                final InputStream input = socket.getInputStream();
+                final byte[] firstResponse = readFrame(input);
+                final byte[] secondResponse = readFrame(input);
+                assertEquals(ProtocolConstants.PIPELINED_VERSION, unsigned(firstResponse[4]));
+                assertEquals(ProtocolConstants.PIPELINED_VERSION, unsigned(secondResponse[4]));
+                assertEquals(1L, longAt(firstResponse, 16));
+                assertEquals(2L, longAt(secondResponse, 16));
+                assertEquals(1L, longAt(firstResponse, 24));
+                assertEquals(2L, longAt(secondResponse, 24));
+            }
+        } finally {
+            server.shutdown(Duration.ofSeconds(2));
+        }
+    }
+
+    @Test
+    void explicitV2KeepsMatchFramesWithTheirOrderedCommandResult() throws Exception {
+        final Path walDirectory = temporaryDirectory.resolve("wal-v2-match");
+        final RecoverableDurableMatchingEngineTcpServer server = server(
+                walDirectory,
+                RecoveryMode.PURE_WAL,
+                "snapshots-v2-match",
+                2);
+
+        server.start();
+        try {
+            final InetAddress address = server.localAddress().orElseThrow().getAddress();
+            final int port = server.localAddress().orElseThrow().getPort();
+            try (Socket socket = new Socket(address, port)) {
+                socket.setSoTimeout(2_000);
+                final OutputStream output = socket.getOutputStream();
+                output.write(encode(new SubmitLimitRequest(
+                        ClientRequestId.of(1), OrderId.of(201), Side.BUY, Price.of(100), Quantity.of(1)),
+                        ProtocolConstants.PIPELINED_VERSION));
+                output.write(encode(new SubmitLimitRequest(
+                        ClientRequestId.of(2), OrderId.of(202), Side.SELL, Price.of(100), Quantity.of(1)),
+                        ProtocolConstants.PIPELINED_VERSION));
+                output.flush();
+
+                final InputStream input = socket.getInputStream();
+                final byte[] firstResult = readFrame(input);
+                final byte[] secondResult = readFrame(input);
+                final byte[] secondMatch = readFrame(input);
+                assertEquals(ProtocolConstants.PIPELINED_VERSION, unsigned(firstResult[4]));
+                assertEquals(ProtocolConstants.PIPELINED_VERSION, unsigned(secondResult[4]));
+                assertEquals(ProtocolConstants.PIPELINED_VERSION, unsigned(secondMatch[4]));
+                assertEquals(1L, longAt(firstResult, 16));
+                assertEquals(1L, longAt(firstResult, 24));
+                assertEquals(0, intAt(firstResult, 36));
+                assertEquals(2L, longAt(secondResult, 16));
+                assertEquals(2L, longAt(secondResult, 24));
+                assertEquals(1, intAt(secondResult, 36));
+                assertEquals(2L, longAt(secondMatch, 16));
+                assertEquals(2L, longAt(secondMatch, 24));
+                assertEquals(0, intAt(secondMatch, 32));
+                assertEquals(1, intAt(secondMatch, 36));
+            }
+        } finally {
+            server.shutdown(Duration.ofSeconds(2));
+        }
+    }
+
+    @Test
     void recoveryFailureLeavesListenerUnboundAndRuntimeTerminal() throws Exception {
         final Path walDirectory = temporaryDirectory.resolve("wal-failure");
         final WalConfiguration wal = WalConfiguration.defaults(walDirectory);
@@ -118,12 +208,24 @@ class RecoverableDurableMatchingEngineTcpServerTest {
             final Path walDirectory,
             final RecoveryMode mode,
             final String snapshotDirectory) {
+        return server(walDirectory, mode, snapshotDirectory,
+                RecoverableDurableMatchingEngineTcpServer.DEFAULT_PIPELINED_MAX_IN_FLIGHT);
+    }
+
+    private RecoverableDurableMatchingEngineTcpServer server(
+            final Path walDirectory,
+            final RecoveryMode mode,
+            final String snapshotDirectory,
+            final int pipelinedMaxInFlight) {
         final DurableNetworkConfiguration durable = DurableNetworkConfiguration.defaults(walDirectory);
         return new RecoverableDurableMatchingEngineTcpServer(
                 RecoverableNetworkConfiguration.from(
                         durable,
                         temporaryDirectory.resolve(snapshotDirectory),
-                        mode));
+                        mode),
+                () -> true,
+                failure -> { },
+                pipelinedMaxInFlight);
     }
 
     private static void write(
@@ -151,7 +253,11 @@ class RecoverableDurableMatchingEngineTcpServerTest {
     }
 
     private static byte[] encode(final Object request) {
-        final EmbeddedChannel channel = new EmbeddedChannel(new ProtocolRequestEncoder());
+        return encode(request, ProtocolConstants.VERSION);
+    }
+
+    private static byte[] encode(final Object request, final int protocolVersion) {
+        final EmbeddedChannel channel = new EmbeddedChannel(new ProtocolRequestEncoder(protocolVersion));
         channel.writeOutbound(request);
         final ByteBuf encoded = channel.readOutbound();
         try {

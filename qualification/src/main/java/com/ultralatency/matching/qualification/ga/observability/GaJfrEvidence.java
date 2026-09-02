@@ -84,12 +84,45 @@ public record GaJfrEvidence(
                 identityBound).evidence();
     }
 
+    /**
+     * Inspects an untrusted recording in the isolated child and publishes the
+     * child's natural-GC pairs to a qualification-owned artifact.
+     *
+     * <p>The parent deliberately does not open the recording.  This overload is
+     * kept public because the soak runner lives in the sibling {@code soak}
+     * package while the child-protocol details remain package-private.</p>
+     */
+    public static GaJfrEvidence inspectWithNaturalGcOutput(
+            final Path recording,
+            final boolean startedBeforeMeasurement,
+            final boolean stoppedBeforePublication,
+            final boolean identityBound,
+            final Path naturalGcOutput) {
+        return inspectDetailed(recording, startedBeforeMeasurement, stoppedBeforePublication,
+                identityBound, naturalGcOutput).evidence();
+    }
+
     /** Returns child protocol details for qualification-only lifecycle diagnostics. */
     static ChildInspection inspectDetailed(
             final Path recording,
             final boolean startedBeforeMeasurement,
             final boolean stoppedBeforePublication,
             final boolean identityBound) {
+        return inspectDetailed(recording, startedBeforeMeasurement, stoppedBeforePublication,
+                identityBound, null);
+    }
+
+    /**
+     * Inspects a recording and asks the child to publish its parsed natural-GC
+     * pairs into a separate, bounded qualification artifact.  The parent still
+     * never opens the JFR file.
+     */
+    static ChildInspection inspectDetailed(
+            final Path recording,
+            final boolean startedBeforeMeasurement,
+            final boolean stoppedBeforePublication,
+            final boolean identityBound,
+            final Path naturalGcOutput) {
         if (recording == null) {
             throw new NullPointerException("recording");
         }
@@ -106,8 +139,7 @@ public record GaJfrEvidence(
         final Process process;
         try {
             final ProcessBuilder builder = new ProcessBuilder(
-                    javaExecutable.toString(), "-cp", classPath, CHILD_CLASS,
-                    recording.toAbsolutePath().normalize().toString());
+                    command(javaExecutable, classPath, recording, naturalGcOutput));
             builder.redirectError(ProcessBuilder.Redirect.DISCARD);
             process = builder.start();
         } catch (final IOException | RuntimeException exception) {
@@ -139,6 +171,21 @@ public record GaJfrEvidence(
         }
         return classifyChildExecution(recording, startedBeforeMeasurement, stoppedBeforePublication,
                 identityBound, output, process.exitValue(), false);
+    }
+
+    private static List<String> command(
+            final Path javaExecutable,
+            final String classPath,
+            final Path recording,
+            final Path naturalGcOutput) {
+        final List<String> command = new ArrayList<>(List.of(
+                javaExecutable.toString(), "-cp", classPath, CHILD_CLASS,
+                recording.toAbsolutePath().normalize().toString()));
+        if (naturalGcOutput != null) {
+            command.add("--gc-output");
+            command.add(naturalGcOutput.toAbsolutePath().normalize().toString());
+        }
+        return command;
     }
 
     /** Classifies a bounded child result; package-private for deterministic contract tests. */

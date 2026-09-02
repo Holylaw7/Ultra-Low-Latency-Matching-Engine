@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 /** Tests the frozen G6 matrix, ordinal windows and conjunction predicates. */
@@ -157,7 +158,11 @@ class GaSoakContractTest {
         return new GaSoakObservation(
                 "00000000-0000-4000-8000-000000000100", matrix.stage(),
                 elapsedNanos, accepted, accepted, 0, 0, 0,
-                new long[0], new long[0], true, true, true, true, true,
-                configurationBound, true, true, true, true);
+                new long[0], new long[0], new long[0], List.of(), List.of(),
+                true, true, true, true, true,
+                configurationBound, true, true, true, true,
+                matrix.isQuick() ? 12_000L : 0L,
+                matrix.isQuick() ? 12_000L : 0L,
+                0L);
     }
 }

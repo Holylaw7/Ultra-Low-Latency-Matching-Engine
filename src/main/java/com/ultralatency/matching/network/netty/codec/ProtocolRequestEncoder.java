@@ -9,10 +9,28 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.EncoderException;
 import io.netty.handler.codec.MessageToByteEncoder;
 
-/**
- * Encodes project-owned requests into exact protocol v1 frames for fixtures and loopback clients.
- */
+/** Encodes project-owned requests into exact versioned protocol frames. */
 public final class ProtocolRequestEncoder extends MessageToByteEncoder<ProtocolRequest> {
+
+    private final int protocolVersion;
+
+    /** Creates the backwards-compatible Protocol v1 encoder. */
+    public ProtocolRequestEncoder() {
+        this(ProtocolConstants.VERSION);
+    }
+
+    /**
+     * Creates an encoder for an explicit protocol version.
+     *
+     * @param protocolVersion supported protocol version
+     */
+    public ProtocolRequestEncoder(final int protocolVersion) {
+        if (protocolVersion != ProtocolConstants.VERSION
+                && protocolVersion != ProtocolConstants.PIPELINED_VERSION) {
+            throw new IllegalArgumentException("Unsupported protocol version: " + protocolVersion);
+        }
+        this.protocolVersion = protocolVersion;
+    }
 
     @Override
     protected void encode(
@@ -22,6 +40,7 @@ public final class ProtocolRequestEncoder extends MessageToByteEncoder<ProtocolR
         if (request instanceof SubmitLimitRequest submit) {
             ProtocolWire.writeHeader(
                     out,
+                    protocolVersion,
                     ProtocolConstants.SUBMIT_LIMIT_TYPE,
                     ProtocolConstants.SUBMIT_LIMIT_FRAME_LENGTH);
             out.writeLong(submit.requestId().value());
@@ -33,6 +52,7 @@ public final class ProtocolRequestEncoder extends MessageToByteEncoder<ProtocolR
         } else if (request instanceof CancelOrderRequest cancel) {
             ProtocolWire.writeHeader(
                     out,
+                    protocolVersion,
                     ProtocolConstants.CANCEL_ORDER_TYPE,
                     ProtocolConstants.CANCEL_ORDER_FRAME_LENGTH);
             out.writeLong(cancel.requestId().value());

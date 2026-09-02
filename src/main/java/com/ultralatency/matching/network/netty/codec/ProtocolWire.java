@@ -16,8 +16,16 @@ final class ProtocolWire {
             final ByteBuf out,
             final int messageType,
             final int frameLength) {
+        writeHeader(out, ProtocolConstants.VERSION, messageType, frameLength);
+    }
+
+    static void writeHeader(
+            final ByteBuf out,
+            final int version,
+            final int messageType,
+            final int frameLength) {
         out.writeInt(ProtocolConstants.MAGIC);
-        out.writeByte(ProtocolConstants.VERSION);
+        out.writeByte(version);
         out.writeByte(messageType);
         out.writeShort(0);
         out.writeInt(frameLength);
@@ -25,6 +33,14 @@ final class ProtocolWire {
     }
 
     static void validateHeader(final ByteBuf frame, final int index, final int expectedLength) {
+        validateHeader(frame, index, expectedLength, ProtocolConstants.VERSION);
+    }
+
+    static void validateHeader(
+            final ByteBuf frame,
+            final int index,
+            final int expectedLength,
+            final int expectedVersion) {
         if (frame.readableBytes() != expectedLength) {
             throw new ProtocolCodecException(
                     com.ultralatency.matching.network.protocol.ProtocolErrorCode.MALFORMED_FRAME,
@@ -35,10 +51,10 @@ final class ProtocolWire {
                     com.ultralatency.matching.network.protocol.ProtocolErrorCode.MALFORMED_FRAME,
                     "Invalid protocol magic");
         }
-        if (frame.getUnsignedByte(index + 4) != ProtocolConstants.VERSION) {
+        if (frame.getUnsignedByte(index + 4) != expectedVersion) {
             throw new ProtocolCodecException(
                     com.ultralatency.matching.network.protocol.ProtocolErrorCode.UNSUPPORTED_VERSION,
-                    "Unsupported protocol version");
+                    "Unexpected protocol version");
         }
         if (frame.getUnsignedShort(index + 6) != 0 || frame.getInt(index + 12) != 0) {
             throw new ProtocolCodecException(

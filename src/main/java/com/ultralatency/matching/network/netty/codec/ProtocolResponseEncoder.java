@@ -11,7 +11,7 @@ import io.netty.handler.codec.EncoderException;
 import io.netty.handler.codec.MessageToByteEncoder;
 
 /**
- * Encodes project-owned responses into bounded protocol v1 frames.
+ * Encodes project-owned responses into bounded protocol frames.
  */
 public final class ProtocolResponseEncoder extends MessageToByteEncoder<ProtocolResponse> {
 
@@ -21,21 +21,23 @@ public final class ProtocolResponseEncoder extends MessageToByteEncoder<Protocol
             final ProtocolResponse response,
             final ByteBuf out) {
         if (response instanceof CommandResultResponse command) {
-            encodeCommandResult(command, out);
+            encodeCommandResult(context, command, out);
         } else if (response instanceof MatchResultResponse match) {
-            encodeMatchResult(match, out);
+            encodeMatchResult(context, match, out);
         } else if (response instanceof ErrorResponse error) {
-            encodeError(error, out);
+            encodeError(context, error, out);
         } else {
             throw new EncoderException("Unsupported protocol response: " + response.getClass());
         }
     }
 
     private static void encodeCommandResult(
+            final ChannelHandlerContext context,
             final CommandResultResponse response,
             final ByteBuf out) {
         ProtocolWire.writeHeader(
                 out,
+                ProtocolVersionAttributes.version(context.channel()),
                 ProtocolConstants.COMMAND_RESULT_TYPE,
                 ProtocolConstants.COMMAND_RESULT_FRAME_LENGTH);
         out.writeLong(response.requestId().value());
@@ -46,10 +48,12 @@ public final class ProtocolResponseEncoder extends MessageToByteEncoder<Protocol
     }
 
     private static void encodeMatchResult(
+            final ChannelHandlerContext context,
             final MatchResultResponse response,
             final ByteBuf out) {
         ProtocolWire.writeHeader(
                 out,
+                ProtocolVersionAttributes.version(context.channel()),
                 ProtocolConstants.MATCH_RESULT_TYPE,
                 ProtocolConstants.MATCH_RESULT_FRAME_LENGTH);
         out.writeLong(response.requestId().value());
@@ -66,8 +70,15 @@ public final class ProtocolResponseEncoder extends MessageToByteEncoder<Protocol
         out.writeLong(response.takerRemainingQuantityUnits());
     }
 
-    private static void encodeError(final ErrorResponse response, final ByteBuf out) {
-        ProtocolWire.writeHeader(out, ProtocolConstants.ERROR_TYPE, ProtocolConstants.ERROR_FRAME_LENGTH);
+    private static void encodeError(
+            final ChannelHandlerContext context,
+            final ErrorResponse response,
+            final ByteBuf out) {
+        ProtocolWire.writeHeader(
+                out,
+                ProtocolVersionAttributes.version(context.channel()),
+                ProtocolConstants.ERROR_TYPE,
+                ProtocolConstants.ERROR_FRAME_LENGTH);
         out.writeLong(response.requestId());
         out.writeShort(response.errorCode().code());
         out.writeZero(6);

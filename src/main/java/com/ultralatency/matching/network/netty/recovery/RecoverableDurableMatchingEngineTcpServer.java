@@ -18,12 +18,14 @@ import com.ultralatency.matching.network.netty.codec.ProtocolCodecException;
 import com.ultralatency.matching.network.netty.codec.ProtocolFrameDecoder;
 import com.ultralatency.matching.network.netty.codec.ProtocolRequestDecoder;
 import com.ultralatency.matching.network.netty.codec.ProtocolResponseEncoder;
+import com.ultralatency.matching.network.netty.codec.ProtocolVersionAttributes;
 import com.ultralatency.matching.network.protocol.CancelOrderRequest;
 import com.ultralatency.matching.network.protocol.ClientRequestId;
 import com.ultralatency.matching.network.protocol.CommandResultResponse;
 import com.ultralatency.matching.network.protocol.ErrorResponse;
 import com.ultralatency.matching.network.protocol.MatchResultResponse;
 import com.ultralatency.matching.network.protocol.ProtocolCommandOutcome;
+import com.ultralatency.matching.network.protocol.ProtocolConstants;
 import com.ultralatency.matching.network.protocol.ProtocolErrorCode;
 import com.ultralatency.matching.network.protocol.ProtocolRequest;
 import com.ultralatency.matching.network.protocol.ProtocolResponse;
@@ -45,7 +47,9 @@ import io.netty.util.concurrent.Future;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -61,10 +65,15 @@ import java.util.function.Consumer;
  */
 public final class RecoverableDurableMatchingEngineTcpServer {
 
+    /** Default bounded window for the explicit Protocol v2 pipelined mode. */
+    public static final int DEFAULT_PIPELINED_MAX_IN_FLIGHT =
+            ProtocolConstants.DEFAULT_PIPELINED_MAX_IN_FLIGHT;
+
     private final Object lifecycleMonitor = new Object();
     private final RecoverableNetworkConfiguration configuration;
     private final BooleanSupplier admissionPredicate;
     private final Consumer<Throwable> failureObserver;
+    private final int pipelinedMaxInFlight;
     private volatile RecoveryRuntimeState state = RecoveryRuntimeState.NEW;
     private volatile Throwable failureCause;
     private volatile Channel serverChannel;
@@ -77,11 +86,14 @@ public final class RecoverableDurableMatchingEngineTcpServer {
     private boolean shutdownInProgress;
     private long expectedRequestId = 1;
     private InFlight inFlight;
+    private final Map<Long, PipelinedInFlight> pipelinedInFlight = new LinkedHashMap<>();
+    private Long nextPipelinedResponseSequence;
+    private boolean pipelinedWriteInProgress;
 
     /** Creates a recovered server with the supplied transport/recovery settings. */
     public RecoverableDurableMatchingEngineTcpServer(
             final RecoverableNetworkConfiguration configuration) {
-        this(configuration, () -> true, failure -> { });
+        this(configuration, () -> true, failure -> { }, DEFAULT_PIPELINED_MAX_IN_FLIGHT);
     }
 
     /**
@@ -99,9 +111,33 @@ public final class RecoverableDurableMatchingEngineTcpServer {
             final RecoverableNetworkConfiguration configuration,
             final BooleanSupplier admissionPredicate,
             final Consumer<Throwable> failureObserver) {
+        this(configuration, admissionPredicate, failureObserver, DEFAULT_PIPELINED_MAX_IN_FLIGHT);
+    }
+
+    /**
+     * Creates a recovered server with an explicit bounded Protocol v2 request window.
+     *
+     * <p>Protocol v1 always retains its original one-request-in-flight semantics. The window is
+     * used only after a client selects the explicit pipelined protocol version.</p>
+     *
+     * @param configuration transport/recovery settings
+     * @param admissionPredicate shared readiness/admission predicate
+     * @param failureObserver first terminal failure observer
+     * @param pipelinedMaxInFlight maximum v2 requests awaiting ordered responses
+     */
+    public RecoverableDurableMatchingEngineTcpServer(
+            final RecoverableNetworkConfiguration configuration,
+            final BooleanSupplier admissionPredicate,
+            final Consumer<Throwable> failureObserver,
+            final int pipelinedMaxInFlight) {
         this.configuration = Objects.requireNonNull(configuration, "configuration");
         this.admissionPredicate = Objects.requireNonNull(admissionPredicate, "admissionPredicate");
         this.failureObserver = Objects.requireNonNull(failureObserver, "failureObserver");
+        if (pipelinedMaxInFlight < 1
+                || pipelinedMaxInFlight > ProtocolConstants.MAX_PIPELINED_IN_FLIGHT) {
+            throw new IllegalArgumentException("Pipelined request window is outside the hard bound");
+        }
+        this.pipelinedMaxInFlight = pipelinedMaxInFlight;
     }
 
     /** Starts recovery and live resources before binding the listener last. */
@@ -220,7 +256,7 @@ public final class RecoverableDurableMatchingEngineTcpServer {
     }
 
     /**
-     * Waits for the current in-flight request to reach a terminal boundary.
+     * Waits for the current in-flight request window to reach a terminal boundary.
      *
      * @param timeout cooperative wait bound
      * @return {@code true} when no request remains in flight, otherwise {@code false}
@@ -229,7 +265,8 @@ public final class RecoverableDurableMatchingEngineTcpServer {
         final long timeoutNanos = timeoutNanos(timeout);
         final long deadline = deadline(timeoutNanos);
         synchronized (lifecycleMonitor) {
-            while (inFlight != null && state != RecoveryRuntimeState.STOPPED) {
+            while ((inFlight != null || !pipelinedInFlight.isEmpty())
+                    && state != RecoveryRuntimeState.STOPPED) {
                 final long remaining = deadline - System.nanoTime();
                 if (remaining <= 0) {
                     return false;
@@ -243,7 +280,7 @@ public final class RecoverableDurableMatchingEngineTcpServer {
                     return false;
                 }
             }
-            return inFlight == null;
+            return inFlight == null && pipelinedInFlight.isEmpty();
         }
     }
 
@@ -275,6 +312,11 @@ public final class RecoverableDurableMatchingEngineTcpServer {
         return configuration;
     }
 
+    /** @return configured bounded Protocol v2 request window */
+    public int pipelinedMaxInFlight() {
+        return pipelinedMaxInFlight;
+    }
+
     void onSessionActive(final ChannelHandlerContext context) {
         final Channel channel = context.channel();
         synchronized (lifecycleMonitor) {
@@ -300,6 +342,10 @@ public final class RecoverableDurableMatchingEngineTcpServer {
     void onRequest(final ChannelHandlerContext context, final ProtocolRequest request) {
         if (state != RecoveryRuntimeState.RUNNING
                 || context.channel() != activeChannel) {
+            return;
+        }
+        if (ProtocolVersionAttributes.isPipelined(context.channel())) {
+            onPipelinedRequest(context, request);
             return;
         }
         if (!admissionAllowed()) {
@@ -354,6 +400,74 @@ public final class RecoverableDurableMatchingEngineTcpServer {
         }
     }
 
+    void onChannelWritabilityChanged(final Channel channel) {
+        readIfPipelinedWindowAvailable(channel);
+    }
+
+    /** Handles one request in the explicit bounded Protocol v2 mode. */
+    private void onPipelinedRequest(
+            final ChannelHandlerContext context,
+            final ProtocolRequest request) {
+        if (!admissionAllowed()) {
+            writeAndClose(
+                    context.channel(),
+                    new ErrorResponse(request.requestId().value(), ProtocolErrorCode.SERVER_BUSY));
+            return;
+        }
+        final DurableCommandCoordinator coordinator;
+        final PipelinedInFlight pending;
+        synchronized (lifecycleMonitor) {
+            if (state != RecoveryRuntimeState.RUNNING
+                    || context.channel() != activeChannel
+                    || !admissionAllowed()) {
+                writeAndClose(
+                        context.channel(),
+                        new ErrorResponse(request.requestId().value(), ProtocolErrorCode.SERVER_BUSY));
+                return;
+            }
+            if (pipelinedInFlight.size() >= pipelinedMaxInFlight) {
+                writeRetryableFull(context.channel(), request.requestId().value());
+                return;
+            }
+            if (request.requestId().value() != expectedRequestId) {
+                writeAndClose(
+                        context.channel(),
+                        new ErrorResponse(
+                                request.requestId().value(), ProtocolErrorCode.UNEXPECTED_REQUEST_ID));
+                return;
+            }
+            coordinator = runtime().coordinator();
+            final DurableCommandIdentity identity = new DurableCommandIdentity(
+                    request.requestId(), coordinator.nextCommandSequence());
+            pending = new PipelinedInFlight(identity);
+            pipelinedInFlight.put(identity.domainCommandSequence().value(), pending);
+            if (nextPipelinedResponseSequence == null) {
+                nextPipelinedResponseSequence = identity.domainCommandSequence().value();
+            }
+        }
+        try {
+            final com.ultralatency.matching.integration.durable.LiveAcceptedOutcome outcome =
+                    coordinator.accept(
+                            request.requestId(),
+                            sequence -> toCommand(request, sequence.toSequence()));
+            if (!pending.identity().equals(outcome.identity())) {
+                throw new IllegalStateException("Pipelined command identity changed during admission");
+            }
+            synchronized (lifecycleMonitor) {
+                expectedRequestId = Math.addExact(expectedRequestId, 1);
+            }
+            readIfPipelinedWindowAvailable(context.channel());
+        } catch (final Throwable failure) {
+            synchronized (lifecycleMonitor) {
+                pipelinedInFlight.remove(pending.identity().domainCommandSequence().value());
+                if (pipelinedInFlight.isEmpty()) {
+                    nextPipelinedResponseSequence = null;
+                }
+            }
+            failRuntime(DurableFailureStage.ENGINE, failure);
+        }
+    }
+
     private DurableCommandIdentity inFlightIdentity() {
         synchronized (lifecycleMonitor) {
             if (inFlight == null) {
@@ -386,6 +500,20 @@ public final class RecoverableDurableMatchingEngineTcpServer {
             channel = activeChannel;
             current = inFlight;
         }
+        if (channel != null && ProtocolVersionAttributes.isPipelined(channel)) {
+            if (!channel.isOpen()) {
+                failRuntime(
+                        DurableFailureStage.ENGINE,
+                        new IllegalStateException("Pipelined result has no open session"));
+                return;
+            }
+            try {
+                channel.eventLoop().execute(() -> handlePipelinedEngineResult(channel, result));
+            } catch (final Throwable failure) {
+                failRuntime(DurableFailureStage.ENGINE, failure);
+            }
+            return;
+        }
         if (channel == null || !channel.isOpen() || current == null
                 || !current.identity().domainCommandSequence().equals(result.commandSequence())) {
             failRuntime(DurableFailureStage.ENGINE,
@@ -396,6 +524,80 @@ public final class RecoverableDurableMatchingEngineTcpServer {
             channel.eventLoop().execute(() -> handleEngineResult(channel, current, result));
         } catch (final Throwable failure) {
             failRuntime(DurableFailureStage.ENGINE, failure);
+        }
+    }
+
+    private void handlePipelinedEngineResult(
+            final Channel channel,
+            final EngineResult result) {
+        final PipelinedInFlight pending;
+        synchronized (lifecycleMonitor) {
+            pending = pipelinedInFlight.get(result.commandSequence().value());
+            if (state != RecoveryRuntimeState.RUNNING
+                    || pending == null
+                    || pending.result != null) {
+                failRuntime(
+                        DurableFailureStage.ENGINE,
+                        new IllegalStateException("Pipelined result correlation mismatch"));
+                return;
+            }
+            pending.result = result;
+        }
+        flushPipelinedResults(channel);
+    }
+
+    private void flushPipelinedResults(final Channel channel) {
+        if (!channel.eventLoop().inEventLoop()) {
+            channel.eventLoop().execute(() -> flushPipelinedResults(channel));
+            return;
+        }
+        final PipelinedInFlight pending;
+        synchronized (lifecycleMonitor) {
+            if (pipelinedWriteInProgress
+                    || nextPipelinedResponseSequence == null
+                    || state == RecoveryRuntimeState.FAILED
+                    || state == RecoveryRuntimeState.STOPPED) {
+                return;
+            }
+            pending = pipelinedInFlight.get(nextPipelinedResponseSequence);
+            if (pending == null || pending.result == null) {
+                return;
+            }
+            pipelinedWriteInProgress = true;
+        }
+        final EngineResult result = pending.result;
+        final List<ProtocolResponse> responses = new ArrayList<>(1 + result.matches().size());
+        responses.add(new CommandResultResponse(
+                pending.identity().requestId(),
+                result.commandSequence(),
+                toProtocolOutcome(result.outcome()),
+                result.matches().size()));
+        for (int index = 0; index < result.matches().size(); index++) {
+            responses.add(toMatchResponse(pending.identity().requestId(), result, index));
+        }
+        try {
+            for (int index = 0; index < responses.size() - 1; index++) {
+                channel.write(responses.get(index));
+            }
+            final ChannelFuture completion = channel.writeAndFlush(responses.get(responses.size() - 1));
+            completion.addListener(future -> {
+                if (!future.isSuccess()) {
+                    failRuntime(DurableFailureStage.OUTBOUND_WRITE, future.cause());
+                    return;
+                }
+                synchronized (lifecycleMonitor) {
+                    pipelinedInFlight.remove(pending.identity().domainCommandSequence().value());
+                    nextPipelinedResponseSequence = nextPipelinedResponseSequence == Long.MAX_VALUE
+                            ? null
+                            : nextPipelinedResponseSequence + 1;
+                    pipelinedWriteInProgress = false;
+                    lifecycleMonitor.notifyAll();
+                }
+                readIfPipelinedWindowAvailable(channel);
+                flushPipelinedResults(channel);
+            });
+        } catch (final Throwable failure) {
+            failRuntime(DurableFailureStage.OUTBOUND_WRITE, failure);
         }
     }
 
@@ -475,6 +677,9 @@ public final class RecoverableDurableMatchingEngineTcpServer {
             state = RecoveryRuntimeState.FAILED;
             admissionOpen = false;
             inFlight = null;
+            pipelinedInFlight.clear();
+            nextPipelinedResponseSequence = null;
+            pipelinedWriteInProgress = false;
             lifecycleMonitor.notifyAll();
             currentSession = activeChannel;
             currentServer = serverChannel;
@@ -563,6 +768,37 @@ public final class RecoverableDurableMatchingEngineTcpServer {
         }
     }
 
+    private void writeRetryableFull(final Channel channel, final long requestId) {
+        try {
+            final ChannelFuture completion = channel.writeAndFlush(
+                    new ErrorResponse(requestId, ProtocolErrorCode.BACKPRESSURE_FULL));
+            completion.addListener(future -> {
+                if (!future.isSuccess()) {
+                    failRuntime(DurableFailureStage.OUTBOUND_WRITE, future.cause());
+                } else {
+                    readIfPipelinedWindowAvailable(channel);
+                }
+            });
+        } catch (final Throwable failure) {
+            failRuntime(DurableFailureStage.OUTBOUND_WRITE, failure);
+        }
+    }
+
+    private void readIfPipelinedWindowAvailable(final Channel channel) {
+        if (state != RecoveryRuntimeState.RUNNING
+                || !channel.isOpen()
+                || !ProtocolVersionAttributes.isPipelined(channel)) {
+            return;
+        }
+        final boolean available;
+        synchronized (lifecycleMonitor) {
+            available = pipelinedInFlight.size() < pipelinedMaxInFlight;
+        }
+        if (available && channel.isWritable()) {
+            channel.read();
+        }
+    }
+
     private void requireState(final RecoveryRuntimeState expected, final String operation) {
         if (state != expected) {
             throw new IllegalStateException(
@@ -645,6 +881,20 @@ public final class RecoverableDurableMatchingEngineTcpServer {
     private record InFlight(DurableCommandIdentity identity) {
     }
 
+    private static final class PipelinedInFlight {
+
+        private final DurableCommandIdentity identity;
+        private EngineResult result;
+
+        private PipelinedInFlight(final DurableCommandIdentity identity) {
+            this.identity = identity;
+        }
+
+        private DurableCommandIdentity identity() {
+            return identity;
+        }
+    }
+
     private static final class RecoveryChannelInitializer extends ChannelInitializer<SocketChannel> {
 
         private final RecoverableDurableMatchingEngineTcpServer server;
@@ -689,6 +939,12 @@ public final class RecoverableDurableMatchingEngineTcpServer {
         @Override
         public void channelInactive(final ChannelHandlerContext context) {
             server.onSessionInactive(context.channel());
+        }
+
+        @Override
+        public void channelWritabilityChanged(final ChannelHandlerContext context) {
+            server.onChannelWritabilityChanged(context.channel());
+            context.fireChannelWritabilityChanged();
         }
 
         @Override

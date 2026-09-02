@@ -16,7 +16,7 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 import java.util.List;
 
 /**
- * Converts one complete protocol v1 request frame into a project-owned value.
+ * Converts one complete protocol request frame into a project-owned value.
  */
 public final class ProtocolRequestDecoder extends MessageToMessageDecoder<ByteBuf> {
 
@@ -26,7 +26,7 @@ public final class ProtocolRequestDecoder extends MessageToMessageDecoder<ByteBu
             final ByteBuf frame,
             final List<Object> out) {
         final int index = frame.readerIndex();
-        final int type = validateCommonFrame(frame, index);
+        final int type = validateCommonFrame(context, frame, index);
         final ProtocolRequest request;
         try {
             request = switch (type) {
@@ -44,7 +44,10 @@ public final class ProtocolRequestDecoder extends MessageToMessageDecoder<ByteBu
         out.add(request);
     }
 
-    private static int validateCommonFrame(final ByteBuf frame, final int index) {
+    private static int validateCommonFrame(
+            final ChannelHandlerContext context,
+            final ByteBuf frame,
+            final int index) {
         final int length = frame.readableBytes();
         if (length < ProtocolConstants.HEADER_LENGTH) {
             throw invalid("Frame is shorter than the common header");
@@ -56,11 +59,19 @@ public final class ProtocolRequestDecoder extends MessageToMessageDecoder<ByteBu
             throw new ProtocolCodecException(ProtocolErrorCode.MALFORMED_FRAME, "Invalid protocol magic");
         }
         final int version = frame.getUnsignedByte(index + 4);
-        if (version != ProtocolConstants.VERSION) {
+        if (version != ProtocolConstants.VERSION
+                && version != ProtocolConstants.PIPELINED_VERSION) {
             throw new ProtocolCodecException(
                     ProtocolErrorCode.UNSUPPORTED_VERSION,
                     "Unsupported protocol version: " + version);
         }
+        final Integer selected = context.channel().attr(ProtocolVersionAttributes.VERSION).get();
+        if (selected != null && selected != version) {
+            throw new ProtocolCodecException(
+                    ProtocolErrorCode.UNSUPPORTED_VERSION,
+                    "Protocol version cannot change within a session");
+        }
+        context.channel().attr(ProtocolVersionAttributes.VERSION).set(version);
         if (frame.getUnsignedShort(index + 6) != 0 || frame.getInt(index + 12) != 0) {
             throw invalid("Non-zero header flags or reserved bytes");
         }

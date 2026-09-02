@@ -125,7 +125,8 @@ class GaG6G8PhysicalRunBindingTest {
         final GaSoakObservation g6 = new GaSoakObservation(
                 physical, GaSoakMatrix.Stage.QUICK, matrix.duration().toNanos(), 10_000L,
                 10_000L, 0, 0, 0, new long[0], new long[0], new long[0], List.of(),
-                List.of(), true, true, true, true, true, true, true, true, true, true);
+                List.of(), true, true, true, true, true, true, true, true, true, true,
+                12_000L, 12_000L, 0L);
         final GaObservabilityObservation g8 = new GaObservabilityObservation(
                 physical, GaSoakMatrix.Stage.QUICK, List.of(), GaGcEvidence.quick("NONE"),
                 GaJfrEvidence.valid(temporaryDirectory.resolve("fixture.jfr")),

@@ -46,6 +46,18 @@ class GaFrozenBoundaryVerifierTest {
     }
 
     @Test
+    void allowsOnlyTheApprovedRc2NetworkPaths(@TempDir final Path temporaryDirectory)
+            throws Exception {
+        final Path repository = initializeRepository(temporaryDirectory.resolve("rc2-network"));
+        final String head = gitHead(repository);
+        write(repository,
+                "src/main/java/com/ultralatency/matching/network/protocol/ProtocolConstants.java",
+                "changed\n");
+
+        assertDoesNotThrow(() -> GaFrozenBoundaryVerifier.verify(repository, head, head));
+    }
+
+    @Test
     void rejectsOtherCoreProductionAndMultipleChanges(@TempDir final Path temporaryDirectory)
             throws Exception {
         final Path otherCoreRepository = initializeRepository(

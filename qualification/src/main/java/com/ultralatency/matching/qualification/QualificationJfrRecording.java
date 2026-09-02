@@ -54,6 +54,11 @@ public final class QualificationJfrRecording implements AutoCloseable {
                 .with("period", "1 s")
                 .withoutStackTrace();
         recording.setToDisk(true);
+        // A terminal path must still materialize the recording if the owning
+        // process exits before the normal close path.  The child process is the
+        // resource owner; dump-on-exit is an additional deterministic safety
+        // boundary, not a substitute for close().
+        recording.setDumpOnExit(true);
         recording.setDestination(normalized);
         recording.start();
         return new QualificationJfrRecording(recording, normalized);

@@ -48,7 +48,13 @@ public record GaObservabilityObservation(
                 && managementEvidence.stream().anyMatch(
                 item -> item.kind() == GaManagementEvidence.Kind.STATUS)
                 && managementEvidence.stream().anyMatch(
-                item -> item.kind() == GaManagementEvidence.Kind.METRICS);
+                item -> item.kind() == GaManagementEvidence.Kind.METRICS)
+                && managementEvidence.stream().anyMatch(
+                item -> item.kind() == GaManagementEvidence.Kind.LIVE
+                        && Boolean.TRUE.equals(item.live()))
+                && managementEvidence.stream().anyMatch(
+                item -> item.kind() == GaManagementEvidence.Kind.READY
+                        && Boolean.TRUE.equals(item.ready()));
     }
 
     /** Returns whether all management counters are monotonic across the observed sequence. */

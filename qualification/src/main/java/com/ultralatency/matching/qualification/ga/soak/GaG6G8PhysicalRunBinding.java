@@ -194,11 +194,13 @@ public final class GaG6G8PhysicalRunBinding {
                 "candidate.productionTreeSha256", "candidate.tag", "candidate.tagObjectSha",
                 "comparability.identitySha256", "configuration.identitySha256",
                 "evidence.startedAtUtc", "evidence.completedAtUtc", "artifact.inventory.path",
-                "artifact.inventory.sha256", "artifact.inventory.size")) {
+                "artifact.inventory.sha256", "artifact.inventory.size", "run.commandCount")) {
             if (!Objects.equals(g6.get(key), g8.get(key))) {
                 throw new IOException("G6/G8 manifest shared field mismatch: " + key);
             }
         }
+        parseNonNegative(required(g6, "run.commandCount"), "G6 command count");
+        parseNonNegative(required(g8, "run.commandCount"), "G8 command count");
     }
 
     private static void verifyManifestArtifacts(

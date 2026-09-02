@@ -5,7 +5,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import java.nio.ByteOrder;
 
 /**
- * Fail-fast big-endian length-field framing for protocol v1.
+ * Fail-fast big-endian length-field framing shared by the versioned protocols.
  */
 public final class ProtocolFrameDecoder extends LengthFieldBasedFrameDecoder {
 
