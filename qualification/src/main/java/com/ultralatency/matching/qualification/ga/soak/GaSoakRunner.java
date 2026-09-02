@@ -4,14 +4,14 @@ import com.ultralatency.matching.app.ReleaseCandidateRuntime;
 import com.ultralatency.matching.app.RuntimeConfiguration;
 import com.ultralatency.matching.app.RuntimeFailureCode;
 import com.ultralatency.matching.engine.EngineCommand;
-import com.ultralatency.matching.qualification.ProtocolV1QualificationClient;
+import com.ultralatency.matching.qualification.ProtocolV2PacedQualificationClient;
 import com.ultralatency.matching.qualification.QualificationConfiguration;
 import com.ultralatency.matching.qualification.QualificationEvidencePublication;
-import com.ultralatency.matching.qualification.QualificationExchange;
 import com.ultralatency.matching.qualification.QualificationJfrRecording;
 import com.ultralatency.matching.qualification.QualificationWorkloadV1;
 import com.ultralatency.matching.qualification.ReleaseCandidateManagementClient;
 import com.ultralatency.matching.qualification.ReleaseCandidateQualificationProcess;
+import com.ultralatency.matching.network.protocol.ProtocolConstants;
 import com.ultralatency.matching.qualification.ga.correctness.GaCorrectnessCanonicalContext;
 import com.ultralatency.matching.qualification.ga.observability.GaGcEvidence;
 import com.ultralatency.matching.qualification.ga.observability.GaJfrEvidence;
@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.locks.LockSupport;
 import com.ultralatency.matching.persistence.wal.WalDurabilityMode;
 import com.ultralatency.matching.pipeline.PipelineWaitMode;
 import com.ultralatency.matching.recovery.online.RecoveryMode;
@@ -49,17 +48,31 @@ public final class GaSoakRunner {
     private static final Duration COMMAND_TIMEOUT = Duration.ofSeconds(5);
     private static final Duration SHUTDOWN_TIMEOUT = Duration.ofSeconds(5);
     private static final int WAL_SEGMENT_SIZE_BYTES = 65_536;
+    private static final PacingDeadlineWaiter SYSTEM_PACING_WAITER =
+            new PacingDeadlineWaiter();
 
     private final GaCorrectnessCanonicalContext configuredContext;
+    private final int pacedMaxInFlight;
 
     /** Creates a runner resolving the frozen candidate/context at execution time. */
     public GaSoakRunner() {
-        this(null);
+        this(null, ProtocolConstants.DEFAULT_PIPELINED_MAX_IN_FLIGHT);
     }
 
     /** Creates a runner with an explicit context for deterministic unit tests. */
     public GaSoakRunner(final GaCorrectnessCanonicalContext context) {
+        this(context, ProtocolConstants.DEFAULT_PIPELINED_MAX_IN_FLIGHT);
+    }
+
+    /** Creates a runner with an explicit bounded Protocol v2 pacing window. */
+    public GaSoakRunner(
+            final GaCorrectnessCanonicalContext context,
+            final int maxInFlight) {
+        if (maxInFlight < 1 || maxInFlight > ProtocolConstants.MAX_PIPELINED_IN_FLIGHT) {
+            throw new IllegalArgumentException("maxInFlight is outside the protocol hard bound");
+        }
         configuredContext = context;
+        pacedMaxInFlight = maxInFlight;
     }
 
     /** Runs exactly one shared, non-formal Quick physical execution. */
@@ -135,28 +148,32 @@ public final class GaSoakRunner {
             final int protocolPort = runtime.protocolServer().localAddress()
                     .orElseThrow(() -> new IOException("protocol listener did not bind"))
                     .getPort();
-            try (ProtocolV1QualificationClient client = new ProtocolV1QualificationClient(
+            final PacedAccumulator accumulator = new PacedAccumulator(latency, transcript);
+            try (ProtocolV2PacedQualificationClient client = new ProtocolV2PacedQualificationClient(
                     new java.net.InetSocketAddress(InetAddress.getLoopbackAddress(), protocolPort),
-                    COMMAND_TIMEOUT)) {
+                    COMMAND_TIMEOUT, pacedMaxInFlight)) {
                 measurementStartNanos = System.nanoTime();
-                pacing = new PacingSchedule(measurementStartNanos, matrix);
+                pacing = new PacingSchedule(measurementStartNanos, matrix,
+                        SYSTEM_PACING_WAITER);
                 long offeredIndex = 0L;
                 while (true) {
+                    accumulator.accept(client.drainCompleted());
                     final PacingOffer offer = pacing.awaitNextOffer();
                     if (offer == null) {
                         break;
                     }
+                    if (client.inFlight() >= client.maxInFlight()) {
+                        pacing.missOffer(offer, "WINDOW_FULL");
+                        continue;
+                    }
                     final EngineCommand command = QualificationWorkloadV1.commandAtForRun(
                             workload, offeredIndex);
-                    final long exchangeStart = System.nanoTime();
                     try {
-                        final QualificationExchange exchange = client.exchange(
-                                command, offeredIndex + 1L);
-                        latency.add(Math.max(1L, System.nanoTime() - exchangeStart));
-                        accepted++;
-                        responses += exchange.responseFrameCount();
-                        transcript.append(offeredIndex + 1L).append(',')
-                                .append(exchange.transcriptDigestHex()).append('\n');
+                        if (!client.tryOffer(command, offeredIndex + 1L)) {
+                            pacing.missOffer(offer, "WINDOW_FULL");
+                            continue;
+                        }
+                        pacing.commitOffer(offer);
                         offeredIndex++;
                     } catch (final SocketTimeoutException timeout) {
                         timeouts++;
@@ -182,6 +199,12 @@ public final class GaSoakRunner {
                         measurementStopNanos = pacing.deadlineNanos();
                     }
                 }
+                while (client.inFlight() > 0) {
+                    accumulator.accept(client.awaitCompleted(COMMAND_TIMEOUT));
+                }
+                accumulator.accept(client.drainCompleted());
+                accepted = accumulator.accepted;
+                responses = accumulator.responses;
                 // Keep the public session open while the runtime performs its orderly shutdown.
                 // Closing it first is interpreted by the candidate server as an unexpected
                 // disconnect and turns an otherwise complete run into a runtime failure.
@@ -325,28 +348,32 @@ public final class GaSoakRunner {
                     managementPort, "STATUS", COMMAND_TIMEOUT));
             management.add(ReleaseCandidateManagementClient.requestEvidence(
                     managementPort, "METRICS", COMMAND_TIMEOUT));
-            try (ProtocolV1QualificationClient client = new ProtocolV1QualificationClient(
+            final PacedAccumulator accumulator = new PacedAccumulator(latency, transcript);
+            try (ProtocolV2PacedQualificationClient client = new ProtocolV2PacedQualificationClient(
                     new java.net.InetSocketAddress(InetAddress.getLoopbackAddress(),
-                            child.protocolPort()), COMMAND_TIMEOUT)) {
+                            child.protocolPort()), COMMAND_TIMEOUT, pacedMaxInFlight)) {
                 measurementStartNanos = System.nanoTime();
-                pacing = new PacingSchedule(measurementStartNanos, matrix);
+                pacing = new PacingSchedule(measurementStartNanos, matrix,
+                        SYSTEM_PACING_WAITER);
                 long offeredIndex = 0L;
                 while (true) {
+                    accumulator.accept(client.drainCompleted());
                     final PacingOffer offer = pacing.awaitNextOffer();
                     if (offer == null) {
                         break;
                     }
+                    if (client.inFlight() >= client.maxInFlight()) {
+                        pacing.missOffer(offer, "WINDOW_FULL");
+                        continue;
+                    }
                     final EngineCommand command = QualificationWorkloadV1.commandAtForRun(
                             workload, offeredIndex);
-                    final long exchangeStart = System.nanoTime();
                     try {
-                        final QualificationExchange exchange = client.exchange(
-                                command, offeredIndex + 1L);
-                        latency.add(Math.max(1L, System.nanoTime() - exchangeStart));
-                        accepted++;
-                        responses += exchange.responseFrameCount();
-                        transcript.append(offeredIndex + 1L).append(',')
-                                .append(exchange.transcriptDigestHex()).append('\n');
+                        if (!client.tryOffer(command, offeredIndex + 1L)) {
+                            pacing.missOffer(offer, "WINDOW_FULL");
+                            continue;
+                        }
+                        pacing.commitOffer(offer);
                         offeredIndex++;
                     } catch (final SocketTimeoutException timeout) {
                         timeouts++;
@@ -370,6 +397,12 @@ public final class GaSoakRunner {
                     pacing.accountMissedThrough(pacing.deadlineNanos());
                     measurementStopNanos = pacing.deadlineNanos();
                 }
+                while (client.inFlight() > 0) {
+                    accumulator.accept(client.awaitCompleted(COMMAND_TIMEOUT));
+                }
+                accumulator.accept(client.drainCompleted());
+                accepted = accumulator.accepted;
+                responses = accumulator.responses;
                 // Keep the public session open until the child has entered its shutdown boundary;
                 // otherwise the candidate records a DISCONNECT terminal failure before the
                 // parent can request orderly shutdown.
@@ -459,6 +492,30 @@ public final class GaSoakRunner {
         return runQuick(outputDirectory);
     }
 
+    /** Collects response observations without coupling them to the offer scheduler. */
+    private static final class PacedAccumulator {
+
+        private final List<Long> latency;
+        private final StringBuilder transcript;
+        private long accepted;
+        private long responses;
+
+        private PacedAccumulator(final List<Long> latency, final StringBuilder transcript) {
+            this.latency = latency;
+            this.transcript = transcript;
+        }
+
+        private void accept(final List<ProtocolV2PacedQualificationClient.CompletedExchange> values) {
+            for (final ProtocolV2PacedQualificationClient.CompletedExchange value : values) {
+                latency.add(value.latencyNanos());
+                accepted++;
+                responses += value.exchange().responseFrameCount();
+                transcript.append(value.requestId()).append(',')
+                        .append(value.exchange().transcriptDigestHex()).append('\n');
+            }
+        }
+    }
+
     /** One nominal offer and its observed monotonic timing. */
     record PacingOffer(long ordinal, long scheduledNanos, long actualOfferNanos) {
     }
@@ -473,16 +530,26 @@ public final class GaSoakRunner {
         private final long deadlineNanos;
         private final long slotPeriodNanos;
         private final long nominalOfferOpportunities;
+        private final PacingDeadlineWaiter waiter;
         private final StringBuilder evidence = new StringBuilder(
                 "slotOrdinal,scheduledMonotonicNanos,actualOfferMonotonicNanos,status\n");
         private long nextOrdinal;
         private long actualOfferedCommands;
         private long missedOfferOpportunities;
+        private long windowFullMissedOpportunities;
 
         PacingSchedule(final long startNanos, final GaSoakMatrix matrix) {
+            this(startNanos, matrix, SYSTEM_PACING_WAITER);
+        }
+
+        PacingSchedule(
+                final long startNanos,
+                final GaSoakMatrix matrix,
+                final PacingDeadlineWaiter pacingWaiter) {
             if (matrix == null || !matrix.isQuick()) {
                 throw new IllegalArgumentException("invalid Quick pacing schedule");
             }
+            waiter = Objects.requireNonNull(pacingWaiter, "pacingWaiter");
             this.startNanos = startNanos;
             try {
                 deadlineNanos = Math.addExact(startNanos, matrix.duration().toNanos());
@@ -495,7 +562,7 @@ public final class GaSoakRunner {
             }
         }
 
-        /** Waits for and records the next legal offer, or returns null at the fixed deadline. */
+        /** Waits for the next active offer slot, or returns null at the fixed deadline. */
         PacingOffer awaitNextOffer() {
             while (nextOrdinal < nominalOfferOpportunities) {
                 final long now = System.nanoTime();
@@ -506,19 +573,18 @@ public final class GaSoakRunner {
                 final long target = targetFor(nextOrdinal);
                 final long slotEnd = slotEndFor(nextOrdinal);
                 if (now < target) {
-                    LockSupport.parkNanos(Math.min(target - now, 10_000_000L));
-                    if (Thread.currentThread().isInterrupted()) {
+                    if (!waiter.awaitUntil(target)) {
                         Thread.currentThread().interrupt();
                         return null;
                     }
                     continue;
                 }
                 if (now < slotEnd) {
-                    return recordOffer(target, now);
+                    return new PacingOffer(nextOrdinal, target, now);
                 }
                 // The whole current slot has elapsed.  Advance to the one active slot, if any;
                 // this records missed opportunities without ever emitting a catch-up burst.
-                accountMissedBefore(activeSlotAt(now));
+                accountMissedBefore(activeSlotAt(now), "SCHEDULER_LATE");
             }
             return null;
         }
@@ -537,20 +603,40 @@ public final class GaSoakRunner {
                     return null;
                 }
                 if (nowNanos < slotEndFor(nextOrdinal)) {
-                    return recordOffer(target, nowNanos);
+                    final PacingOffer offer = new PacingOffer(nextOrdinal, target, nowNanos);
+                    commitOffer(offer);
+                    return offer;
                 }
-                accountMissedBefore(activeSlotAt(nowNanos));
+                accountMissedBefore(activeSlotAt(nowNanos), "SCHEDULER_LATE");
             }
             return null;
         }
 
-        private PacingOffer recordOffer(final long target, final long actualNanos) {
-            final PacingOffer offer = new PacingOffer(nextOrdinal, target, actualNanos);
-            evidence.append(nextOrdinal).append(',').append(target).append(',')
-                    .append(actualNanos).append(",OFFERED\n");
+        void commitOffer(final PacingOffer offer) {
+            requireCurrent(offer);
+            evidence.append(offer.ordinal()).append(',').append(offer.scheduledNanos()).append(',')
+                    .append(offer.actualOfferNanos()).append(",OFFERED\n");
             nextOrdinal++;
             actualOfferedCommands++;
-            return offer;
+        }
+
+        void missOffer(final PacingOffer offer, final String reason) {
+            requireCurrent(offer);
+            Objects.requireNonNull(reason, "reason");
+            evidence.append(offer.ordinal()).append(',').append(offer.scheduledNanos())
+                    .append(",,").append("MISSED_").append(reason).append('\n');
+            nextOrdinal++;
+            missedOfferOpportunities++;
+            if ("WINDOW_FULL".equals(reason)) {
+                windowFullMissedOpportunities++;
+            }
+        }
+
+        private void requireCurrent(final PacingOffer offer) {
+            Objects.requireNonNull(offer, "offer");
+            if (offer.ordinal() != nextOrdinal) {
+                throw new IllegalArgumentException("pacing offer is not the current slot");
+            }
         }
 
         /** Accounts for all nominal slots whose scheduled time has passed. */
@@ -558,17 +644,17 @@ public final class GaSoakRunner {
             if (nowNanos < startNanos) {
                 throw new IllegalArgumentException("clock precedes pacing start");
             }
-            accountMissedBefore(activeSlotAt(nowNanos));
+            accountMissedBefore(activeSlotAt(nowNanos), "SCHEDULER_LATE");
         }
 
         /** Advances the schedule without issuing a catch-up offer. */
-        private void accountMissedBefore(final long firstFutureOrdinal) {
+        private void accountMissedBefore(final long firstFutureOrdinal, final String reason) {
             final long bounded = Math.min(nominalOfferOpportunities,
                     Math.max(nextOrdinal, firstFutureOrdinal));
             while (nextOrdinal < bounded) {
                 final long target = targetFor(nextOrdinal);
                 evidence.append(nextOrdinal).append(',').append(target)
-                        .append(",,MISSED\n");
+                        .append(",,MISSED_").append(reason).append('\n');
                 nextOrdinal++;
                 missedOfferOpportunities++;
             }
@@ -604,6 +690,10 @@ public final class GaSoakRunner {
             return missedOfferOpportunities;
         }
 
+        long windowFullMissedOpportunities() {
+            return windowFullMissedOpportunities;
+        }
+
         String evidenceCsv() {
             return evidence.toString();
         }
@@ -611,17 +701,7 @@ public final class GaSoakRunner {
 
     /** Waits until a monotonic deadline without shortening the fixed observation interval. */
     private static void awaitDeadline(final long deadlineNanos) {
-        while (true) {
-            final long remaining = deadlineNanos - System.nanoTime();
-            if (remaining <= 0L) {
-                return;
-            }
-            LockSupport.parkNanos(Math.min(remaining, 10_000_000L));
-            if (Thread.currentThread().isInterrupted()) {
-                Thread.currentThread().interrupt();
-                return;
-            }
-        }
+        SYSTEM_PACING_WAITER.awaitUntil(deadlineNanos);
     }
 
     /** Returns the monotonic deadline for one offered command ordinal. */
