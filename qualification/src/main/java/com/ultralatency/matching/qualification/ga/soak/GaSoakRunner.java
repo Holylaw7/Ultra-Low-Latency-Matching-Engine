@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Stream;
+import java.util.concurrent.locks.LockSupport;
 import com.ultralatency.matching.persistence.wal.WalDurabilityMode;
 import com.ultralatency.matching.pipeline.PipelineWaitMode;
 import com.ultralatency.matching.recovery.online.RecoveryMode;
@@ -90,7 +90,7 @@ public final class GaSoakRunner {
         final RuntimeConfiguration configuration = runtimeConfiguration(walRoot, snapshotRoot);
         final ReleaseCandidateRuntime runtime = ReleaseCandidateRuntime.create(configuration);
         final GaSoakResourceSampler sampler = new GaSoakResourceSampler(
-                physicalId, GaSoakMatrix.Stage.QUICK, snapshotRoot);
+                physicalId, GaSoakMatrix.Stage.QUICK, physicalRoot, snapshotRoot);
         QualificationJfrRecording jfr = null;
         boolean publicPathCompleted = false;
         boolean gracefulShutdown = false;
@@ -99,6 +99,8 @@ public final class GaSoakRunner {
         int mismatches = 0;
         long accepted = 0L;
         long responses = 0L;
+        long measurementStartNanos = -1L;
+        long measurementStopNanos = -1L;
         try {
             jfr = QualificationJfrRecording.start(jfrPath);
             runtime.start();
@@ -120,7 +122,15 @@ public final class GaSoakRunner {
             try (ProtocolV1QualificationClient client = new ProtocolV1QualificationClient(
                     new java.net.InetSocketAddress(InetAddress.getLoopbackAddress(), protocolPort),
                     COMMAND_TIMEOUT)) {
+                measurementStartNanos = System.nanoTime();
+                final long durationNanos = matrix.duration().toNanos();
+                final long measurementDeadline = Math.addExact(measurementStartNanos, durationNanos);
                 for (int index = 0; index < workload.commandCount(); index++) {
+                    final long targetNanos = pacedTarget(measurementStartNanos, index,
+                            matrix.offeredRatePerSecond());
+                    if (!waitUntil(targetNanos, measurementDeadline)) {
+                        break;
+                    }
                     final EngineCommand command = QualificationWorkloadV1.commandAtForRun(
                             workload, index);
                     final long exchangeStart = System.nanoTime();
@@ -142,8 +152,12 @@ public final class GaSoakRunner {
                         throw mismatch;
                     }
                 }
+                if (accepted == workload.commandCount()) {
+                    waitUntil(measurementDeadline, measurementDeadline);
+                }
             }
-            publicPathCompleted = true;
+            measurementStopNanos = System.nanoTime();
+            publicPathCompleted = accepted == workload.commandCount();
             management.add(ReleaseCandidateManagementClient.requestEvidence(
                     managementPort, "STATUS", COMMAND_TIMEOUT));
             gracefulShutdown = shutdown(runtime);
@@ -166,7 +180,12 @@ public final class GaSoakRunner {
             }
         }
         final Instant completed = Instant.now();
-        final long elapsedNanos = Math.max(1L, Duration.between(started, completed).toNanos());
+        if (measurementStartNanos > 0L && measurementStopNanos < measurementStartNanos) {
+            measurementStopNanos = System.nanoTime();
+        }
+        final long elapsedNanos = measurementStartNanos > 0L
+                ? Math.max(1L, measurementStopNanos - measurementStartNanos)
+                : Math.max(1L, Duration.between(started, completed).toNanos());
         final List<GaSoakResourceSample> resources = sampler.samples();
         final GaSoakObservation g6Observation = new GaSoakObservation(
                 physicalId, GaSoakMatrix.Stage.QUICK, elapsedNanos, accepted, accepted,
@@ -178,8 +197,9 @@ public final class GaSoakRunner {
         final GaGcEvidence gcEvidence = GaGcEvidence.quick("NONE");
         final GaObservabilityObservation g8Observation = new GaObservabilityObservation(
                 physicalId, GaSoakMatrix.Stage.QUICK, resources, gcEvidence, jfrEvidence,
-                management, true, true, gracefulShutdown ? 0 : 1, false,
-                false, noTransientFiles(snapshotRoot), true, context.isApprovedCandidate()
+                management, true, true, gracefulShutdown ? 0 : 1, sampler.samplingFailed(),
+                sampler.hasUnknownOwnedFiles(), sampler.transientFilesCleanAfterShutdown(), true,
+                context.isApprovedCandidate()
                         || configuredContext != null, context.controllerGitSha() != null);
         final GaSoakEvaluator.Evaluation g6 = GaSoakEvaluator.evaluateQuick(matrix, g6Observation);
         final GaObservabilityEvaluator.Evaluation g8 =
@@ -209,6 +229,39 @@ public final class GaSoakRunner {
             throw new IllegalArgumentException("formal TASK-052 soak execution is not authorized");
         }
         return runQuick(outputDirectory);
+    }
+
+    /** Returns the monotonic deadline for one offered command ordinal. */
+    static long pacedTarget(
+            final long measurementStartNanos,
+            final long zeroBasedCommandOrdinal,
+            final int offeredRatePerSecond) {
+        if (measurementStartNanos < 0L || zeroBasedCommandOrdinal < 0L
+                || offeredRatePerSecond <= 0) {
+            throw new IllegalArgumentException("invalid pacing inputs");
+        }
+        final long offset = Math.multiplyExact(zeroBasedCommandOrdinal, 1_000_000_000L)
+                / offeredRatePerSecond;
+        return Math.addExact(measurementStartNanos, offset);
+    }
+
+    /** Waits until a monotonic target without crossing the fixed run deadline. */
+    private static boolean waitUntil(final long targetNanos, final long deadlineNanos) {
+        if (targetNanos > deadlineNanos) {
+            return false;
+        }
+        while (true) {
+            final long now = System.nanoTime();
+            if (now >= targetNanos) {
+                return now <= deadlineNanos;
+            }
+            final long remaining = targetNanos - now;
+            LockSupport.parkNanos(Math.min(remaining, 10_000_000L));
+            if (Thread.currentThread().isInterrupted()) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
+        }
     }
 
     private GaCorrectnessCanonicalContext context() throws IOException {
@@ -272,15 +325,6 @@ public final class GaSoakRunner {
             result[index] = values.get(index);
         }
         return result;
-    }
-
-    private static boolean noTransientFiles(final Path snapshotRoot) {
-        try (Stream<Path> paths = Files.list(snapshotRoot)) {
-            return paths.noneMatch(path -> Files.isRegularFile(path)
-                    && path.getFileName().toString().endsWith(".tmp"));
-        } catch (final IOException failure) {
-            return false;
-        }
     }
 
     private static String resourceText(final List<GaSoakResourceSample> samples) {

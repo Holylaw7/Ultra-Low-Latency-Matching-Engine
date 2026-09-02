@@ -76,6 +76,33 @@ class GaObservabilityEvaluatorTest {
         assertEquals("B3", evaluation.failureCode());
     }
 
+    @Test
+    void formalResourceAndGcIdentityDefectsRemainB0() {
+        final List<GaSoakResourceSample> foreignResources = resourceSamples();
+        foreignResources.set(300, new GaSoakResourceSample(
+                "other-physical", GaSoakMatrix.Stage.STAGE_A, 300L, 300L, 12L, 0L, 0L));
+        final GaObservabilityObservation resourceIdentity = new GaObservabilityObservation(
+                PHYSICAL_ID, GaSoakMatrix.Stage.STAGE_A, foreignResources,
+                new GaGcEvidence(naturalGcSamples(), true, true, true, "NONE"),
+                GaJfrEvidence.valid(Path.of("formal.jfr")), validManagement(), true, true, 0,
+                false, false, true, true, true, true);
+        final GaObservabilityEvaluator.Evaluation resourceEvaluation =
+                GaObservabilityEvaluator.evaluateFormal(GaSoakMatrix.stageA(), resourceIdentity);
+        assertFalse(resourceEvaluation.passed());
+        assertEquals("FAIL", resourceEvaluation.outcome());
+        assertEquals("B0", resourceEvaluation.failureCode());
+
+        final List<GaNaturalGcSample> foreignGc = naturalGcSamples();
+        foreignGc.set(4, new GaNaturalGcSample(
+                "other-physical", GaSoakMatrix.Stage.STAGE_A, 4L, 4L, 4L, 1_000L, true));
+        final GaObservabilityObservation gcIdentity = formalObservationWithGc(foreignGc);
+        final GaObservabilityEvaluator.Evaluation gcEvaluation =
+                GaObservabilityEvaluator.evaluateFormal(GaSoakMatrix.stageA(), gcIdentity);
+        assertFalse(gcEvaluation.passed());
+        assertEquals("FAIL", gcEvaluation.outcome());
+        assertEquals("B0", gcEvaluation.failureCode());
+    }
+
     private static GaObservabilityObservation quickObservation() {
         return new GaObservabilityObservation(PHYSICAL_ID, GaSoakMatrix.Stage.QUICK, List.of(),
                 GaGcEvidence.quick("NONE"), GaJfrEvidence.valid(Path.of("quick.jfr")),

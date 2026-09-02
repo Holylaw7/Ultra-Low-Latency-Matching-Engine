@@ -87,4 +87,61 @@ class GaManagementEvidenceTest {
         assertFalse(current.nonRegressingFrom(previous));
         assertTrue(previous.nonRegressingFrom(previous));
     }
+
+    @Test
+    void lifecycleTransitionsAndCountersAreValidatedAcrossEndpointSamples() {
+        final List<GaManagementEvidence> valid = List.of(
+                GaManagementEvidence.live(1, true),
+                GaManagementEvidence.ready(1, true),
+                GaManagementEvidence.status(1, true, false, "STARTING", "NONE", true,
+                        "PURE_WAL", 1, 0, 10),
+                GaManagementEvidence.status(1, true, true, "READY", "NONE", true,
+                        "PURE_WAL", 2, 0, 11),
+                GaManagementEvidence.metrics(1, true, true, "READY", "NONE", true,
+                        "PURE_WAL", 2, 0, 11, 3, 0));
+        final GaObservabilityObservation validObservation = new GaObservabilityObservation(
+                "physical-a", GaSoakMatrix.Stage.QUICK, List.of(), GaGcEvidence.quick("NONE"),
+                GaJfrEvidence.valid(Path.of("quick.jfr")), valid, true, true, 0, false,
+                false, true, true, true, true);
+        assertTrue(validObservation.managementSemanticsComplete());
+
+        final List<GaManagementEvidence> regressed = List.of(
+                GaManagementEvidence.status(1, true, true, "READY", "NONE", true,
+                        "PURE_WAL", 2, 0, 11),
+                GaManagementEvidence.metrics(1, true, true, "READY", "NONE", true,
+                        "PURE_WAL", 1, 0, 10, 3, 0));
+        final GaObservabilityObservation invalid = new GaObservabilityObservation(
+                "physical-a", GaSoakMatrix.Stage.QUICK, List.of(), GaGcEvidence.quick("NONE"),
+                GaJfrEvidence.valid(Path.of("quick.jfr")), regressed, true, true, 0, false,
+                false, true, true, true, true);
+        assertFalse(invalid.managementCountersNonRegressing());
+
+        final List<GaManagementEvidence> invalidTransition = List.of(
+                GaManagementEvidence.status(1, true, true, "READY", "NONE", true,
+                        "PURE_WAL", 2, 0, 11),
+                GaManagementEvidence.status(1, false, false, "NEW", "NONE", false,
+                        "PURE_WAL", 2, 0, 12));
+        final GaObservabilityObservation transitionObservation = new GaObservabilityObservation(
+                "physical-a", GaSoakMatrix.Stage.QUICK, List.of(), GaGcEvidence.quick("NONE"),
+                GaJfrEvidence.valid(Path.of("quick.jfr")), invalidTransition, true, true, 0, false,
+                false, true, true, true, true);
+        assertFalse(transitionObservation.managementStateTransitionsValid());
+    }
+
+    @Test
+    void lifecycleStateValuesMatchTheProductionStatusContract() {
+        final GaManagementEvidence startingWithWrongLive = GaManagementEvidence.status(
+                1, false, false, "STARTING", "NONE", false, "PURE_WAL", 0, 0, 0);
+        assertFalse(startingWithWrongLive.hasValidStateSemantics());
+
+        final GaManagementEvidence readyWithFailure = GaManagementEvidence.status(
+                1, true, true, "READY", "RUNTIME", true, "PURE_WAL", 0, 0, 0);
+        assertFalse(readyWithFailure.hasValidStateSemantics());
+
+        final GaManagementEvidence created = GaManagementEvidence.status(
+                1, false, false, "NEW", "NONE", false, "UNSET", 0, 0, 0);
+        final GaManagementEvidence ready = GaManagementEvidence.status(
+                1, true, true, "READY", "NONE", true, "PURE_WAL", 0, 0, 1);
+        assertFalse(ready.stateTransitionValidFrom(created));
+    }
 }

@@ -121,11 +121,80 @@ public record GaManagementEvidence(
         if (schemaVersion != previous.schemaVersion || kind != previous.kind) {
             return false;
         }
+        return nonRegressingCountersFrom(previous);
+    }
+
+    /** Returns whether every counter present in both endpoint observations does not regress. */
+    public boolean nonRegressingCountersFrom(final GaManagementEvidence previous) {
+        Objects.requireNonNull(previous, "previous");
+        if (schemaVersion != previous.schemaVersion) {
+            return false;
+        }
         return nonRegressing(acceptedCommands, previous.acceptedCommands)
                 && nonRegressing(terminalFailures, previous.terminalFailures)
                 && nonRegressing(uptimeMillis, previous.uptimeMillis)
                 && nonRegressing(managementRequests, previous.managementRequests)
                 && nonRegressing(managementRejected, previous.managementRejected);
+    }
+
+    /** Returns whether this endpoint has a valid lifecycle state/value combination. */
+    public boolean hasValidStateSemantics() {
+        if (kind == Kind.LIVE || kind == Kind.READY) {
+            return true;
+        }
+        if (!hasRequiredFields() || !Set.of(
+                "NEW", "CONFIG_VALIDATED", "STARTING", "READY", "STOPPING", "STOPPED",
+                "FAILED").contains(state)) {
+            return false;
+        }
+        final boolean expectedLive = Set.of("STARTING", "READY", "STOPPING").contains(state);
+        if (live != expectedLive) {
+            return false;
+        }
+        if (ready != ("READY".equals(state))) {
+            return false;
+        }
+        if (ready && (!Boolean.TRUE.equals(live) || !Boolean.TRUE.equals(protocolBound))) {
+            return false;
+        }
+        if (!"NONE".equals(failureCode)
+                && !Set.of("FAILED", "STOPPED").contains(state)) {
+            return false;
+        }
+        if ("FAILED".equals(state) && "NONE".equals(failureCode)) {
+            return false;
+        }
+        return !Set.of("FAILED", "STOPPED").contains(state)
+                || !Boolean.TRUE.equals(protocolBound);
+    }
+
+    /** Returns whether this status can legally follow the previous status. */
+    public boolean stateTransitionValidFrom(final GaManagementEvidence previous) {
+        Objects.requireNonNull(previous, "previous");
+        if (!hasValidStateSemantics() || !previous.hasValidStateSemantics()) {
+            return false;
+        }
+        if (kind == Kind.LIVE || kind == Kind.READY
+                || previous.kind == Kind.LIVE || previous.kind == Kind.READY) {
+            return true;
+        }
+        return reachable(previous.state, state);
+    }
+
+    private static boolean reachable(final String from, final String to) {
+        if (from.equals(to)) {
+            return true;
+        }
+        return switch (from) {
+            case "NEW" -> Set.of("CONFIG_VALIDATED", "STOPPED", "FAILED").contains(to);
+            case "CONFIG_VALIDATED" -> Set.of("STARTING", "STOPPING", "FAILED").contains(to);
+            case "STARTING" -> Set.of("READY", "STOPPING", "FAILED").contains(to);
+            case "READY" -> Set.of("STOPPING", "FAILED").contains(to);
+            case "STOPPING" -> Set.of("STOPPED", "FAILED").contains(to);
+            case "FAILED" -> "STOPPED".equals(to);
+            case "STOPPED" -> false;
+            default -> false;
+        };
     }
 
     private boolean statusFieldsPresent() {
@@ -136,8 +205,7 @@ public record GaManagementEvidence(
     }
 
     private static boolean nonRegressing(final Long current, final Long previous) {
-        return current == null && previous == null
-                || current != null && previous != null && current >= previous;
+        return current == null || previous == null || current >= previous;
     }
 
     /** Returns only the allowed public field names for an endpoint. */

@@ -3,7 +3,9 @@ package com.ultralatency.matching.qualification.ga.observability;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import jdk.jfr.consumer.RecordedEvent;
 import jdk.jfr.consumer.RecordingFile;
 
@@ -36,13 +38,18 @@ public final class GaJfrChildInspector {
         String failureCode = "NONE";
         String reason = "NONE";
         long eventCount = 0L;
+        final Set<String> observedEventFamilies = new LinkedHashSet<>();
         try (RecordingFile reader = new RecordingFile(recording)) {
             constructorReturned = true;
             failureStage = "readEvent";
             while (reader.hasMoreEvents()) {
-                final RecordedEvent ignored = reader.readEvent();
-                if (ignored != null) {
+                final RecordedEvent event = reader.readEvent();
+                if (event != null) {
                     eventCount++;
+                    final String eventName = event.getEventType().getName();
+                    if (GaJfrEvidence.REQUIRED_EVENT_FAMILIES.contains(eventName)) {
+                        observedEventFamilies.add(eventName);
+                    }
                 }
             }
             failureStage = "none";
@@ -53,10 +60,11 @@ public final class GaJfrChildInspector {
                     ? "CONSTRUCTOR_FAILURE" : "READ_EVENT_FAILURE";
             closeExecuted = constructorReturned;
         }
-        final boolean complete = "NONE".equals(failureCode);
-        final boolean readable = complete;
-        final boolean requiredEventsPresent = complete;
-        final String eventFamilies = complete ? requiredEventFamilies() : "";
+        final boolean requiredEventsPresent = observedEventFamilies.containsAll(
+                GaJfrEvidence.REQUIRED_EVENT_FAMILIES);
+        final boolean readable = "NONE".equals(failureCode);
+        final boolean complete = readable && requiredEventsPresent;
+        final String eventFamilies = eventFamilies(observedEventFamilies);
         emit(complete, failureCode, readable, requiredEventsPresent, eventCount, eventFamilies,
                 constructorReturned, failureStage, closeExecuted, reason);
     }
@@ -87,8 +95,8 @@ public final class GaJfrChildInspector {
         System.out.println(line);
     }
 
-    private static String requiredEventFamilies() {
-        final List<String> values = new ArrayList<>(GaJfrEvidence.REQUIRED_EVENT_FAMILIES);
+    private static String eventFamilies(final Set<String> observedEventFamilies) {
+        final List<String> values = new ArrayList<>(observedEventFamilies);
         values.sort(String::compareTo);
         return String.join(",", values);
     }

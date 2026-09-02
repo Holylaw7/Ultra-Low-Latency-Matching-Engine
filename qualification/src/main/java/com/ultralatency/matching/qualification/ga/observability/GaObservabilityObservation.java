@@ -43,7 +43,44 @@ public record GaObservabilityObservation(
 
     /** Returns whether every management response is a complete known schema. */
     public boolean managementComplete() {
-        return !managementEvidence.isEmpty() && managementEvidence.stream()
-                .allMatch(item -> item.completeResponseBoundary() && item.hasRequiredFields());
+        return managementEvidence.stream()
+                .allMatch(item -> item.completeResponseBoundary() && item.hasRequiredFields())
+                && managementEvidence.stream().anyMatch(
+                item -> item.kind() == GaManagementEvidence.Kind.STATUS)
+                && managementEvidence.stream().anyMatch(
+                item -> item.kind() == GaManagementEvidence.Kind.METRICS);
+    }
+
+    /** Returns whether all management counters are monotonic across the observed sequence. */
+    public boolean managementCountersNonRegressing() {
+        GaManagementEvidence previous = null;
+        for (GaManagementEvidence current : managementEvidence) {
+            if (previous != null && !current.nonRegressingCountersFrom(previous)) {
+                return false;
+            }
+            previous = current;
+        }
+        return !managementEvidence.isEmpty();
+    }
+
+    /** Returns whether observed STATUS/METRICS states follow the runtime lifecycle graph. */
+    public boolean managementStateTransitionsValid() {
+        GaManagementEvidence previous = null;
+        for (GaManagementEvidence current : managementEvidence) {
+            if (!current.hasValidStateSemantics()) {
+                return false;
+            }
+            if (previous != null && !current.stateTransitionValidFrom(previous)) {
+                return false;
+            }
+            previous = current;
+        }
+        return !managementEvidence.isEmpty();
+    }
+
+    /** Returns whether management schema, counters and lifecycle semantics are all valid. */
+    public boolean managementSemanticsComplete() {
+        return managementComplete() && managementCountersNonRegressing()
+                && managementStateTransitionsValid();
     }
 }

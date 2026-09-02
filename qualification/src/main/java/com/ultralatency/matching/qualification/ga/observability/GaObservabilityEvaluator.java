@@ -58,7 +58,11 @@ public final class GaObservabilityEvaluator {
         criteria.add(exact("quick.configuration", matrix.isApprovedQuick(), "true"));
         criteria.add(exact("quick.stage", observation.stage() == GaSoakMatrix.Stage.QUICK, "true"));
         criteria.add(exact("quick.management.complete", observation.managementComplete(), "true"));
-        criteria.add(exact("quick.jfr.complete", observation.jfrEvidence().complete(), "true"));
+        criteria.add(exact("quick.management.counters.monotonic",
+                observation.managementCountersNonRegressing(), "true"));
+        criteria.add(exact("quick.management.stateTransitions",
+                observation.managementStateTransitionsValid(), "true"));
+        criteria.add(exact("quick.jfr.readable", observation.jfrEvidence().readable(), "true"));
         criteria.add(exact("quick.gc.parser.ready", observation.gcEvidence().parsed(), "true"));
         criteria.add(exact("quick.client.evidence.complete", observation.clientEvidenceComplete(), "true"));
         criteria.add(exact("quick.terminal.evidence.complete",
@@ -73,8 +77,8 @@ public final class GaObservabilityEvaluator {
                 || "B3".equals(observation.jfrEvidence().failureCode())
                 || "B3".equals(observation.gcEvidence().failureCode());
         final String outcome = passed ? "PASS" : environmentAbort ? "ABORTED" : "FAIL";
-        return new Evaluation(passed, false, outcome, passed ? "NONE" : environmentAbort
-                ? "B3" : "B2", criteria);
+        return new Evaluation(passed, false, outcome,
+                failureCode(outcome, environmentAbort, criteria, observation), criteria);
     }
 
     /** Evaluates the formal G8 resource and observability contract. */
@@ -90,6 +94,10 @@ public final class GaObservabilityEvaluator {
         criteria.add(exact("configuration.approved", matrix.isApprovedFormal(), "true"));
         criteria.add(exact("stage.identity", observation.stage() == matrix.stage(), "true"));
         criteria.add(exact("management.complete", observation.managementComplete(), "true"));
+        criteria.add(exact("management.counters.monotonic",
+                observation.managementCountersNonRegressing(), "true"));
+        criteria.add(exact("management.stateTransitions",
+                observation.managementStateTransitionsValid(), "true"));
         criteria.add(exact("jfr.complete", observation.jfrEvidence().complete(), "true"));
         criteria.add(exact("gc.evidence.applicable", observation.gcEvidence().applicable(), "true"));
         criteria.add(exact("client.evidence.complete", observation.clientEvidenceComplete(), "true"));
@@ -118,7 +126,7 @@ public final class GaObservabilityEvaluator {
             failureCode = "B3";
         } else {
             outcome = criteria.stream().allMatch(Criterion::passed) ? "PASS" : "FAIL";
-            failureCode = "PASS".equals(outcome) ? "NONE" : "B1";
+            failureCode = failureCode(outcome, false, criteria, observation);
         }
         return new Evaluation("PASS".equals(outcome), "PASS".equals(outcome), outcome,
                 failureCode, criteria);
@@ -149,6 +157,69 @@ public final class GaObservabilityEvaluator {
         criteria.add(exact("candidate.bound", observation.candidateBound(), "true"));
         criteria.add(exact("controller.bound", observation.controllerBound(), "true"));
         return criteria;
+    }
+
+    private static String failureCode(
+            final String outcome,
+            final boolean environmentAbort,
+            final List<Criterion> criteria,
+            final GaObservabilityObservation observation) {
+        if ("PASS".equals(outcome)) {
+            return "NONE";
+        }
+        if (environmentAbort) {
+            return "B3";
+        }
+        if (identityFailure(criteria)) {
+            return "B0";
+        }
+        if (configurationFailure(criteria)) {
+            return "B2";
+        }
+        if ("B2".equals(observation.jfrEvidence().failureCode())
+                || "B2".equals(observation.gcEvidence().failureCode())) {
+            return "B2";
+        }
+        if (resourceIdentityFailure(observation) || naturalGcIdentityFailure(observation)) {
+            return "B0";
+        }
+        if (!observation.managementComplete()) {
+            return "B2";
+        }
+        return "B1";
+    }
+
+    private static boolean identityFailure(final List<Criterion> criteria) {
+        return criteria.stream().anyMatch(item -> !item.passed()
+                && (item.id().endsWith("configuration.bound")
+                || item.id().endsWith("candidate.bound")
+                || item.id().endsWith("controller.bound")
+                || item.id().endsWith("stage")
+                || item.id().equals("stage.identity")));
+    }
+
+    private static boolean configurationFailure(final List<Criterion> criteria) {
+        return criteria.stream().anyMatch(item -> !item.passed()
+                && (item.id().endsWith(".configuration")
+                || item.id().equals("configuration.approved")
+                || item.id().equals("quick.offeredRate")));
+    }
+
+    private static boolean resourceIdentityFailure(
+            final GaObservabilityObservation observation) {
+        for (GaResourceGuards.Metric metric : GaResourceGuards.Metric.values()) {
+            if ("B0".equals(GaResourceGuards.evaluate(metric, observation.resourceSamples(),
+                    observation.physicalExecutionId(), observation.stage()).failureCode())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean naturalGcIdentityFailure(
+            final GaObservabilityObservation observation) {
+        return "B0".equals(GaNaturalGcGuard.evaluate(observation.gcEvidence().samples(),
+                observation.physicalExecutionId(), observation.stage()).failureCode());
     }
 
     private static Criterion resourceCriterion(

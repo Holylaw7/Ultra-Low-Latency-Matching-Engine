@@ -102,17 +102,20 @@ class MatchingEnginePipelineFailureTest {
     void resultHandlerFailureIsTerminalAndRejectsLaterCommands() throws InterruptedException {
         final AtomicInteger failureCount = new AtomicInteger();
         final AtomicReference<Throwable> observedFailure = new AtomicReference<>();
+        final CountDownLatch callbackCompleted = new CountDownLatch(1);
         final MatchingEnginePipeline pipeline = new MatchingEnginePipeline(
                 new PipelineConfiguration(8, PipelineWaitMode.BLOCKING), result -> {
                     throw new IllegalStateException("handler failure");
                 }, failure -> {
                     failureCount.incrementAndGet();
                     observedFailure.compareAndSet(null, failure);
+                    callbackCompleted.countDown();
                 });
         pipeline.start();
         assertEquals(PipelinePublishOutcome.ACCEPTED, pipeline.tryPublish(PipelineCommandFixture.command(1, 1)));
 
         awaitState(pipeline, PipelineState.FAILED);
+        assertTrue(callbackCompleted.await(5, TimeUnit.SECONDS));
         awaitCount(failureCount, 1);
 
         assertEquals("handler failure", pipeline.failureCause().orElseThrow().getMessage());

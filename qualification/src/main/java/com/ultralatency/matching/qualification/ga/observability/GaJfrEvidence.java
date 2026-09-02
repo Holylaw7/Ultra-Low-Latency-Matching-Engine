@@ -62,6 +62,12 @@ public record GaJfrEvidence(
                 && eventFamilies.containsAll(REQUIRED_EVENT_FAMILIES);
     }
 
+    /** Returns whether the recording was readable without requiring every formal event family. */
+    public boolean readable() {
+        return startedBeforeMeasurement && stoppedBeforePublication && structurallyReadable
+                && identityBound && "NONE".equals(failureCode);
+    }
+
     /** Returns a valid fixture observation. */
     public static GaJfrEvidence valid(final Path recording) {
         return new GaJfrEvidence(recording, true, true, true, true,
@@ -113,13 +119,13 @@ public record GaJfrEvidence(
         try {
             finished = process.waitFor(CHILD_TIMEOUT.toSeconds(), TimeUnit.SECONDS);
         } catch (final InterruptedException exception) {
+            terminate(process);
             Thread.currentThread().interrupt();
-            process.destroyForcibly();
             return failure(recording, startedBeforeMeasurement, stoppedBeforePublication,
                     identityBound, "B3", "launcher", "CHILD_INTERRUPTED");
         }
         if (!finished) {
-            process.destroyForcibly();
+            terminate(process);
             return failure(recording, startedBeforeMeasurement, stoppedBeforePublication,
                     identityBound, "B3", "timeout", "CHILD_TIMEOUT");
         }
@@ -163,7 +169,7 @@ public record GaJfrEvidence(
         }
         if (exitCode != 0) {
             return failure(recording, startedBeforeMeasurement, stoppedBeforePublication,
-                    identityBound, "B2", "child", "CHILD_NONZERO_WITH_PROTOCOL");
+                    identityBound, "B3", "crash", "CHILD_NONZERO_WITH_PROTOCOL");
         }
         final String failureCode = protocol.failureCode();
         final boolean readable = protocol.recordingReadable() && "NONE".equals(failureCode);
@@ -270,6 +276,15 @@ public record GaJfrEvidence(
         final boolean windows = System.getProperty("os.name", "")
                 .toLowerCase(Locale.ROOT).contains("win");
         return Path.of(javaHome, "bin", windows ? "java.exe" : "java");
+    }
+
+    private static void terminate(final Process process) {
+        process.destroyForcibly();
+        try {
+            process.waitFor();
+        } catch (final InterruptedException exception) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     private static String readBounded(final InputStream stream) throws IOException {

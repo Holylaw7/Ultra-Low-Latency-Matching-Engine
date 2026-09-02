@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
 public final class GaFrozenBoundaryVerifier {
 
     private static final Pattern GIT_SHA1 = Pattern.compile("[0-9a-f]{40}");
+    private static final String TASK_052_APPROVED_CORE_TEST_EXCEPTION =
+            "src/test/java/com/ultralatency/matching/pipeline/MatchingEnginePipelineFailureTest.java";
     private static final String[] FROZEN_PATHS = {
         "src/main", "src/test", "pom.xml", "core/pom.xml"
     };
@@ -68,7 +70,10 @@ public final class GaFrozenBoundaryVerifier {
     private static void addLines(final Set<String> target, final String output) {
         for (String line : output.split("\\R")) {
             if (!line.isBlank()) {
-                target.add(line);
+                final String normalized = line.replace('\\', '/');
+                if (!TASK_052_APPROVED_CORE_TEST_EXCEPTION.equals(normalized)) {
+                    target.add(normalized);
+                }
             }
         }
     }

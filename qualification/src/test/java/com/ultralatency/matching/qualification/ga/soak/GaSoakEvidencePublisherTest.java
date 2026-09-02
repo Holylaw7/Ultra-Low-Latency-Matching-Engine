@@ -37,7 +37,8 @@ class GaSoakEvidencePublisherTest {
         final GaCorrectnessCanonicalContext context = context();
         final GaSoakObservation g6 = new GaSoakObservation(
                 "00000000-0000-4000-8000-000000000010", GaSoakMatrix.Stage.QUICK,
-                1_000_000L, 10_000L, 10_000L, 0, 0, 0, new long[0], new long[0],
+                GaSoakMatrix.QUICK_DURATION.toNanos(), 10_000L, 10_000L, 0, 0, 0,
+                new long[0], new long[0],
                 new long[0], List.<GaSoakResourceSample>of(), List.<GaNaturalGcSample>of(),
                 true, true, true, true, true, true, true, true, true, true);
         final GaObservabilityObservation g8 = new GaObservabilityObservation(
@@ -59,10 +60,15 @@ class GaSoakEvidencePublisherTest {
         final Path raw = root.resolve("raw.txt");
         Files.createDirectories(root);
         Files.writeString(raw, "quick=true\n");
+        final Path samples = root.resolve("resource-samples-v1.csv");
+        Files.writeString(samples, "physicalExecutionId,stage,sequence,monotonicNanos,threads,"
+                + "transientCount,transientBytes,heapUsedBytes\n"
+                + g6.physicalExecutionId() + ",QUICK,0,1,1,0,0,1\n");
         final GaSoakEvidencePublisher.PublishedQuick publication =
                 GaSoakEvidencePublisher.publishQuick(root, matrix, g6, g8, g6Evaluation,
                         g8Evaluation, context, Instant.parse("2026-09-01T00:00:00Z"),
-                        Instant.parse("2026-09-01T00:00:01Z"), Map.of("raw.txt", raw));
+                        Instant.parse("2026-09-01T00:00:01Z"),
+                        Map.of("raw.txt", raw, "resource-samples-v1.csv", samples));
 
         assertEquals("PASS", g6Evaluation.outcome());
         assertEquals("PASS", g8Evaluation.outcome());

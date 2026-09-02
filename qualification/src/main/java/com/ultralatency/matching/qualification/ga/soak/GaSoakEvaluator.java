@@ -64,6 +64,11 @@ public final class GaSoakEvaluator {
         addCommon(criteria, observation);
         criteria.add(exact("quick.configuration", matrix.isApprovedQuick(), "true"));
         criteria.add(exact("quick.stage", observation.stage() == GaSoakMatrix.Stage.QUICK, "true"));
+        criteria.add(exact("quick.duration", observation.durationSatisfied(matrix), "true"));
+        criteria.add(new Criterion("quick.offeredRate",
+                Integer.toString(matrix.offeredRatePerSecond()), "EQ",
+                Integer.toString(GaSoakMatrix.APPROVED_OFFERED_RATE_PER_SECOND),
+                matrix.offeredRatePerSecond() == GaSoakMatrix.APPROVED_OFFERED_RATE_PER_SECOND));
         criteria.add(greaterOrEqual("quick.acceptedFloor", observation.acceptedCommands(),
                 matrix.acceptedFloor()));
         criteria.add(exact("quick.gracefulShutdown", observation.gracefulShutdown(), "true"));
@@ -164,7 +169,21 @@ public final class GaSoakEvaluator {
             final boolean formalEligible,
             final List<Criterion> criteria) {
         return new Evaluation(passed, formalEligible, passed ? "PASS" : "FAIL",
-                passed ? "NONE" : "B1", criteria);
+                passed ? "NONE" : failureCode(criteria), criteria);
+    }
+
+    private static String failureCode(final List<Criterion> criteria) {
+        return criteria.stream().anyMatch(item -> !item.passed()
+                && (item.id().endsWith(".bound") || item.id().endsWith(".stage")
+                || item.id().equals("stage.identity")))
+                ? "B0" : configurationFailure(criteria) ? "B2" : "B1";
+    }
+
+    private static boolean configurationFailure(final List<Criterion> criteria) {
+        return criteria.stream().anyMatch(item -> !item.passed()
+                && (item.id().endsWith(".configuration")
+                || item.id().equals("configuration.approved")
+                || item.id().equals("quick.offeredRate")));
     }
 
     private static Criterion exact(final String id, final boolean actual, final String required) {

@@ -33,9 +33,10 @@ class GaJfrEvidenceTest {
         assertTrue(Files.isRegularFile(recording));
 
         final GaJfrEvidence evidence = GaJfrEvidence.inspect(recording, true, true, true);
-        assertTrue(evidence.complete(), evidence.toString());
+        assertTrue(evidence.readable(), evidence.toString());
         assertEquals("NONE", evidence.failureCode());
-        assertTrue(evidence.eventFamilies().containsAll(GaJfrEvidence.REQUIRED_EVENT_FAMILIES));
+        assertTrue(evidence.eventFamilies().stream().allMatch(
+                GaJfrEvidence.REQUIRED_EVENT_FAMILIES::contains));
     }
 
     @Test
@@ -90,7 +91,7 @@ class GaJfrEvidenceTest {
         assertTrue(parseObservation.closeExecuted());
         assertEquals("DELETE_PASS", parseCleanup);
 
-        assertTrue(validObservation.evidence().complete());
+        assertTrue(validObservation.evidence().readable());
         assertEquals("NONE", validObservation.evidence().failureCode());
         assertTrue(validObservation.constructorReturned());
         assertEquals("none", validObservation.failureStage());
@@ -118,6 +119,33 @@ class GaJfrEvidenceTest {
         assertEquals("B2", classify(fixture, duplicate).evidence().failureCode());
         assertEquals("B2", classify(fixture, unknownVersion).evidence().failureCode());
         assertEquals("B2", classify(fixture, oversized).evidence().failureCode());
+    }
+
+    @Test
+    void observedEventFamiliesDoNotGetFabricatedFromExpectedConfiguration() {
+        final Path fixture = temporaryDirectory.resolve("protocol.jfr");
+        final String missingFamily = VALID_CHILD_OUTPUT
+                .replace("|complete=true", "|complete=false")
+                .replace("|requiredEventsPresent=true", "|requiredEventsPresent=false")
+                .replace(",jdk.ThreadStart", "");
+        final GaJfrEvidence.ChildInspection result = classify(fixture, missingFamily);
+
+        assertTrue(result.evidence().readable());
+        assertFalse(result.evidence().complete());
+        assertFalse(result.evidence().eventFamilies().contains("jdk.ThreadStart"));
+        assertEquals("NONE", result.evidence().failureCode());
+
+        final String emptyFailure = VALID_CHILD_OUTPUT
+                .replace("complete=true", "complete=false")
+                .replace("failureCode=NONE", "failureCode=B3")
+                .replace("recordingReadable=true", "recordingReadable=false")
+                .replace("requiredEventsPresent=true", "requiredEventsPresent=false")
+                .replace("eventFamilies=jdk.CPULoad,jdk.GCHeapSummary,jdk.GarbageCollection,jdk.JavaThreadStatistics"
+                        + ",jdk.ObjectAllocationSample,jdk.ResidentSetSize,jdk.ThreadAllocationStatistics"
+                        + ",jdk.ThreadEnd,jdk.ThreadStart", "eventFamilies=");
+        final GaJfrEvidence.ChildInspection empty = classify(fixture, emptyFailure);
+        assertEquals("B3", empty.evidence().failureCode());
+        assertTrue(empty.evidence().eventFamilies().isEmpty());
     }
 
     @Test
