@@ -5,7 +5,7 @@
 | Field           | Value                                                                                                    |
 | --------------- | -------------------------------------------------------------------------------------------------------- |
 | Task ID / Title | `TASK-20260825-052` — Soak and Observability Foundation                                                  |
-| Status          | `In Progress — Committed/Pushed; Technical Evidence PASS; Governance Synchronization Pending`          |
+| Status          | `In Progress — Remediated Implementation Committed/Pushed; Controller Evidence PASS; Governance Synchronization Pending` |
 | Phase / ADR     | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint       | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Human scope reviewed |
 | Depends On      | TASK-051 pre-campaign Evidence Gate PASS — satisfied                                                    |
@@ -56,10 +56,19 @@ Implementation:
 QUALIFICATION-ONLY / COMMITTED / PUSHED
 
 Qualification controller:
-9140ab8215c2b170b925aadd02502d4d131a2f99
+7b00fdf571fb8fa4918b7138210693b9e79f346c
+
+Remediated Implementation Evidence Review:
+PASS
 
 Technical local Evidence:
 PASS
+
+Controller-bound Quick:
+PASS / QUICK_READINESS_ONLY
+
+Controller exact-SHA CI:
+Standard PASS (33585928074); Quick Lane PASS (33585928038)
 
 Governance synchronization:
 IN PROGRESS
@@ -81,17 +90,18 @@ NOT AUTHORIZED
 
 No System.gc(), workload pressure, threshold change or automatic extension to
 force PASS. B2 allows qualification-only remediation; candidate defects are
-B1. The qualification implementation is committed and pushed at
-`9140ab8215c2b170b925aadd02502d4d131a2f99`; the post-commit governance
+B1. The remediated qualification implementation is committed and pushed at
+`7b00fdf571fb8fa4918b7138210693b9e79f346c`; the post-commit governance
 synchronization is a separate object and does not replace that controller.
 
 ## 7. Background / Current Implementation
 
 Phase 9/10 provide one-hour campaigns and management/JFR evidence, not the
 pre-declared two-/six-hour GA stability Gate. TASK-052's staged GA soak and
-G8 foundation is committed/pushed and has passed its qualification test,
-focused-matrix and controller-bound Quick readiness validation. The pre-soak
-Evidence Gate is not passed, and no formal soak has been executed.
+G8 foundation is committed/pushed at the remediated controller above and has
+passed its qualification test, focused-matrix, controller-bound Quick and
+exact-controller CI validation. The pre-soak Evidence Gate is not passed, and
+no formal soak has been executed.
 
 ## 8. Requirements, Inputs, Outputs and Non-Goals
 
@@ -147,7 +157,7 @@ bounded workload and chronological per-run guards prevent this.
 
 | Stage                | Status            | Gate                           |
 | -------------------- | ----------------- | ------------------------------ |
-| Implementation/Quick | Committed/pushed; technical local Evidence PASS; controller-bound Quick PASS / QUICK_READINESS_ONLY | TASK-051 PASS; Human scope approved |
+| Implementation/Quick | Remediated implementation committed/pushed; controller-bound Quick PASS / QUICK_READINESS_ONLY; exact-controller CI PASS | TASK-051 PASS; Human scope approved |
 | 2h soak              | Not Authorized    | explicit Human approval        |
 | 6h soak              | Not Authorized    | 2h review + new Human approval |
 
@@ -159,8 +169,8 @@ bounded workload and chronological per-run guards prevent this.
 ### Implementation Log
 
 The 2026-08-25 rows above are historical planning checkpoints. Current state:
-Human scope approved; qualification-only implementation is committed and
-pushed at `9140ab8215c2b170b925aadd02502d4d131a2f99`; technical local evidence
-and the controller-bound shared Quick are PASS; post-commit governance
-synchronization is in progress; the pre-soak Evidence Gate and both formal
-soak campaigns remain unauthorized.
+Human scope approved; the remediated qualification-only implementation is
+committed and pushed at `7b00fdf571fb8fa4918b7138210693b9e79f346c`; the
+Implementation Evidence Review, controller-bound Quick and exact-controller
+CI are PASS; TASK-052-only governance synchronization is in progress; the
+pre-soak Evidence Gate and both formal soak campaigns remain unauthorized.

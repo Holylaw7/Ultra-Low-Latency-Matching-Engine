@@ -6,20 +6,22 @@
 | --- | --- |
 | TASK-050 | Human closed; G3/G7 PASS / QUALIFYING / FROZEN |
 | TASK-051 | Human closed; G4/G5 pre-campaign foundation complete |
-| TASK-052 | IN PROGRESS / CHANGES REQUIRED; qualification-only scope approved |
-| Implementation | COMMITTED / PUSHED at `9140ab8215c2b170b925aadd02502d4d131a2f99` |
-| Technical local evidence | PASS |
-| Final shared Quick | PASS / `QUICK_READINESS_ONLY` |
+| TASK-052 | IN PROGRESS; qualification-only scope approved; Remediated Implementation Evidence Review PASS |
+| Implementation | COMMITTED / PUSHED at `7b00fdf571fb8fa4918b7138210693b9e79f346c` (technical-only controller) |
+| Technical local evidence | PASS; six verifier findings 6/6 resolved; core and qualification validation PASS |
+| Final controller-bound Quick | PASS / `QUICK_READINESS_ONLY` |
+| Controller exact-SHA CI | Standard `33585928074` PASS; Quick Lane `33585928038` PASS |
+| Governance checkpoint | TASK-052-only synchronization pending; exact checkpoint SHA is external provenance |
 | Pre-Soak Evidence Gate | NOT PASSED |
 | Formal Stage A / Stage B | NOT RUN / NOT AUTHORIZED |
 | TASK-054 | NOT AUTHORIZED |
 | Candidate | `v0.9.0-rc.1` immutable |
 
 TASK-052 owns the qualification-only G6/G8 pre-campaign foundation. Its
-implementation, tests, child-JVM JFR inspection path, shared Quick lifecycle,
-canonical evidence publication and task-specific physical binding are present
-in the pushed qualification object above. TASK-052 does not execute or claim
-the formal two-hour or six-hour soak campaigns.
+remediated implementation, tests, child-JVM JFR inspection path, shared Quick
+lifecycle, canonical evidence publication and task-specific physical binding
+are present in the pushed technical controller above. TASK-052 does not
+execute or claim the formal two-hour or six-hour soak campaigns.
 
 ## Qualification scope and frozen boundaries
 
@@ -53,13 +55,17 @@ remain outside the implementation scope and unchanged.
 
 ## Local implementation evidence
 
-The qualification test and evidence checks completed before the implementation
-commit:
+The qualification test and evidence checks completed before the remediated
+implementation commit:
 
 ```text
-GaJfrEvidenceTest: 5/5 PASS
+Independent Verifier findings: 6/6 resolved
+direct remediation matrix: 32/32 PASS
+GaJfrEvidenceTest: 6/6 PASS
 focused G6/G8 direct matrix: 30/30 PASS
-mvn verify: 225 core + 163 qualification; 0 failures/errors; 2 expected skips
+MatchingEnginePipelineFailureTest: 6/6 PASS
+GaFrozenBoundaryVerifierTest: 6/6 PASS
+mvn verify: 225 core + 177 qualification; 0 failures/errors; 2 expected skips
 Checkstyle: PASS / 0 violations
 git diff --check: PASS
 candidate/production/POM/dependency/workflow frozen-boundary audit: PASS
@@ -83,28 +89,29 @@ resource-retention predicates.
 
 ## Controller-bound Quick evidence
 
-The final Human-authorized replacement Quick was run exactly once with the
-validated Java 21 executable. The earlier Attempt 1 used Java 17, produced no
-physical execution and is preserved as `ABORTED / B3`. Automatic retry count is
-zero; Human-authorized replacement count is one.
+The first final controller-bound Quick for the remediated controller was run
+exactly once with the validated Java 21 executable. The earlier Java-17
+Attempt 1 and the prior controller-bound Quick are preserved as historical
+non-qualifying evidence. Automatic retry count remains zero; each replacement
+was explicitly Human-authorized.
 
 ```text
-output: qualification-results/g6-g8-quick-9e099d77-63ba-47d6-9fb1-b309c1cec98d/
-controller: 9140ab8215c2b170b925aadd02502d4d131a2f99
+output: qualification-results/task052-remediated-controller-quick-20260902/g6-g8-quick-c12f6c09-75cb-43c9-9a8d-f1f87f0e5fb1/
+controller: 7b00fdf571fb8fa4918b7138210693b9e79f346c
 candidate: v0.9.0-rc.1
-physicalExecutionId: 5267817a-6e35-40b3-98d7-8a4755a1914f
-G6 run.id: 3395ec7e-991d-4d54-b052-a656fee3609e
-G8 run.id: 8b37e161-e6d0-4293-baf6-3a0c1924f9a5
+physicalExecutionId: 9db6e511-1cf2-48bb-9f9c-336229d62383
+G6 run.id: 3162798a-e446-4b00-8544-098740b8fddf
+G8 run.id: 13269302-ba72-45c1-bf22-78cfd60fceb3
 G6 outcome: PASS / QUICK_READINESS_ONLY
 G8 outcome: PASS / QUICK_READINESS_ONLY
 ```
 
 The G6 and G8 run IDs are distinct. The binding, both manifests and both gate
-results carry the implementation controller, frozen candidate identity,
-profile `MEMORY_STEADY_STATE_V1`, seed `20260823`, stage `QUICK` and the same
-configuration identity. The replacement evidence contains four raw inventory
+results carry the remediated implementation controller, frozen candidate
+identity, profile `MEMORY_STEADY_STATE_V1`, seed `20260823`, stage `QUICK` and
+the same configuration identity. The evidence contains four raw inventory
 payloads, five canonical payloads and ten adjacent sidecars; the hash,
-inventory and binding audit passed. Quick intentionally publishes no formal
+inventory and binding audits passed. Quick intentionally publishes no formal
 campaign summary.
 
 The prior local pre-commit Quick evidence remains historical and untouched:
@@ -117,19 +124,30 @@ G8:       ef7de4f9-3701-4a0b-aad7-62eba31f02e1
 
 It is not substituted for the final controller-bound replacement evidence.
 
+The previously accepted controller-bound Quick for historical controller
+`9140ab8215c2b170b925aadd02502d4d131a2f99` remains preserved but is now
+non-qualifying after the six Independent Verifier findings. Its physical run
+`5267817a-6e35-40b3-98d7-8a4755a1914f`, G6 run
+`3395ec7e-991d-4d54-b052-a656fee3609e` and G8 run
+`8b37e161-e6d0-4293-baf6-3a0c1924f9a5` are historical evidence only.
+
 ## Provenance and reviewer boundary
 
 The repository uses three distinct provenance layers:
 
 ```text
 qualification implementation/evidence controller:
+7b00fdf571fb8fa4918b7138210693b9e79f346c
+
+previous qualification controller (historical / reviewer-rejected):
 9140ab8215c2b170b925aadd02502d4d131a2f99
 
 repository governance checkpoint:
 the current docs-only synchronization checkpoint; its exact SHA is external
 Git/CI/reviewer provenance and is not embedded in its own content; the prior
-reviewed checkpoint was `dc319560efa93335fe4b5fd074f5d78a21de9361`; it is not a
-qualification controller
+post-controller checkpoint was `62a92bc162d4bab67ce50aff07f73da3614be208`;
+earlier reviewed checkpoint `dc319560efa93335fe4b5fd074f5d78a21de9361` is
+also historical; neither is a qualification controller
 
 governance checkpoint self-reference rule:
 a governance checkpoint commit must not be required to contain its own final
@@ -140,11 +158,12 @@ append-only execution evidence, not a value to predict or continuously write
 back into immutable qualification provenance
 ```
 
-The exact-SHA CI results for the qualification implementation object were:
+The exact-SHA CI results for the remediated qualification implementation
+object were:
 
 ```text
-Standard 33521246687: PASS / head_sha exact / attempt 1
-Quick Lane 33521246406: PASS / head_sha exact / attempt 1
+Standard 33585928074: PASS / head_sha exact / attempt 1
+Quick Lane 33585928038: PASS / head_sha exact / attempt 1
 automatic retry: 0
 ```
 
@@ -169,10 +188,11 @@ authorization or release approval.
 
 ## Current and next gate
 
-`Human TASK-052 Implementation Evidence Review`: **PASS**. The current gate is
-post-commit governance/reviewer validation; reviewer verdicts are external,
-append-only execution evidence and are not written back into this checkpoint.
+`Human TASK-052 Remediated Implementation Evidence Review`: **PASS**. The
+current gate is the TASK-052-only governance checkpoint and reviewer
+validation; reviewer verdicts are external, append-only execution evidence and
+are not written back into this checkpoint.
 The next Human gate is the `TASK-052 Pre-Soak Evidence Gate Final Review` after
 the authorized reviewer sequence. Until that gate, TASK-052 remains `IN
-PROGRESS / CHANGES REQUIRED`, formal Stage A/B and TASK-054 remain
+PROGRESS`, formal Stage A/B and TASK-054 remain
 unauthorized, and no release, merge, tag or GA action is authorized.
