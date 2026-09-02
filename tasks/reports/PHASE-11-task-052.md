@@ -11,7 +11,7 @@
 | Technical local evidence | PASS; six verifier findings 6/6 resolved; core and qualification validation PASS |
 | Final controller-bound Quick | PASS / `QUICK_READINESS_ONLY` |
 | Controller exact-SHA CI | Standard `33585928074` PASS; Quick Lane `33585928038` PASS |
-| Governance checkpoint | TASK-052-only synchronization pending; exact checkpoint SHA is external provenance |
+| Governance checkpoint | ESTABLISHED; reviewer validation PENDING; exact checkpoint SHA is external provenance |
 | Pre-Soak Evidence Gate | NOT PASSED |
 | Formal Stage A / Stage B | NOT RUN / NOT AUTHORIZED |
 | TASK-054 | NOT AUTHORIZED |
