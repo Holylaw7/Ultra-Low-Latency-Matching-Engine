@@ -5,7 +5,7 @@
 | Field           | Value                                                                                                    |
 | --------------- | -------------------------------------------------------------------------------------------------------- |
 | Task ID / Title | `TASK-20260825-052` — Soak and Observability Foundation                                                  |
-| Status          | `In Progress — Remediated Implementation Committed/Pushed; Controller Evidence PASS; Governance Synchronization Pending` |
+| Status          | `In Progress — Remediated Implementation Committed/Pushed; Controller Evidence PASS; Governance Checkpoint Established; Reviewer Validation Pending` |
 | Phase / ADR     | Phase 11 / [ADR-0019](../../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) |
 | Blueprint       | [Phase 11](../blueprints/PHASE-11-ga-qualification-and-product-release-blueprint.md) — Human scope reviewed |
 | Depends On      | TASK-051 pre-campaign Evidence Gate PASS — satisfied                                                    |
@@ -70,8 +70,11 @@ PASS / QUICK_READINESS_ONLY
 Controller exact-SHA CI:
 Standard PASS (33585928074); Quick Lane PASS (33585928038)
 
-Governance synchronization:
-IN PROGRESS
+Governance checkpoint:
+ESTABLISHED
+
+Reviewer validation:
+PENDING
 
 Pre-Soak Evidence Gate:
 NOT PASSED
@@ -172,5 +175,6 @@ The 2026-08-25 rows above are historical planning checkpoints. Current state:
 Human scope approved; the remediated qualification-only implementation is
 committed and pushed at `7b00fdf571fb8fa4918b7138210693b9e79f346c`; the
 Implementation Evidence Review, controller-bound Quick and exact-controller
-CI are PASS; TASK-052-only governance synchronization is in progress; the
-pre-soak Evidence Gate and both formal soak campaigns remain unauthorized.
+CI are PASS; the TASK-052 governance checkpoint is established and reviewer
+validation is pending; the pre-soak Evidence Gate and both formal soak
+campaigns remain unauthorized.
