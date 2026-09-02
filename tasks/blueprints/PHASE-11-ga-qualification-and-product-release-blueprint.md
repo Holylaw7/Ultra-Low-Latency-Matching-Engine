@@ -13,7 +13,7 @@
 | Post-tag docs | `b8489bf` — documentation-only, not candidate production source |
 | Proposal Branch | `docs/phase11-ga-qualification-blueprint` |
 | Planned Tasks | `TASK-20260825-047` through `TASK-20260825-056` |
-| Next Gate | `TASK-052 Implementation Evidence Review; formal G4/G5 remains separately Human-gated under TASK-053; formal Stage A/B remains separately Human-gated under TASK-054` |
+| Next Gate | `TASK-052 post-commit governance/reviewer validation, then Human TASK-052 Pre-Soak Evidence Gate Final Review; formal G4/G5 remains separately Human-gated under TASK-053; formal Stage A/B remains separately Human-gated under TASK-054` |
 
 ## 2. Phase Objective
 
@@ -477,7 +477,7 @@ Qualification Campaigns: Formal G4/G5 campaign not authorized (owned by TASK-053
 Candidate: `v0.9.0-rc.1` immutable
 RC mutation: Not Authorized
 v1.0.0 / GitHub Release / GA: Not Authorized
-Next Gate: TASK-052 Implementation Evidence Review; formal G4/G5 campaign remains separately Human-gated under TASK-053; formal Stage A/B remains separately Human-gated under TASK-054
+Next Gate: TASK-052 post-commit governance/reviewer validation, then Human TASK-052 Pre-Soak Evidence Gate Final Review; formal G4/G5 campaign remains separately Human-gated under TASK-053; formal Stage A/B remains separately Human-gated under TASK-054
 ```
 
 ## 23. Execution Checkpoints
