@@ -49,7 +49,7 @@ public final class GaQuickInvocation {
 
     /** Serializes invocation fields in deterministic key order. */
     public static String canonicalText(final Map<String, String> fields) {
-        final Map<String, String> copy = requireFields(fields);
+        final Map<String, String> copy = new TreeMap<>(requireFields(fields));
         final StringBuilder text = new StringBuilder();
         copy.forEach((key, value) -> text.append(key).append('=').append(value).append('\n'));
         return text.toString();
