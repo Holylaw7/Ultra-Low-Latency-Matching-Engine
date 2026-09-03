@@ -193,6 +193,7 @@ public final class GaDurabilityEvidence {
         final Inventory inventory = publishInventory(root);
         final Map<String, String> runtime = runtimeProvenance(root);
         final String comparability = QualificationIdentity.digest(runtime);
+        final String qualificationJarSha256 = context.qualificationJarSha256();
         final String configuration = configurationIdentityOverride == null
                 ? QualificationIdentity.digest(configurationFields(
                         gate, gateVersion, seed, commandCount, segmentSize, workloadVersion))
@@ -223,6 +224,9 @@ public final class GaDurabilityEvidence {
         fields.put("comparability.identitySha256", comparability);
         fields.put("configuration.identitySha256", configuration);
         fields.put("controller.gitSha", context.controllerGitSha());
+        if (qualificationJarSha256 != null) {
+            fields.put("qualification.jarSha256", qualificationJarSha256);
+        }
         fields.put("evidence.completedAtUtc", completed.toString());
         fields.put("evidence.elapsedMillis", Long.toString(
                 Math.max(0L, java.time.Duration.between(started, completed).toMillis())));
@@ -235,6 +239,8 @@ public final class GaDurabilityEvidence {
         fields.put("run.commandCount", Integer.toString(commandCount));
         fields.put("run.id", runId);
         fields.put("run.profile", PROFILE);
+        fields.put("run.protocolV2Window",
+                Integer.toString(context.protocolV2Window()));
         fields.put("run.seed", Long.toString(seed));
         fields.putAll(runtime);
         fields.put("schema.version", GaEvidenceCodec.Schema.RUN.version());
@@ -646,6 +652,15 @@ public final class GaDurabilityEvidence {
                 || !context.controllerGitSha().equals(fields.get("controller.gitSha"))) {
             throw new IOException("campaign manifest candidate or controller identity mismatch");
         }
+        if (!Integer.toString(context.protocolV2Window()).equals(
+                fields.get("run.protocolV2Window"))) {
+            throw new IOException("campaign manifest protocol window mismatch");
+        }
+        final String qualificationJarSha256 = context.qualificationJarSha256();
+        if (qualificationJarSha256 != null
+                && !qualificationJarSha256.equals(fields.get("qualification.jarSha256"))) {
+            throw new IOException("campaign manifest qualification JAR identity mismatch");
+        }
     }
 
     private static void validateManifestArtifacts(
@@ -873,6 +888,10 @@ public final class GaDurabilityEvidence {
         final Map<String, String> fields = new TreeMap<>();
         fields.put("gate.id", gate);
         fields.put("gate.version", gateVersion);
+        fields.put("protocol.version", GaCorrectnessCanonicalContext.APPROVED_PROTOCOL_VERSION);
+        fields.put("protocol.v2.window", Integer.toString(
+                GaCorrectnessCanonicalContext.APPROVED_PROTOCOL_V2_WINDOW));
+        fields.put("wal.mode", GaCorrectnessCanonicalContext.APPROVED_WAL_MODE);
         fields.put("matrix.commandCount", Integer.toString(commandCount));
         fields.put("matrix.segmentSizeBytes", Integer.toString(segmentSize));
         fields.put("matrix.seed", Long.toString(seed));

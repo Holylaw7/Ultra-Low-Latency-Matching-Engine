@@ -29,6 +29,9 @@ class GaDurabilityRunnerTest {
         assertTrue(Files.isRegularFile(result.gateResultPath()));
         assertTrue(Files.isRegularFile(result.summaryPath()));
         assertTrue(Files.readString(result.gateResultPath()).contains("evidence.outcome=PASS"));
+        final Map<String, String> lifecycleManifest = GaEvidenceStore.read(
+                result.runs().get(0).manifestPath(), GaEvidenceCodec.Schema.RUN);
+        assertEquals("8", lifecycleManifest.get("run.protocolV2Window"));
         assertTrue(Files.isRegularFile(result.gateResultPath().resolveSibling(
                 result.gateResultPath().getFileName() + ".sha256")));
         final Map<String, String> campaign = GaEvidenceCodec.decode(

@@ -20,7 +20,7 @@ import com.ultralatency.matching.qualification.QualificationChildProcess;
 import com.ultralatency.matching.qualification.QualificationEvidencePublication;
 import com.ultralatency.matching.qualification.QualificationIdentity;
 import com.ultralatency.matching.qualification.QualificationProfile;
-import com.ultralatency.matching.qualification.ProtocolV1QualificationClient;
+import com.ultralatency.matching.qualification.ProtocolV2PacedQualificationClient;
 import com.ultralatency.matching.qualification.QualificationWorkloadV1;
 import com.ultralatency.matching.qualification.ga.correctness.GaCorrectnessCanonicalContext;
 import com.ultralatency.matching.recovery.online.RecoveryMode;
@@ -77,6 +77,9 @@ public final class GaDurabilityRunner {
                 ? GaCorrectnessCanonicalContext.fromSystem() : configuredContext;
         if (matrix.isApproved() && !context.isApprovedCandidate()) {
             throw new IOException("approved G3 matrix requires the frozen candidate context");
+        }
+        if (matrix.isApproved() && context.qualificationJarSha256() == null) {
+            throw new IOException("approved G3 matrix requires a packaged qualification JAR identity");
         }
         final Path root = createRoot(outputDirectory);
         final Instant started = Instant.now();
@@ -204,12 +207,19 @@ public final class GaDurabilityRunner {
                     walDirectory, snapshotDirectory, segmentSize, COMMAND_TIMEOUT);
             int responseCount = 0;
             boolean responseBoundaryObserved = false;
-            try (ProtocolV1QualificationClient client = new ProtocolV1QualificationClient(
-                    child.address(), COMMAND_TIMEOUT)) {
+            try (ProtocolV2PacedQualificationClient client = new ProtocolV2PacedQualificationClient(
+                    child.address(), COMMAND_TIMEOUT,
+                    GaCorrectnessCanonicalContext.APPROVED_PROTOCOL_V2_WINDOW)) {
                 for (int index = 0; index < matrix.commandsPerCycle(); index++) {
-                    client.exchange(QualificationWorkloadV1.commandAtForRun(configuration, index),
-                            index + 1L);
-                    responseCount++;
+                    final EngineCommand command = QualificationWorkloadV1.commandAtForRun(
+                            configuration, index);
+                    while (!client.tryOffer(command, index + 1L)) {
+                        responseCount += client.awaitCompleted(COMMAND_TIMEOUT).size();
+                    }
+                    responseCount += client.drainCompleted().size();
+                }
+                while (client.inFlight() > 0 || client.completedCount() > 0) {
+                    responseCount += client.awaitCompleted(COMMAND_TIMEOUT).size();
                 }
                 responseBoundaryObserved = responseCount == matrix.commandsPerCycle();
                 if (forced) {
@@ -1031,6 +1041,10 @@ public final class GaDurabilityRunner {
         final TreeMap<String, String> fields = new TreeMap<>();
         fields.put("gate.id", GATE);
         fields.put("gate.version", GATE_VERSION);
+        fields.put("protocol.version", GaCorrectnessCanonicalContext.APPROVED_PROTOCOL_VERSION);
+        fields.put("protocol.v2.window", Integer.toString(
+                GaCorrectnessCanonicalContext.APPROVED_PROTOCOL_V2_WINDOW));
+        fields.put("wal.mode", GaCorrectnessCanonicalContext.APPROVED_WAL_MODE);
         fields.put("matrix.version", matrix.version());
         fields.put("matrix.segmentSizesBytes", matrix.walSegmentSizes().toString());
         fields.put("matrix.gracefulCycles", Integer.toString(matrix.gracefulCycles()));

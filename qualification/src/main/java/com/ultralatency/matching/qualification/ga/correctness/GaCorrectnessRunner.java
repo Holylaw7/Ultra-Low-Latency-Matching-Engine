@@ -12,10 +12,9 @@ import com.ultralatency.matching.persistence.wal.CommandWalReader;
 import com.ultralatency.matching.persistence.wal.CommandWalWriter;
 import com.ultralatency.matching.persistence.wal.WalConfiguration;
 import com.ultralatency.matching.persistence.wal.WalDurabilityMode;
-import com.ultralatency.matching.qualification.ProtocolV1QualificationClient;
+import com.ultralatency.matching.qualification.ProtocolV2PacedQualificationClient;
 import com.ultralatency.matching.qualification.QualificationConfiguration;
 import com.ultralatency.matching.qualification.QualificationEvidencePublication;
-import com.ultralatency.matching.qualification.QualificationExchange;
 import com.ultralatency.matching.qualification.QualificationWorkloadV1;
 import com.ultralatency.matching.recovery.online.RecoveryMode;
 import com.ultralatency.matching.recovery.online.RecoveryPlanner;
@@ -77,6 +76,10 @@ public final class GaCorrectnessRunner {
         Objects.requireNonNull(context, "context");
         if (!"ga-g1-g2-test-v1".equals(matrix.version()) && !context.isApprovedCandidate()) {
             throw new IOException("approved matrix requires the frozen candidate context");
+        }
+        if (!"ga-g1-g2-test-v1".equals(matrix.version())
+                && context.qualificationJarSha256() == null) {
+            throw new IOException("approved matrix requires a packaged qualification JAR identity");
         }
         final Path output = outputDirectory.toAbsolutePath().normalize();
         Files.createDirectories(output);
@@ -284,18 +287,32 @@ public final class GaCorrectnessRunner {
             final Path snapshotDirectory) throws IOException {
         final RecoverableDurableMatchingEngineTcpServer server = server(
                 walConfiguration, snapshotDirectory, freePort());
-        ProtocolV1QualificationClient client = null;
+        ProtocolV2PacedQualificationClient client = null;
         final GaCorrectnessObservationAccumulator accumulator =
                 new GaCorrectnessObservationAccumulator();
         try {
             server.start();
-            client = new ProtocolV1QualificationClient(
-                    server.localAddress().orElseThrow(), configuration.commandTimeout());
+            client = new ProtocolV2PacedQualificationClient(
+                    server.localAddress().orElseThrow(), configuration.commandTimeout(), 8);
             for (int index = 0; index < configuration.commandCount(); index++) {
                 final EngineCommand command = QualificationWorkloadV1.commandAtForRun(
                         configuration, index);
-                final QualificationExchange exchange = client.exchange(command, index + 1L);
-                accumulator.accept(command, exchange);
+                while (!client.tryOffer(command, index + 1L)) {
+                    for (final ProtocolV2PacedQualificationClient.CompletedExchange completed
+                            : client.awaitCompleted(configuration.commandTimeout())) {
+                        accumulator.accept(completed.command(), completed.exchange());
+                    }
+                }
+                for (final ProtocolV2PacedQualificationClient.CompletedExchange completed
+                        : client.drainCompleted()) {
+                    accumulator.accept(completed.command(), completed.exchange());
+                }
+            }
+            while (client.inFlight() > 0 || client.completedCount() > 0) {
+                for (final ProtocolV2PacedQualificationClient.CompletedExchange completed
+                        : client.awaitCompleted(configuration.commandTimeout())) {
+                    accumulator.accept(completed.command(), completed.exchange());
+                }
             }
         } finally {
             try {

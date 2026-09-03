@@ -30,6 +30,43 @@ class GaCorrectnessCanonicalEvidenceTest {
     Path temporaryDirectory;
 
     @Test
+    void rc2FormalContextBindsCandidateProtocolWindowAndWal() {
+        final GaCorrectnessCanonicalContext context = new GaCorrectnessCanonicalContext(
+                temporaryDirectory,
+                "3".repeat(40),
+                new GaCandidateVerifier.Verified(
+                        "v0.9.0-rc.2",
+                        "9e2a67ada0e3b6220b730131d0bae79dc03073ed",
+                        "740e8a3dea0a759c707c597778c26c41e9bb3e47",
+                        "ef1d9f4cb64a9d6e331fb326ebe8f3b0abb29a53bf6045a5d4999a53e73b4bbc",
+                        "0b77d37985b9124ac4fd1b90d669db550efd0cf00c23af65fdc29b35071703c4"));
+
+        assertTrue(context.isApprovedCandidate());
+        assertEquals("v2", context.protocolVersion());
+        assertEquals(8, context.protocolV2Window());
+        assertEquals("SYNC_EACH_APPEND", context.walMode());
+    }
+
+    @Test
+    void qualificationJarIdentityCanBeExplicitlyBoundForPackagedRuns() throws Exception {
+        final String property = "qualification.jarSha256";
+        final String previous = System.getProperty(property);
+        final String expected = "a".repeat(64);
+        System.setProperty(property, expected);
+        try {
+            final GaCorrectnessCanonicalContext context =
+                    GaCorrectnessCanonicalContext.test(temporaryDirectory);
+            assertEquals(expected, context.qualificationJarSha256());
+        } finally {
+            if (previous == null) {
+                System.clearProperty(property);
+            } else {
+                System.setProperty(property, previous);
+            }
+        }
+    }
+
+    @Test
     void onePhysicalCasePublishesIndependentG1AndG2Views() throws Exception {
         final GaCorrectnessMatrix matrix = GaCorrectnessMatrix.test();
         final GaCorrectnessCase matrixCase = matrix.cases().get(0);
@@ -70,6 +107,8 @@ class GaCorrectnessCanonicalEvidenceTest {
                 "ga-g1-g2-physical-run-binding-v1.txt.sha256")));
         assertEquals("G1", g1.get("gate.id"));
         assertEquals("G2", g2.get("gate.id"));
+        assertEquals("8", g1.get("run.protocolV2Window"));
+        assertEquals("8", g2.get("run.protocolV2Window"));
         assertEquals("g1-v1", g1.get("gate.version"));
         assertEquals("g2-v1", g2.get("gate.version"));
         assertNotEquals(g1.get("run.id"), g2.get("run.id"));

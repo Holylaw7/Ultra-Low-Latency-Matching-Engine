@@ -137,15 +137,18 @@ public final class GaCorrectnessCanonicalEvidence {
         final GaCorrectnessArtifactInventory.Published inventory =
                 GaCorrectnessArtifactInventory.publish(root, inventoryPath);
         final String comparabilityIdentity = QualificationIdentity.digest(runtime);
+        final String qualificationJarSha256 = context.qualificationJarSha256();
         final long elapsedMillis = elapsedNanos / 1_000_000L;
         final String g1RunId = UUID.randomUUID().toString();
         final String g2RunId = UUID.randomUUID().toString();
         final Map<String, String> g1 = manifestFields(
                 "G1", G1_VERSION, g1RunId, matrix, result, context, runtime,
-                comparabilityIdentity, started, completed, elapsedMillis, inventory);
+                comparabilityIdentity, qualificationJarSha256, started, completed, elapsedMillis,
+                inventory);
         final Map<String, String> g2 = manifestFields(
                 "G2", G2_VERSION, g2RunId, matrix, result, context, runtime,
-                comparabilityIdentity, started, completed, elapsedMillis, inventory);
+                comparabilityIdentity, qualificationJarSha256, started, completed, elapsedMillis,
+                inventory);
         final Path g1Path = root.resolve("ga-g1-run-manifest-v1.txt");
         final Path g2Path = root.resolve("ga-g2-run-manifest-v1.txt");
         final String g1Digest = GaEvidenceStore.publish(g1Path, GaEvidenceCodec.Schema.RUN, g1);
@@ -286,9 +289,24 @@ public final class GaCorrectnessCanonicalEvidence {
                 || !Integer.toString(matrix.commandCount()).equals(g2.get("run.commandCount"))) {
             throw new IOException("canonical view matrix attribution mismatch");
         }
+        if (!Integer.toString(context.protocolV2Window()).equals(g1.get("run.protocolV2Window"))
+                || !Integer.toString(context.protocolV2Window()).equals(
+                g2.get("run.protocolV2Window"))) {
+            throw new IOException("canonical view protocol window mismatch");
+        }
         if (!workloadVersion(expected.profile()).equals(g1.get("workload.version"))
                 || !workloadVersion(expected.profile()).equals(g2.get("workload.version"))) {
             throw new IOException("canonical view workload attribution mismatch");
+        }
+        final String qualificationJarSha256 = context.qualificationJarSha256();
+        if (qualificationJarSha256 != null
+                && (!qualificationJarSha256.equals(g1.get("qualification.jarSha256"))
+                || !qualificationJarSha256.equals(g2.get("qualification.jarSha256")))) {
+            throw new IOException("canonical view qualification JAR identity mismatch");
+        }
+        if (!Objects.equals(g1.get("qualification.jarSha256"),
+                g2.get("qualification.jarSha256"))) {
+            throw new IOException("paired canonical views disagree on qualification JAR");
         }
         final Set<String> gateSpecific = Set.of(
                 "configuration.identitySha256", "gate.id", "gate.version", "run.id");
@@ -540,6 +558,7 @@ public final class GaCorrectnessCanonicalEvidence {
             final GaCorrectnessCanonicalContext context,
             final Map<String, String> runtime,
             final String comparabilityIdentity,
+            final String qualificationJarSha256,
             final Instant started,
             final Instant completed,
             final long elapsedMillis,
@@ -555,6 +574,9 @@ public final class GaCorrectnessCanonicalEvidence {
         fields.put("candidate.tag", candidate.tag());
         fields.put("candidate.tagObjectSha", candidate.tagObjectSha());
         fields.put("comparability.identitySha256", comparabilityIdentity);
+        if (qualificationJarSha256 != null) {
+            fields.put("qualification.jarSha256", qualificationJarSha256);
+        }
         fields.put("configuration.identitySha256",
                 configurationIdentity(matrix, gate, gateVersion, context));
         fields.put("controller.gitSha", context.controllerGitSha());
@@ -569,6 +591,8 @@ public final class GaCorrectnessCanonicalEvidence {
         fields.put("run.commandCount", Integer.toString(matrix.commandCount()));
         fields.put("run.id", runId);
         fields.put("run.profile", matrixCase.profile().name());
+        fields.put("run.protocolV2Window",
+                Integer.toString(context.protocolV2Window()));
         fields.put("run.seed", Long.toString(matrixCase.seed()));
         runtime.forEach(fields::put);
         fields.put("schema.version", GaEvidenceCodec.Schema.RUN.version());
@@ -810,6 +834,9 @@ public final class GaCorrectnessCanonicalEvidence {
             final GaCorrectnessCanonicalContext context) {
         final Map<String, String> values = new TreeMap<>();
         values.put("candidate.tag", context.candidate().tag());
+        values.put("protocol.version", context.protocolVersion());
+        values.put("protocol.v2.window", Integer.toString(context.protocolV2Window()));
+        values.put("wal.mode", context.walMode());
         values.put("gate.id", gate);
         values.put("gate.version", gateVersion);
         values.put("matrix.commandCount", Integer.toString(matrix.commandCount()));

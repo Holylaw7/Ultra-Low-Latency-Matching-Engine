@@ -2,6 +2,7 @@ package com.ultralatency.matching.qualification.ga.correctness;
 
 import com.ultralatency.matching.qualification.ga.GaCandidateVerifier;
 import com.ultralatency.matching.qualification.ga.GaFrozenBoundaryVerifier;
+import com.ultralatency.matching.qualification.QualificationArtifactHasher;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -23,13 +24,21 @@ public record GaCorrectnessCanonicalContext(
 
     private static final Pattern GIT_SHA1 = Pattern.compile("[0-9a-f]{40}");
     private static final Pattern SHA256 = Pattern.compile("[0-9a-f]{64}");
-    private static final String DEFAULT_TAG = "v0.9.0-rc.1";
+    private static final String DEFAULT_TAG = "v0.9.0-rc.2";
     private static final String DEFAULT_TAG_OBJECT =
-            "dfd38c08e80aed9035bf1c2d7c8faf8bae99c356";
+            "9e2a67ada0e3b6220b730131d0bae79dc03073ed";
     private static final String DEFAULT_PRODUCTION =
-            "e2828f563ee41316c062385c0244ac1336731359";
+            "740e8a3dea0a759c707c597778c26c41e9bb3e47";
     private static final String DEFAULT_TREE =
-            "81739474c2ce269a7771885e87805a8cffcec864a46449a8f5347586cfd06651";
+            "ef1d9f4cb64a9d6e331fb326ebe8f3b0abb29a53bf6045a5d4999a53e73b4bbc";
+    private static final String DEFAULT_APPLICATION_JAR =
+            "0b77d37985b9124ac4fd1b90d669db550efd0cf00c23af65fdc29b35071703c4";
+    /** Protocol selected by the frozen RC2 formal public-path campaign. */
+    public static final String APPROVED_PROTOCOL_VERSION = "v2";
+    /** Bounded Protocol v2 window selected by the frozen RC2 candidate. */
+    public static final int APPROVED_PROTOCOL_V2_WINDOW = 8;
+    /** Durability mode selected by the frozen RC2 formal campaign. */
+    public static final String APPROVED_WAL_MODE = "SYNC_EACH_APPEND";
 
     /** Validates immutable identity values. */
     public GaCorrectnessCanonicalContext {
@@ -55,6 +64,7 @@ public record GaCorrectnessCanonicalContext(
         frozenProperty("qualification.candidate.tagObjectSha", DEFAULT_TAG_OBJECT);
         frozenProperty("qualification.candidate.productionSha", DEFAULT_PRODUCTION);
         frozenProperty("qualification.candidate.productionTreeSha256", DEFAULT_TREE);
+        frozenProperty("qualification.candidate.applicationJarSha256", DEFAULT_APPLICATION_JAR);
         final String configuredJar = System.getProperty("qualification.candidate.applicationJar");
         if (configuredJar != null && !configuredJar.equals("core/target/matching-engine-rc.jar")) {
             throw new IOException("qualification candidate application JAR path is frozen");
@@ -109,7 +119,61 @@ public record GaCorrectnessCanonicalContext(
         return DEFAULT_TAG.equals(candidate.tag())
                 && DEFAULT_TAG_OBJECT.equals(candidate.tagObjectSha())
                 && DEFAULT_PRODUCTION.equals(candidate.productionSha())
-                && DEFAULT_TREE.equals(candidate.productionTreeSha256());
+                && DEFAULT_TREE.equals(candidate.productionTreeSha256())
+                && DEFAULT_APPLICATION_JAR.equals(candidate.applicationJarSha256());
+    }
+
+    /** Returns the protocol identity bound to RC2 formal qualification. */
+    public String protocolVersion() {
+        return APPROVED_PROTOCOL_VERSION;
+    }
+
+    /** Returns the bounded v2 window bound to RC2 formal qualification. */
+    public int protocolV2Window() {
+        return APPROVED_PROTOCOL_V2_WINDOW;
+    }
+
+    /** Returns the WAL durability identity bound to RC2 formal qualification. */
+    public String walMode() {
+        return APPROVED_WAL_MODE;
+    }
+
+    /**
+     * Returns the SHA-256 of the qualification artifact that loaded this context.
+     *
+     * <p>Formal executions are required to run from the packaged qualification JAR.  Unit tests
+     * execute from an exploded classes directory, in which case the value is omitted unless an
+     * explicit, validated property supplies the packaged artifact identity.  When both a
+     * packaged location and a property are present they must agree.</p>
+     */
+    public String qualificationJarSha256() throws IOException {
+        final String configured = System.getProperty("qualification.jarSha256");
+        if (configured != null) {
+            requireSha256(configured, "qualification.jarSha256");
+        }
+        final java.net.URL location = GaCorrectnessCanonicalContext.class
+                .getProtectionDomain().getCodeSource() == null
+                ? null
+                : GaCorrectnessCanonicalContext.class.getProtectionDomain().getCodeSource()
+                        .getLocation();
+        if (location == null) {
+            return configured;
+        }
+        final Path artifact;
+        try {
+            artifact = Path.of(location.toURI()).toAbsolutePath().normalize();
+        } catch (final java.net.URISyntaxException exception) {
+            throw new IOException("cannot resolve qualification code source", exception);
+        }
+        if (!java.nio.file.Files.isRegularFile(artifact)
+                || !artifact.getFileName().toString().endsWith(".jar")) {
+            return configured;
+        }
+        final String actual = QualificationArtifactHasher.sha256(artifact);
+        if (configured != null && !configured.equals(actual)) {
+            throw new IOException("qualification JAR SHA-256 does not match configured identity");
+        }
+        return actual;
     }
 
     private static String gitHead(final Path repository) throws IOException {
