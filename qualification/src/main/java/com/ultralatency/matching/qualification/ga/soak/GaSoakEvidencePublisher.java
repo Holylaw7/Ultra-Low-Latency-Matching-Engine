@@ -101,6 +101,23 @@ public final class GaSoakEvidencePublisher {
             final Instant started,
             final Instant completed,
             final Map<String, Path> rawArtifacts) throws IOException {
+        return publishQuick(evidenceRoot, matrix, g6Observation, g8Observation, g6Evaluation,
+                g8Evaluation, context, started, completed, rawArtifacts, null);
+    }
+
+    /** Publishes one Quick run with canonical paced identity and runtime evidence. */
+    public static PublishedQuick publishQuick(
+            final Path evidenceRoot,
+            final GaSoakMatrix matrix,
+            final GaSoakObservation g6Observation,
+            final GaObservabilityObservation g8Observation,
+            final GaSoakEvaluator.Evaluation g6Evaluation,
+            final GaObservabilityEvaluator.Evaluation g8Evaluation,
+            final GaCorrectnessCanonicalContext context,
+            final Instant started,
+            final Instant completed,
+            final Map<String, Path> rawArtifacts,
+            final GaPacedRuntimeEvidence pacedEvidence) throws IOException {
         Objects.requireNonNull(evidenceRoot, "evidenceRoot");
         Objects.requireNonNull(matrix, "matrix");
         Objects.requireNonNull(g6Observation, "g6Observation");
@@ -127,6 +144,22 @@ public final class GaSoakEvidencePublisher {
         if (artifacts.isEmpty()) {
             throw new IOException("Quick evidence requires raw artifacts");
         }
+        if (pacedEvidence != null) {
+            for (String required : List.of("capacity-evidence-v1.csv",
+                    "reader-wake-evidence-v1.csv", "measurement-boundary-v1.txt",
+                    "invocation-v1.properties")) {
+                if (!artifacts.containsKey(required)) {
+                    throw new IOException("paced Quick evidence is missing " + required);
+                }
+            }
+            final Map<String, String> publishedInvocation = GaQuickInvocation.read(
+                    artifacts.get("invocation-v1.properties"));
+            if (!publishedInvocation.equals(pacedEvidence.invocationFields())
+                    || !pacedEvidence.invocationIdentitySha256().equals(
+                    GaQuickInvocation.identity(publishedInvocation))) {
+                throw new IOException("invocation artifact does not match runtime identity");
+            }
+        }
         for (Path artifact : artifacts.values()) {
             publishSidecar(artifact);
         }
@@ -135,7 +168,7 @@ public final class GaSoakEvidencePublisher {
         publishSidecar(inventory);
         final Map<String, String> runtime = runtimeFields(root);
         final String comparability = QualificationIdentity.digest(runtime);
-        final Map<String, String> configurationFields = configurationFields(matrix);
+        final Map<String, String> configurationFields = configurationFields(matrix, pacedEvidence);
         final String configuration = QualificationIdentity.digest(configurationFields);
         final String g6RunId = UUID.randomUUID().toString();
         final String g8RunId = UUID.randomUUID().toString();
@@ -145,13 +178,15 @@ public final class GaSoakEvidencePublisher {
         // canonical chains.
         final long sharedAcceptedCommands = g6Observation.acceptedCommands();
         final Map<String, String> g6Fields = manifestFields(
-                "G6", G6_QUICK_VERSION, g6RunId, matrix, g6Observation, context,
+                "G6", G6_QUICK_VERSION, g6RunId, matrix, physicalId, context,
                 runtime, configuration, comparability, started, completed, inventory, artifacts,
-                g6Evaluation.outcome(), g6Evaluation.failureCode(), sharedAcceptedCommands);
+                g6Evaluation.outcome(), g6Evaluation.failureCode(), sharedAcceptedCommands,
+                pacedEvidence);
         final Map<String, String> g8Fields = manifestFields(
-                "G8", G8_QUICK_VERSION, g8RunId, matrix, g8Observation, context,
+                "G8", G8_QUICK_VERSION, g8RunId, matrix, physicalId, context,
                 runtime, configuration, comparability, started, completed, inventory, artifacts,
-                g8Evaluation.outcome(), g8Evaluation.failureCode(), sharedAcceptedCommands);
+                g8Evaluation.outcome(), g8Evaluation.failureCode(), sharedAcceptedCommands,
+                pacedEvidence);
         final Path g6Manifest = root.resolve("g6-run-manifest-v1.txt");
         final Path g8Manifest = root.resolve("g8-run-manifest-v1.txt");
         final String g6Digest = GaEvidenceStore.publish(
@@ -209,7 +244,7 @@ public final class GaSoakEvidencePublisher {
             final String gateVersion,
             final String runId,
             final GaSoakMatrix matrix,
-            final Object observation,
+            final String physicalId,
             final GaCorrectnessCanonicalContext context,
             final Map<String, String> runtime,
             final String configuration,
@@ -220,7 +255,8 @@ public final class GaSoakEvidencePublisher {
             final Map<String, Path> artifacts,
             final String outcome,
             final String failureCode,
-            final long acceptedCommands) throws IOException {
+            final long acceptedCommands,
+            final GaPacedRuntimeEvidence pacedEvidence) throws IOException {
         if (acceptedCommands < 0L) {
             throw new IllegalArgumentException("accepted command count must be non-negative");
         }
@@ -241,9 +277,16 @@ public final class GaSoakEvidencePublisher {
         fields.put("candidate.productionTreeSha256", candidate.productionTreeSha256());
         fields.put("candidate.tag", candidate.tag());
         fields.put("candidate.tagObjectSha", candidate.tagObjectSha());
+        fields.put("physicalExecution.id", physicalId);
         fields.put("comparability.identitySha256", comparability);
         fields.put("configuration.identitySha256", configuration);
         fields.put("controller.gitSha", context.controllerGitSha());
+        if (pacedEvidence != null) {
+            fields.put("qualification.jarSha256", pacedEvidence.qualificationJarSha256());
+            fields.put("invocation.identitySha256", pacedEvidence.invocationIdentitySha256());
+            fields.put("run.protocolV2Window", Integer.toString(pacedEvidence.configuredWindow()));
+            fields.putAll(pacedEvidence.manifestFields());
+        }
         fields.put("evidence.completedAtUtc", completed.toString());
         fields.put("evidence.elapsedMillis", Long.toString(Math.max(0L,
                 Duration.between(started, completed).toMillis())));
@@ -348,7 +391,9 @@ public final class GaSoakEvidencePublisher {
         return List.copyOf(result);
     }
 
-    private static Map<String, String> configurationFields(final GaSoakMatrix matrix) {
+    private static Map<String, String> configurationFields(
+            final GaSoakMatrix matrix,
+            final GaPacedRuntimeEvidence pacedEvidence) {
         final Map<String, String> values = new TreeMap<>();
         values.put("acceptedFloor", Long.toString(matrix.acceptedFloor()));
         values.put("duration", matrix.duration().toString());
@@ -358,6 +403,9 @@ public final class GaSoakEvidencePublisher {
         values.put("seed", Long.toString(matrix.seed()));
         values.put("stage", matrix.stage().name());
         values.put("version", matrix.version());
+        if (pacedEvidence != null) {
+            values.put("protocolV2.window", Integer.toString(pacedEvidence.configuredWindow()));
+        }
         return Map.copyOf(values);
     }
 
@@ -374,7 +422,7 @@ public final class GaSoakEvidencePublisher {
                 observed.getOrDefault("java.runtime.version", "UNAVAILABLE"));
         runtime.put("runtime.javaVendor", observed.getOrDefault("java.vendor", "UNAVAILABLE"));
         runtime.put("runtime.javaVmArguments",
-                observed.getOrDefault("java.vm.arguments", "<none>"));
+                stableRuntimeArguments(observed.getOrDefault("java.vm.arguments", "<none>")));
         runtime.put("runtime.javaVmName", observed.getOrDefault("java.vm.name", "UNAVAILABLE"));
         runtime.put("runtime.javaVmVersion",
                 observed.getOrDefault("java.vm.version", "UNAVAILABLE"));
@@ -389,13 +437,24 @@ public final class GaSoakEvidencePublisher {
         return Map.copyOf(runtime);
     }
 
+    /** Removes the separately bound matrix window from the comparability identity. */
+    private static String stableRuntimeArguments(final String arguments) {
+        final String value = Objects.requireNonNull(arguments, "arguments");
+        final String stable = java.util.Arrays.stream(value.split(" "))
+                .filter(argument -> !argument.startsWith("-Dqualification.paced.maxInFlight="))
+                .filter(argument -> !argument.isBlank())
+                .collect(java.util.stream.Collectors.joining(" "));
+        return stable.isBlank() ? "<none>" : stable;
+    }
+
     private static void publishInventory(
             final Path inventory,
             final Map<String, Path> artifacts,
-        final Path root) throws IOException {
+            final Path root) throws IOException {
         final StringBuilder text = new StringBuilder();
         final List<Map.Entry<String, Path>> ordered = new ArrayList<>(artifacts.entrySet());
-        ordered.sort(Map.Entry.comparingByKey());
+        ordered.sort((left, right) -> relativeUnchecked(root, left.getValue())
+                .compareTo(relativeUnchecked(root, right.getValue())));
         for (Map.Entry<String, Path> entry : ordered) {
             text.append(QualificationArtifactHasher.sha256(entry.getValue())).append("  ")
                     .append(relativeUnchecked(root, entry.getValue())).append('\n');

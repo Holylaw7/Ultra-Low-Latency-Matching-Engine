@@ -49,6 +49,9 @@ public final class ProtocolV2PacedQualificationClient implements AutoCloseable {
     private long nextRequestId = 1L;
     private int maximumObservedInFlight;
     private int maximumObservedCompleted;
+    private long readerWakeCount;
+    private final List<Long> readerWakeNanos = new ArrayList<>();
+    private long capacityReleaseCount;
 
     /** Connects a bounded paced client to a Protocol v2 server. */
     public ProtocolV2PacedQualificationClient(
@@ -106,6 +109,27 @@ public final class ProtocolV2PacedQualificationClient implements AutoCloseable {
         }
     }
 
+    /** @return the number of qualification-side reader wake signals issued for new work */
+    public long readerWakeCount() {
+        synchronized (monitor) {
+            return readerWakeCount;
+        }
+    }
+
+    /** @return monotonic timestamps for every qualification-side reader wake signal */
+    public List<Long> readerWakeNanos() {
+        synchronized (monitor) {
+            return List.copyOf(readerWakeNanos);
+        }
+    }
+
+    /** @return the number of fully validated responses that released wire capacity */
+    public long capacityReleaseCount() {
+        synchronized (monitor) {
+            return capacityReleaseCount;
+        }
+    }
+
     /**
      * Offers one request if the bounded window has capacity.
      *
@@ -136,6 +160,8 @@ public final class ProtocolV2PacedQualificationClient implements AutoCloseable {
             // The reader may be waiting with an empty wire-pending set. Installation and wake-up
             // are one synchronized state transition; otherwise the first offer can be stranded
             // until an unrelated completion or drain occurs.
+            readerWakeCount++;
+            readerWakeNanos.add(System.nanoTime());
             monitor.notifyAll();
         }
         try {
@@ -247,7 +273,10 @@ public final class ProtocolV2PacedQualificationClient implements AutoCloseable {
                         return;
                     }
                     final long completedNanos = System.nanoTime();
-                    completed.addLast(request.completedExchange(exchange, completedNanos));
+                    final long capacityReleaseNanos = System.nanoTime();
+                    capacityReleaseCount++;
+                    completed.addLast(request.completedExchange(
+                            exchange, completedNanos, capacityReleaseNanos));
                     maximumObservedCompleted = Math.max(maximumObservedCompleted, completed.size());
                     monitor.notifyAll();
                 }
@@ -545,11 +574,24 @@ public final class ProtocolV2PacedQualificationClient implements AutoCloseable {
             EngineCommand command,
             QualificationExchange exchange,
             long offeredNanos,
-            long completedNanos) {
+            long completedNanos,
+            long capacityReleaseNanos) {
+
+        public CompletedExchange {
+            if (requestId <= 0L || command == null || exchange == null || offeredNanos < 0L
+                    || completedNanos < offeredNanos || capacityReleaseNanos < completedNanos) {
+                throw new IllegalArgumentException("completed exchange chronology is invalid");
+            }
+        }
 
         /** Returns the observed request/response duration in nanoseconds. */
         public long latencyNanos() {
             return Math.max(1L, completedNanos - offeredNanos);
+        }
+
+        /** Returns the response-complete to wire-capacity-release delay. */
+        public long capacityReleaseDelayNanos() {
+            return capacityReleaseNanos - completedNanos;
         }
     }
 
@@ -568,9 +610,11 @@ public final class ProtocolV2PacedQualificationClient implements AutoCloseable {
         }
 
         private CompletedExchange completedExchange(
-                final QualificationExchange exchange,
-                final long completedNanos) {
-            return new CompletedExchange(requestId, command, exchange, offeredNanos, completedNanos);
+            final QualificationExchange exchange,
+                final long completedNanos,
+                final long capacityReleaseNanos) {
+            return new CompletedExchange(requestId, command, exchange, offeredNanos,
+                    completedNanos, capacityReleaseNanos);
         }
     }
 }

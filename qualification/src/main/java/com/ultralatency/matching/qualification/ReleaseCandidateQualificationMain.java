@@ -20,6 +20,8 @@ import com.ultralatency.matching.qualification.ga.performance.GaPerformanceQuick
 import com.ultralatency.matching.qualification.ga.performance.GaPerformanceRunner;
 import com.ultralatency.matching.qualification.ga.soak.GaSoakQuickResult;
 import com.ultralatency.matching.qualification.ga.soak.GaSoakRunner;
+import com.ultralatency.matching.qualification.ga.soak.GaPacedEvidenceVerifier;
+import com.ultralatency.matching.qualification.ga.soak.GaSoakMatrixSummary;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,6 +30,9 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /** Qualification-only entrypoint for the packaged Phase 10 runtime boundary. */
 public final class ReleaseCandidateQualificationMain {
@@ -140,6 +145,16 @@ public final class ReleaseCandidateQualificationMain {
             runGaSoakQuick(Path.of(arguments[4]));
             return;
         }
+        if (arguments != null && arguments.length >= 4 && "matrix-summary".equals(arguments[0])
+                && "--output".equals(arguments[1])) {
+            runMatrixSummary(Path.of(arguments[2]),
+                    List.of(Arrays.copyOfRange(arguments, 3, arguments.length)));
+            return;
+        }
+        if (arguments != null && arguments.length == 2 && "verify-paced".equals(arguments[0])) {
+            runPacedEvidenceVerification(Path.of(arguments[1]));
+            return;
+        }
         {
             System.err.println("usage: child --config <path>");
             System.err.println("       lifecycle --output <directory>");
@@ -158,6 +173,8 @@ public final class ReleaseCandidateQualificationMain {
             System.err.println("       ga-performance --lane quick [--output <dir>]");
             System.err.println("       ga-capacity --lane quick [--output <dir>]");
             System.err.println("       ga-soak --lane quick [--output <dir>]");
+            System.err.println("       matrix-summary --output <file> <run-root>...");
+            System.err.println("       verify-paced <run-root>");
             System.exit(64);
             return;
         }
@@ -418,7 +435,10 @@ public final class ReleaseCandidateQualificationMain {
 
     private static void runGaSoakQuick(final Path outputDirectory) {
         try {
-            final GaSoakQuickResult result = new GaSoakRunner().runQuick(outputDirectory);
+            final int window = Integer.getInteger("qualification.paced.maxInFlight",
+                    com.ultralatency.matching.network.protocol.ProtocolConstants
+                            .DEFAULT_PIPELINED_MAX_IN_FLIGHT);
+            final GaSoakQuickResult result = new GaSoakRunner(null, window).runQuick(outputDirectory);
             System.out.println("GA_SOAK QUICK "
                     + (result.g6Evaluation().passed() && result.g8Evaluation().passed()
                     ? "PASS" : "FAIL") + " " + result.evidenceRoot()
@@ -428,6 +448,38 @@ public final class ReleaseCandidateQualificationMain {
             }
         } catch (final Exception failure) {
             System.err.println("GA_SOAK_QUICK_FAILURE " + failure.getClass().getName()
+                    + " " + String.valueOf(failure.getMessage()));
+            System.exit(1);
+        }
+    }
+
+    private static void runMatrixSummary(final Path output, final List<String> roots) {
+        try {
+            final List<Path> runRoots = new ArrayList<>();
+            for (String root : roots) {
+                runRoots.add(Path.of(root));
+            }
+            final Path summary = GaSoakMatrixSummary.publish(output, runRoots);
+            System.out.println("GA_SOAK_MATRIX_SUMMARY " + summary
+                    + " onlyNVaried=" + GaSoakMatrixSummary.onlyWindowVaries(runRoots));
+        } catch (final Exception failure) {
+            System.err.println("GA_SOAK_MATRIX_SUMMARY_FAILURE " + failure.getClass().getName()
+                    + " " + String.valueOf(failure.getMessage()));
+            System.exit(1);
+        }
+    }
+
+    private static void runPacedEvidenceVerification(final Path root) {
+        try {
+            final GaPacedEvidenceVerifier.Report report = GaPacedEvidenceVerifier.verify(root);
+            System.out.println("GA_SOAK_EVIDENCE_VERIFIED " + report.root()
+                    + " N=" + report.configuredWindow()
+                    + " nominal=" + report.nominalOfferOpportunities()
+                    + " offered=" + report.actualOfferedCommands()
+                    + " late=" + report.missedSchedulerLate()
+                    + " windowFull=" + report.missedWindowFull());
+        } catch (final Exception failure) {
+            System.err.println("GA_SOAK_EVIDENCE_VERIFY_FAILURE " + failure.getClass().getName()
                     + " " + String.valueOf(failure.getMessage()));
             System.exit(1);
         }

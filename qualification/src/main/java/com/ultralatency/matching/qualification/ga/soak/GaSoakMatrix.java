@@ -160,4 +160,14 @@ public record GaSoakMatrix(
     public String configurationIdentitySha256() {
         return QualificationIdentity.digest(configurationFields());
     }
+
+    /** Returns the paced Quick configuration identity including the bounded window. */
+    public String configurationIdentitySha256(final int protocolV2Window) {
+        if (protocolV2Window < 1) {
+            throw new IllegalArgumentException("protocolV2Window must be positive");
+        }
+        final java.util.Map<String, String> values = new java.util.TreeMap<>(configurationFields());
+        values.put("protocolV2.window", Integer.toString(protocolV2Window));
+        return QualificationIdentity.digest(values);
+    }
 }

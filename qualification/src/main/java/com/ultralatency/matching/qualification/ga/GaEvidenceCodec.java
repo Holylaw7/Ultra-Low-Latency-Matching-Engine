@@ -130,8 +130,15 @@ public final class GaEvidenceCodec {
                 "comparability.identitySha256", "configuration.identitySha256",
                 "controller.gitSha", "evidence.completedAtUtc", "evidence.elapsedMillis",
                 "evidence.failureCode", "evidence.failureDigestSha256", "evidence.outcome",
+                "evidence.capacity.maxCompletedUndrained", "evidence.capacity.maxInFlight",
+                "evidence.capacity.maxPendingWire", "evidence.capacity.readerWakeCount",
+                "evidence.capacity.releaseCount", "evidence.capacity.releaseDelayP50Nanos",
+                "evidence.capacity.releaseDelayP90Nanos", "evidence.capacity.releaseDelayP99Nanos",
+                "evidence.capacity.releaseDelayMaxNanos", "evidence.measurementStartNanos",
+                "evidence.measurementEndNanos", "evidence.measurementDurationNanos",
                 "evidence.startedAtUtc", "gate.id", "gate.version", "run.commandCount",
-                "run.id", "run.profile", "run.seed", "runtime.cpuModel",
+                "run.id", "run.profile", "run.protocolV2Window", "physicalExecution.id",
+                "qualification.jarSha256", "invocation.identitySha256", "run.seed", "runtime.cpuModel",
                 "runtime.filesystem", "runtime.gcCollectors", "runtime.heapMaxBytes",
                 "runtime.javaRuntimeVersion", "runtime.javaVendor", "runtime.javaVmArguments",
                 "runtime.javaVmName", "runtime.javaVmVersion", "runtime.logicalProcessors",
@@ -174,6 +181,20 @@ public final class GaEvidenceCodec {
         requireUuid(fields, "run.id");
         requireInstant(fields, "evidence.startedAtUtc");
         requireInstant(fields, "evidence.completedAtUtc");
+        requireOptionalUuid(fields, "physicalExecution.id");
+        requireOptionalSha256(fields, "qualification.jarSha256");
+        requireOptionalSha256(fields, "invocation.identitySha256");
+        requireOptionalInteger(fields, "run.protocolV2Window");
+        for (String key : Set.of(
+                "evidence.capacity.maxCompletedUndrained",
+                "evidence.capacity.maxInFlight", "evidence.capacity.maxPendingWire",
+                "evidence.capacity.readerWakeCount", "evidence.capacity.releaseCount",
+                "evidence.capacity.releaseDelayP50Nanos", "evidence.capacity.releaseDelayP90Nanos",
+                "evidence.capacity.releaseDelayP99Nanos", "evidence.capacity.releaseDelayMaxNanos",
+                "evidence.measurementStartNanos", "evidence.measurementEndNanos",
+                "evidence.measurementDurationNanos")) {
+            requireOptionalInteger(fields, key);
+        }
         if ("PASS".equals(fields.get("evidence.outcome"))) {
             if (!"NONE".equals(fields.get("evidence.failureCode"))) {
                 throw new IllegalArgumentException("PASS run must use failureCode NONE");
@@ -394,6 +415,13 @@ public final class GaEvidenceCodec {
         }
     }
 
+    private static void requireOptionalInteger(
+            final Map<String, String> fields, final String key) {
+        if (fields.containsKey(key)) {
+            requireInteger(fields, key);
+        }
+    }
+
     private static void requireSize(final Map<String, String> fields, final String key) {
         try {
             if (Long.parseLong(fields.get(key)) > 1_099_511_627_776L) {
@@ -416,10 +444,24 @@ public final class GaEvidenceCodec {
         }
     }
 
+    private static void requireOptionalSha256(
+            final Map<String, String> fields, final String key) {
+        if (fields.containsKey(key)) {
+            requireSha256(fields, key);
+        }
+    }
+
     private static void requireUuid(final Map<String, String> fields, final String key) {
         if (!UUID_PATTERN.matcher(Objects.requireNonNull(fields.get(key), key)).matches()
                 || !UUID.fromString(fields.get(key)).toString().equals(fields.get(key))) {
             throw new IllegalArgumentException(key + " must be a lowercase UUID");
+        }
+    }
+
+    private static void requireOptionalUuid(
+            final Map<String, String> fields, final String key) {
+        if (fields.containsKey(key)) {
+            requireUuid(fields, key);
         }
     }
 

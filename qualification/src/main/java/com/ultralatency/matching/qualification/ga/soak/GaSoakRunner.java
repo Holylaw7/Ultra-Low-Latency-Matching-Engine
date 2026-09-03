@@ -6,6 +6,7 @@ import com.ultralatency.matching.app.RuntimeFailureCode;
 import com.ultralatency.matching.engine.EngineCommand;
 import com.ultralatency.matching.qualification.ProtocolV2PacedQualificationClient;
 import com.ultralatency.matching.qualification.QualificationConfiguration;
+import com.ultralatency.matching.qualification.QualificationArtifactHasher;
 import com.ultralatency.matching.qualification.QualificationEvidencePublication;
 import com.ultralatency.matching.qualification.QualificationJfrRecording;
 import com.ultralatency.matching.qualification.QualificationWorkloadV1;
@@ -32,6 +33,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.util.stream.Collectors;
 import com.ultralatency.matching.persistence.wal.WalDurabilityMode;
 import com.ultralatency.matching.pipeline.PipelineWaitMode;
 import com.ultralatency.matching.recovery.online.RecoveryMode;
@@ -128,8 +133,14 @@ public final class GaSoakRunner {
         long responses = 0L;
         long measurementStartNanos = -1L;
         long measurementStopNanos = -1L;
+        int maximumObservedInFlight = 0;
+        int maximumObservedCompleted = 0;
+        long readerWakeCount = 0L;
+        List<Long> readerWakeNanos = List.of();
+        long capacityReleaseCount = 0L;
         PacingSchedule pacing = null;
         boolean workloadFailure = false;
+        final PacedAccumulator accumulator = new PacedAccumulator(latency, transcript);
         try {
             jfr = QualificationJfrRecording.start(jfrPath);
             runtime.start();
@@ -148,7 +159,6 @@ public final class GaSoakRunner {
             final int protocolPort = runtime.protocolServer().localAddress()
                     .orElseThrow(() -> new IOException("protocol listener did not bind"))
                     .getPort();
-            final PacedAccumulator accumulator = new PacedAccumulator(latency, transcript);
             try (ProtocolV2PacedQualificationClient client = new ProtocolV2PacedQualificationClient(
                     new java.net.InetSocketAddress(InetAddress.getLoopbackAddress(), protocolPort),
                     COMMAND_TIMEOUT, pacedMaxInFlight)) {
@@ -205,6 +215,11 @@ public final class GaSoakRunner {
                 accumulator.accept(client.drainCompleted());
                 accepted = accumulator.accepted;
                 responses = accumulator.responses;
+                maximumObservedInFlight = client.maximumObservedInFlight();
+                maximumObservedCompleted = client.maximumObservedCompleted();
+                readerWakeCount = client.readerWakeCount();
+                readerWakeNanos = client.readerWakeNanos();
+                capacityReleaseCount = client.capacityReleaseCount();
                 // Keep the public session open while the runtime performs its orderly shutdown.
                 // Closing it first is interpreted by the candidate server as an unexpected
                 // disconnect and turns an otherwise complete run into a runtime failure.
@@ -268,6 +283,18 @@ public final class GaSoakRunner {
         final Path managementArtifact = root.resolve("management-evidence-v1.csv");
         final Path terminalArtifact = root.resolve("terminal-evidence-v1.txt");
         final Path pacingArtifact = root.resolve("pacing-evidence-v1.csv");
+        final Path capacityArtifact = root.resolve("capacity-evidence-v1.csv");
+        final Path readerWakeArtifact = root.resolve("reader-wake-evidence-v1.csv");
+        final Path measurementArtifact = root.resolve("measurement-boundary-v1.txt");
+        final Path invocationArtifact = root.resolve("invocation-v1.properties");
+        final long evidenceStart = measurementStartNanos >= 0L ? measurementStartNanos : 0L;
+        final long evidenceEnd = Math.max(evidenceStart,
+                measurementStopNanos >= evidenceStart ? measurementStopNanos : evidenceStart);
+        final GaPacedRuntimeEvidence pacedEvidence = new GaPacedRuntimeEvidence(
+                pacedMaxInFlight, maximumObservedInFlight, maximumObservedInFlight,
+                maximumObservedCompleted, readerWakeCount, readerWakeNanos, capacityReleaseCount,
+                accumulator.capacityReleases(), evidenceStart, evidenceEnd,
+                "0".repeat(64), invocationFields(matrix, context, "0".repeat(64), configuration));
         QualificationEvidencePublication.text(configArtifact, childConfigurationText(configuration));
         QualificationEvidencePublication.text(transcriptArtifact, transcript.toString());
         QualificationEvidencePublication.text(resourceArtifact, resourceText(resources));
@@ -276,6 +303,11 @@ public final class GaSoakRunner {
                 terminalText(g6, g8, accepted, responses, gracefulShutdown));
         QualificationEvidencePublication.text(pacingArtifact,
                 pacing == null ? "" : pacing.evidenceCsv());
+        QualificationEvidencePublication.text(capacityArtifact, pacedEvidence.capacityCsv());
+        QualificationEvidencePublication.text(readerWakeArtifact, pacedEvidence.readerWakeCsv());
+        QualificationEvidencePublication.text(measurementArtifact,
+                pacedEvidence.measurementBoundaryText());
+        GaQuickInvocation.write(invocationArtifact, pacedEvidence.invocationFields());
         final Map<String, Path> artifacts = new LinkedHashMap<>();
         artifacts.put(configArtifact.getFileName().toString(), configArtifact);
         artifacts.put(transcriptArtifact.getFileName().toString(), transcriptArtifact);
@@ -283,10 +315,14 @@ public final class GaSoakRunner {
         artifacts.put(managementArtifact.getFileName().toString(), managementArtifact);
         artifacts.put(terminalArtifact.getFileName().toString(), terminalArtifact);
         artifacts.put(pacingArtifact.getFileName().toString(), pacingArtifact);
+        artifacts.put(capacityArtifact.getFileName().toString(), capacityArtifact);
+        artifacts.put(readerWakeArtifact.getFileName().toString(), readerWakeArtifact);
+        artifacts.put(measurementArtifact.getFileName().toString(), measurementArtifact);
+        artifacts.put(invocationArtifact.getFileName().toString(), invocationArtifact);
         putIfRegular(artifacts, jfrPath);
         final GaSoakEvidencePublisher.PublishedQuick publication = GaSoakEvidencePublisher
                 .publishQuick(root, matrix, g6Observation, g8Observation, g6, g8, context,
-                        started, completed, artifacts);
+                        started, completed, artifacts, pacedEvidence);
         return new GaSoakQuickResult(g6Observation, g8, g6, publication);
     }
 
@@ -332,9 +368,15 @@ public final class GaSoakRunner {
         long responses = 0L;
         long measurementStartNanos = -1L;
         long measurementStopNanos = -1L;
+        int maximumObservedInFlight = 0;
+        int maximumObservedCompleted = 0;
+        long readerWakeCount = 0L;
+        List<Long> readerWakeNanos = List.of();
+        long capacityReleaseCount = 0L;
         int childExitCode = 1;
         boolean workloadFailure = false;
         PacingSchedule pacing = null;
+        final PacedAccumulator accumulator = new PacedAccumulator(latency, transcript);
         try (ReleaseCandidateQualificationProcess child =
                 ReleaseCandidateQualificationProcess.start(
                         qualificationArtifact, configArtifact, evidenceRoot,
@@ -348,7 +390,6 @@ public final class GaSoakRunner {
                     managementPort, "STATUS", COMMAND_TIMEOUT));
             management.add(ReleaseCandidateManagementClient.requestEvidence(
                     managementPort, "METRICS", COMMAND_TIMEOUT));
-            final PacedAccumulator accumulator = new PacedAccumulator(latency, transcript);
             try (ProtocolV2PacedQualificationClient client = new ProtocolV2PacedQualificationClient(
                     new java.net.InetSocketAddress(InetAddress.getLoopbackAddress(),
                             child.protocolPort()), COMMAND_TIMEOUT, pacedMaxInFlight)) {
@@ -403,6 +444,11 @@ public final class GaSoakRunner {
                 accumulator.accept(client.drainCompleted());
                 accepted = accumulator.accepted;
                 responses = accumulator.responses;
+                maximumObservedInFlight = client.maximumObservedInFlight();
+                maximumObservedCompleted = client.maximumObservedCompleted();
+                readerWakeCount = client.readerWakeCount();
+                readerWakeNanos = client.readerWakeNanos();
+                capacityReleaseCount = client.capacityReleaseCount();
                 // Keep the public session open until the child has entered its shutdown boundary;
                 // otherwise the candidate records a DISCONNECT terminal failure before the
                 // parent can request orderly shutdown.
@@ -459,6 +505,20 @@ public final class GaSoakRunner {
         final Path managementArtifact = root.resolve("management-evidence-v1.csv");
         final Path terminalArtifact = root.resolve("terminal-evidence-v1.txt");
         final Path pacingArtifact = root.resolve("pacing-evidence-v1.csv");
+        final Path capacityArtifact = root.resolve("capacity-evidence-v1.csv");
+        final Path readerWakeArtifact = root.resolve("reader-wake-evidence-v1.csv");
+        final Path measurementArtifact = root.resolve("measurement-boundary-v1.txt");
+        final Path invocationArtifact = root.resolve("invocation-v1.properties");
+        final long evidenceStart = measurementStartNanos >= 0L ? measurementStartNanos : 0L;
+        final long evidenceEnd = Math.max(evidenceStart,
+                measurementStopNanos >= evidenceStart ? measurementStopNanos : evidenceStart);
+        final String qualificationJarSha256 = QualificationArtifactHasher.sha256(qualificationArtifact);
+        final GaPacedRuntimeEvidence pacedEvidence = new GaPacedRuntimeEvidence(
+                pacedMaxInFlight, maximumObservedInFlight, maximumObservedInFlight,
+                maximumObservedCompleted, readerWakeCount, readerWakeNanos, capacityReleaseCount,
+                accumulator.capacityReleases(), evidenceStart, evidenceEnd,
+                qualificationJarSha256,
+                invocationFields(matrix, context, qualificationJarSha256, configuration));
         QualificationEvidencePublication.text(transcriptArtifact, transcript.toString());
         QualificationEvidencePublication.text(resourceArtifact, resourceText(resources));
         QualificationEvidencePublication.text(managementArtifact, managementText(management));
@@ -466,6 +526,11 @@ public final class GaSoakRunner {
                 terminalText(g6, g8, accepted, responses, gracefulShutdown));
         QualificationEvidencePublication.text(pacingArtifact,
                 pacing == null ? "" : pacing.evidenceCsv());
+        QualificationEvidencePublication.text(capacityArtifact, pacedEvidence.capacityCsv());
+        QualificationEvidencePublication.text(readerWakeArtifact, pacedEvidence.readerWakeCsv());
+        QualificationEvidencePublication.text(measurementArtifact,
+                pacedEvidence.measurementBoundaryText());
+        GaQuickInvocation.write(invocationArtifact, pacedEvidence.invocationFields());
         final Map<String, Path> artifacts = new LinkedHashMap<>();
         artifacts.put(configArtifact.getFileName().toString(), configArtifact);
         artifacts.put(transcriptArtifact.getFileName().toString(), transcriptArtifact);
@@ -473,12 +538,16 @@ public final class GaSoakRunner {
         artifacts.put(managementArtifact.getFileName().toString(), managementArtifact);
         artifacts.put(terminalArtifact.getFileName().toString(), terminalArtifact);
         artifacts.put(pacingArtifact.getFileName().toString(), pacingArtifact);
+        artifacts.put(capacityArtifact.getFileName().toString(), capacityArtifact);
+        artifacts.put(readerWakeArtifact.getFileName().toString(), readerWakeArtifact);
+        artifacts.put(measurementArtifact.getFileName().toString(), measurementArtifact);
+        artifacts.put(invocationArtifact.getFileName().toString(), invocationArtifact);
         putIfRegular(artifacts, jfrPath);
         putIfRegular(artifacts, naturalGcArtifact);
         putIfRegular(artifacts, evidenceRoot.resolve("resource-evidence.csv"));
         final GaSoakEvidencePublisher.PublishedQuick publication = GaSoakEvidencePublisher
                 .publishQuick(root, matrix, g6Observation, g8Observation, g6, g8, context,
-                        started, completed, artifacts);
+                        started, completed, artifacts, pacedEvidence);
         return new GaSoakQuickResult(g6Observation, g8, g6, publication);
     }
 
@@ -499,6 +568,7 @@ public final class GaSoakRunner {
         private final StringBuilder transcript;
         private long accepted;
         private long responses;
+        private final List<GaPacedRuntimeEvidence.CapacityRelease> capacityReleases = new ArrayList<>();
 
         private PacedAccumulator(final List<Long> latency, final StringBuilder transcript) {
             this.latency = latency;
@@ -506,13 +576,21 @@ public final class GaSoakRunner {
         }
 
         private void accept(final List<ProtocolV2PacedQualificationClient.CompletedExchange> values) {
+            final long schedulerConsumedNanos = System.nanoTime();
             for (final ProtocolV2PacedQualificationClient.CompletedExchange value : values) {
                 latency.add(value.latencyNanos());
                 accepted++;
                 responses += value.exchange().responseFrameCount();
                 transcript.append(value.requestId()).append(',')
                         .append(value.exchange().transcriptDigestHex()).append('\n');
+                capacityReleases.add(new GaPacedRuntimeEvidence.CapacityRelease(
+                        value.requestId(), value.exchange().commandSequence(), value.offeredNanos(),
+                        value.completedNanos(), value.capacityReleaseNanos(), schedulerConsumedNanos));
             }
+        }
+
+        private List<GaPacedRuntimeEvidence.CapacityRelease> capacityReleases() {
+            return List.copyOf(capacityReleases);
         }
     }
 
@@ -748,6 +826,86 @@ public final class GaSoakRunner {
                 16,
                 Duration.ofSeconds(1),
                 Duration.ofSeconds(2));
+    }
+
+    /** Builds the stable, run-independent material invocation fields for a packaged Quick. */
+    private Map<String, String> invocationFields(
+            final GaSoakMatrix matrix,
+            final GaCorrectnessCanonicalContext context,
+            final String qualificationJarSha256,
+            final RuntimeConfiguration configuration) {
+        final Map<String, String> values = new java.util.TreeMap<>();
+        final String javaExecutable = ProcessHandle.current().info().command().orElse(
+                Path.of(System.getProperty("java.home", "UNAVAILABLE"), "bin", "java")
+                        .toAbsolutePath().normalize().toString());
+        final MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
+        final String collectors = ManagementFactory.getGarbageCollectorMXBeans().stream()
+                .map(GarbageCollectorMXBean::getName).sorted().collect(Collectors.joining(","));
+        final String vmArguments = stableVmArguments();
+        values.put("invocation.schema", GaQuickInvocation.VERSION);
+        values.put("controller.gitSha", context.controllerGitSha());
+        values.put("candidate.applicationJarSha256", context.candidate().applicationJarSha256());
+        values.put("candidate.productionSha", context.candidate().productionSha());
+        values.put("candidate.productionTreeSha256", context.candidate().productionTreeSha256());
+        values.put("qualification.jarSha256", qualificationJarSha256);
+        values.put("qualification.entrypoint", "ReleaseCandidateQualificationMain:ga-soak-quick");
+        values.put("qualification.client", "ProtocolV2PacedQualificationClient");
+        values.put("qualification.scheduler", "absolute-deadline-hybrid");
+        values.put("qualification.precisionWindowNanos",
+                Long.toString(SYSTEM_PACING_WAITER.precisionWindowNanos()));
+        values.put("qualification.configurationIdentitySha256",
+                matrix.configurationIdentitySha256(pacedMaxInFlight));
+        values.put("protocol.version", "v2");
+        values.put("protocol.singleSession", "true");
+        values.put("protocol.singleProducer", "true");
+        values.put("protocolV2.window", Integer.toString(pacedMaxInFlight));
+        values.put("quick.version", matrix.version());
+        values.put("quick.profile", matrix.profile());
+        values.put("quick.seed", Long.toString(matrix.seed()));
+        values.put("quick.duration", matrix.duration().toString());
+        values.put("quick.offeredRatePerSecond", Integer.toString(matrix.offeredRatePerSecond()));
+        values.put("quick.nominalOfferOpportunities", Long.toString(
+                Math.multiplyExact(matrix.duration().getSeconds(),
+                        (long) matrix.offeredRatePerSecond())));
+        values.put("quick.acceptedFloor", Long.toString(matrix.acceptedFloor()));
+        values.put("quick.sampleRateHz", Integer.toString(matrix.sampleRateHz()));
+        values.put("runtime.javaExecutable", javaExecutable);
+        values.put("runtime.javaRuntimeVersion", System.getProperty("java.runtime.version", "UNAVAILABLE"));
+        values.put("runtime.javaVmName", System.getProperty("java.vm.name", "UNAVAILABLE"));
+        values.put("runtime.javaVmVersion", System.getProperty("java.vm.version", "UNAVAILABLE"));
+        values.put("runtime.javaVmArguments", vmArguments.isBlank() ? "<none>" : vmArguments);
+        values.put("runtime.gcCollectors", collectors.isBlank() ? "UNAVAILABLE" : collectors);
+        values.put("runtime.heapMaxBytes", Long.toString(memory.getHeapMemoryUsage().getMax()));
+        values.put("runtime.osName", System.getProperty("os.name", "UNAVAILABLE"));
+        values.put("runtime.osVersion", System.getProperty("os.version", "UNAVAILABLE"));
+        values.put("runtime.osArch", System.getProperty("os.arch", "UNAVAILABLE"));
+        values.put("runtime.logicalProcessors",
+                Integer.toString(Runtime.getRuntime().availableProcessors()));
+        values.put("runtime.walMode", configuration.walDurabilityMode().name());
+        values.put("runtime.recoveryMode", configuration.recoveryMode().name());
+        values.put("runtime.walSegmentSizeBytes", Integer.toString(configuration.walSegmentSizeBytes()));
+        values.put("runtime.pipelineCapacity", Integer.toString(configuration.pipelineCapacity()));
+        values.put("runtime.pipelineWaitMode", configuration.pipelineWaitMode().name());
+        values.put("runtime.protocolWriteLowWaterMark",
+                Integer.toString(configuration.protocolWriteLowWaterMark()));
+        values.put("runtime.protocolWriteHighWaterMark",
+                Integer.toString(configuration.protocolWriteHighWaterMark()));
+        values.put("runtime.managementEnabled", Boolean.toString(configuration.managementEnabled()));
+        values.put("runtime.managementMaxConnections",
+                Integer.toString(configuration.managementMaxConnections()));
+        values.put("runtime.managementRequestTimeout", configuration.managementRequestTimeout().toString());
+        values.put("runtime.shutdownTimeout", configuration.shutdownTimeout().toString());
+        values.put("runtime.portPolicy", "ephemeral-loopback");
+        values.put("runtime.pathPolicy", "run-local-evidence-root");
+        return Map.copyOf(values);
+    }
+
+    /** Returns JVM arguments with the separately-bound per-run window removed. */
+    private static String stableVmArguments() {
+        final String value = ManagementFactory.getRuntimeMXBean().getInputArguments().stream()
+                .filter(argument -> !argument.startsWith("-Dqualification.paced.maxInFlight="))
+                .collect(Collectors.joining(" "));
+        return value.isBlank() ? "<none>" : value;
     }
 
     private static boolean shutdown(final ReleaseCandidateRuntime runtime) {
