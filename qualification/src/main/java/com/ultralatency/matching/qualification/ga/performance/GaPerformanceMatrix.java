@@ -14,8 +14,8 @@ public record GaPerformanceMatrix(
         int lifecycleSamples,
         int quickCommandCount) {
 
-    /** Frozen G4 matrix identity from ADR-0019 D11. */
-    public static final String APPROVED_VERSION = "ga-g4-performance-v1";
+    /** Frozen RC2 G4 matrix identity. */
+    public static final String APPROVED_VERSION = "ga-g4-performance-v2";
     /** Profile used by every formal G4 run. */
     public static final String APPROVED_PROFILE = "MEMORY_STEADY_STATE_V1";
     /** Frozen G4 workload seed. */
@@ -24,6 +24,17 @@ public record GaPerformanceMatrix(
     public static final int APPROVED_RUN_COUNT = 3;
     /** Duration of each formal SLO run. */
     public static final Duration APPROVED_RUN_DURATION = Duration.ofMinutes(10);
+    /** Warmup duration excluded from every formal performance sample population. */
+    public static final Duration APPROVED_WARMUP_DURATION = Duration.ofSeconds(60);
+    /** Public protocol used by the frozen RC2 performance contract. */
+    public static final String APPROVED_PROTOCOL = "v2";
+    /** Bounded public protocol window used by the frozen RC2 performance contract. */
+    public static final int APPROVED_PROTOCOL_V2_WINDOW = 8;
+    /** Durability mode used by the frozen RC2 performance contract. */
+    public static final String APPROVED_WAL_MODE = "SYNC_EACH_APPEND";
+    /** Formal load model: refill one request whenever a validated response releases capacity. */
+    public static final String APPROVED_LOAD_MODEL =
+            "BOUNDED_CLOSED_LOOP_CONTINUOUS_REFILL";
     /** Total lifecycle samples required by the formal matrix. */
     public static final int APPROVED_LIFECYCLE_SAMPLES = 60;
     /** Short public-path workload used only by the Quick readiness lane. */
@@ -86,6 +97,11 @@ public record GaPerformanceMatrix(
                 && runCount == APPROVED_RUN_COUNT
                 && APPROVED_RUN_DURATION.equals(runDuration)
                 && lifecycleSamples == APPROVED_LIFECYCLE_SAMPLES;
+    }
+
+    /** Returns the warmup interval excluded from formal measurements. */
+    public Duration warmupDuration() {
+        return APPROVED_WARMUP_DURATION;
     }
 
     /** Returns the immutable list of formal SLO thresholds in nanoseconds. */

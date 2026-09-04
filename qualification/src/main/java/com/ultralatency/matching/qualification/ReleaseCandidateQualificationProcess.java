@@ -67,6 +67,39 @@ public final class ReleaseCandidateQualificationProcess implements AutoCloseable
                 command(packagedArtifact, configuration, evidenceDirectory, allocationSampling))
                 .redirectErrorStream(true)
                 .start();
+        return awaitReady(process, timeout);
+    }
+
+    /**
+     * Starts the immutable production candidate with the qualification wrapper as a separate
+     * entry point.  The candidate JAR is deliberately first on the class path, so production
+     * classes are loaded from the exact candidate artifact while the qualification JAR supplies
+     * only the private child/control wrapper.  This is the packaged public-path boundary used by
+     * formal RC2 campaigns; the existing {@link #start(Path, Path, Path, Duration, boolean)}
+     * method remains unchanged for historical qualification callers.
+     */
+    public static ReleaseCandidateQualificationProcess startPackagedCandidate(
+            final Path candidateArtifact,
+            final Path qualificationArtifact,
+            final Path configuration,
+            final Path evidenceDirectory,
+            final Duration startupTimeout,
+            final boolean allocationSampling) throws IOException {
+        requireJar(candidateArtifact, "candidateArtifact");
+        requireJar(qualificationArtifact, "qualificationArtifact");
+        Objects.requireNonNull(configuration, "configuration");
+        final Duration timeout = requireTimeout(startupTimeout, "startupTimeout");
+        final Process process = new ProcessBuilder(
+                candidateFirstCommand(candidateArtifact, qualificationArtifact,
+                        configuration, evidenceDirectory, allocationSampling))
+                .redirectErrorStream(true)
+                .start();
+        return awaitReady(process, timeout);
+    }
+
+    private static ReleaseCandidateQualificationProcess awaitReady(
+            final Process process,
+            final Duration timeout) throws IOException {
         final BufferedReader output = new BufferedReader(
                 new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
         final ExecutorService readerExecutor = Executors.newSingleThreadExecutor(runnable -> {
@@ -196,6 +229,46 @@ public final class ReleaseCandidateQualificationProcess implements AutoCloseable
         addEvidenceArgument(command, evidenceDirectory);
         addAllocationArgument(command, allocationSampling);
         return command.toArray(String[]::new);
+    }
+
+    private static String[] candidateFirstCommand(
+            final Path candidateArtifact,
+            final Path qualificationArtifact,
+            final Path configuration,
+            final Path evidenceDirectory,
+            final boolean allocationSampling) {
+        final String javaExecutable = javaExecutable();
+        final String classPath = candidateArtifact.toAbsolutePath().normalize()
+                + java.io.File.pathSeparator
+                + qualificationArtifact.toAbsolutePath().normalize();
+        final java.util.List<String> command = new java.util.ArrayList<>(java.util.List.of(
+                javaExecutable,
+                "-cp",
+                classPath,
+                ReleaseCandidateQualificationMain.class.getName(),
+                "child",
+                "--config",
+                configuration.toAbsolutePath().normalize().toString()));
+        addEvidenceArgument(command, evidenceDirectory);
+        addAllocationArgument(command, allocationSampling);
+        return command.toArray(String[]::new);
+    }
+
+    private static String javaExecutable() {
+        return Path.of(
+                System.getProperty("java.home"),
+                "bin",
+                System.getProperty("os.name", "").toLowerCase().contains("win")
+                        ? "java.exe" : "java").toString();
+    }
+
+    private static void requireJar(final Path artifact, final String name) throws IOException {
+        Objects.requireNonNull(artifact, name);
+        final Path normalized = artifact.toAbsolutePath().normalize();
+        if (!java.nio.file.Files.isRegularFile(normalized)
+                || !normalized.getFileName().toString().endsWith(".jar")) {
+            throw new IOException(name + " must be a packaged JAR: " + normalized);
+        }
     }
 
     private static void addEvidenceArgument(

@@ -17,6 +17,8 @@ import com.ultralatency.matching.qualification.ga.durability.GaOverloadRunner;
 import com.ultralatency.matching.qualification.ga.capacity.GaCapacityQuickResult;
 import com.ultralatency.matching.qualification.ga.capacity.GaCapacityRunner;
 import com.ultralatency.matching.qualification.ga.performance.GaPerformanceQuickResult;
+import com.ultralatency.matching.qualification.ga.performance.GaPerformanceFormalResult;
+import com.ultralatency.matching.qualification.ga.performance.GaFormalPerformanceContract;
 import com.ultralatency.matching.qualification.ga.performance.GaPerformanceRunner;
 import com.ultralatency.matching.qualification.ga.soak.GaSoakQuickResult;
 import com.ultralatency.matching.qualification.ga.soak.GaSoakRunner;
@@ -123,6 +125,21 @@ public final class ReleaseCandidateQualificationMain {
             runGaPerformanceQuick(Path.of(arguments[4]));
             return;
         }
+        if (arguments != null && arguments.length == 5 && "ga-performance".equals(arguments[0])
+                && "--lane".equals(arguments[1]) && "full".equals(arguments[2])
+                && "--campaign".equals(arguments[3])
+                && GaFormalPerformanceContract.CAMPAIGN.equals(arguments[4])) {
+            runGaPerformanceFormal(candidateArtifact(), Path.of("qualification-results"));
+            return;
+        }
+        if (arguments != null && arguments.length == 7 && "ga-performance".equals(arguments[0])
+                && "--lane".equals(arguments[1]) && "full".equals(arguments[2])
+                && "--campaign".equals(arguments[3])
+                && GaFormalPerformanceContract.CAMPAIGN.equals(arguments[4])
+                && "--output".equals(arguments[5])) {
+            runGaPerformanceFormal(candidateArtifact(), Path.of(arguments[6]));
+            return;
+        }
         if (arguments != null && arguments.length == 3 && "ga-capacity".equals(arguments[0])
                 && "--lane".equals(arguments[1]) && "quick".equals(arguments[2])) {
             runGaCapacityQuick(Path.of("qualification-results"));
@@ -171,6 +188,8 @@ public final class ReleaseCandidateQualificationMain {
             System.err.println("       ga-overload --matrix <ga-g7-overload-v1|ga-g7-overload-test-v1>"
                     + " [--output <dir>]");
             System.err.println("       ga-performance --lane quick [--output <dir>]");
+            System.err.println("       ga-performance --lane full --campaign "
+                    + GaFormalPerformanceContract.CAMPAIGN + " [--output <dir>]");
             System.err.println("       ga-capacity --lane quick [--output <dir>]");
             System.err.println("       ga-soak --lane quick [--output <dir>]");
             System.err.println("       matrix-summary --output <file> <run-root>...");
@@ -417,6 +436,24 @@ public final class ReleaseCandidateQualificationMain {
         }
     }
 
+    private static void runGaPerformanceFormal(
+            final Path artifact, final Path outputDirectory) {
+        try {
+            final GaPerformanceFormalResult result = new GaPerformanceRunner().runFormal(
+                    artifact, outputDirectory);
+            System.out.println("GA_PERFORMANCE FORMAL "
+                    + (result.passed() ? "PASS" : "FAIL") + " "
+                    + result.campaignManifestPath() + " " + result.gateResultPath());
+            if (!result.passed()) {
+                System.exit(1);
+            }
+        } catch (final Exception failure) {
+            System.err.println("GA_PERFORMANCE_FORMAL_FAILURE "
+                    + failure.getClass().getName() + " " + String.valueOf(failure.getMessage()));
+            System.exit(1);
+        }
+    }
+
     private static void runGaCapacityQuick(final Path outputDirectory) {
         try {
             final GaCapacityQuickResult result = new GaCapacityRunner().runQuick(outputDirectory);
@@ -517,5 +554,12 @@ public final class ReleaseCandidateQualificationMain {
             throw new IllegalStateException("lifecycle must run from the packaged qualification jar");
         }
         return artifact;
+    }
+
+    private static Path candidateArtifact() {
+        final Path repository = Path.of(System.getProperty(
+                "qualification.repository", System.getProperty("user.dir")));
+        return repository.resolve("core/target/matching-engine-rc.jar")
+                .toAbsolutePath().normalize();
     }
 }

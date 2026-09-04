@@ -186,6 +186,24 @@ public final class GaPerformanceRunner {
                 run.manifestPath(), gate);
     }
 
+    /**
+     * Runs the frozen RC2 formal G4 campaign through the packaged Protocol v2 public path.
+     *
+     * <p>This entry point is intentionally separate from {@link #runQuick(Path)}.  A formal
+     * invocation therefore cannot silently fall back to the historical Quick/v1 runner.</p>
+     *
+     * @param packagedArtifact immutable packaged RC2 application JAR
+     * @param outputDirectory destination for immutable formal evidence
+     * @return the formal campaign result
+     * @throws IOException if identity, process or evidence publication fails
+     */
+    public GaPerformanceFormalResult runFormal(
+            final Path packagedArtifact,
+            final Path outputDirectory) throws IOException {
+        return new GaFormalPerformanceRunner(configuredContext).run(
+                packagedArtifact, outputDirectory);
+    }
+
     private GaCorrectnessCanonicalContext context() throws IOException {
         return configuredContext == null
                 ? GaCorrectnessCanonicalContext.fromSystem() : configuredContext;

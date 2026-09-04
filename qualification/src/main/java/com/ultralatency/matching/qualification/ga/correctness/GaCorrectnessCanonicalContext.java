@@ -151,22 +151,8 @@ public record GaCorrectnessCanonicalContext(
         if (configured != null) {
             requireSha256(configured, "qualification.jarSha256");
         }
-        final java.net.URL location = GaCorrectnessCanonicalContext.class
-                .getProtectionDomain().getCodeSource() == null
-                ? null
-                : GaCorrectnessCanonicalContext.class.getProtectionDomain().getCodeSource()
-                        .getLocation();
-        if (location == null) {
-            return configured;
-        }
-        final Path artifact;
-        try {
-            artifact = Path.of(location.toURI()).toAbsolutePath().normalize();
-        } catch (final java.net.URISyntaxException exception) {
-            throw new IOException("cannot resolve qualification code source", exception);
-        }
-        if (!java.nio.file.Files.isRegularFile(artifact)
-                || !artifact.getFileName().toString().endsWith(".jar")) {
+        final Path artifact = codeSourceJar();
+        if (artifact == null) {
             return configured;
         }
         final String actual = QualificationArtifactHasher.sha256(artifact);
@@ -174,6 +160,60 @@ public record GaCorrectnessCanonicalContext(
             throw new IOException("qualification JAR SHA-256 does not match configured identity");
         }
         return actual;
+    }
+
+    /**
+     * Returns the packaged qualification JAR which supplied this context.  Formal child
+     * processes use this path as the second, wrapper-only class-path entry after the candidate
+     * JAR.  Exploded classes are rejected instead of silently constructing an in-process path.
+     */
+    public Path qualificationJarPath() throws IOException {
+        final Path artifact = codeSourceJar();
+        if (artifact == null) {
+            final String configured = System.getProperty("qualification.jar");
+            if (configured == null || configured.isBlank()) {
+                throw new IOException("formal qualification requires a packaged qualification JAR");
+            }
+            final Path configuredPath = Path.of(configured).toAbsolutePath().normalize();
+            if (!java.nio.file.Files.isRegularFile(configuredPath)
+                    || !configuredPath.getFileName().toString().endsWith(".jar")) {
+                throw new IOException("configured qualification.jar is not a packaged JAR");
+            }
+            verifyQualificationJarDigest(configuredPath);
+            return configuredPath;
+        }
+        verifyQualificationJarDigest(artifact);
+        return artifact;
+    }
+
+    private void verifyQualificationJarDigest(final Path artifact) throws IOException {
+        final String configured = System.getProperty("qualification.jarSha256");
+        if (configured != null) {
+            requireSha256(configured, "qualification.jarSha256");
+        }
+        final String actual = QualificationArtifactHasher.sha256(artifact);
+        if (configured != null && !configured.equals(actual)) {
+            throw new IOException("qualification JAR SHA-256 does not match configured identity");
+        }
+    }
+
+    private static Path codeSourceJar() throws IOException {
+        final java.net.URL location = GaCorrectnessCanonicalContext.class
+                .getProtectionDomain().getCodeSource() == null
+                ? null
+                : GaCorrectnessCanonicalContext.class.getProtectionDomain().getCodeSource()
+                        .getLocation();
+        if (location == null) {
+            return null;
+        }
+        final Path artifact;
+        try {
+            artifact = Path.of(location.toURI()).toAbsolutePath().normalize();
+        } catch (final java.net.URISyntaxException exception) {
+            throw new IOException("cannot resolve qualification code source", exception);
+        }
+        return java.nio.file.Files.isRegularFile(artifact)
+                && artifact.getFileName().toString().endsWith(".jar") ? artifact : null;
     }
 
     private static String gitHead(final Path repository) throws IOException {
