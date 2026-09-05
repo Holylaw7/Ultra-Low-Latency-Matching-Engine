@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.UUID;
 
 /** Read-only integrity checks for the raw artifacts of a formal G4 run. */
 public final class GaFormalPerformanceEvidenceVerifier {
@@ -65,9 +66,13 @@ public final class GaFormalPerformanceEvidenceVerifier {
             if (!campaignGateBindsRequiredManifests(root, fields, gateFields)) {
                 findings.add("campaign gate does not bind canonical campaign/run manifests");
             }
-            verifyCampaignEvidence(root, fields, gateFields, findings);
+            final Map<String, String> campaignEvidence = verifyCampaignEvidence(
+                    root, fields, gateFields, findings);
+            verifyFormalCampaignSemantics(fields, campaignEvidence, gateFields, findings);
+            verifyCampaignGateInventory(root, gateFields, findings);
             final int runCount = Math.toIntExact(longValue(fields, "run.count"));
             final List<Map<String, String>> runManifests = new ArrayList<>();
+            final Set<String> physicalExecutions = new HashSet<>();
             for (int index = 1; index <= runCount; index++) {
                 final String prefix = String.format("run.%04d.", index);
                 final Path runManifest = resolvePayload(root, fields.get(prefix + "manifestPath"));
@@ -76,8 +81,13 @@ public final class GaFormalPerformanceEvidenceVerifier {
                     findings.add("campaign run manifest hash mismatch: " + runManifest);
                 }
                 try {
-                    runManifests.add(GaEvidenceStore.read(
-                            runManifest, GaEvidenceCodec.Schema.RUN));
+                    final Map<String, String> runFields = GaEvidenceStore.read(
+                            runManifest, GaEvidenceCodec.Schema.RUN);
+                    runManifests.add(runFields);
+                    verifyCampaignRunBinding(fields, campaignEvidence, runFields, index,
+                            root.relativize(runManifest).toString().replace('\\', '/'),
+                            QualificationArtifactHasher.sha256(runManifest),
+                            physicalExecutions, findings);
                 } catch (IOException | RuntimeException failure) {
                     findings.add("campaign run manifest is not readable: " + runManifest);
                 }
@@ -94,8 +104,10 @@ public final class GaFormalPerformanceEvidenceVerifier {
                     findings.add("PASS campaign does not contain the complete run set");
                 }
                 verifyPerformanceComparability(runManifests, fields, findings);
-                verifyLifecycleDirectory(root.resolve("lifecycle"), fields, findings);
-                verifyManagementDirectory(root.resolve("management"), fields, findings);
+                verifyLifecycleDirectory(root.resolve("lifecycle"), fields, campaignEvidence,
+                        findings);
+                verifyManagementDirectory(root.resolve("management"), fields, campaignEvidence,
+                        findings);
             }
         } catch (final IOException | RuntimeException failure) {
             findings.add("campaign reconstruction failed: " + failure.getMessage());
@@ -104,7 +116,7 @@ public final class GaFormalPerformanceEvidenceVerifier {
                 : classifyFindings(findings), findings);
     }
 
-    private static void verifyCampaignEvidence(
+    private static Map<String, String> verifyCampaignEvidence(
             final Path root,
             final Map<String, String> fields,
             final Map<String, String> gate,
@@ -112,7 +124,7 @@ public final class GaFormalPerformanceEvidenceVerifier {
         final Path evidence = root.resolve("campaign-evidence-v2.txt");
         if (!Files.isRegularFile(evidence)) {
             findings.add("missing campaign evidence payload");
-            return;
+            return Map.of();
         }
         if (!isGatePayloadBound(root, gate, evidence)) {
             findings.add("campaign evidence hash or size mismatch");
@@ -122,7 +134,7 @@ public final class GaFormalPerformanceEvidenceVerifier {
         final Map<String, String> campaignEvidence = readKeyValue(evidence);
         verifyCampaignIdentity(fields, campaignEvidence, findings);
         if (!"PASS".equals(fields.get("campaign.outcome"))) {
-            return;
+            return campaignEvidence;
         }
         final Path lifecycle = root.resolve("lifecycle").resolve("SHA256SUMS");
         final Path management = root.resolve("management").resolve("SHA256SUMS");
@@ -136,6 +148,215 @@ public final class GaFormalPerformanceEvidenceVerifier {
         verifyDirectoryInventory(management, findings);
         verifyDirectoryIdentity(lifecycle, campaignEvidence, findings);
         verifyDirectoryIdentity(management, campaignEvidence, findings);
+        return campaignEvidence;
+    }
+
+    private static void verifyFormalCampaignSemantics(
+            final Map<String, String> campaign,
+            final Map<String, String> evidence,
+            final Map<String, String> gate,
+            final List<String> findings) {
+        if (!"PASS".equals(campaign.get("campaign.outcome"))) {
+            return;
+        }
+        requireExact(campaign, "gate.id", "G4", findings, "formal campaign gate");
+        requireExact(campaign, "gate.version", GaFormalPerformanceContract.CAMPAIGN,
+                findings, "formal campaign gate version");
+        requireExact(campaign, "run.count", Integer.toString(GaFormalPerformanceContract.RUN_COUNT),
+                findings, "formal campaign run count");
+        requireExact(campaign, "campaign.requiredRunCount",
+                Integer.toString(GaFormalPerformanceContract.RUN_COUNT), findings,
+                "formal campaign required run count");
+        requireExact(campaign, "campaign.validRunCount",
+                Integer.toString(GaFormalPerformanceContract.RUN_COUNT), findings,
+                "formal campaign valid run count");
+        requireExact(evidence, "schema", "ga-g4-performance-campaign-v2", findings,
+                "formal campaign schema");
+        requireExact(evidence, "formal", "true", findings, "formal campaign lane");
+        requireExact(evidence, "lane", "FORMAL_G4", findings, "formal campaign lane");
+        requireExact(evidence, "matrix.version", GaPerformanceMatrix.APPROVED_VERSION,
+                findings, "formal campaign matrix");
+        requireExact(evidence, "gate.id", "G4", findings, "formal campaign gate");
+        requireExact(evidence, "gate.version", GaFormalPerformanceContract.CAMPAIGN,
+                findings, "formal campaign gate version");
+        requireExact(evidence, "campaign.gate", "G4", findings, "formal campaign owner");
+        requireExact(evidence, "protocol", GaPerformanceMatrix.APPROVED_PROTOCOL,
+                findings, "formal campaign protocol");
+        requireExact(evidence, "protocolV2.window", Integer.toString(
+                GaPerformanceMatrix.APPROVED_PROTOCOL_V2_WINDOW), findings,
+                "formal campaign protocol window");
+        requireExact(evidence, "walMode", GaPerformanceMatrix.APPROVED_WAL_MODE,
+                findings, "formal campaign WAL");
+        requireExact(evidence, "loadModel", GaPerformanceMatrix.APPROVED_LOAD_MODEL,
+                findings, "formal campaign load model");
+        requireExact(evidence, "profile", GaPerformanceMatrix.APPROVED_PROFILE, findings,
+                "formal campaign profile");
+        requireExact(evidence, "seed", Long.toString(GaPerformanceMatrix.APPROVED_SEED),
+                findings, "formal campaign seed");
+        requireExact(evidence, "warmup.duration.nanos", Long.toString(
+                GaFormalPerformanceContract.WARMUP.toNanos()), findings,
+                "formal campaign warmup");
+        requireExact(evidence, "measurement.duration.nanos", Long.toString(
+                GaFormalPerformanceContract.MEASUREMENT.toNanos()), findings,
+                "formal campaign measurement");
+        requireExact(evidence, "lifecycle.cycles", Integer.toString(
+                GaFormalPerformanceContract.LIFECYCLE_CYCLES), findings,
+                "formal lifecycle semantics");
+        requireExact(evidence, "management.warmup.duration.nanos", Long.toString(
+                GaFormalPerformanceContract.MANAGEMENT_WARMUP.toNanos()), findings,
+                "formal management warmup");
+        requireExact(evidence, "management.measurement.duration.nanos", Long.toString(
+                GaFormalPerformanceContract.MANAGEMENT_MEASUREMENT.toNanos()), findings,
+                "formal management measurement");
+        requireExact(evidence, "management.status.interval.nanos", Long.toString(
+                GaFormalPerformanceContract.MANAGEMENT_INTERVAL.toNanos()), findings,
+                "formal management interval");
+        requireExact(evidence, "management.status.requestCount", Integer.toString(
+                GaFormalPerformanceContract.MANAGEMENT_STATUS_REQUESTS), findings,
+                "formal management request count");
+        if (evidence.get("campaign.id") == null || evidence.get("campaign.id").isBlank()
+                || !Objects.equals(evidence.get("campaign.id"), campaign.get("campaign.id"))) {
+            findings.add("formal campaign identity is missing or mismatched");
+        }
+        if (!gate.isEmpty()) {
+            requireExact(gate, "gate.id", "G4", findings, "formal gate id");
+            requireExact(gate, "gate.version", GaFormalPerformanceContract.CAMPAIGN,
+                    findings, "formal gate version");
+            requireExact(gate, "campaign.id", campaign.get("campaign.id"), findings,
+                    "formal gate campaign owner");
+            requireExact(gate, "campaign.gate", "G4", findings, "formal gate campaign owner");
+        }
+    }
+
+    private static void requireExact(
+            final Map<String, String> fields,
+            final String key,
+            final String expected,
+            final List<String> findings,
+            final String description) {
+        if (expected == null || !Objects.equals(expected, fields.get(key))) {
+            findings.add(description + " mismatch: " + key);
+        }
+    }
+
+    private static void verifyCampaignRunBinding(
+            final Map<String, String> campaign,
+            final Map<String, String> evidence,
+            final Map<String, String> run,
+            final int index,
+            final String actualManifestPath,
+            final String actualManifestSha,
+            final Set<String> physicalExecutions,
+            final List<String> findings) {
+        final String prefix = String.format("run.%04d.", index);
+        final Map<String, String> expected = new LinkedHashMap<>();
+        expected.put("id", campaign.get(prefix + "id"));
+        expected.put("outcome", campaign.get(prefix + "outcome"));
+        expected.put("manifestPath", campaign.get(prefix + "manifestPath"));
+        expected.put("manifestSha256", campaign.get(prefix + "manifestSha256"));
+        expected.put("configurationIdentitySha256",
+                campaign.get(prefix + "configurationIdentitySha256"));
+        expected.put("comparabilityIdentitySha256",
+                campaign.get(prefix + "comparabilityIdentitySha256"));
+        expected.forEach((suffix, value) -> {
+            if (value == null || value.isBlank()) {
+                findings.add("campaign run binding is missing: " + prefix + suffix);
+            }
+            final String runKey = switch (suffix) {
+                case "id" -> "run.id";
+                case "outcome" -> "evidence.outcome";
+                case "manifestPath" -> null;
+                case "manifestSha256" -> null;
+                case "configurationIdentitySha256" -> "configuration.identitySha256";
+                case "comparabilityIdentitySha256" -> "comparability.identitySha256";
+                default -> null;
+            };
+            if (runKey != null && !Objects.equals(value, run.get(runKey))) {
+                findings.add("campaign run binding mismatch: " + prefix + suffix);
+            }
+        });
+        if (!Objects.equals(campaign.get(prefix + "manifestPath"), actualManifestPath)
+                || !Objects.equals(campaign.get(prefix + "manifestSha256"), actualManifestSha)) {
+            findings.add("campaign run manifest path/hash is not bound: " + index);
+        }
+        final String physical = campaign.get(prefix + "physicalExecutionId");
+        if (!physicalExecutionIdWellFormed(physical) || !physicalExecutions.add(physical)
+                || !Objects.equals(physical, run.get("physicalExecution.id"))) {
+            findings.add("campaign run physical execution ownership mismatch: " + index);
+        }
+        if (!Objects.equals(campaign.get("campaign.id"), run.get("campaign.id"))) {
+            findings.add("campaign run campaign identity mismatch: " + index);
+        }
+        final String evidencePrefix = prefix;
+        for (String suffix : List.of("id", "outcome", "manifestPath", "manifestSha256",
+                "physicalExecutionId", "configurationIdentitySha256",
+                "comparabilityIdentitySha256")) {
+            if (!Objects.equals(evidence.get(evidencePrefix + suffix),
+                    "physicalExecutionId".equals(suffix) ? physical
+                            : "configurationIdentitySha256".equals(suffix)
+                            ? campaign.get(prefix + "configurationIdentitySha256")
+                            : "comparabilityIdentitySha256".equals(suffix)
+                            ? campaign.get(prefix + "comparabilityIdentitySha256")
+                            : campaign.get(prefix + suffix))) {
+                findings.add("campaign evidence run binding mismatch: " + prefix + suffix);
+            }
+        }
+    }
+
+    private static void verifyCampaignGateInventory(
+            final Path root,
+            final Map<String, String> gate,
+            final List<String> findings) throws IOException {
+        if (gate.isEmpty()) {
+            return;
+        }
+        final int count = integerUnchecked(gate.get("manifest.count"));
+        final Map<String, String> entries = new TreeMap<>();
+        for (int index = 1; index <= count; index++) {
+            final String prefix = String.format("manifest.%04d.", index);
+            final String path = gate.get(prefix + "path");
+            final String sha = gate.get(prefix + "sha256");
+            if (path == null || sha == null || entries.put(path, sha) != null) {
+                findings.add("campaign gate manifest inventory has duplicate or missing path");
+                continue;
+            }
+            final Path payload = resolvePayload(root, path);
+            if (!Files.isRegularFile(payload)
+                    || !sha.equals(QualificationArtifactHasher.sha256(payload))) {
+                findings.add("campaign gate manifest hash mismatch: " + path);
+            }
+        }
+        try (var paths = Files.walk(root)) {
+            paths.filter(Files::isRegularFile).forEach(path -> {
+                final Path gatePath = root.resolve("g4-gate-result-v1.txt").normalize();
+                final Path gateSidecar = root.resolve("g4-gate-result-v1.txt.sha256").normalize();
+                if (path.equals(gatePath) || path.equals(gateSidecar)) {
+                    return;
+                }
+                final String relative = root.relativize(path).toString().replace('\\', '/');
+                final String actual = entries.get(relative);
+                try {
+                    if (actual == null || !actual.equals(QualificationArtifactHasher.sha256(path))) {
+                        findings.add("campaign gate inventory does not cover payload: " + relative);
+                    }
+                } catch (IOException failure) {
+                    findings.add("campaign gate inventory cannot hash payload: " + relative);
+                }
+            });
+        }
+    }
+
+    private static boolean physicalExecutionIdValid(
+            final String value,
+            final Set<String> seen) {
+        if (value == null || value.isBlank()) {
+            return false;
+        }
+        try {
+            return UUID.fromString(value).toString().equals(value) && seen.add(value);
+        } catch (IllegalArgumentException failure) {
+            return false;
+        }
     }
 
     private static boolean isGatePayloadBound(
@@ -178,6 +399,81 @@ public final class GaFormalPerformanceEvidenceVerifier {
             }
         }
         return runCount > 0;
+    }
+
+    /** Returns whether every regular campaign payload is covered by the authoritative gate. */
+    static boolean campaignGateInventoryComplete(
+            final Path root,
+            final Map<String, String> gate) {
+        final List<String> findings = new ArrayList<>();
+        try {
+            verifyCampaignGateInventory(root.toAbsolutePath().normalize(), gate, findings);
+        } catch (IOException | RuntimeException failure) {
+            return false;
+        }
+        return findings.isEmpty();
+    }
+
+    /** Returns whether one run's manifest, campaign index, and campaign evidence agree. */
+    static boolean campaignRunBindingComplete(
+            final Map<String, String> campaign,
+            final Map<String, String> evidence,
+            final Map<String, String> run,
+            final int index,
+            final String actualManifestPath,
+            final String actualManifestSha) {
+        final List<String> findings = new ArrayList<>();
+        verifyCampaignRunBinding(campaign, evidence, run, index, actualManifestPath,
+                actualManifestSha, new HashSet<>(), findings);
+        return findings.isEmpty();
+    }
+
+    /** Returns whether a PASS campaign carries the complete frozen formal contract. */
+    static boolean formalCampaignSemanticsComplete(
+            final Map<String, String> campaign,
+            final Map<String, String> evidence,
+            final Map<String, String> gate) {
+        final List<String> findings = new ArrayList<>();
+        verifyFormalCampaignSemantics(campaign, evidence, gate, findings);
+        return findings.isEmpty();
+    }
+
+    /** Returns whether raw latency/capacity rows are linked to authoritative request identities. */
+    static boolean requestCorrelationsComplete(
+            final Map<String, String> raw,
+            final Path latencySamples,
+            final Path capacityEvidence) {
+        final List<String> findings = new ArrayList<>();
+        try {
+            final List<LatencyRow> latency = readLatencySamples(latencySamples);
+            final Map<String, String> capacity = readKeyValue(capacityEvidence);
+            final int count = integer(capacity, "releaseSampleCount");
+            final List<CapacityRow> releaseRows = count > 0
+                    ? readCapacityRows(capacity) : List.of();
+            verifyRequestCorrelations(raw, latency, releaseRows, findings);
+        } catch (IOException | RuntimeException failure) {
+            return false;
+        }
+        return findings.isEmpty();
+    }
+
+    /** Returns whether required resource, JFR, and configuration payloads are owned and hashed. */
+    static boolean mandatoryRuntimeEvidenceComplete(
+            final Path root,
+            final Map<String, String> fields,
+            final Map<String, String> inventory) {
+        return mandatoryRuntimeEvidenceFindings(root, fields, inventory).isEmpty();
+    }
+
+    /** Returns mandatory-artifact findings for direct qualification regression fixtures. */
+    static List<String> mandatoryRuntimeEvidenceFindings(
+            final Path root,
+            final Map<String, String> fields,
+            final Map<String, String> inventory) {
+        final List<String> findings = new ArrayList<>();
+        verifyMandatoryRuntimeEvidence(root.toAbsolutePath().normalize(), fields, findings,
+                inventory);
+        return List.copyOf(findings);
     }
 
     private static int integerUnchecked(final String value) {
@@ -371,6 +667,16 @@ public final class GaFormalPerformanceEvidenceVerifier {
                 try {
                     final Map<String, String> fields = GaEvidenceStore.read(
                             manifest, GaEvidenceCodec.Schema.RUN);
+                    verifySidecar(manifest.resolveSibling(manifest.getFileName() + ".sha256"),
+                            manifest, findings);
+                    final String inventorySha = fields.get("artifact.inventory.sha256");
+                    final String inventorySize = fields.get("artifact.inventory.size");
+                    if (!"SHA256SUMS".equals(fields.get("artifact.inventory.path"))
+                            || !Objects.equals(inventorySha,
+                            QualificationArtifactHasher.sha256(inventory))
+                            || !Objects.equals(inventorySize, Long.toString(Files.size(inventory)))) {
+                        findings.add("run manifest inventory binding is not authoritative");
+                    }
                     verifySemanticEvidence(root, fields, findings);
                     verifyGate(root, fields, findings);
                 } catch (final IOException failure) {
@@ -474,12 +780,20 @@ public final class GaFormalPerformanceEvidenceVerifier {
         }
         final Map<String, String> raw = readKeyValue(rawPath);
         compareRawManifest(raw, manifest, findings);
+        final boolean formal = "true".equals(manifest.get("run.formal"))
+                || "true".equals(raw.get("formal"));
+        if (formal) {
+            verifyFormalRunSemantics(raw, manifest, findings);
+        } else if (!"false".equals(manifest.get("run.formal"))
+                || !"false".equals(raw.get("formal"))) {
+            findings.add("run lane/formal declaration is ambiguous");
+        }
         final List<LatencyRow> latency = readLatencySamples(samplesPath);
         verifyAccounting(raw, manifest, latency, findings);
         verifyLatency(raw, manifest, latency, findings);
         verifyCapacity(raw, manifest, latency, capacityPath, findings);
         if ("PASS".equals(manifest.get("evidence.outcome"))) {
-            verifyMandatoryRuntimeEvidence(root, findings);
+            verifyMandatoryRuntimeEvidence(root, raw, findings, readInventoryMap(root));
             verifyCandidateHealth(raw, findings);
             verifyIndependentPerformancePass(raw, latency, findings);
         }
@@ -500,6 +814,15 @@ public final class GaFormalPerformanceEvidenceVerifier {
         if (!Objects.equals(manifest.get("evidence.outcome"), fields.get("evidence.outcome"))) {
             findings.add("run manifest/gate outcome mismatch");
         }
+        if (!"G4".equals(fields.get("gate.id"))
+                || !GaFormalPerformanceContract.CAMPAIGN.equals(fields.get("gate.version"))) {
+            findings.add("run gate is not the frozen G4 gate id/version");
+        }
+        if (manifest.containsKey("campaign.id")
+                && (!Objects.equals(manifest.get("campaign.id"), fields.get("campaign.id"))
+                || !"G4".equals(fields.get("campaign.gate")))) {
+            findings.add("run gate campaign ownership is missing or mismatched");
+        }
         if (!Objects.equals(manifest.get("candidate.tag"), fields.get("candidate.tag"))
                 || !Objects.equals(manifest.get("candidate.tagObjectSha"),
                         fields.get("candidate.tagObjectSha"))
@@ -508,6 +831,12 @@ public final class GaFormalPerformanceEvidenceVerifier {
                 || !Objects.equals(manifest.get("controller.gitSha"),
                         fields.get("controller.gitSha"))) {
             findings.add("run gate identity is not bound to the run manifest");
+        }
+        if (!Objects.equals(manifest.get("configuration.identitySha256"),
+                fields.get("configuration.identitySha256"))
+                || !Objects.equals(manifest.get("comparability.identitySha256"),
+                fields.get("comparability.identitySha256"))) {
+            findings.add("run gate configuration/comparability identity is not manifest-bound");
         }
         final int manifestCount = integer(fields, "manifest.count");
         if (manifestCount < 1) {
@@ -537,6 +866,59 @@ public final class GaFormalPerformanceEvidenceVerifier {
                 }
             }
         }
+    }
+
+    private static void verifyFormalRunSemantics(
+            final Map<String, String> raw,
+            final Map<String, String> manifest,
+            final List<String> findings) {
+        final Map<String, String> expected = Map.ofEntries(
+                Map.entry("schema", GaPerformanceMatrix.APPROVED_VERSION),
+                Map.entry("formal", "true"),
+                Map.entry("lane", "FORMAL_G4"),
+                Map.entry("run.formal", "true"),
+                Map.entry("protocol", GaPerformanceMatrix.APPROVED_PROTOCOL),
+                Map.entry("window", Integer.toString(
+                        GaPerformanceMatrix.APPROVED_PROTOCOL_V2_WINDOW)),
+                Map.entry("walMode", GaPerformanceMatrix.APPROVED_WAL_MODE),
+                Map.entry("loadModel", GaPerformanceMatrix.APPROVED_LOAD_MODEL),
+                Map.entry("profile", GaPerformanceMatrix.APPROVED_PROFILE),
+                Map.entry("seed", Long.toString(GaPerformanceMatrix.APPROVED_SEED)),
+                Map.entry("warmupDurationNanos", Long.toString(
+                        GaFormalPerformanceContract.WARMUP.toNanos())));
+        for (Map.Entry<String, String> entry : expected.entrySet()) {
+            if (!Objects.equals(entry.getValue(), raw.get(entry.getKey()))) {
+                findings.add("formal run semantic mismatch: " + entry.getKey());
+            }
+        }
+        final long expectedMeasurement = GaFormalPerformanceContract.MEASUREMENT.toNanos();
+        if (longValueOrDefault(raw.get("measurementDurationNanos"), -1L) != expectedMeasurement
+                || longValueOrDefault(manifest.get("run.measurementDurationNanos"), -1L)
+                != expectedMeasurement
+                || longValueOrDefault(manifest.get("run.warmupDurationNanos"), -1L)
+                != GaFormalPerformanceContract.WARMUP.toNanos()) {
+            findings.add("formal run warmup/measurement duration is not exact");
+        }
+        final int ordinal = integerValue(raw.get("runOrdinal"), -1);
+        if (ordinal < 1 || ordinal > GaFormalPerformanceContract.RUN_COUNT) {
+            findings.add("formal run ordinal is outside the exact campaign set");
+        }
+        for (String key : List.of("gate.id", "gate.version")) {
+            final String expectedValue = "gate.id".equals(key) ? "G4"
+                    : GaFormalPerformanceContract.CAMPAIGN;
+            if (!expectedValue.equals(manifest.get(key))) {
+                findings.add("formal run gate semantic mismatch: " + key);
+            }
+        }
+        if (!Objects.equals(raw.get("physicalExecutionId"), manifest.get("physicalExecution.id"))) {
+            findings.add("formal run physical execution is not manifest-bound");
+        }
+        final String campaignId = manifest.get("campaign.id");
+        if (campaignId == null || campaignId.isBlank()
+                || !campaignId.equals(raw.get("campaign.id"))) {
+            findings.add("formal run campaign identity is missing or mismatched");
+        }
+        verifyFixedRunIdentity(raw, manifest, findings);
     }
 
     private static void verifyCandidateHealth(
@@ -602,29 +984,58 @@ public final class GaFormalPerformanceEvidenceVerifier {
 
     private static void verifyMandatoryRuntimeEvidence(
             final Path root,
-            final List<String> findings) {
-        final Path evidenceDirectory = root.resolve("process-evidence");
-        final Path resource = evidenceDirectory.resolve("resource-evidence.csv");
-        final Path jfr = evidenceDirectory.resolve("qualification.jfr");
+            final Map<String, String> fields,
+            final List<String> findings,
+            final Map<String, String> inventory) {
         try {
-            if (!Files.isRegularFile(resource) || Files.isSymbolicLink(resource)
-                    || !Files.isReadable(resource) || Files.size(resource) <= 0L) {
-                findings.add("PASS run is missing readable resource evidence");
-            } else {
+            if (!mandatoryIdentityFieldsComplete(fields)) {
+                for (String key : List.of("physicalExecutionId", "candidate.tagObjectSha",
+                        "controller.gitSha", "configuration.identitySha256",
+                        "environment.identitySha256")) {
+                    if (!nonBlank(fields.get(key)) || "UNAVAILABLE".equals(fields.get(key))) {
+                        findings.add("mandatory evidence ownership field is missing: " + key);
+                    }
+                }
+            }
+            final Path resource = verifyMandatoryArtifact(root, fields,
+                    "processEvidence.resourcePath", "processEvidence.resourceSha256",
+                    inventory, findings, "resource evidence");
+            final Path jfr = verifyMandatoryArtifact(root, fields,
+                    "processEvidence.jfrPath", "processEvidence.jfrSha256",
+                    inventory, findings, "JFR evidence");
+            if (resource != null) {
                 final QualificationResourceEvidence parsed =
                         QualificationResourceEvidenceReader.read(resource, 0);
                 if (parsed.samples().isEmpty()) {
                     findings.add("PASS run has no resource evidence samples");
                 }
             }
-            if (!Files.isRegularFile(jfr) || Files.isSymbolicLink(jfr)
-                    || !Files.isReadable(jfr) || Files.size(jfr) <= 0L) {
-                findings.add("PASS run is missing readable JFR evidence");
-            } else {
+            if (jfr != null) {
                 final GaJfrEvidence parsed = GaJfrEvidence.inspect(jfr, true, true, true);
                 if (!parsed.complete()) {
                     findings.add("PASS run JFR evidence is not complete for the formal contract");
                 }
+            }
+            final String configurationPath = fields.get("configuration.filePath");
+            final String configurationSha = fields.get("configuration.fileSha256");
+            if (configurationPath == null || configurationSha == null) {
+                findings.add("mandatory configuration artifact binding is missing");
+            } else {
+                verifyMandatoryArtifact(root, fields, "configuration.filePath",
+                        "configuration.fileSha256", inventory, findings, "configuration");
+            }
+            final Map<String, String> environment = new TreeMap<>();
+            fields.forEach((key, value) -> {
+                if (key.startsWith("environment.")
+                        && !key.equals("environment.identitySha256")
+                        && !key.equals("environment.bound")) {
+                    environment.put(key.substring("environment.".length()), value);
+                }
+            });
+            if (environment.isEmpty() || !Objects.equals(
+                    GaPerformanceEnvironment.identity(environment),
+                    fields.get("environment.identitySha256"))) {
+                findings.add("environment identity is not recomputable from authoritative evidence");
             }
             verifyStorageOwnership(root, findings);
         } catch (IOException | RuntimeException failure) {
@@ -633,9 +1044,43 @@ public final class GaFormalPerformanceEvidenceVerifier {
         }
     }
 
+    private static Path verifyMandatoryArtifact(
+            final Path root,
+            final Map<String, String> fields,
+            final String pathKey,
+            final String shaKey,
+            final Map<String, String> inventory,
+            final List<String> findings,
+            final String description) throws IOException {
+        final String relative = fields.get(pathKey);
+        final String declared = fields.get(shaKey);
+        if (relative == null || declared == null || relative.isBlank()
+                || !declared.matches("[0-9a-f]{64}")) {
+            findings.add("mandatory " + description + " binding is missing or malformed");
+            return null;
+        }
+        final Path payload = resolvePayload(root, relative);
+        if (!Files.isRegularFile(payload) || Files.isSymbolicLink(payload)
+                || !Files.isReadable(payload) || Files.size(payload) <= 0L) {
+            findings.add("mandatory " + description + " is not a readable regular file");
+            return null;
+        }
+        final String actual = QualificationArtifactHasher.sha256(payload);
+        if (!declared.equals(actual)) {
+            findings.add("mandatory " + description + " hash does not match its owner");
+        }
+        final String listed = inventory.get(root.relativize(payload).toString().replace('\\', '/'));
+        if (!actual.equals(listed)) {
+            findings.add("mandatory " + description + " is not bound by its authoritative inventory");
+        }
+        verifySidecar(payload.resolveSibling(payload.getFileName() + ".sha256"), payload, findings);
+        return payload;
+    }
+
     private static void verifyLifecycleDirectory(
             final Path root,
             final Map<String, String> campaign,
+            final Map<String, String> campaignEvidence,
             final List<String> findings) {
         final Path summary = root.resolve("lifecycle-summary-v2.txt");
         final Path inventory = root.resolve("SHA256SUMS");
@@ -645,8 +1090,15 @@ public final class GaFormalPerformanceEvidenceVerifier {
                 return;
             }
             verifyDirectoryInventory(inventory, findings);
+            final Map<String, String> inventoryEntries = readCanonicalInventory(inventory);
             final Map<String, String> fields = readKeyValue(summary);
-            if (!"true".equals(fields.get("formal"))
+            if (!"ga-g4-lifecycle-summary-v2".equals(fields.get("schema"))
+                    || !"true".equals(fields.get("formal"))
+                    || !"FORMAL_G4".equals(fields.get("lane"))
+                    || !Objects.equals(fields.get("campaign.id"), campaign.get("campaign.id"))
+                    || !"G4".equals(fields.get("gate.id"))
+                    || !GaFormalPerformanceContract.CAMPAIGN.equals(fields.get("gate.version"))
+                    || !GaPerformanceMatrix.APPROVED_VERSION.equals(fields.get("matrix.version"))
                     || !"60".equals(fields.get("matrix.cycles"))
                     || !"60".equals(fields.get("sample.count"))
                     || !"60".equals(fields.get("startup.sampleCount"))
@@ -656,17 +1108,22 @@ public final class GaFormalPerformanceEvidenceVerifier {
                     || !"NONE".equals(fields.get("blocker"))) {
                 findings.add("PASS campaign lifecycle summary is incomplete");
             }
-            verifyChildIdentity(fields, campaign, "lifecycle summary", findings);
+            verifyChildIdentity(fields, campaignEvidence, "lifecycle summary", findings);
+            if (!Objects.equals(fields.get("campaign.id"), campaignEvidence.get("campaign.id"))) {
+                findings.add("lifecycle summary campaign identity mismatch");
+            }
             final long[] startup = new long[60];
             final long[] shutdown = new long[60];
+            final Set<String> physicalExecutions = new HashSet<>();
             String configurationIdentity = null;
             for (int index = 1; index <= 60; index++) {
                 final String prefix = "cycle." + index + ".";
                 final String relative = fields.get(prefix + "rawPath");
-                final Path raw = relative == null
-                        ? root.resolve(String.format("cycle-%02d/lifecycle-raw-evidence-v2.txt",
-                                index))
-                        : resolvePayload(root, relative);
+                if (relative == null || relative.isBlank()) {
+                    findings.add("lifecycle raw path is missing: cycle " + index);
+                    continue;
+                }
+                final Path raw = resolvePayload(root, relative);
                 final String declared = fields.get(prefix + "rawSha256");
                 if (!Files.isRegularFile(raw) || declared == null
                         || !declared.equals(QualificationArtifactHasher.sha256(raw))) {
@@ -675,7 +1132,23 @@ public final class GaFormalPerformanceEvidenceVerifier {
                 }
                 verifySidecar(raw.resolveSibling(raw.getFileName() + ".sha256"), raw, findings);
                 final Map<String, String> cycle = readKeyValue(raw);
-                verifyChildIdentity(cycle, campaign, "lifecycle cycle " + index, findings);
+                verifyChildIdentity(cycle, campaignEvidence, "lifecycle cycle " + index, findings);
+                if (!"ga-g4-lifecycle-cycle-v2".equals(cycle.get("schema"))
+                        || !"true".equals(cycle.get("formal"))
+                        || !"FORMAL_G4".equals(cycle.get("lane"))
+                        || !Objects.equals(cycle.get("campaign.id"), campaign.get("campaign.id"))
+                        || !"G4".equals(cycle.get("gate.id"))
+                        || !GaFormalPerformanceContract.CAMPAIGN.equals(cycle.get("gate.version"))
+                        || !GaPerformanceMatrix.APPROVED_VERSION.equals(cycle.get("matrix.version"))
+                        || !Integer.toString(index).equals(cycle.get("cycle"))
+                        || !Objects.equals(fields.get(prefix + "physicalExecutionId"),
+                        cycle.get("physicalExecutionId"))
+                        || !physicalExecutionIdValid(cycle.get("physicalExecutionId"),
+                        physicalExecutions)) {
+                    findings.add("lifecycle cycle canonical identity mismatch: " + index);
+                }
+                verifyMandatoryRuntimeEvidence(raw.getParent(), cycle, findings,
+                        rebaseInventory(inventory.getParent(), raw.getParent(), inventoryEntries));
                 if (!"PASS".equals(cycle.get("outcome"))
                         || !"NONE".equals(cycle.get("blocker"))
                         || !"true".equals(cycle.get("candidate.ready"))
@@ -791,6 +1264,7 @@ public final class GaFormalPerformanceEvidenceVerifier {
     private static void verifyManagementDirectory(
             final Path root,
             final Map<String, String> campaign,
+            final Map<String, String> campaignEvidence,
             final List<String> findings) {
         final Path summary = root.resolve("management-summary-v2.txt");
         final Path inventory = root.resolve("SHA256SUMS");
@@ -800,15 +1274,24 @@ public final class GaFormalPerformanceEvidenceVerifier {
                 return;
             }
             verifyDirectoryInventory(inventory, findings);
+            final Map<String, String> inventoryEntries = readCanonicalInventory(inventory);
             final Map<String, String> fields = readKeyValue(summary);
-            if (!"true".equals(fields.get("formal"))
+            if (!"ga-g4-management-summary-v2".equals(fields.get("schema"))
+                    || !"true".equals(fields.get("formal"))
+                    || !"FORMAL_G4".equals(fields.get("lane"))
+                    || !Objects.equals(fields.get("campaign.id"), campaign.get("campaign.id"))
+                    || !"G4".equals(fields.get("gate.id"))
+                    || !GaFormalPerformanceContract.CAMPAIGN.equals(fields.get("gate.version"))
+                    || !GaPerformanceMatrix.APPROVED_VERSION.equals(fields.get("matrix.version"))
                     || !"4".equals(fields.get("trial.count"))
                     || !"true".equals(fields.get("pairA.passed"))
                     || !"true".equals(fields.get("pairB.passed"))
                     || !"NONE".equals(fields.get("blocker"))) {
                 findings.add("PASS campaign management summary is incomplete");
             }
-            verifyChildIdentity(fields, campaign, "management summary", findings);
+            verifyChildIdentity(fields, campaignEvidence, "management summary", findings);
+            final Set<String> physicalExecutions = new HashSet<>();
+            final Set<String> trialIds = new HashSet<>();
             final List<ManagementEvidenceRow> trials = new ArrayList<>();
             String configurationIdentity = null;
             final boolean[] expectedStatusModes = {false, true, true, false};
@@ -828,7 +1311,25 @@ public final class GaFormalPerformanceEvidenceVerifier {
                 }
                 verifySidecar(raw.resolveSibling(raw.getFileName() + ".sha256"), raw, findings);
                 final Map<String, String> trial = readKeyValue(raw);
-                verifyChildIdentity(trial, campaign, "management trial " + index, findings);
+                verifyChildIdentity(trial, campaignEvidence, "management trial " + index, findings);
+                final String expectedTrialId = fields.get(prefix + "id");
+                final String expectedPairId = fields.get(prefix + "pairId");
+                final String expectedPhysicalId = fields.get(prefix + "physicalExecutionId");
+                final String trialPhysicalId = trial.get("physicalExecutionId");
+                if (!managementIdentityComplete(fields, trial, campaignEvidence, index)
+                        || !"ga-g4-management-trial-v2".equals(trial.get("schema"))
+                        || !"true".equals(trial.get("formal"))
+                        || !"FORMAL_G4".equals(trial.get("lane"))
+                        || !Objects.equals(trial.get("campaign.id"), campaign.get("campaign.id"))
+                        || !"G4".equals(trial.get("gate.id"))
+                        || !GaFormalPerformanceContract.CAMPAIGN.equals(trial.get("gate.version"))
+                        || !physicalExecutionIdValid(expectedPhysicalId, physicalExecutions)
+                        || !Objects.equals(expectedPhysicalId, trialPhysicalId)
+                        || !trialIds.add(expectedTrialId)) {
+                    findings.add("management trial canonical ownership mismatch: " + index);
+                }
+                verifyMandatoryRuntimeEvidence(raw.getParent(), trial, findings,
+                        rebaseInventory(inventory.getParent(), raw.getParent(), inventoryEntries));
                 if (!managementBindingComplete(trial)) {
                     findings.add("management evidence canonical binding is incomplete: trial "
                             + index);
@@ -854,11 +1355,15 @@ public final class GaFormalPerformanceEvidenceVerifier {
                 final long cross = longValueOrDefault(trial.get("measurement.crossBoundaryCommands"), -1L);
                 final long unfinished = longValueOrDefault(trial.get("measurement.unfinishedCommands"), -1L);
                 final long duration = longValueOrDefault(trial.get("measurementDurationNanos"), -1L);
+                final String expectedMode = expectedStatusModes[index - 1] ? "STATUS" : "IDLE";
                 if (!"PASS".equals(trial.get("outcome")) || !"NONE".equals(trial.get("blocker"))
                         || !statusHealthPass(trial) || polls != (status ? 300 : 0)
+                        || !expectedMode.equals(trial.get("trial.mode"))
                         || offered <= 0L || accepted != offered
                         || completed + post + cross + unfinished != accepted
                         || unfinished != 0L || duration != 300_000_000_000L
+                        || longValueOrDefault(trial.get("warmupDurationNanos"), -1L)
+                        != GaFormalPerformanceContract.MANAGEMENT_WARMUP.toNanos()
                         || !"0".equals(trial.get("shutdown.exitCode"))
                         || !"true".equals(trial.get("shutdown.completed"))) {
                     findings.add("management trial is not a trustworthy PASS: " + index);
@@ -909,6 +1414,89 @@ public final class GaFormalPerformanceEvidenceVerifier {
                 && "true".equals(trial.get("evidence.mandatoryComplete"));
     }
 
+    /** Returns whether the canonical campaign/trial identity tuple is complete and owned. */
+    static boolean managementIdentityComplete(
+            final Map<String, String> summary,
+            final Map<String, String> trial,
+            final Map<String, String> campaignEvidence,
+            final int ordinal) {
+        final String prefix = "trial." + ordinal + ".";
+        return nonBlankEqual(campaignEvidence, trial, "candidate.tag")
+                && nonBlankEqual(campaignEvidence, trial, "candidate.tagObjectSha")
+                && nonBlankEqual(campaignEvidence, trial, "candidate.productionSha")
+                && nonBlankEqual(campaignEvidence, trial, "candidate.applicationJarSha256")
+                && nonBlankEqual(campaignEvidence, trial, "qualification.jarSha256")
+                && nonBlankEqual(campaignEvidence, trial, "controller.gitSha")
+                && Objects.equals(summary.get("campaign.id"), trial.get("campaign.id"))
+                && Objects.equals(summary.get("gate.id"), trial.get("gate.id"))
+                && Objects.equals(summary.get("gate.version"), trial.get("gate.version"))
+                && Objects.equals(summary.get(prefix + "id"), trial.get("trial.id"))
+                && Objects.equals(summary.get(prefix + "ordinal"), trial.get("trial.ordinal"))
+                && Objects.equals(summary.get(prefix + "pairId"), trial.get("pair.id"))
+                && Objects.equals(summary.get(prefix + "physicalExecutionId"),
+                        trial.get("physicalExecutionId"))
+                && Objects.equals(summary.get(prefix + "configuration.identitySha256"),
+                        trial.get("configuration.identitySha256"))
+                && Objects.equals(summary.get(prefix + "environment.identitySha256"),
+                        trial.get("environment.identitySha256"))
+                && nonBlank(summary.get("campaign.id"))
+                && nonBlank(summary.get(prefix + "id"))
+                && nonBlank(summary.get(prefix + "pairId"))
+                && physicalExecutionIdWellFormed(summary.get(prefix + "physicalExecutionId"));
+    }
+
+    /** Returns whether a formal run carries every frozen semantic identity. */
+    static boolean formalRunSemanticsComplete(
+            final Map<String, String> raw,
+            final Map<String, String> manifest) {
+        final List<String> findings = new ArrayList<>();
+        verifyFormalRunSemantics(raw, manifest, findings);
+        return findings.isEmpty();
+    }
+
+    /** Returns whether STATUS samples satisfy the persisted absolute-clock contract. */
+    static boolean statusEvidenceComplete(final Map<String, String> trial) {
+        try {
+            final boolean status = "true".equals(trial.get("pollStatus"));
+            readStatusLatencies(trial, status, integerValue(trial.get("status.pollCount"), -1));
+            return true;
+        } catch (IOException | RuntimeException failure) {
+            return false;
+        }
+    }
+
+    /** Returns whether all mandatory ownership identity fields are present and usable. */
+    static boolean mandatoryIdentityFieldsComplete(final Map<String, String> fields) {
+        return physicalExecutionIdWellFormed(fields.get("physicalExecutionId"))
+                && digest(fields.get("candidate.tagObjectSha"), 40)
+                && digest(fields.get("controller.gitSha"), 40)
+                && digest(fields.get("configuration.identitySha256"), 64)
+                && digest(fields.get("environment.identitySha256"), 64);
+    }
+
+    private static boolean nonBlank(final String value) {
+        return value != null && !value.isBlank();
+    }
+
+    private static boolean nonBlankEqual(
+            final Map<String, String> first,
+            final Map<String, String> second,
+            final String key) {
+        return nonBlank(first.get(key)) && Objects.equals(first.get(key), second.get(key));
+    }
+
+    private static boolean physicalExecutionIdWellFormed(final String value) {
+        try {
+            return value != null && UUID.fromString(value).toString().equals(value);
+        } catch (IllegalArgumentException failure) {
+            return false;
+        }
+    }
+
+    private static boolean digest(final String value, final int length) {
+        return value != null && value.matches("[0-9a-f]{" + length + "}");
+    }
+
     private static boolean statusHealthPass(final Map<String, String> trial) {
         return "true".equals(trial.get("candidate.ready"))
                 && "true".equals(trial.get("status.healthy"))
@@ -956,6 +1544,11 @@ public final class GaFormalPerformanceEvidenceVerifier {
     private static long[] readStatusLatencies(
             final Map<String, String> trial, final boolean status, final int polls)
             throws IOException {
+        final String operation = trial.get("status.operation");
+        if (!Objects.equals(operation, status ? "STATUS" : "NONE")
+                || !"METRICS".equals(trial.get("metrics.operation"))) {
+            throw new IOException("management operation ownership is invalid");
+        }
         final int declared = integerValue(trial.get("status.sampleCount"), -1);
         if (declared < 0 || declared != polls || declared != (status
                 ? GaFormalPerformanceContract.MANAGEMENT_STATUS_REQUESTS : 0)) {
@@ -965,19 +1558,36 @@ public final class GaFormalPerformanceEvidenceVerifier {
         final long interval = GaFormalPerformanceContract.MANAGEMENT_INTERVAL.toNanos();
         final long measurementStart = longValue(trial, "measurementStartNanos");
         final long measurementEnd = longValue(trial, "measurementEndNanos");
+        long previousCompleted = Long.MIN_VALUE;
         for (int index = 1; index <= declared; index++) {
             final String prefix = "status.sample." + index + ".";
+            if (!"STATUS".equals(trial.get(prefix + "operation"))
+                    || integerValue(trial.get(prefix + "ordinal"), -1) != index) {
+                throw new IOException("STATUS operation or ordinal is not persisted exactly");
+            }
             final long deadline = longValue(trial, prefix + "deadlineNanos");
             final long started = longValue(trial, prefix + "startedNanos");
             final long completed = longValue(trial, prefix + "completedNanos");
             final long latency = longValue(trial, prefix + "latencyNanos");
-            final long expectedDeadline = measurementStart + (long) (index - 1) * interval;
+            final long expectedDeadline;
+            try {
+                expectedDeadline = Math.addExact(measurementStart,
+                        Math.multiplyExact((long) (index - 1), interval));
+            } catch (ArithmeticException failure) {
+                throw new IOException("STATUS deadline arithmetic overflow", failure);
+            }
+            final long nextDeadline = index == declared ? Long.MAX_VALUE
+                    : Math.addExact(expectedDeadline, interval);
             if (deadline != expectedDeadline || started < deadline || completed < started
+                    || deadline < measurementStart || deadline >= measurementEnd
+                    || index > 1 && started < previousCompleted
+                    || completed >= nextDeadline
                     || !GaFormalPerformanceRunner.statusSampleWithinMeasurement(
                             measurementStart, measurementEnd, started, completed)
                     || latency != completed - started || latency < 1L) {
                 throw new IOException("STATUS timing evidence is not absolute or ordered");
             }
+            previousCompleted = completed;
             result[index - 1] = latency;
         }
         return result;
@@ -1005,11 +1615,19 @@ public final class GaFormalPerformanceEvidenceVerifier {
         pairs.put("candidate.productionSha", campaign.get("candidate.productionSha"));
         pairs.put("candidate.applicationJarSha256",
                 campaign.get("candidate.applicationJarSha256"));
+        pairs.put("campaign.id", campaign.get("campaign.id"));
+        pairs.put("gate.id", "G4");
+        pairs.put("gate.version", GaFormalPerformanceContract.CAMPAIGN);
+        pairs.put("lane", "FORMAL_G4");
         pairs.put("qualification.jarSha256", campaign.get("qualification.jarSha256"));
         pairs.put("controller.gitSha", campaign.get("qualification.controllerSha"));
         pairs.put("protocol", "v2");
         pairs.put("window", "8");
         pairs.put("walMode", "SYNC_EACH_APPEND");
+        pairs.put("loadModel", GaPerformanceMatrix.APPROVED_LOAD_MODEL);
+        pairs.put("matrix.version", GaPerformanceMatrix.APPROVED_VERSION);
+        pairs.put("profile", GaPerformanceMatrix.APPROVED_PROFILE);
+        pairs.put("seed", Long.toString(GaPerformanceMatrix.APPROVED_SEED));
         for (Map.Entry<String, String> entry : pairs.entrySet()) {
             if (entry.getValue() != null
                     && !Objects.equals(entry.getValue(), child.get(entry.getKey()))) {
@@ -1073,6 +1691,10 @@ public final class GaFormalPerformanceEvidenceVerifier {
             if (!Objects.equals(raw.get(pair.getKey()), manifest.get(pair.getValue()))) {
                 findings.add("raw/manifest mismatch: " + pair.getKey());
             }
+        }
+        if (manifest.containsKey("campaign.id")
+                && !Objects.equals(raw.get("campaign.id"), manifest.get("campaign.id"))) {
+            findings.add("raw/manifest mismatch: campaign.id");
         }
         if ("PASS".equals(manifest.get("evidence.outcome"))) {
             verifyFixedRunIdentity(raw, manifest, findings);
@@ -1170,6 +1792,71 @@ public final class GaFormalPerformanceEvidenceVerifier {
             final Map<String, String> raw,
             final long measurementStart,
             final long measurementEnd) throws IOException {
+        final Map<Long, RequestEvidence> requests = readRequestLedger(raw);
+        final Set<Long> sequences = new HashSet<>();
+        long offered = 0L;
+        long accepted = 0L;
+        long completed = 0L;
+        long post = 0L;
+        long cross = 0L;
+        long unfinished = 0L;
+        for (RequestEvidence request : requests.values()) {
+            if (request.commandSequence == null || request.offeredNanos == null
+                    || request.inMeasurement == null || request.completedNanos == null
+                    || request.capacityReleaseNanos == null || request.outcomeCode == null) {
+                throw new IOException("request-level accounting row is incomplete");
+            }
+            if (request.commandSequence <= 0L || !sequences.add(request.commandSequence)
+                    || request.offeredNanos < 0L
+                    || request.completedNanos < 0L || request.capacityReleaseNanos < 0L) {
+                throw new IOException("request-level accounting chronology is invalid");
+            }
+            if (request.outcomeCode < -1L || request.outcomeCode == 0L
+                    || request.outcomeCode > 3L) {
+                throw new IOException("request-level accounting outcome code is unknown");
+            }
+            if (request.completedNanos == 0L
+                    && (request.outcomeCode != -1L || request.capacityReleaseNanos != 0L)) {
+                throw new IOException("unfinished request has a terminal outcome or release");
+            }
+            if (request.completedNanos > 0L
+                    && (request.completedNanos < request.offeredNanos
+                    || request.capacityReleaseNanos <= request.completedNanos
+                    || request.outcomeCode < 1L || request.outcomeCode > 3L)) {
+                throw new IOException("request-level accounting completion is invalid");
+            }
+            if (request.latencyNanos != null
+                    && request.completedNanos > 0L
+                    && request.latencyNanos != Math.max(1L,
+                            request.completedNanos - request.offeredNanos)) {
+                throw new IOException("request-level derived latency is not authoritative");
+            }
+            if (!request.inMeasurement) {
+                continue;
+            }
+            if (request.offeredNanos < measurementStart
+                    || request.offeredNanos >= measurementEnd) {
+                throw new IOException("measurement request offer is outside its interval");
+            }
+            offered++;
+            if (request.completedNanos == 0L) {
+                unfinished++;
+            } else {
+                accepted++;
+                if (request.completedNanos < measurementStart) {
+                    cross++;
+                } else if (request.completedNanos < measurementEnd) {
+                    completed++;
+                } else {
+                    post++;
+                }
+            }
+        }
+        return new RequestAccounting(offered, accepted, completed, post, cross, unfinished);
+    }
+
+    private static Map<Long, RequestEvidence> readRequestLedger(
+            final Map<String, String> raw) throws IOException {
         final Map<Long, RequestEvidence> requests = new TreeMap<>();
         for (Map.Entry<String, String> entry : raw.entrySet()) {
             final String key = entry.getKey();
@@ -1201,60 +1888,14 @@ public final class GaFormalPerformanceEvidenceVerifier {
                 case "capacityReleaseNanos" -> request.capacityReleaseNanos = parseLong(
                         entry.getValue(), field);
                 case "outcomeCode" -> request.outcomeCode = parseLong(entry.getValue(), field);
-                case "latencyNanos" -> {
-                    // The management raw payload may include this derived field.  The
-                    // authoritative accounting boundaries are the request state timestamps.
-                }
+                case "latencyNanos" -> request.latencyNanos = parseLong(entry.getValue(), field);
                 default -> throw new IOException("unknown request-level accounting field: " + field);
             }
         }
         if (requests.isEmpty()) {
             throw new IOException("request-level accounting evidence is missing");
         }
-        long offered = 0L;
-        long accepted = 0L;
-        long completed = 0L;
-        long post = 0L;
-        long cross = 0L;
-        long unfinished = 0L;
-        for (RequestEvidence request : requests.values()) {
-            if (request.commandSequence == null || request.offeredNanos == null
-                    || request.inMeasurement == null || request.completedNanos == null
-                    || request.capacityReleaseNanos == null || request.outcomeCode == null) {
-                throw new IOException("request-level accounting row is incomplete");
-            }
-            if (request.commandSequence <= 0L || request.offeredNanos < 0L
-                    || request.completedNanos < 0L || request.capacityReleaseNanos < 0L) {
-                throw new IOException("request-level accounting chronology is invalid");
-            }
-            if (request.completedNanos > 0L
-                    && (request.completedNanos < request.offeredNanos
-                    || request.capacityReleaseNanos < request.completedNanos
-                    || request.outcomeCode < 0L)) {
-                throw new IOException("request-level accounting completion is invalid");
-            }
-            if (!request.inMeasurement) {
-                continue;
-            }
-            if (request.offeredNanos < measurementStart
-                    || request.offeredNanos >= measurementEnd) {
-                throw new IOException("measurement request offer is outside its interval");
-            }
-            offered++;
-            if (request.completedNanos == 0L) {
-                unfinished++;
-            } else {
-                accepted++;
-                if (request.completedNanos < measurementStart) {
-                    cross++;
-                } else if (request.completedNanos < measurementEnd) {
-                    completed++;
-                } else {
-                    post++;
-                }
-            }
-        }
-        return new RequestAccounting(offered, accepted, completed, post, cross, unfinished);
+        return requests;
     }
 
     private static long parseLong(final String value, final String field) throws IOException {
@@ -1342,6 +1983,7 @@ public final class GaFormalPerformanceEvidenceVerifier {
             } else if ("PASS".equals(manifest.get("evidence.outcome"))) {
                 findings.add("PASS run has no detailed capacity release rows");
             }
+            verifyRequestCorrelations(raw, latency, rows, findings);
             verifyCapacityBounds(capacity, manifest, rows, findings);
             verifyLatencyCapacityCrossCheck(latency, rows, findings);
             if ("PASS".equals(manifest.get("evidence.outcome"))
@@ -1395,6 +2037,69 @@ public final class GaFormalPerformanceEvidenceVerifier {
                     || release.offeredNanos() != row.offeredNanos()) {
                 findings.add("latency/capacity request timeline mismatch: " + row.requestId());
             }
+        }
+    }
+
+    private static void verifyRequestCorrelations(
+            final Map<String, String> raw,
+            final List<LatencyRow> latency,
+            final List<CapacityRow> capacity,
+            final List<String> findings) {
+        try {
+            final Map<Long, RequestEvidence> ledger = readRequestLedger(raw);
+            final long start = longValue(raw, "measurementStartNanos");
+            final long end = longValue(raw, "measurementEndNanos");
+            final Set<Long> latencyRequests = new HashSet<>();
+            for (LatencyRow row : latency) {
+                final RequestEvidence request = ledger.get(row.requestId());
+                if (request == null || !latencyRequests.add(row.requestId())
+                        || !Objects.equals(request.commandSequence, row.commandSequence())
+                        || !Objects.equals(request.offeredNanos, row.offeredNanos())
+                        || !Objects.equals(request.completedNanos, row.completedNanos())
+                        || !Objects.equals(request.capacityReleaseNanos,
+                                row.capacityReleaseNanos())
+                        || !Boolean.TRUE.equals(request.inMeasurement)
+                        || request.completedNanos < start || request.completedNanos >= end
+                        || request.latencyNanos == null
+                        || request.latencyNanos != row.latencyNanos()) {
+                    findings.add("latency sample is orphaned or mismatched with raw request: "
+                            + row.requestId());
+                }
+            }
+            for (Map.Entry<Long, RequestEvidence> entry : ledger.entrySet()) {
+                final RequestEvidence request = entry.getValue();
+                if (Boolean.TRUE.equals(request.inMeasurement)
+                        && request.completedNanos != null && request.completedNanos > 0L
+                        && request.completedNanos >= start && request.completedNanos < end
+                        && !latencyRequests.contains(entry.getKey())) {
+                    findings.add("measured completed request has no latency sample: "
+                            + entry.getKey());
+                }
+            }
+            final Set<Long> capacityRequests = new HashSet<>();
+            for (CapacityRow row : capacity) {
+                final RequestEvidence request = ledger.get(row.requestId());
+                if (request == null || !capacityRequests.add(row.requestId())
+                        || !Objects.equals(request.commandSequence, row.commandSequence())
+                        || !Objects.equals(request.offeredNanos, row.offeredNanos())
+                        || !Objects.equals(request.completedNanos, row.responseCompleteNanos())
+                        || !Objects.equals(request.capacityReleaseNanos,
+                                row.capacityReleaseNanos())) {
+                    findings.add("capacity sample is orphaned or mismatched with raw request: "
+                            + row.requestId());
+                }
+            }
+            if (!capacity.isEmpty()) {
+                for (Map.Entry<Long, RequestEvidence> entry : ledger.entrySet()) {
+                    final RequestEvidence request = entry.getValue();
+                    if (request.completedNanos != null && request.completedNanos > 0L
+                            && !capacityRequests.contains(entry.getKey())) {
+                        findings.add("completed request has no capacity sample: " + entry.getKey());
+                    }
+                }
+            }
+        } catch (IOException | RuntimeException failure) {
+            findings.add("request correlation reconstruction failed: " + failure.getMessage());
         }
     }
 
@@ -1571,6 +2276,36 @@ public final class GaFormalPerformanceEvidenceVerifier {
         return List.copyOf(entries);
     }
 
+    private static Map<String, String> readInventoryMap(final Path root) throws IOException {
+        final Map<String, String> result = new TreeMap<>();
+        for (InventoryEntry entry : readInventory(root, root.resolve("SHA256SUMS"))) {
+            if (result.put(entry.path(), entry.sha256()) != null) {
+                throw new IOException("duplicate SHA256SUMS entry");
+            }
+        }
+        return Map.copyOf(result);
+    }
+
+    private static Map<String, String> rebaseInventory(
+            final Path inventoryRoot,
+            final Path payloadRoot,
+            final Map<String, String> inventory) throws IOException {
+        final Path normalizedInventoryRoot = inventoryRoot.toAbsolutePath().normalize();
+        final Path normalizedPayloadRoot = payloadRoot.toAbsolutePath().normalize();
+        if (normalizedInventoryRoot.equals(normalizedPayloadRoot)) {
+            return inventory;
+        }
+        final String prefix = normalizedInventoryRoot.relativize(normalizedPayloadRoot)
+                .toString().replace('\\', '/') + "/";
+        final Map<String, String> rebased = new TreeMap<>();
+        for (Map.Entry<String, String> entry : inventory.entrySet()) {
+            if (entry.getKey().startsWith(prefix)) {
+                rebased.put(entry.getKey().substring(prefix.length()), entry.getValue());
+            }
+        }
+        return Map.copyOf(rebased);
+    }
+
     private static Path resolvePayload(final Path root, final String relative)
             throws IOException {
         final Path resolved = root.resolve(relative).normalize();
@@ -1660,5 +2395,6 @@ public final class GaFormalPerformanceEvidenceVerifier {
         private Long completedNanos;
         private Long capacityReleaseNanos;
         private Long outcomeCode;
+        private Long latencyNanos;
     }
 }

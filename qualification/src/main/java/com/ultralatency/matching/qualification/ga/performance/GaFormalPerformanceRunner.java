@@ -71,6 +71,7 @@ public final class GaFormalPerformanceRunner {
             throw new IOException("formal G4 qualification JAR identity does not match artifact");
         }
         final Path root = newCampaignDirectory(outputDirectory);
+        final String campaignId = UUID.randomUUID().toString();
         final Instant campaignStarted = Instant.now();
         final List<GaFormalPerformanceEvidencePublisher.PublishedRun> runs = new ArrayList<>();
         final List<GaPerformanceEvaluator.Evaluation> evaluations = new ArrayList<>();
@@ -86,7 +87,7 @@ public final class GaFormalPerformanceRunner {
                 final GaFormalRunResult run = runPerformance(
                         packagedArtifact, qualificationArtifact,
                         root.resolve(String.format("run-%02d", index)), context, matrix,
-                        qualificationJar, index);
+                         qualificationJar, index, campaignId);
                 runs.add(run.publishedRun());
                 evaluations.add(run.evaluation());
                 return run.evaluation().passed();
@@ -99,14 +100,14 @@ public final class GaFormalPerformanceRunner {
             }
             lifecycle = runLifecycle(
                     packagedArtifact, qualificationArtifact, root.resolve("lifecycle"), context,
-                    qualificationJar, matrix);
+                    qualificationJar, matrix, campaignId);
             if (!shouldStartManagement(lifecycle)) {
                 throw new IOException("formal G4 stopped at lifecycle campaign; preserved lifecycle "
                         + "evidence: " + root.resolve("lifecycle"));
             }
             management = runManagement(
                     packagedArtifact, qualificationArtifact, root.resolve("management"), context,
-                    qualificationJar, matrix);
+                    qualificationJar, matrix, campaignId);
             if (!management.passed()) {
                 throw new IOException("formal G4 stopped at management campaign; preserved management "
                         + "evidence: " + root.resolve("management"));
@@ -123,7 +124,7 @@ public final class GaFormalPerformanceRunner {
         }
         final Path campaign = GaFormalPerformanceEvidencePublisher.publishCampaign(
                 root, context, matrix, runs, campaignStarted, Instant.now(),
-                campaignCriteria, campaignMetrics(lifecycle, management), passed);
+                campaignCriteria, campaignMetrics(lifecycle, management), passed, campaignId);
         final Path gate = GaFormalPerformanceEvidencePublisher.publishCampaignGate(
                 root, context, runs, campaign, campaignCriteria, campaignStarted, Instant.now(),
                 passed ? "NONE" : campaignFailureCode(campaignCriteria, evaluations),
@@ -204,6 +205,19 @@ public final class GaFormalPerformanceRunner {
             final GaPerformanceMatrix matrix,
             final String qualificationJar,
             final int runOrdinal) throws IOException {
+        return runPerformance(artifact, qualificationArtifact, root, context, matrix,
+                qualificationJar, runOrdinal, "");
+    }
+
+    static GaFormalRunResult runPerformance(
+            final Path artifact,
+            final Path qualificationArtifact,
+            final Path root,
+            final GaCorrectnessCanonicalContext context,
+            final GaPerformanceMatrix matrix,
+            final String qualificationJar,
+            final int runOrdinal,
+            final String campaignId) throws IOException {
         final GaFormalLaunchBinding launch = GaFormalLaunchBinding.checked(
                 artifact, qualificationArtifact, root);
         final Path candidateArtifact = launch.candidateArtifact();
@@ -319,15 +333,16 @@ public final class GaFormalPerformanceRunner {
                 : failureCode(observation);
         final String raw = accumulator.rawEvidence(context, qualificationJar, matrix, runOrdinal,
                 physicalExecutionId, measurementStart, measurementEnd, configurationIdentity,
-                environmentIdentity, environment, observation);
+                environmentIdentity, environment, observation, campaignId, runDirectory,
+                configurationPath);
         final List<GaFormalPerformanceEvidencePublisher.LatencySample> samples =
                 List.copyOf(accumulator.samples);
         final GaFormalPerformanceEvidencePublisher.RunInput input =
                 new GaFormalPerformanceEvidencePublisher.RunInput(
                         matrix, context, physicalExecutionId, started, completed,
                         measurementStart, measurementEnd, observation, accumulator.offered,
-                        accumulator.trades, samples, accumulator.capacityMetrics(), configuration,
-                        environment, raw, outcome, failureCode, evaluation.criteria());
+                         accumulator.trades, samples, accumulator.capacityMetrics(), configuration,
+                         environment, raw, outcome, failureCode, evaluation.criteria(), campaignId);
         final GaFormalPerformanceEvidencePublisher.PublishedRun published =
                 GaFormalPerformanceEvidencePublisher.publishRun(runDirectory, input);
         return new GaFormalRunResult(published, evaluation);
@@ -728,12 +743,12 @@ public final class GaFormalPerformanceRunner {
                 state.completedNanos = value.completedNanos();
                 state.capacityReleaseNanos = value.capacityReleaseNanos();
                 state.outcomeCode = value.exchange().outcomeCode();
-                state.latencyNanos = value.latencyNanos();
-                releaseDelays.add(value.capacityReleaseDelayNanos());
+                state.latencyNanos = Math.max(1L,
+                        state.completedNanos - state.offeredNanos);
+                releaseDelays.add(state.capacityReleaseNanos - state.completedNanos);
                 releaseSamples.add(new GaFormalPerformanceEvidencePublisher.CapacityReleaseSample(
-                        value.requestId(), value.exchange().commandSequence(),
-                        value.offeredNanos(), value.completedNanos(),
-                        value.capacityReleaseNanos(), System.nanoTime()));
+                        state.requestId, state.commandSequence, state.offeredNanos,
+                        state.completedNanos, state.capacityReleaseNanos, System.nanoTime()));
                 if (!collect || start <= 0L || end <= start) {
                     continue;
                 }
@@ -747,11 +762,10 @@ public final class GaFormalPerformanceRunner {
                     if (completedInMeasurement) {
                         responses++;
                         trades += value.exchange().matches().size();
-                        latencies.add(value.latencyNanos());
+                        latencies.add(state.latencyNanos);
                         samples.add(new GaFormalPerformanceEvidencePublisher.LatencySample(
-                                value.requestId(), value.exchange().commandSequence(),
-                                value.offeredNanos(), value.completedNanos(),
-                                value.capacityReleaseNanos()));
+                                state.requestId, state.commandSequence, state.offeredNanos,
+                                state.completedNanos, state.capacityReleaseNanos));
                     } else if (value.completedNanos() >= end) {
                         postMeasurementDrain++;
                     } else {
@@ -864,12 +878,19 @@ public final class GaFormalPerformanceRunner {
                 final String configurationIdentity,
                 final String environmentIdentity,
                 final Map<String, String> environment,
-                final GaPerformanceObservation observation) {
+                final GaPerformanceObservation observation,
+                final String campaignId,
+                final Path runDirectory,
+                final Path configurationPath) throws IOException {
             final StringBuilder result = new StringBuilder()
-                    .append("schema=ga-g4-performance-v2\n")
-                    .append("formal=true\n")
+                    .append("schema=").append(matrix.version()).append('\n')
+                    .append("formal=").append(matrix.isApproved()).append('\n')
+                    .append("lane=").append(matrix.isApproved() ? "FORMAL_G4" : "QUICK")
+                    .append('\n')
                     .append("runOrdinal=").append(runOrdinal).append('\n')
                     .append("physicalExecutionId=").append(physicalExecutionId).append('\n')
+                    .append("campaign.id=").append(campaignId == null ? "" : campaignId)
+                    .append('\n')
                     .append("candidate.tag=").append(context.candidate().tag()).append('\n')
                     .append("candidate.tagObjectSha=")
                     .append(context.candidate().tagObjectSha()).append('\n')
@@ -882,16 +903,30 @@ public final class GaFormalPerformanceRunner {
                     .append("qualification.jarSha256=").append(qualificationJar).append('\n')
                     .append("controller.gitSha=").append(context.controllerGitSha()).append('\n')
                 .append("protocol=v2\nwindow=8\nwalMode=SYNC_EACH_APPEND\n")
-                    .append("loadModel=BOUNDED_CLOSED_LOOP_CONTINUOUS_REFILL\n")
-                    .append("profile=").append(matrix.profile()).append('\n')
-                    .append("seed=").append(matrix.seed()).append('\n')
+                 .append("loadModel=BOUNDED_CLOSED_LOOP_CONTINUOUS_REFILL\n")
+                     .append("profile=").append(matrix.profile()).append('\n')
+                     .append("seed=").append(matrix.seed()).append('\n')
+                     .append("run.formal=").append(matrix.isApproved()).append('\n')
+                     .append("warmupDurationNanos=").append(matrix.isApproved()
+                             ? GaFormalPerformanceContract.WARMUP.toNanos() : 0L).append('\n')
                     .append("configuration.identitySha256=")
                     .append(configurationIdentity).append('\n')
                     .append("environment.identitySha256=")
                     .append(environmentIdentity).append('\n')
                     .append("measurementStartNanos=").append(start).append('\n')
                     .append("measurementEndNanos=").append(end).append('\n')
-                    .append("measurementDurationNanos=").append(end - start).append('\n')
+                     .append("measurementDurationNanos=").append(end - start).append('\n')
+                     .append("configuration.filePath=runtime.properties\n")
+                     .append("configuration.fileSha256=")
+                     .append(artifactDigestOrUnavailable(configurationPath)).append('\n')
+                     .append("processEvidence.resourcePath=process-evidence/resource-evidence.csv\n")
+                     .append("processEvidence.resourceSha256=")
+                     .append(artifactDigestOrUnavailable(runDirectory.resolve(
+                             "process-evidence/resource-evidence.csv"))).append('\n')
+                     .append("processEvidence.jfrPath=process-evidence/qualification.jfr\n")
+                     .append("processEvidence.jfrSha256=")
+                     .append(artifactDigestOrUnavailable(runDirectory.resolve(
+                             "process-evidence/qualification.jfr"))).append('\n')
                     .append("offeredCommands=").append(offered).append('\n')
                     .append("acceptedCommands=").append(accepted).append('\n')
                     .append("responseCount=").append(responses).append('\n')
@@ -943,11 +978,24 @@ public final class GaFormalPerformanceRunner {
                     .append('\n')
                     .append("request.").append(state.requestId)
                     .append(".outcomeCode=").append(state.outcomeCode).append('\n'));
+            requests.values().stream().sorted(java.util.Comparator.comparingLong(
+                    state -> state.requestId)).filter(state -> state.inMeasurement
+                    && state.completedNanos >= start && state.completedNanos < end).forEach(state ->
+                    result.append("request.").append(state.requestId)
+                            .append(".latencyNanos=").append(state.latencyNanos).append('\n'));
             result.append(raw);
             environment.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(entry ->
                     result.append("environment.").append(entry.getKey()).append('=').append(
                             entry.getValue()).append('\n'));
             return result.toString();
+        }
+
+        private static String artifactDigestOrUnavailable(final Path path) {
+            try {
+                return QualificationArtifactHasher.sha256(path);
+            } catch (IOException failure) {
+                return "UNAVAILABLE";
+            }
         }
 
         private static final class RequestState {
@@ -1049,7 +1097,8 @@ public final class GaFormalPerformanceRunner {
             final Path root,
             final GaCorrectnessCanonicalContext context,
             final String qualificationJar,
-            final GaPerformanceMatrix matrix) throws IOException {
+            final GaPerformanceMatrix matrix,
+            final String campaignId) throws IOException {
         Objects.requireNonNull(context, "context");
         Objects.requireNonNull(qualificationJar, "qualificationJar");
         final GaFormalLaunchBinding launch = GaFormalLaunchBinding.checked(
@@ -1158,7 +1207,7 @@ public final class GaFormalPerformanceRunner {
                     failureType.isBlank() ? "NONE" : failureType, configurationBound,
                     environmentBound, candidateBound, controllerBound);
             publishLifecycleSample(cycle, sample, context, qualificationJar, matrix,
-                    environment, configurationIdentity, failureType);
+                    environment, configurationIdentity, failureType, campaignId);
             samples.add(sample);
             if (!sample.passed()) {
                 blocker = sampleBlocker;
@@ -1169,7 +1218,7 @@ public final class GaFormalPerformanceRunner {
                 List.copyOf(samples), samples.size() == GaFormalPerformanceContract.LIFECYCLE_CYCLES
                         && samples.stream().allMatch(LifecycleSample::passed)
                         && "NONE".equals(blocker), blocker);
-        publishLifecycleSummary(campaignRoot, result, context, qualificationJar, matrix);
+        publishLifecycleSummary(campaignRoot, result, context, qualificationJar, matrix, campaignId);
         return result;
     }
 
@@ -1210,10 +1259,16 @@ public final class GaFormalPerformanceRunner {
             final GaPerformanceMatrix matrix,
             final Map<String, String> environment,
             final String configurationIdentity,
-            final String failureMessage) throws IOException {
+            final String failureMessage,
+            final String campaignId) throws IOException {
         final StringBuilder text = new StringBuilder()
                 .append("schema=ga-g4-lifecycle-cycle-v2\n")
                 .append("formal=true\n")
+                .append("lane=FORMAL_G4\n")
+                .append("campaign.id=").append(campaignId).append('\n')
+                .append("gate.id=G4\n")
+                .append("gate.version=").append(GaFormalPerformanceContract.CAMPAIGN)
+                .append('\n')
                 .append("cycle=").append(sample.cycle()).append('\n')
                 .append("physicalExecutionId=").append(sample.physicalExecutionId()).append('\n')
                 .append("candidate.tag=").append(context.candidate().tag()).append('\n')
@@ -1226,6 +1281,7 @@ public final class GaFormalPerformanceRunner {
                 .append("qualification.jarSha256=").append(qualificationJar).append('\n')
                 .append("controller.gitSha=").append(context.controllerGitSha()).append('\n')
                 .append("protocol=v2\nwindow=8\nwalMode=SYNC_EACH_APPEND\n")
+                .append("loadModel=").append(GaPerformanceMatrix.APPROVED_LOAD_MODEL).append('\n')
                 .append("matrix.version=").append(matrix.version()).append('\n')
                 .append("profile=").append(matrix.profile()).append('\n')
                 .append("seed=").append(matrix.seed()).append('\n')
@@ -1247,8 +1303,17 @@ public final class GaFormalPerformanceRunner {
                 .append("controller.bound=").append(sample.controllerBound()).append('\n')
                 .append("configuration.identitySha256=").append(configurationIdentity)
                 .append('\n')
-                .append("configuration.fileSha256=").append(sample.configurationSha256())
-                .append('\n')
+                 .append("configuration.fileSha256=").append(sample.configurationSha256())
+                 .append('\n')
+                 .append("configuration.filePath=runtime.properties\n")
+                 .append("processEvidence.resourcePath=process-evidence/resource-evidence.csv\n")
+                 .append("processEvidence.resourceSha256=")
+                 .append(artifactDigestOrUnavailable(cycle.resolve(
+                         "process-evidence/resource-evidence.csv"))).append('\n')
+                 .append("processEvidence.jfrPath=process-evidence/qualification.jfr\n")
+                 .append("processEvidence.jfrSha256=")
+                 .append(artifactDigestOrUnavailable(cycle.resolve(
+                         "process-evidence/qualification.jfr"))).append('\n')
                 .append("evidence.mandatoryComplete=")
                 .append(hasMandatoryEvidence(cycle)).append('\n')
                 .append("outcome=").append(sample.outcome()).append('\n')
@@ -1286,7 +1351,8 @@ public final class GaFormalPerformanceRunner {
             final LifecycleResult result,
             final GaCorrectnessCanonicalContext context,
             final String qualificationJar,
-            final GaPerformanceMatrix matrix) throws IOException {
+            final GaPerformanceMatrix matrix,
+            final String campaignId) throws IOException {
         final String configurationIdentity = GaFormalPerformanceContract.configurationIdentity(
                 GaFormalPerformanceContract.configurationFields(
                         context, matrix, context.candidate().applicationJarSha256(),
@@ -1298,6 +1364,11 @@ public final class GaFormalPerformanceRunner {
         final StringBuilder text = new StringBuilder()
                 .append("schema=ga-g4-lifecycle-summary-v2\n")
                 .append("formal=true\n")
+                .append("lane=FORMAL_G4\n")
+                .append("campaign.id=").append(campaignId).append('\n')
+                .append("gate.id=G4\n")
+                .append("gate.version=").append(GaFormalPerformanceContract.CAMPAIGN)
+                .append('\n')
                 .append("matrix.version=").append(matrix.version()).append('\n')
                 .append("matrix.cycles=").append(GaFormalPerformanceContract.LIFECYCLE_CYCLES)
                 .append('\n')
@@ -1320,7 +1391,10 @@ public final class GaFormalPerformanceRunner {
                 .append("controller.gitSha=").append(context.controllerGitSha()).append('\n')
                 .append("configuration.identitySha256=").append(configurationIdentity)
                 .append('\n')
-                .append("protocol=v2\nwindow=8\nwalMode=SYNC_EACH_APPEND\n");
+                .append("protocol=v2\nwindow=8\nwalMode=SYNC_EACH_APPEND\n")
+                .append("loadModel=").append(GaPerformanceMatrix.APPROVED_LOAD_MODEL).append('\n')
+                .append("profile=").append(matrix.profile()).append('\n')
+                .append("seed=").append(matrix.seed()).append('\n');
         for (LifecycleSample sample : result.samples()) {
             text.append("cycle.").append(sample.cycle()).append(".physicalExecutionId=")
                     .append(sample.physicalExecutionId()).append('\n')
@@ -1372,6 +1446,14 @@ public final class GaFormalPerformanceRunner {
         return value == null ? "UNAVAILABLE" : value.replace('\r', ' ').replace('\n', ' ');
     }
 
+    private static String artifactDigestOrUnavailable(final Path path) {
+        try {
+            return QualificationArtifactHasher.sha256(path);
+        } catch (IOException failure) {
+            return "UNAVAILABLE";
+        }
+    }
+
     private static String relativeUnchecked(final Path root, final Path file) {
         return root.toAbsolutePath().normalize().relativize(
                 file.toAbsolutePath().normalize()).toString().replace('\\', '/');
@@ -1383,7 +1465,8 @@ public final class GaFormalPerformanceRunner {
             final Path root,
             final GaCorrectnessCanonicalContext context,
             final String qualificationJar,
-            final GaPerformanceMatrix matrix) throws IOException {
+            final GaPerformanceMatrix matrix,
+            final String campaignId) throws IOException {
         final GaFormalLaunchBinding launch = GaFormalLaunchBinding.checked(
                 artifact, qualificationArtifact, root);
         final Path candidateArtifact = launch.candidateArtifact();
@@ -1395,18 +1478,18 @@ public final class GaFormalPerformanceRunner {
         Files.createDirectories(campaignRoot);
         final ManagementTrial aIdle = runManagementTrial(
                 candidateArtifact, qualificationJarArtifact, campaignRoot.resolve("pair-a-idle"), false,
-                context, qualificationJar, matrix);
+                context, qualificationJar, matrix, campaignId, "A", "pair-a-idle", 1);
         if (!aIdle.complete()) {
             final ManagementResult result = new ManagementResult(false, false,
                     aIdle.throughput(), 0.0d, p99(aIdle.responseP99()), 0L,
                     0.0d, 0.0d, 0L, 0L, aIdle.blocker());
             publishManagementSummary(campaignRoot, result, List.of(aIdle), context,
-                    qualificationJar, matrix);
+                    qualificationJar, matrix, campaignId);
             return result;
         }
         final ManagementTrial aStatus = runManagementTrial(
                 candidateArtifact, qualificationJarArtifact, campaignRoot.resolve("pair-a-status"), true,
-                context, qualificationJar, matrix);
+                context, qualificationJar, matrix, campaignId, "A", "pair-a-status", 2);
         final boolean pairA = compares(aIdle, aStatus);
         if (!pairA) {
             final ManagementResult result = new ManagementResult(false, false,
@@ -1414,24 +1497,24 @@ public final class GaFormalPerformanceRunner {
                     p99(aStatus.responseP99()), 0.0d, 0.0d, 0L, 0L,
                     comparisonBlocker(aIdle, aStatus));
             publishManagementSummary(campaignRoot, result, List.of(aIdle, aStatus), context,
-                    qualificationJar, matrix);
+                    qualificationJar, matrix, campaignId);
             return result;
         }
         final ManagementTrial bStatus = runManagementTrial(
                 candidateArtifact, qualificationJarArtifact, campaignRoot.resolve("pair-b-status"), true,
-                context, qualificationJar, matrix);
+                context, qualificationJar, matrix, campaignId, "B", "pair-b-status", 3);
         if (!bStatus.complete()) {
             final ManagementResult result = new ManagementResult(true, false,
                     aIdle.throughput(), aStatus.throughput(), p99(aIdle.responseP99()),
                     p99(aStatus.responseP99()), 0.0d, bStatus.throughput(), 0L,
                     p99(bStatus.responseP99()), bStatus.blocker());
             publishManagementSummary(campaignRoot, result, List.of(aIdle, aStatus, bStatus), context,
-                    qualificationJar, matrix);
+                    qualificationJar, matrix, campaignId);
             return result;
         }
         final ManagementTrial bIdle = runManagementTrial(
                 candidateArtifact, qualificationJarArtifact, campaignRoot.resolve("pair-b-idle"), false,
-                context, qualificationJar, matrix);
+                context, qualificationJar, matrix, campaignId, "B", "pair-b-idle", 4);
         final boolean pairB = compares(bIdle, bStatus);
         final ManagementResult result = new ManagementResult(pairA, pairB,
                 aIdle.throughput(), aStatus.throughput(), p99(aIdle.responseP99()),
@@ -1439,7 +1522,7 @@ public final class GaFormalPerformanceRunner {
                 p99(bIdle.responseP99()), p99(bStatus.responseP99()),
                 comparisonBlocker(bIdle, bStatus));
         publishManagementSummary(campaignRoot, result, List.of(aIdle, aStatus, bStatus, bIdle), context,
-                qualificationJar, matrix);
+                qualificationJar, matrix, campaignId);
         return result;
     }
 
@@ -1450,7 +1533,11 @@ public final class GaFormalPerformanceRunner {
             final boolean pollStatus,
             final GaCorrectnessCanonicalContext context,
             final String qualificationJar,
-            final GaPerformanceMatrix matrix) throws IOException {
+            final GaPerformanceMatrix matrix,
+            final String campaignId,
+            final String pairId,
+            final String trialId,
+            final int trialOrdinal) throws IOException {
         Files.createDirectories(root);
         final Path config = writeConfiguration(root, root.resolve("wal"), root.resolve("snapshots"));
         Files.createDirectories(root.resolve("wal"));
@@ -1549,8 +1636,9 @@ public final class GaFormalPerformanceRunner {
                             statusStarted, statusCompleted)) {
                         statusBoundaryComplete = false;
                     }
-                    statusSamples.add(new StatusSample(statusDeadline, statusStarted,
-                            statusCompleted, Math.max(1L, statusCompleted - statusStarted)));
+                    statusSamples.add(new StatusSample("STATUS", statusSamples.size() + 1,
+                            statusDeadline, statusStarted, statusCompleted,
+                            Math.max(1L, statusCompleted - statusStarted)));
                     statusHealthy = healthyStatus(lastStatus);
                     terminalFailures = lastStatus.terminalFailures();
                     failureCode = lastStatus.failureCode();
@@ -1678,7 +1766,8 @@ public final class GaFormalPerformanceRunner {
                 candidateReady,
                 statusHealthy, metricsComplete, statusPolled, failureCode, terminalFailures,
                 shutdownExitCode, shutdownCompleted, blocker, failureType, failureMessage,
-                observation, accumulator, statusSamples, statusBoundaryComplete, environment);
+                observation, accumulator, statusSamples, statusBoundaryComplete, environment,
+                campaignId, pairId, trialId, trialOrdinal, root, config);
         final Path rawPath = root.resolve("management-raw-evidence-v2.txt");
         com.ultralatency.matching.qualification.QualificationEvidencePublication.text(
                 rawPath, raw);
@@ -1701,7 +1790,8 @@ public final class GaFormalPerformanceRunner {
                 candidateBound, controllerBound, observation.errors(), observation.timeouts(),
                 observation.mismatches(), observation.mandatoryEvidenceComplete(),
                 observation.candidateHealthEvidenceComplete(), statusBoundaryComplete,
-                outcome, blocker, rawPath);
+                outcome, blocker, rawPath, campaignId, pairId, trialId, trialOrdinal,
+                physicalExecutionId, configurationIdentitySha256, environmentIdentitySha256);
     }
 
     private static boolean compares(final ManagementTrial idle, final ManagementTrial status) {
@@ -1832,10 +1922,25 @@ public final class GaFormalPerformanceRunner {
             final RunAccumulator accumulator,
             final List<StatusSample> statusSamples,
             final boolean statusBoundaryComplete,
-            final Map<String, String> environment) {
+            final Map<String, String> environment,
+            final String campaignId,
+            final String pairId,
+            final String trialId,
+            final int trialOrdinal,
+            final Path root,
+            final Path configurationPath) throws IOException {
         final StringBuilder text = new StringBuilder()
                 .append("schema=ga-g4-management-trial-v2\n")
                 .append("formal=true\n")
+                .append("lane=FORMAL_G4\n")
+                .append("campaign.id=").append(campaignId).append('\n')
+                .append("gate.id=G4\n")
+                .append("gate.version=").append(GaFormalPerformanceContract.CAMPAIGN)
+                .append('\n')
+                .append("pair.id=").append(pairId).append('\n')
+                .append("trial.id=").append(trialId).append('\n')
+                .append("trial.ordinal=").append(trialOrdinal).append('\n')
+                .append("trial.mode=").append(pollStatus ? "STATUS" : "IDLE").append('\n')
                 .append("candidate.tag=").append(context.candidate().tag()).append('\n')
                 .append("candidate.tagObjectSha=").append(context.candidate().tagObjectSha())
                 .append('\n')
@@ -1851,14 +1956,25 @@ public final class GaFormalPerformanceRunner {
                 .append(configurationIdentitySha256).append('\n')
                 .append("configuration.fileSha256=").append(configurationFileSha256)
                 .append('\n')
+                .append("configuration.filePath=runtime.properties\n")
                 .append("environment.identitySha256=")
                 .append(environmentIdentitySha256).append('\n')
+                .append("processEvidence.resourcePath=process-evidence/resource-evidence.csv\n")
+                .append("processEvidence.resourceSha256=")
+                .append(artifactDigestOrUnavailable(root.resolve(
+                        "process-evidence/resource-evidence.csv"))).append('\n')
+                .append("processEvidence.jfrPath=process-evidence/qualification.jfr\n")
+                .append("processEvidence.jfrSha256=")
+                .append(artifactDigestOrUnavailable(root.resolve(
+                        "process-evidence/qualification.jfr"))).append('\n')
                 .append("protocol=v2\nwindow=8\nwalMode=SYNC_EACH_APPEND\n")
                 .append("profile=").append(matrix.profile()).append('\n')
                 .append("seed=").append(matrix.seed()).append('\n')
                 .append("loadModel=").append(GaPerformanceMatrix.APPROVED_LOAD_MODEL)
                 .append('\n')
                 .append("matrix.version=").append(matrix.version()).append('\n')
+                .append("warmupDurationNanos=").append(
+                        GaFormalPerformanceContract.MANAGEMENT_WARMUP.toNanos()).append('\n')
                 .append("measurementStartNanos=").append(measurementStart).append('\n')
                 .append("measurementEndNanos=").append(measurementEnd).append('\n')
                 .append("measurementDurationNanos=")
@@ -1870,6 +1986,8 @@ public final class GaFormalPerformanceRunner {
                 .append("status.healthy=").append(statusHealthy).append('\n')
                 .append("metrics.complete=").append(metricsComplete).append('\n')
                 .append("status.polled=").append(statusPolled).append('\n')
+                .append("status.operation=").append(pollStatus ? "STATUS" : "NONE").append('\n')
+                .append("metrics.operation=METRICS\n")
                 .append("status.pollCount=").append(statusSamples.size()).append('\n')
                 .append("status.boundaryComplete=").append(statusBoundaryComplete).append('\n')
                 .append("candidate.failureCode=").append(failureCode).append('\n')
@@ -1914,6 +2032,8 @@ public final class GaFormalPerformanceRunner {
             final String prefix = "status.sample." + (index + 1) + ".";
             text.append(prefix).append("deadlineNanos=").append(sample.deadlineNanos())
                     .append('\n')
+                    .append(prefix).append("operation=").append(sample.operation()).append('\n')
+                    .append(prefix).append("ordinal=").append(sample.ordinal()).append('\n')
                     .append(prefix).append("startedNanos=").append(sample.startedNanos())
                     .append('\n')
                     .append(prefix).append("completedNanos=")
@@ -1961,12 +2081,20 @@ public final class GaFormalPerformanceRunner {
             final List<ManagementTrial> trials,
             final GaCorrectnessCanonicalContext context,
             final String qualificationJar,
-            final GaPerformanceMatrix matrix) throws IOException {
+            final GaPerformanceMatrix matrix,
+            final String campaignId) throws IOException {
         final StringBuilder text = new StringBuilder()
                 .append("schema=ga-g4-management-summary-v2\n")
                 .append("formal=true\n")
+                .append("lane=FORMAL_G4\n")
+                .append("campaign.id=").append(campaignId).append('\n')
+                .append("gate.id=G4\n")
+                .append("gate.version=").append(GaFormalPerformanceContract.CAMPAIGN)
+                .append('\n')
                 .append("matrix.version=").append(matrix.version()).append('\n')
                 .append("candidate.tag=").append(context.candidate().tag()).append('\n')
+                .append("candidate.tagObjectSha=").append(context.candidate().tagObjectSha())
+                .append('\n')
                 .append("candidate.productionSha=").append(context.candidate().productionSha())
                 .append('\n')
                 .append("candidate.applicationJarSha256=")
@@ -1974,6 +2102,9 @@ public final class GaFormalPerformanceRunner {
                 .append("qualification.jarSha256=").append(qualificationJar).append('\n')
                 .append("controller.gitSha=").append(context.controllerGitSha()).append('\n')
                 .append("protocol=v2\nwindow=8\nwalMode=SYNC_EACH_APPEND\n")
+                .append("loadModel=").append(GaPerformanceMatrix.APPROVED_LOAD_MODEL).append('\n')
+                .append("profile=").append(matrix.profile()).append('\n')
+                .append("seed=").append(matrix.seed()).append('\n')
                 .append("pairA.passed=").append(result.pairAPassed()).append('\n')
                 .append("pairB.passed=").append(result.pairBPassed()).append('\n')
                 .append("blocker=").append(result.blocker()).append('\n')
@@ -1981,7 +2112,16 @@ public final class GaFormalPerformanceRunner {
         for (int index = 0; index < trials.size(); index++) {
             final ManagementTrial trial = trials.get(index);
             final String prefix = "trial." + (index + 1) + ".";
-            text.append(prefix).append("outcome=").append(trial.outcome()).append('\n')
+            text.append(prefix).append("id=").append(trial.trialId()).append('\n')
+                    .append(prefix).append("ordinal=").append(trial.trialOrdinal()).append('\n')
+                    .append(prefix).append("pairId=").append(trial.pairId()).append('\n')
+                    .append(prefix).append("physicalExecutionId=")
+                    .append(trial.physicalExecutionId()).append('\n')
+                    .append(prefix).append("configuration.identitySha256=")
+                    .append(trial.configurationIdentitySha256()).append('\n')
+                    .append(prefix).append("environment.identitySha256=")
+                    .append(trial.environmentIdentitySha256()).append('\n')
+                    .append(prefix).append("outcome=").append(trial.outcome()).append('\n')
                     .append(prefix).append("blocker=").append(trial.blocker()).append('\n')
                     .append(prefix).append("rawPath=")
                     .append(relativeUnchecked(root, trial.rawEvidencePath())).append('\n')
@@ -2170,12 +2310,15 @@ public final class GaFormalPerformanceRunner {
     }
 
     private record StatusSample(
+            String operation,
+            int ordinal,
             long deadlineNanos,
             long startedNanos,
             long completedNanos,
             long latencyNanos) {
         private StatusSample {
-            if (deadlineNanos < 0L || startedNanos < deadlineNanos
+            if (!"STATUS".equals(operation) || ordinal <= 0 || deadlineNanos < 0L
+                    || startedNanos < deadlineNanos
                     || completedNanos < startedNanos || latencyNanos < 1L
                     || latencyNanos != completedNanos - startedNanos) {
                 throw new IllegalArgumentException("invalid STATUS timing sample");
@@ -2215,7 +2358,14 @@ public final class GaFormalPerformanceRunner {
             boolean statusBoundaryComplete,
             String outcome,
             String blocker,
-            Path rawEvidencePath) {
+            Path rawEvidencePath,
+            String campaignId,
+            String pairId,
+            String trialId,
+            int trialOrdinal,
+            String physicalExecutionId,
+            String configurationIdentitySha256,
+            String environmentIdentitySha256) {
 
         private boolean complete() {
             return "PASS".equals(outcome) && "NONE".equals(blocker)

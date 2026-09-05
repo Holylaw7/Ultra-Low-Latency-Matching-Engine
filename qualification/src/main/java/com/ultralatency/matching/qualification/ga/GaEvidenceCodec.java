@@ -125,6 +125,7 @@ public final class GaEvidenceCodec {
 
     private static void validateRun(final Map<String, String> fields) {
         final Set<String> fixed = Set.of(
+                "campaign.id",
                 "candidate.applicationJarSha256", "candidate.productionSha",
                 "candidate.productionTreeSha256", "candidate.tag", "candidate.tagObjectSha",
                 "comparability.identitySha256", "configuration.identitySha256",
@@ -137,7 +138,9 @@ public final class GaEvidenceCodec {
                 "evidence.capacity.releaseDelayMaxNanos", "evidence.measurementStartNanos",
                 "evidence.measurementEndNanos", "evidence.measurementDurationNanos",
                 "evidence.startedAtUtc", "gate.id", "gate.version", "run.commandCount",
-                "run.id", "run.profile", "run.protocolV2Window", "physicalExecution.id",
+                "run.formal", "run.id", "run.loadModel", "run.measurementDurationNanos",
+                "run.profile", "run.protocol", "run.protocolV2Window", "run.walMode",
+                "run.warmupDurationNanos", "physicalExecution.id",
                 "qualification.jarSha256", "invocation.identitySha256", "run.seed", "runtime.cpuModel",
                 "runtime.filesystem", "runtime.gcCollectors", "runtime.heapMaxBytes",
                 "runtime.javaRuntimeVersion", "runtime.javaVendor", "runtime.javaVmArguments",
@@ -182,9 +185,13 @@ public final class GaEvidenceCodec {
         requireInstant(fields, "evidence.startedAtUtc");
         requireInstant(fields, "evidence.completedAtUtc");
         requireOptionalUuid(fields, "physicalExecution.id");
+        requireOptionalUuid(fields, "campaign.id");
         requireOptionalSha256(fields, "qualification.jarSha256");
         requireOptionalSha256(fields, "invocation.identitySha256");
         requireOptionalInteger(fields, "run.protocolV2Window");
+        requireOptionalInteger(fields, "run.measurementDurationNanos");
+        requireOptionalInteger(fields, "run.warmupDurationNanos");
+        requireOptionalBoolean(fields, "run.formal");
         for (String key : Set.of(
                 "evidence.capacity.maxCompletedUndrained",
                 "evidence.capacity.maxInFlight", "evidence.capacity.maxPendingWire",
@@ -208,7 +215,8 @@ public final class GaEvidenceCodec {
         final Set<String> fixed = Set.of(
                 "blocker.classification", "candidate.applicationJarSha256",
                 "candidate.productionSha", "candidate.productionTreeSha256", "candidate.tag",
-                "candidate.tagObjectSha", "comparability.identitySha256",
+                "candidate.tagObjectSha", "campaign.id", "campaign.gate",
+                "comparability.identitySha256",
                 "configuration.identitySha256", "controller.gitSha", "criterion.count",
                 "evidence.completedAtUtc", "evidence.outcome", "evidence.startedAtUtc", "gate.id",
                 "gate.version", "limitation.count", "manifest.count", "schema.version");
@@ -226,6 +234,8 @@ public final class GaEvidenceCodec {
         requireSha256(fields, "comparability.identitySha256");
         requireSha256(fields, "configuration.identitySha256");
         requireGitSha1(fields, "controller.gitSha");
+        requireOptionalUuid(fields, "campaign.id");
+        requireOptionalToken(fields, "campaign.gate");
         requireInteger(fields, "criterion.count");
         requireInteger(fields, "limitation.count");
         requireInteger(fields, "manifest.count");
@@ -266,11 +276,9 @@ public final class GaEvidenceCodec {
                 "campaign.outcome", "campaign.requiredRunCount", "campaign.startedAtUtc",
                 "campaign.validRunCount", "candidate.applicationJarSha256", "candidate.productionSha",
                 "candidate.tag", "candidate.tagObjectSha", "comparability.policy",
-                "controller.gitSha", "gate.id", "run.count", "schema.version");
+                "controller.gitSha", "gate.id", "gate.version", "run.count", "schema.version");
         rejectUnknownFields(fields, fixed, Set.of("run."));
-        final int runMembers = requireExactBaseAndFamily(fields, fixed, "run.",
-                Set.of("comparabilityIdentitySha256", "configurationIdentitySha256", "id",
-                        "manifestPath", "manifestSha256", "outcome"), 1, 100);
+        final int runMembers = requireCampaignRunFamily(fields, fixed, 1, 100);
         requireSha256(fields, "candidate.applicationJarSha256");
         requireGitSha1(fields, "candidate.productionSha");
         requireGitSha1(fields, "candidate.tagObjectSha");
@@ -291,6 +299,7 @@ public final class GaEvidenceCodec {
         requireBoolean(fields, "campaign.configurationIdentityEqual");
         requireEnum(fields, "campaign.outcome", Set.of("PASS", "FAIL", "ABORTED"));
         requireEnum(fields, "gate.id", GATES);
+        requireOptionalToken(fields, "gate.version");
         requireInstant(fields, "campaign.startedAtUtc");
         requireInstant(fields, "campaign.completedAtUtc");
         for (int index = 1; index <= integer(fields, "run.count"); index++) {
@@ -300,8 +309,60 @@ public final class GaEvidenceCodec {
             requireSha256(fields, prefix + ".manifestSha256");
             requireUuid(fields, prefix + ".id");
             requireEnum(fields, prefix + ".outcome", Set.of("PASS", "FAIL", "ABORTED"));
+            requireOptionalUuid(fields, prefix + ".physicalExecutionId");
             rejectRelativePath(fields.get(prefix + ".manifestPath"));
         }
+    }
+
+    private static int requireCampaignRunFamily(
+            final Map<String, String> fields,
+            final Set<String> fixed,
+            final int minimum,
+            final int maximum) {
+        final Set<String> required = Set.of(
+                "comparabilityIdentitySha256", "configurationIdentitySha256", "id",
+                "manifestPath", "manifestSha256", "outcome");
+        final Set<String> allowed = Set.of(
+                "comparabilityIdentitySha256", "configurationIdentitySha256", "id",
+                "manifestPath", "manifestSha256", "outcome", "physicalExecutionId");
+        final Map<Integer, Set<String>> members = new TreeMap<>();
+        for (String key : fields.keySet()) {
+            if (fixed.contains(key)) {
+                continue;
+            }
+            if (!key.startsWith("run.")) {
+                throw new IllegalArgumentException("unknown campaign field: " + key);
+            }
+            final String remainder = key.substring("run.".length());
+            final int dot = remainder.indexOf('.');
+            if (dot <= 1 || dot != remainder.lastIndexOf('.')) {
+                throw new IllegalArgumentException("malformed campaign run family: " + key);
+            }
+            final String number = remainder.substring(0, dot);
+            if (!number.matches("[0-9]{4}")) {
+                throw new IllegalArgumentException("invalid campaign run index: " + key);
+            }
+            final String suffix = remainder.substring(dot + 1);
+            if (!allowed.contains(suffix)) {
+                throw new IllegalArgumentException("unknown campaign run field: " + key);
+            }
+            members.computeIfAbsent(Integer.parseInt(number), ignored -> new java.util.HashSet<>())
+                    .add(suffix);
+        }
+        if (members.size() < minimum || members.size() > maximum) {
+            throw new IllegalArgumentException("campaign run family cardinality out of range");
+        }
+        int expected = 1;
+        for (Map.Entry<Integer, Set<String>> member : members.entrySet()) {
+            final Set<String> actual = member.getValue();
+            if (member.getKey() != expected
+                    || !(actual.equals(required)
+                    || (actual.size() == allowed.size() && actual.containsAll(allowed)))) {
+                throw new IllegalArgumentException("campaign run family has gap or wrong members");
+            }
+            expected++;
+        }
+        return members.size();
     }
 
     private static void validateRelease(final Map<String, String> fields) {
@@ -419,6 +480,20 @@ public final class GaEvidenceCodec {
             final Map<String, String> fields, final String key) {
         if (fields.containsKey(key)) {
             requireInteger(fields, key);
+        }
+    }
+
+    private static void requireOptionalBoolean(
+            final Map<String, String> fields, final String key) {
+        if (fields.containsKey(key)) {
+            requireBoolean(fields, key);
+        }
+    }
+
+    private static void requireOptionalToken(
+            final Map<String, String> fields, final String key) {
+        if (fields.containsKey(key)) {
+            requireToken(fields, key);
         }
     }
 
