@@ -9,11 +9,11 @@
 | Owner | Human Developer |
 | Architect | Codex / Sol High |
 | Created / Updated | `2026-08-25` |
-| Candidate | `v0.9.0-rc.1` annotated tag object `dfd38c0`, peeled production SHA `e2828f5` |
-| Post-tag docs | `b8489bf` — documentation-only, not candidate production source |
+| Candidate | `v0.9.0-rc.2` annotated tag object `9e2a67a`, peeled production SHA `740e8a3` |
+| Historical RC1 post-tag docs | `b8489bf` — documentation-only, not candidate production source |
 | Proposal Branch | `docs/phase11-ga-qualification-blueprint` |
 | Planned Tasks | `TASK-20260825-047` through `TASK-20260825-056` |
-| Next Gate | `TASK-052 governance-checkpoint validation and reviewer execution, then Human TASK-052 Pre-Soak Evidence Gate Final Review; formal G4/G5 remains separately Human-gated under TASK-053; formal Stage A/B remains separately Human-gated under TASK-054` |
+| Next Gate | `RC2 TASK-053 G4 pre-execution audit and Human formal G4 authorization; G5 remains separately rebased and locked; formal Stage A/B remains separately Human-gated under TASK-054` |
 
 ## 2. Phase Objective
 
@@ -73,7 +73,7 @@ automatic v1.0.0 tag, GitHub Release or GA declaration
 ```
 
 The proposed product scope is Java 21, single node, existing one-engine/
-single-symbol topology, one Protocol v1 session and one request in flight,
+single-symbol topology, one Protocol v2 session with bounded window N=8,
 SubmitLimit/Cancel, loopback/trusted network, `SYNC_EACH_APPEND`, WAL-before-
 execute, Snapshot-tail/PURE_WAL recovery and GitHub binary distribution.
 
@@ -87,9 +87,9 @@ work remains frozen away from:
 src/main/**
 root/core Maven production build inputs
 runtime dependencies/defaults/configuration semantics
-Protocol v1 / WAL v1 / Snapshot v1
+Protocol v2 / WAL v1 / Snapshot v1 production semantics
 matching / sequence / durability / recovery semantics
-v0.9.0-rc.1 and every existing baseline tag
+v0.9.0-rc.2 and every existing baseline tag
 existing raw qualification evidence
 existing CI workflows
 ```
@@ -123,7 +123,7 @@ linked above. Luna has no authority to choose replacements during execution.
 
 ```text
 Immutable Candidate
-v0.9.0-rc.1 / e2828f5
+v0.9.0-rc.2 / 740e8a3
         |
         +-- production tree + reproducible JAR identity
         |
@@ -165,7 +165,7 @@ component.
 | 4 | `TASK-20260825-050` | G3/G7 durability, crash and overload evidence | 049 Human Closure PASS | **Stop before formal campaign; separate Human approval** |
 | 5 | `TASK-20260825-051` | G4/G5 performance/capacity harness and Quick evidence | 050 PASS | **Stop before Full campaign** |
 | 6 | `TASK-20260825-052` | G6/G8 soak/observability harness and Quick evidence | 051 pre-campaign PASS | **Stop before 2h run** |
-| 7 | `TASK-20260825-053` | Execute approved G4/G5 campaign | Human performance/capacity approval | No automatic replacement |
+| 7 | `TASK-20260825-053` | Execute the approved RC2 G4 performance/lifecycle/management campaign; rebase G5 separately | Human G4 approval; G5 Human rebase | No automatic replacement |
 | 8 | `TASK-20260825-054` | Execute approved 2h then separately approved 6h soak | Human 2h approval, then Human 6h approval | **Two Human gates** |
 | 9 | `TASK-20260825-055` | G10 runbooks, license/release notes and release-manifest preparation | 053/054 PASS | No publication |
 | 10 | `TASK-20260825-056` | G12 final evidence audit and Closure Proposal | 055 PASS | **Stop for Closure** |
@@ -184,7 +184,7 @@ authorize the separately gated campaigns, Phase Closure, GA, tag or release.
 | 050 | qualification runners/tests/evidence | G3/G7 fault matrix | fail-closed/convergence/overload bounds |
 | 051 | qualification perf/capacity runners/tests/docs | Quick/pre-campaign Gate only | benchmark review + exact-SHA CI; stop |
 | 052 | qualification soak/observability runners/tests/docs | Quick/pre-soak Gate only | verifier/benchmark/docs + exact-SHA CI; stop |
-| 053 | immutable evidence directories/docs | approved G4/G5 results | every run/campaign PASS; no retry |
+| 053 | immutable evidence directories/docs | approved RC2 G4 results; G5 remains a separate lineage | every run/campaign PASS; no retry |
 | 054 | immutable evidence directories/docs | approved 2h and 6h results | each run independent PASS; Human gate between |
 | 055 | `docs/release/**`, `docs/operations/**`, release evidence | G10 and release manifest draft | runnable docs + limitation/license audit |
 | 056 | Phase 11 evidence/status docs | G12 audit and Closure Proposal | all G1-G12 PASS + reviewers + exact-SHA CI |
@@ -339,7 +339,7 @@ ADR-0019 D17 and the Matrix are normative. Key rule:
 ```text
 production/build/runtime candidate repair
         -> rc.1 cannot directly become GA
-        -> create rc.2
+        -> create a new RC (for example rc.3)
         -> rerun affected Gates
         -> rerun G1-G12 when impact is uncertain
 ```
@@ -389,7 +389,7 @@ Stop for Sol High and Human review on:
 | thresholds are tuned to pass | freeze them in approved ADR before execution | reject run; Blueprint amendment required |
 | controller contaminates candidate | separate SHAs and zero production diff | revert qualification Task; rerun affected Gate |
 | failure evidence is hidden | immutable PASS/FAIL/ABORTED and no retry | stop for Human review |
-| candidate defect appears | B1 classification | create rc.2; requalify |
+| candidate defect appears | B1 classification | create a new RC (for example rc.3); requalify |
 | security tooling unavailable | ABORTED, pinned provenance | Human decides replacement; never PASS by omission |
 | GA claim exceeds scope | G10/G12 claim audit | block release |
 
@@ -471,13 +471,13 @@ explicit Human Phase 11 Closure Approval. Phase Closure does not create
 
 ```text
 Blueprint Status: Approved — Human Phase 11 Blueprint Approval 2026-08-25
-Implementation: TASK-047 Completed / Evidence Gate PASS; TASK-048 Completed / Closed / Human Approved with G9 `32856372581` PASS/qualifying/frozen and G11 `32955619875` PASS/qualifying/frozen under `OFFLINE_SUPPLY_CHAIN_SECURITY_V1` (artifact `9601871146`, GitHub digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`); final docs/evidence remediation `f2d5470`; Standard `32959524443` and Quick `32959524552` PASS; all historical G11 failures remain preserved/non-qualifying; TASK-049 CLOSED by Human with fresh 24-case matrix PASS/evidence frozen (24 G1 manifests, 24 G2 manifests, 24 bindings, 48 unique run IDs, root inventory 8,840/8,840); TASK-050 CLOSED by Human with G3 and G7 PASS/QUALIFYING/FROZEN and formal campaign evidence preserved/frozen; TASK-051 CLOSED by Human with G4/G5 pre-campaign foundation and reviewer evidence accepted, formal G4/G5 campaign not authorized; TASK-052 is IN PROGRESS / Human scope approved / remediated qualification-only implementation committed/pushed at `7b00fdf571fb8fa4918b7138210693b9e79f346c` / Remediated Implementation Evidence Review PASS / controller-bound Quick PASS / QUICK_READINESS_ONLY / exact-controller Standard `33585928074` and Quick `33585928038` PASS / TASK-052 governance checkpoint ESTABLISHED / reviewer validation PENDING / pre-soak Evidence Gate not passed; previous controller `9140ab8215c2b170b925aadd02502d4d131a2f99` remains historical and non-qualifying; TASK-053 remains not authorized; formal Stage A/B and TASK-054 remain not authorized
+Historical implementation checkpoints through TASK-052 remain preserved above. Current active lineage: RC2 Candidate Freeze is closed; Wave 1 G1/G2/G3 are PASS; TASK-053 G4 pre-execution remediation is active and formal G4 is Human-gated; TASK-054 remains locked. The exact RC2 candidate identity is `v0.9.0-rc.2` with production SHA `740e8a3dea0a759c707c597778c26c41e9bb3e47`, Protocol v2, window `N=8`, and `SYNC_EACH_APPEND`.
 TASK-050 Evidence: Preserved / Frozen
-Qualification Campaigns: Formal G4/G5 campaign not authorized (owned by TASK-053); any later campaigns remain separately Human-gated
-Candidate: `v0.9.0-rc.1` immutable
+Qualification Campaigns: Formal G4 remains Human-gated under active RC2 TASK-053; G5 is separately rebased and locked
+Candidate: `v0.9.0-rc.2` immutable
 RC mutation: Not Authorized
 v1.0.0 / GitHub Release / GA: Not Authorized
-Next Gate: TASK-052 governance-checkpoint validation and reviewer execution, then Human TASK-052 Pre-Soak Evidence Gate Final Review; formal G4/G5 campaign remains separately Human-gated under TASK-053; formal Stage A/B remains separately Human-gated under TASK-054
+Next Gate: RC2 TASK-053 G4 pre-execution audit and Human formal G4 authorization; G5, formal Stage A/B and TASK-054 remain locked
 ```
 
 ## 23. Execution Checkpoints

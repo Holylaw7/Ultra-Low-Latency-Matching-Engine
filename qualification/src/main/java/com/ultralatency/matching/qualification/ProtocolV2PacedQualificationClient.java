@@ -95,6 +95,23 @@ public final class ProtocolV2PacedQualificationClient implements AutoCloseable {
         }
     }
 
+    /**
+     * Returns the largest number of requests retained in the wire-pending map.
+     *
+     * <p>This is intentionally an alias with an evidence-oriented name.  A complete response is
+     * removed from this map before it is transferred to the separately bounded completion queue,
+     * so this value is the raw maximum pending-wire depth rather than a scheduler-side estimate.
+     * Keeping the accessor on the qualification client also prevents the evidence publisher from
+     * deriving a wire bound from a copied counter.</p>
+     *
+     * @return the largest observed pending-wire depth
+     */
+    public int maximumObservedPendingWire() {
+        synchronized (monitor) {
+            return maximumObservedInFlight;
+        }
+    }
+
     /** @return complete responses waiting for caller consumption */
     public int completedCount() {
         synchronized (monitor) {

@@ -30,7 +30,8 @@ public final class GaFormalPerformanceEvidencePublisher {
             int maximumObservedCompletedUndrained,
             long readerWakeCount,
             long capacityReleaseCount,
-            long[] releaseDelayNanos) {
+            long[] releaseDelayNanos,
+            List<CapacityReleaseSample> releaseSamples) {
         public CapacityMetrics {
             if (maximumObservedInFlight < 0 || maximumObservedPendingWire < 0
                     || maximumObservedCompletedUndrained < 0 || readerWakeCount < 0
@@ -38,11 +39,62 @@ public final class GaFormalPerformanceEvidencePublisher {
                 throw new IllegalArgumentException("capacity metrics must be non-negative");
             }
             releaseDelayNanos = copyNonNegative(releaseDelayNanos, "releaseDelayNanos");
+            releaseSamples = List.copyOf(Objects.requireNonNull(releaseSamples,
+                    "releaseSamples"));
+            for (CapacityReleaseSample sample : releaseSamples) {
+                Objects.requireNonNull(sample, "releaseSamples member");
+            }
+            if (!releaseSamples.isEmpty()
+                    && releaseSamples.size() != releaseDelayNanos.length) {
+                throw new IllegalArgumentException(
+                        "release samples and release delays must have equal size");
+            }
+            if (!releaseSamples.isEmpty()
+                    && capacityReleaseCount != releaseSamples.size()) {
+                throw new IllegalArgumentException(
+                        "capacity release count must match release samples");
+            }
+        }
+
+        /** Compatibility constructor for older synthetic qualification fixtures. */
+        public CapacityMetrics(
+                final int maximumObservedInFlight,
+                final int maximumObservedPendingWire,
+                final int maximumObservedCompletedUndrained,
+                final long readerWakeCount,
+                final long capacityReleaseCount,
+                final long[] releaseDelayNanos) {
+            this(maximumObservedInFlight, maximumObservedPendingWire,
+                    maximumObservedCompletedUndrained, readerWakeCount, capacityReleaseCount,
+                    releaseDelayNanos, List.of());
         }
 
         @Override
         public long[] releaseDelayNanos() {
             return releaseDelayNanos.clone();
+        }
+    }
+
+    /** One complete response-to-capacity-release timeline row. */
+    public record CapacityReleaseSample(
+            long requestId,
+            long commandSequence,
+            long offeredNanos,
+            long responseCompleteNanos,
+            long capacityReleaseNanos,
+            long schedulerConsumedNanos) {
+        public CapacityReleaseSample {
+            if (requestId <= 0L || commandSequence <= 0L || offeredNanos < 0L
+                    || responseCompleteNanos < offeredNanos
+                    || capacityReleaseNanos < responseCompleteNanos
+                    || schedulerConsumedNanos < capacityReleaseNanos) {
+                throw new IllegalArgumentException("capacity release chronology is invalid");
+            }
+        }
+
+        /** Returns the response-complete to capacity-release delay. */
+        public long releaseDelayNanos() {
+            return capacityReleaseNanos - responseCompleteNanos;
         }
     }
 
@@ -166,7 +218,11 @@ public final class GaFormalPerformanceEvidencePublisher {
 
         final Path inventory = root.resolve("SHA256SUMS");
         final List<Path> artifacts = payloadArtifacts(root);
+        for (Path artifact : artifacts) {
+            publishArtifactSidecar(artifact);
+        }
         publishInventory(inventory, artifacts, root);
+        publishArtifactSidecar(inventory);
         final Map<String, String> runtime = runtimeFields(input.environment());
         final String comparability = GaPerformanceEnvironment.identity(input.environment());
         final String configuration = GaFormalPerformanceContract.configurationIdentity(
@@ -227,6 +283,12 @@ public final class GaFormalPerformanceEvidencePublisher {
                 root.resolve("g4-gate-result-v1.txt"),
                 configuration, comparability, input.outcome(), "PASS".equals(input.outcome()));
         final Path gate = publishGate(root, run, input);
+        final GaFormalPerformanceEvidenceVerifier.Verification verification =
+                GaFormalPerformanceEvidenceVerifier.verifyRun(root);
+        if (!verification.passed() && "PASS".equals(input.outcome())) {
+            throw new IOException("formal run evidence failed integrity verification: "
+                    + verification.findings());
+        }
         return new PublishedRun(
                 run.runId(), run.physicalExecutionId(), run.evidenceDirectory(),
                 run.manifestPath(), run.manifestSha256(), gate,
@@ -253,29 +315,76 @@ public final class GaFormalPerformanceEvidencePublisher {
         Objects.requireNonNull(completed, "completed");
         Objects.requireNonNull(criteria, "criteria");
         Objects.requireNonNull(campaignMetrics, "campaignMetrics");
-        if (runs.size() != matrix.runCount() || criteria.isEmpty()
+        if (runs.isEmpty() || runs.size() > matrix.runCount() || criteria.isEmpty()
                 || completed.isBefore(started)) {
             throw new IllegalArgumentException("formal campaign values are outside their bounds");
         }
         final Path root = campaignRoot.toAbsolutePath().normalize();
         Files.createDirectories(root);
+        final String campaignId = UUID.randomUUID().toString();
         final Path evidence = root.resolve("campaign-evidence-v2.txt");
-        QualificationEvidencePublication.text(evidence, keyValueText(campaignMetrics));
+        final Map<String, String> evidenceFields = new LinkedHashMap<>(campaignMetrics);
+        final GaCandidateVerifier.Verified candidate = context.candidate();
+        evidenceFields.put("campaign.id", campaignId);
+        evidenceFields.put("campaign.gate", "G4");
+        evidenceFields.put("campaign.requiredRunCount", Integer.toString(matrix.runCount()));
+        evidenceFields.put("campaign.runCount", Integer.toString(runs.size()));
+        evidenceFields.put("candidate.tag", candidate.tag());
+        evidenceFields.put("candidate.tagObjectSha", candidate.tagObjectSha());
+        evidenceFields.put("candidate.productionSha", candidate.productionSha());
+        evidenceFields.put("candidate.applicationJarSha256", candidate.applicationJarSha256());
+        evidenceFields.put("qualification.controllerSha", context.controllerGitSha());
+        final String qualificationDigest = context.qualificationJarSha256();
+        evidenceFields.put("qualification.jarSha256", qualificationDigest == null
+                || qualificationDigest.isBlank() ? "UNAVAILABLE" : qualificationDigest);
+        evidenceFields.put("protocol", GaPerformanceMatrix.APPROVED_PROTOCOL);
+        evidenceFields.put("protocolV2.window", Integer.toString(
+                GaPerformanceMatrix.APPROVED_PROTOCOL_V2_WINDOW));
+        evidenceFields.put("walMode", GaPerformanceMatrix.APPROVED_WAL_MODE);
+        evidenceFields.put("loadModel", GaPerformanceMatrix.APPROVED_LOAD_MODEL);
+        evidenceFields.put("profile", matrix.profile());
+        evidenceFields.put("seed", Long.toString(matrix.seed()));
+        evidenceFields.put("campaign.startedAtUtc", started.toString());
+        evidenceFields.put("campaign.completedAtUtc", completed.toString());
+        for (int index = 0; index < runs.size(); index++) {
+            final PublishedRun run = runs.get(index);
+            final String prefix = String.format("run.%04d.", index + 1);
+            evidenceFields.put(prefix + "id", run.runId());
+            evidenceFields.put(prefix + "physicalExecutionId", run.physicalExecutionId());
+            evidenceFields.put(prefix + "manifestPath", relative(root, run.manifestPath()));
+            evidenceFields.put(prefix + "manifestSha256", run.manifestSha256());
+        }
+        addInventoryBinding(evidenceFields, "lifecycle", root.resolve("lifecycle")
+                .resolve("SHA256SUMS"));
+        addInventoryBinding(evidenceFields, "management", root.resolve("management")
+                .resolve("SHA256SUMS"));
+        QualificationEvidencePublication.text(evidence, keyValueText(evidenceFields));
         publishArtifactSidecar(evidence);
         final Map<String, String> fields = new TreeMap<>();
-        final GaCandidateVerifier.Verified candidate = context.candidate();
         final String configuration = runs.get(0).configurationIdentitySha256();
         final String comparability = runs.get(0).comparabilityIdentitySha256();
         final boolean configurationEqual = runs.stream().allMatch(run ->
                 configuration.equals(run.configurationIdentitySha256()));
+        final boolean comparabilityEqual = runs.stream().allMatch(run ->
+                comparability.equals(run.comparabilityIdentitySha256()));
+        final Path lifecycleInventory = root.resolve("lifecycle").resolve("SHA256SUMS");
+        final Path managementInventory = root.resolve("management").resolve("SHA256SUMS");
+        final boolean evidenceComplete = Files.isRegularFile(lifecycleInventory)
+                && Files.isRegularFile(managementInventory);
+        final boolean allRunResultsPass = runs.size() == matrix.runCount()
+                && runs.stream().allMatch(PublishedRun::passed);
+        final boolean allCriteriaPass = criteria.stream()
+                .allMatch(GaPerformanceEvaluator.Criterion::passed);
+        final boolean campaignPassed = passed && allRunResultsPass && allCriteriaPass
+                && configurationEqual && comparabilityEqual && evidenceComplete;
         fields.put("candidate.applicationJarSha256", candidate.applicationJarSha256());
         fields.put("candidate.productionSha", candidate.productionSha());
         fields.put("candidate.tag", candidate.tag());
         fields.put("candidate.tagObjectSha", candidate.tagObjectSha());
         fields.put("campaign.completedAtUtc", completed.toString());
         fields.put("campaign.configurationIdentityEqual", Boolean.toString(configurationEqual));
-        fields.put("campaign.id", UUID.randomUUID().toString());
-        fields.put("campaign.outcome", passed ? "PASS" : "FAIL");
+        fields.put("campaign.id", campaignId);
+        fields.put("campaign.outcome", campaignPassed ? "PASS" : "FAIL");
         fields.put("campaign.requiredRunCount", Integer.toString(matrix.runCount()));
         fields.put("campaign.startedAtUtc", started.toString());
         fields.put("campaign.validRunCount", Long.toString(runs.stream()
@@ -301,6 +410,20 @@ public final class GaFormalPerformanceEvidencePublisher {
         GaEvidenceStore.publish(manifest, GaEvidenceCodec.Schema.CAMPAIGN, fields);
         publishArtifactSidecar(manifest);
         return manifest;
+    }
+
+    private static void addInventoryBinding(
+            final Map<String, String> fields,
+            final String name,
+            final Path inventory) throws IOException {
+        if (Files.isRegularFile(inventory)) {
+            fields.put("campaign." + name + ".inventory.path", relative(
+                    inventory.getParent().getParent(), inventory));
+            fields.put("campaign." + name + ".inventory.sha256",
+                    QualificationArtifactHasher.sha256(inventory));
+            fields.put("campaign." + name + ".inventory.size",
+                    Long.toString(Files.size(inventory)));
+        }
     }
 
     /** Publishes a gate result whose manifests reference the campaign and each physical run. */
@@ -345,7 +468,24 @@ public final class GaFormalPerformanceEvidencePublisher {
             fields.put("limitation.0001.code", failureCode);
             fields.put("limitation.0001.statementDigestSha256", digest(limitationText));
         }
-        fields.put("manifest.count", Integer.toString(runs.size() + 1));
+        final List<Path> boundArtifacts = new java.util.ArrayList<>();
+        for (PublishedRun run : runs) {
+            boundArtifacts.add(run.manifestPath());
+        }
+        boundArtifacts.add(campaignManifest);
+        final Path campaignEvidence = root.resolve("campaign-evidence-v2.txt");
+        final Path lifecycleInventory = root.resolve("lifecycle").resolve("SHA256SUMS");
+        final Path managementInventory = root.resolve("management").resolve("SHA256SUMS");
+        if (Files.isRegularFile(campaignEvidence)) {
+            boundArtifacts.add(campaignEvidence);
+        }
+        if (Files.isRegularFile(lifecycleInventory)) {
+            boundArtifacts.add(lifecycleInventory);
+        }
+        if (Files.isRegularFile(managementInventory)) {
+            boundArtifacts.add(managementInventory);
+        }
+        fields.put("manifest.count", Integer.toString(boundArtifacts.size()));
         int manifestIndex = 1;
         for (PublishedRun run : runs) {
             final String prefix = String.format("manifest.%04d", manifestIndex++);
@@ -356,6 +496,14 @@ public final class GaFormalPerformanceEvidencePublisher {
                 relative(root, campaignManifest));
         fields.put(String.format("manifest.%04d.sha256", manifestIndex),
                 QualificationArtifactHasher.sha256(campaignManifest));
+        manifestIndex++;
+        for (Path artifact : boundArtifacts.subList(runs.size() + 1, boundArtifacts.size())) {
+            fields.put(String.format("manifest.%04d.path", manifestIndex),
+                    relative(root, artifact));
+            fields.put(String.format("manifest.%04d.sha256", manifestIndex),
+                    QualificationArtifactHasher.sha256(artifact));
+            manifestIndex++;
+        }
         fields.put("schema.version", GaEvidenceCodec.Schema.GATE.version());
         for (int index = 0; index < criteria.size(); index++) {
             final GaPerformanceEvaluator.Criterion criterion = criteria.get(index);
@@ -414,14 +562,25 @@ public final class GaFormalPerformanceEvidencePublisher {
         }
         final Path target = root.resolve("g4-gate-result-v1.txt");
         GaEvidenceStore.publish(target, GaEvidenceCodec.Schema.GATE, fields);
+        publishArtifactSidecar(target);
         return target;
     }
 
     /** Publishes a basename sidecar for one formal payload artifact. */
     public static void publishArtifactSidecar(final Path artifact) throws IOException {
         final Path sidecar = artifact.resolveSibling(artifact.getFileName() + ".sha256");
-        GaEvidenceStore.publishArtifactSidecar(sidecar,
-                Map.of(artifact.getFileName().toString(), artifact));
+        final Map<String, Path> expected = Map.of(artifact.getFileName().toString(),
+                artifact);
+        if (Files.exists(sidecar)) {
+            final Map<String, String> actual = GaEvidenceStore.readArtifactSidecar(sidecar);
+            final String expectedDigest = QualificationArtifactHasher.sha256(artifact);
+            if (!expectedDigest.equals(actual.get(artifact.getFileName().toString()))
+                    || actual.size() != 1) {
+                throw new IOException("artifact sidecar does not match payload: " + artifact);
+            }
+            return;
+        }
+        GaEvidenceStore.publishArtifactSidecar(sidecar, expected);
     }
 
     private static List<Path> payloadArtifacts(final Path root) throws IOException {
@@ -474,7 +633,38 @@ public final class GaFormalPerformanceEvidencePublisher {
                 .append("readerWakeCount=").append(input.capacityMetrics().readerWakeCount())
                 .append('\n')
                 .append("capacityReleaseCount=")
-                .append(input.capacityMetrics().capacityReleaseCount()).append('\n');
+                .append(input.capacityMetrics().capacityReleaseCount()).append('\n')
+                .append("releaseDelayCount=")
+                .append(input.capacityMetrics().releaseDelayNanos().length).append('\n');
+        final List<CapacityReleaseSample> releaseSamples =
+                input.capacityMetrics().releaseSamples();
+        final long releaseSampleCount = releaseSamples.isEmpty()
+                ? input.capacityMetrics().releaseDelayNanos().length : releaseSamples.size();
+        text.append("releaseSampleCount=").append(releaseSampleCount).append('\n');
+        long index = 1L;
+        for (CapacityReleaseSample sample : releaseSamples) {
+            final String prefix = String.format("releaseSample.%06d.", index++);
+            text.append(prefix).append("requestId=").append(sample.requestId()).append('\n')
+                    .append(prefix).append("commandSequence=")
+                    .append(sample.commandSequence()).append('\n')
+                    .append(prefix).append("offeredNanos=").append(sample.offeredNanos())
+                    .append('\n')
+                    .append(prefix).append("responseCompleteNanos=")
+                    .append(sample.responseCompleteNanos()).append('\n')
+                    .append(prefix).append("capacityReleaseNanos=")
+                    .append(sample.capacityReleaseNanos()).append('\n')
+                    .append(prefix).append("schedulerConsumedNanos=")
+                    .append(sample.schedulerConsumedNanos()).append('\n')
+                    .append(prefix).append("releaseDelayNanos=")
+                    .append(sample.releaseDelayNanos()).append('\n');
+        }
+        if (releaseSamples.isEmpty()) {
+            index = 1L;
+            for (long delay : input.capacityMetrics().releaseDelayNanos()) {
+                text.append("releaseDelay.").append(index++).append(".nanos=")
+                        .append(delay).append('\n');
+            }
+        }
         return text.toString();
     }
 

@@ -37,23 +37,27 @@ silently authorize optimization or a feature change.
 The target is exactly:
 
 ```text
-candidate tag:          v0.9.0-rc.1
-annotated tag object:   dfd38c08e80aed9035bf1c2d7c8faf8bae99c356
-peeled production SHA:  e2828f563ee41316c062385c0244ac1336731359
-post-tag docs SHA:      b8489bf8d8fe979bfd4b28bd7e6c2da8bb33b1d4
+candidate tag:          v0.9.0-rc.2
+annotated tag object:   9e2a67ada0e3b6220b730131d0bae79dc03073ed
+peeled production SHA:  740e8a3dea0a759c707c597778c26c41e9bb3e47
+candidate JAR SHA-256:  0B77D37985B9124AC4FD1B90D669DB550EFD0CF00C23AF65FDC29B35071703C4
+Protocol v2 window:     N=8
+WAL mode:               SYNC_EACH_APPEND
 ```
 
 Every qualifying run records the candidate tag, tag-object SHA, peeled commit,
 production tree digest, application JAR SHA-256 and qualification-controller
-SHA. `b8489bf` may be cited as documentation evidence only.
+SHA. The former `v0.9.0-rc.1` identity and its evidence remain historical
+reference material only.
 
 ### D3 — Candidate mutation requires a new RC
 
 Any change to production source, production semantics, root/core build inputs,
 runtime defaults, runtime dependency graph, Protocol/WAL/Snapshot formats or
-packaged artifact makes `rc.1` ineligible for direct GA promotion. The repair
-must produce `v0.9.0-rc.2` (or later) and rerun every affected Gate. If impact
-cannot be bounded with confidence, G1 through G12 all rerun.
+packaged artifact makes `rc.2` ineligible for direct GA promotion. The repair
+must produce a new candidate (for example `v0.9.0-rc.3`) and rerun every
+affected Gate. If impact cannot be bounded with confidence, G1 through G12 all
+rerun.
 
 Existing `rc.1` evidence is never relabelled as evidence for a repaired RC.
 
@@ -63,7 +67,7 @@ The proposed GA scope is:
 
 - Java 21, single-node deployment;
 - one MatchingEngine and the existing single-symbol topology;
-- one active Protocol v1 session with one request in flight;
+- one active Protocol v2 session with the frozen bounded window `N=8`;
 - `SubmitLimitCommand` and `CancelOrderCommand` only;
 - loopback/trusted-network operation;
 - `SYNC_EACH_APPEND`, WAL-before-execute and fail-stop durability semantics;
@@ -164,9 +168,10 @@ a force-injection production seam would mutate the candidate and require rc.2.
 ### D11 — Performance SLO is fixed before execution
 
 G4 uses three independent comparable ten-minute
-`MEMORY_STEADY_STATE_V1` runs with seed `20260823`, Protocol v1 TCP,
-`SYNC_EACH_APPEND`, Pipeline `1024/BLOCKING`, one sequential client and idle
-management path. Every run must meet:
+`MEMORY_STEADY_STATE_V1` runs with seed `20260823`, the frozen RC2 Protocol v2
+TCP path with bounded window `N=8`, `SYNC_EACH_APPEND`, Pipeline
+`1024/BLOCKING`, and a bounded closed-loop continuous-refill client. Every run
+must meet:
 
 | Metric | SLO |
 | --- | ---: |
@@ -176,9 +181,11 @@ management path. Every run must meet:
 | response P99.9 | `<= 10 ms` |
 | errors/timeouts/sequence mismatch | `0` |
 
-Sixty retained lifecycle samples must have startup P99 `<= 1.25 s` and clean
-shutdown P99 `<= 1.25 s`. A paired `STATUS @ 1 Hz` trial may regress neither
-throughput nor P99 by more than 10% against idle management. These are
+Sixty fresh lifecycle cycles must produce 60 startup and 60 graceful-shutdown
+samples; each P99 must be `<= 1.25 s`. Management is evaluated as two fresh,
+symmetrical pairs (`IDLE -> STATUS@1Hz` and `STATUS@1Hz -> IDLE`), with a 60 s
+warmup and five-minute measurement per trial. Each pair may regress neither
+throughput nor P99 by more than 10% against its idle trial. These are
 environment-qualified product SLOs, not universal SLAs.
 
 The three runs must execute on the Phase 10 reference environment exactly:
@@ -465,13 +472,13 @@ commit exists and must not replace `1bdab634...` as qualification provenance.
 
 ### D16 — Release source and production source may be distinguished
 
-The qualified production artifact source remains `e2828f5`. Human may either:
+The frozen RC2 production artifact source is `740e8a3`. Human may either:
 
-1. require `v1.0.0` to point exactly to `e2828f5`, with final documentation as
+1. require `v1.0.0` to point exactly to `740e8a3`, with final documentation as
    GitHub Release assets; or
 2. select a later documentation/qualification-only release-source commit if
    its production source, root/core build inputs, runtime configuration and
-   dependency graph have zero diff from `e2828f5`, and a clean rebuilt JAR is
+   dependency graph have zero diff from `740e8a3`, and a clean rebuilt JAR is
    byte-identical to the qualified candidate.
 
 `ga-release-manifest-v1` records both production and release-source SHAs. This
@@ -519,7 +526,7 @@ the corresponding Human authority.
 
 Phase 11 can produce evidence strong enough for a narrow GA decision while
 preserving the candidate. It may also legitimately end in `FAIL`, `ABORTED` or
-an `rc.2` recommendation. A successful Phase Closure still does not itself
+a new-RC recommendation. A successful Phase Closure still does not itself
 publish or declare GA.
 
 ## Exception Gates
@@ -546,7 +553,8 @@ action.
 | 2026-08-26 | Human Developer | APPROVED — Limited candidate Gitleaks path-contract B2 Remediation | `32952590543` preserved FAIL/B2; switch candidate scan to root-relative `dir .`, record `repository-relative-v1` / `working-directory` policy identity; no candidate/POM/production/G9 change or fresh G11 execution |
 | 2026-08-26 | Evidence Gate | PASS — Candidate Gitleaks path-contract B2 Remediation | `f6db140`; Standard CI `32954953854`; Quick Lane `32954953801`; native `dir .` path contract, focused/full verification and frozen-boundary audit PASS; fresh G11 remains separately Human-gated |
 | 2026-08-26 | Evidence Gate | PASS — Fresh G11 under amended path contract | `32955619875`; artifact `9601871146`; GitHub digest `sha256:5c4a54e3c28ec14d7709b4a5e747d79aa4bb710d4cb80b8ee489e31912cc7afd`; G11 qualifying/frozen; TASK-048 final evidence review pending; no additional G11 execution |
-| 2026-09-01 | Human | APPROVED — TASK-050 post-closure qualification-harness B2 remediation exception | `GaOverloadRunner.java` / `GaOverloadRunnerTest.java`; `MANAGEMENT_BOUND` release barrier and diagnostics plus `PIPELINED_REQUEST` diagnostics; TASK-050 remains CLOSED and formal G3/G7 evidence remains frozen |
+ | 2026-09-01 | Human | APPROVED — TASK-050 post-closure qualification-harness B2 remediation exception | `GaOverloadRunner.java` / `GaOverloadRunnerTest.java`; `MANAGEMENT_BOUND` release barrier and diagnostics plus `PIPELINED_REQUEST` diagnostics; TASK-050 remains CLOSED and formal G3/G7 evidence remains frozen |
+| 2026-09-05 | Human Developer | APPROVED — RC2 TASK-053 G4 final pre-execution qualification/evidence remediation | Accepted-throughput accounting, final candidate health, lifecycle/management evidence, strict STATUS@1Hz, raw hash/recomputation, stop-on-first-blocker and active RC2 contract only; no production/candidate/G5 change; formal G4 remains Human-gated |
 
 The `688d955` entry is the final remediation audit checkpoint. Any later
 docs-only commit that records this checkpoint is external validation only and

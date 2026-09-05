@@ -34,6 +34,35 @@ class GaPerformanceEvaluatorTest {
     }
 
     @Test
+    void throughputUsesAcceptedPopulationRatherThanInWindowCompletions() {
+        final GaPerformanceObservation observation = new GaPerformanceObservation(
+                Integer.MAX_VALUE, 300_001L, 1L, 600_000_000_000L,
+                new long[]{1L}, new long[0], new long[0], 0.0d, 0.0d, 0L, 0L,
+                0, 0, 0, true, true, true, true, true,
+                new GaPerformanceMeasurement(300_001L, 300_001L, 1L, 0L, 0L,
+                        300_000L, true), true, "NONE", 0L, 0, true);
+
+        assertEquals(500.00166666666667d, GaPerformanceEvaluator.throughput(observation),
+                0.000000001d);
+    }
+
+    @Test
+    void unhealthyCandidateCannotPassHealthyPerformanceSlo() {
+        final GaPerformanceObservation observation = new GaPerformanceObservation(
+                8, 8L, 8L, 8_000_000L,
+                new long[]{1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L},
+                new long[0], new long[0], 1000.0d, 1000.0d, 0L, 0L,
+                0, 0, 0, true, true, true, true, true,
+                new GaPerformanceMeasurement(8L, 8L, 8L, 0L, 0L, 0L, true),
+                false, "FAILED", 1L, 0, true);
+
+        final GaPerformanceEvaluator.Evaluation evaluation =
+                GaPerformanceEvaluator.evaluateRun(observation);
+        assertFalse(evaluation.passed());
+        assertEquals("B1", evaluation.failureCode());
+    }
+
+    @Test
     void trustworthyLatencySloFailureIsCandidateB1() {
         final GaPerformanceObservation observation = observation(
                 8, 8_000_000L,

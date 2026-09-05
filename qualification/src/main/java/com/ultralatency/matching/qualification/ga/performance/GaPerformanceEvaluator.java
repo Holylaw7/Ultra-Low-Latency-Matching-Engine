@@ -75,6 +75,14 @@ public final class GaPerformanceEvaluator {
         criteria.add(zero("errors", observation.errors()));
         criteria.add(zero("timeouts", observation.timeouts()));
         criteria.add(zero("mismatches", observation.mismatches()));
+        criteria.add(exact("candidate.ready", observation.candidateReady(), "true"));
+        criteria.add(exact("candidate.failureCode", "NONE".equals(
+                observation.candidateFailureCode()), "true"));
+        criteria.add(zero("candidate.terminalFailures", observation.terminalFailures()));
+        criteria.add(exact("process.exit", observation.processExitCode() == 0, "true"));
+        criteria.add(exact("evidence.complete", observation.mandatoryEvidenceComplete(), "true"));
+        criteria.add(exact("evidence.candidateHealthComplete",
+                observation.candidateHealthEvidenceComplete(), "true"));
         criteria.add(exact("configuration.bound", observation.configurationBound(), "true"));
         criteria.add(exact("comparability.bound", observation.comparabilityBound(), "true"));
         criteria.add(exact("candidate.bound", observation.candidateBound(), "true"));
@@ -152,7 +160,7 @@ public final class GaPerformanceEvaluator {
     /** Returns the measured accepted throughput without rounding away failures. */
     public static double throughput(final GaPerformanceObservation observation) {
         return observation.elapsedNanos() == 0 ? 0.0
-                : observation.responseCount() * 1_000_000_000.0
+                : observation.acceptedCommands() * 1_000_000_000.0
                 / observation.elapsedNanos();
     }
 
@@ -199,8 +207,18 @@ public final class GaPerformanceEvaluator {
         if (!observation.configurationBound() || !observation.comparabilityBound()) {
             return "B3";
         }
+        if (!observation.mandatoryEvidenceComplete()) {
+            return "B0";
+        }
+        if (!observation.candidateHealthEvidenceComplete()) {
+            return "B2";
+        }
         if (observation.errors() > 0 || observation.timeouts() > 0
                 || observation.mismatches() > 0) {
+            return "B1";
+        }
+        if (!observation.candidateReady() || !"NONE".equals(observation.candidateFailureCode())
+                || observation.terminalFailures() != 0L || observation.processExitCode() != 0) {
             return "B1";
         }
         if (!observation.publicPathCompleted()

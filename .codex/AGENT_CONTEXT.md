@@ -1,6 +1,6 @@
 # AGENT_CONTEXT — Matching Engine Current State
 
-> Last Updated: 2026-09-02
+> Last Updated: 2026-09-05
 > Purpose: compact current-state index; detailed history lives in Tasks, Stage
 > Reports, ADRs and Git.
 
@@ -10,20 +10,20 @@
 | --- | --- |
 | Project | Ultra-Low-Latency Matching Engine |
 | Product scope | Single-node deterministic matching engine with additive pipeline, WAL and protocol boundaries |
-| Phase | Phase 11 — GA Qualification (`Blueprint Approved; TASK-048/TASK-049/TASK-050/TASK-051 Human Closed; G1/G2/G3/G7/G9/G11 PASS / QUALIFYING / FROZEN; TASK-052 IN PROGRESS; formal G4/G5 and G6/G8 campaigns not authorized`) |
-| Latest product task | [`TASK-20260825-052`](../tasks/active/TASK-20260825-052-phase11-soak-observability.md) — remediated qualification-only G6/G8 foundation committed/pushed at `7b00fdf571fb8fa4918b7138210693b9e79f346c`; controller-bound Quick PASS / QUICK_READINESS_ONLY; exact-controller Standard and Quick CI PASS; TASK-052 governance checkpoint established; reviewer validation pending; pre-soak Evidence Gate not passed |
+| Phase | Phase 11 — GA Qualification (`RC2 Candidate Freeze closed; G1/G2/G3 PASS; TASK-053 active G4 pre-execution remediation; formal G4 not authorized; G5 and G6/G8 remain locked`) |
+| Latest product task | [`TASK-20260825-053`](../tasks/active/TASK-20260825-053-phase11-performance-capacity-campaign.md) — RC2 G4 pre-execution qualification/evidence remediation active; formal G4 Human-gated; G5 remains separately locked |
 | Latest architecture decision | [`ADR-0019`](../docs/adr/ADR-0019-ga-qualification-rc-immutability-and-release-authority.md) — Accepted |
-| Current planning task | TASK-20260825-052 — IN PROGRESS; Human scope approved; remediated qualification-only G6/G8 foundation committed/pushed at `7b00fdf571fb8fa4918b7138210693b9e79f346c`; Implementation Evidence Review PASS; controller-bound Quick PASS / QUICK_READINESS_ONLY; exact-controller Standard and Quick CI PASS; TASK-052 governance checkpoint established; reviewer validation pending; formal Stage A/B and TASK-054 are not authorized |
+| Current planning task | TASK-20260825-053 — RC2 G4 pre-execution remediation; formal G4 not authorized; G5/TASK-054 remain locked |
 | Governance mode | Phase Blueprint Mode completed, approved and active for future multi-task Phases |
 | Product stage | Phase 9 frozen at `v0.8.0-engineering-baseline`; Phase 10 frozen at `v0.9.0-rc.1`; Phase 11 GA qualification in progress; Product Release separately governed |
 | Product approval | Phase 9 Human Closure Approved; merge `ef73f60` / Master CI `32711512036` PASS; `v0.8.0-engineering-baseline` / Tag CI `32711649980` PASS; Closure Input `8e5d39d` / Standard CI `32709188522` / Quick Lane `32709188327`; remediation `5f3b1c5` / Standard CI `32710712341` / Quick Lane `32710712428` PASS |
-| Phase 11 current gate | TASK-048/TASK-049/TASK-050/TASK-051 Human Closed; G1/G2/G3/G7/G9/G11 PASS / QUALIFYING / FROZEN; TASK-050 evidence preserved/frozen; TASK-052 is IN PROGRESS with remediated qualification-only implementation committed/pushed at `7b00fdf571fb8fa4918b7138210693b9e79f346c`; Implementation Evidence Review PASS; controller-bound Quick and exact-controller CI PASS; governance checkpoint established; reviewer validation pending; pre-soak Evidence Gate not passed; formal G4/G5, formal Stage A/B, TASK-053 and TASK-054 are not authorized |
+| Phase 11 current gate | RC2 Candidate Freeze closed; G1/G2/G3 PASS; TASK-053 G4 pre-execution remediation active; formal G4 not authorized; G5/G6/G8/TASK-054 remain locked |
 | Latest infrastructure task | [`TASK-20260820-006`](../tasks/completed/TASK-20260820-006-repository-remote-ci-setup.md) — Completed |
 | Branch | `docs/phase11-ga-qualification-blueprint` |
 | Engineering baseline commit | `e2828f5` (Phase 10 merge; Master CI `32816928409` PASS) |
 | Engineering baseline tag | `v0.9.0-rc.1` (Tag CI `32817075147` / Quick `32817075152` PASS) |
 | Remote | `origin` — `https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine.git` |
-| Remote sync | `origin/master` remains at workflow-installation merge `0575c76`; the Phase 11 branch and origin branch currently carry technical controller `7b00fdf571fb8fa4918b7138210693b9e79f346c`; the qualification controller and any later docs-only governance checkpoint remain distinct objects; the exact governance-checkpoint SHA is external Git/CI/reviewer provenance and is not embedded in its own content; prior controller `9140ab8215c2b170b925aadd02502d4d131a2f99` and prior governance identities remain historical; `v0.9.0-rc.1` remains unchanged; `.vscode/` remains untouched |
+| Remote sync | `origin/master` remains at workflow-installation merge `0575c76`; the Phase 11 branch and origin branch carry the historical qualification lineage; `e8324aabad694444bf84d337b33bbb8295efc8f7` is the pre-final-remediation controller, while the active RC2 G4 controller is established only by its subsequent qualification-only commit and evidence package; controller and any docs-only governance checkpoint remain distinct objects; prior controller `9140ab8215c2b170b925aadd02502d4d131a2f99` and prior governance identities remain historical; `v0.9.0-rc.1` remains unchanged; `.vscode/` remains untouched |
 | Latest Phase 7 CI | Master merge `6473365` — [32574891113](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574891113) PASS; tag `v0.6.0-engineering-baseline` — [32574958017](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574958017) PASS |
 | Latest Phase 7 docs CI | TASK-028 evidence checkpoint `9fed6b2` — [32574274905](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32574274905) PASS; final docs sync commits are included in merge `6473365` |
 | Latest Phase 8 CI | Technical Closure input `c59d7c0` — [32616802595](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32616802595) PASS; remediation `4bdfb97` — [32620164524](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32620164524) PASS; merge `87abbc1` — [32622722649](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32622722649) PASS; tag — [32622757607](https://github.com/Holylaw7/Ultra-Low-Latency-Matching-Engine/actions/runs/32622757607) PASS |
@@ -164,8 +164,8 @@ ADR-0011 Final Approved
   -> TASK-049 [Completed / Human Closed; fresh 24-case matrix PASS with paired canonical G1/G2 evidence; historical pre-remediation evidence preserved non-qualifying]
   -> TASK-050 [Completed / Human Closed; G3/G7 PASS / QUALIFYING / FROZEN; formal G3/G7 campaign executed exactly once; campaign evidence preserved/frozen; historical failures preserved non-qualifying]
   -> TASK-051 [Completed / Human Closed; G4/G5 pre-campaign foundation and reviewer evidence accepted; formal G4/G5 campaign remains unauthorized]
-  -> TASK-052 [IN PROGRESS; Human scope approved; remediated qualification-only G6/G8 foundation committed/pushed at `7b00fdf571fb8fa4918b7138210693b9e79f346c`; Implementation Evidence Review PASS; controller-bound Quick PASS / QUICK_READINESS_ONLY; exact-controller Standard and Quick CI PASS; TASK-052 governance checkpoint established; reviewer validation pending; pre-soak Evidence Gate not passed]
-  -> TASK-053 [Not authorized]
+   -> TASK-052 [Historical qualification foundation; no current formal soak authorization]
+   -> TASK-053 [RC2 G4 pre-execution remediation active; formal G4 not authorized; G5 separately locked]
   -> TASK-054 through TASK-056 [Dependency ordered; not authorized]
   -> Phase 11 Full Campaigns / Closure / v1.0.0 / GitHub Release / GA [Not Authorized]
   -> Product Release [Not Authorized]

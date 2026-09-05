@@ -4,10 +4,10 @@
 
 ```text
 Status:                  Approved / Frozen by Human Blueprint Approval 2026-08-25
-Candidate tag:           v0.9.0-rc.1
-Annotated tag object:    dfd38c08e80aed9035bf1c2d7c8faf8bae99c356
-Peeled production SHA:   e2828f563ee41316c062385c0244ac1336731359
-Post-tag docs SHA:       b8489bf8d8fe979bfd4b28bd7e6c2da8bb33b1d4
+Candidate tag:           v0.9.0-rc.2
+Annotated tag object:    9e2a67ada0e3b6220b730131d0bae79dc03073ed
+Peeled production SHA:   740e8a3dea0a759c707c597778c26c41e9bb3e47
+Candidate JAR SHA-256:   0B77D37985B9124AC4FD1B90D669DB550EFD0CF00C23AF65FDC29B35071703C4
 GA / tag / publication:  Not Authorized
 Repository license:      Apache-2.0 — Human accepted
 Distribution:             GitHub binary — Human accepted
@@ -21,7 +21,7 @@ All twelve Gates are conjunctive. `FAIL` cannot be waived. `ABORTED` is not
 
 | Gate | Objective | Required execution / evidence | PASS | Blocker |
 | --- | --- | --- | --- | --- |
-| G1 Correctness | Preserve price-time matching semantics | Golden/domain suites; public Protocol v1 workloads; ordered result/checkpoint/transcript/probe comparison | zero invalid trade, loss, gap or divergence | B0/B1 |
+| G1 Correctness | Preserve price-time matching semantics | Golden/domain suites; public Protocol v2 workloads; ordered result/checkpoint/transcript/probe comparison | zero invalid trade, loss, gap or divergence | B0/B1 |
 | G2 Deterministic Replay | Live, PURE_WAL and Snapshot-tail converge | `LIFECYCLE_MIX`, `CROSSING_MULTI_MATCH`, `RESTING_DEPTH`, `MEMORY_STEADY_STATE_V1`; seeds 20260823/24/25 | checkpoint, suffix results, TradeId, EventSequence, transcript and public probe exact | B0/B1 |
 | G3 Crash Recovery / Durability | Prove approved durability fault model | append/force failures, final torn tail, corruption/gap/checksum, 50 graceful and 50 post-response forced terminations | fail-closed or exact convergence; no unreported durability claim | B0/B1 |
 | G4 Performance SLO | Meet fixed local-host SLO | three comparable ten-minute public-path runs; 60 lifecycle samples; paired management trial | every threshold in ADR-0019 D11 PASS | B1/B2/B3 |
@@ -37,7 +37,8 @@ All twelve Gates are conjunctive. `FAIL` cannot be waived. `ABORTED` is not
 ## G1 / G2 qualification profiles
 
 Each profile uses only supported `SubmitLimitCommand` and
-`CancelOrderCommand`, traverses the packaged Protocol v1 public boundary, then
+`CancelOrderCommand`, traverses the packaged Protocol v2 public boundary with
+the frozen bounded window `N=8`, then
 performs strict WAL scan, `PURE_WAL` recovery and Snapshot-tail recovery.
 
 Every profile/seed uses exactly 100,000 commands, WAL segment size 65,536 and
@@ -89,7 +90,15 @@ Adding a production injection seam requires rc.2.
 
 Three independent ten-minute runs use the same candidate, workload seed,
 JDK/JVM/GC, filesystem/storage, `SYNC_EACH_APPEND`, Pipeline
-`1024/BLOCKING`, Netty allocator and single sequential client.
+`1024/BLOCKING`, Netty allocator and bounded closed-loop continuous-refill
+Protocol v2 client with `N=8`.
+
+Each run has a fresh 60-second warmup excluded from the ten-minute measurement.
+Per-request latency is the actual offer/write-handoff to complete validated
+response interval, evaluated with nearest-rank percentiles. Lifecycle consists
+of 60 fresh startup/shutdown cycles; management is evaluated as two fresh
+symmetrical pairs (`IDLE -> STATUS@1Hz` and `STATUS@1Hz -> IDLE`), each with a
+60-second warmup and five-minute measurement.
 
 They must match the Phase 10 reference comparability identity: Windows 11
 `10.0.26200`, amd64, i9-13900H / 20 logical processors, fixed NTFS `E:` volume

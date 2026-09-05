@@ -60,6 +60,13 @@ class GaPerformanceRunnerTest {
         assertTrue(Files.isRegularFile(result.publishedRun().manifestPath()));
         assertTrue(Files.isRegularFile(result.publishedRun().gateResultPath()));
         assertTrue(Files.isDirectory(result.publishedRun().evidenceDirectory()));
+        assertTrue(GaFormalPerformanceEvidenceVerifier.verifyRun(
+                result.publishedRun().evidenceDirectory()).passed());
+        final Path raw = result.publishedRun().evidenceDirectory()
+                .resolve("raw-evidence-v2.txt");
+        Files.writeString(raw, "tampered=true\n", java.nio.file.StandardOpenOption.APPEND);
+        assertFalse(GaFormalPerformanceEvidenceVerifier.verifyRun(
+                result.publishedRun().evidenceDirectory()).passed());
     }
 
     @Test
@@ -99,6 +106,43 @@ class GaPerformanceRunnerTest {
                 true, true, true, true, true, true, true, true, 1, 0));
         assertEquals("B3", GaFormalPerformanceRunner.managementBlocker(
                 true, true, true, true, false, true, true, true, 0, 0));
+    }
+
+    @Test
+    void statusTrialRequiresExactlyOnePollPerSecondAndIdleHasNoPolls() {
+        assertTrue(GaFormalPerformanceRunner.statusWorkloadComplete(true,
+                GaFormalPerformanceContract.MANAGEMENT_STATUS_REQUESTS));
+        assertFalse(GaFormalPerformanceRunner.statusWorkloadComplete(true,
+                GaFormalPerformanceContract.MANAGEMENT_STATUS_REQUESTS - 1));
+        assertTrue(GaFormalPerformanceRunner.statusWorkloadComplete(false, 0));
+        assertFalse(GaFormalPerformanceRunner.statusWorkloadComplete(false, 1));
+    }
+
+    @Test
+    void firstBlockedPhysicalStagePreventsEveryLaterLaunch() throws Exception {
+        final int[] launches = {0};
+
+        final int executed = GaFormalPerformanceRunner.executeUntilBlocker(3, ordinal -> {
+            launches[0]++;
+            assertEquals(1, ordinal);
+            return false;
+        });
+
+        assertEquals(1, executed);
+        assertEquals(1, launches[0]);
+    }
+
+    @Test
+    void secondBlockedPhysicalStagePreventsThirdLaunch() throws Exception {
+        final int[] launches = {0};
+
+        final int executed = GaFormalPerformanceRunner.executeUntilBlocker(3, ordinal -> {
+            launches[0]++;
+            return ordinal < 2;
+        });
+
+        assertEquals(2, executed);
+        assertEquals(2, launches[0]);
     }
 
     private GaCorrectnessCanonicalContext testContext() {

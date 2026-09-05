@@ -241,7 +241,11 @@ public final class ReleaseCandidateQualificationMain {
             while ((command = input.readLine()) != null) {
                 if ("SHUTDOWN".equals(command)) {
                     runtime.shutdown();
-                    closeEvidence(evidenceDirectory, sampler, jfr, null);
+                    if (!closeEvidence(evidenceDirectory, sampler, jfr, null)) {
+                        System.err.println("CHILD_FAILURE mandatory evidence publication failed");
+                        System.exit(1);
+                        return;
+                    }
                     output.println("STOPPED " + runtime.status().state() + " "
                             + RuntimeExitCode.forFailure(runtime.status().failureCode()).code());
                     return;
@@ -249,7 +253,11 @@ public final class ReleaseCandidateQualificationMain {
                 output.println("IGNORED " + command);
             }
             runtime.shutdown();
-            closeEvidence(evidenceDirectory, sampler, jfr, null);
+            if (!closeEvidence(evidenceDirectory, sampler, jfr, null)) {
+                System.err.println("CHILD_FAILURE mandatory evidence publication failed");
+                System.exit(1);
+                return;
+            }
         } catch (final IOException | RuntimeException failure) {
             try {
                 runtime.shutdown();
@@ -263,27 +271,41 @@ public final class ReleaseCandidateQualificationMain {
         }
     }
 
-    private static void closeEvidence(
+    private static boolean closeEvidence(
             final Path evidenceDirectory,
             final QualificationResourceSampler sampler,
             final QualificationJfrRecording jfr,
             final Throwable primaryFailure) {
+        IOException evidenceFailure = null;
         try {
             if (sampler != null) {
                 sampler.close();
                 QualificationResourceEvidenceWriter.write(
                         evidenceDirectory.resolve("resource-evidence.csv"), sampler.evidence());
             }
+        } catch (final IOException publicationFailure) {
+            evidenceFailure = publicationFailure;
+        }
+        try {
             if (jfr != null) {
                 jfr.close();
             }
-        } catch (final IOException evidenceFailure) {
-            if (primaryFailure != null) {
-                primaryFailure.addSuppressed(evidenceFailure);
+        } catch (final IOException jfrFailure) {
+            if (evidenceFailure == null) {
+                evidenceFailure = jfrFailure;
             } else {
-                System.err.println("CHILD_EVIDENCE_FAILURE " + evidenceFailure.getMessage());
+                evidenceFailure.addSuppressed(jfrFailure);
             }
         }
+        if (evidenceFailure == null) {
+            return true;
+        }
+        if (primaryFailure != null) {
+            primaryFailure.addSuppressed(evidenceFailure);
+        } else {
+            System.err.println("CHILD_EVIDENCE_FAILURE " + evidenceFailure.getMessage());
+        }
+        return false;
     }
 
     private static void runLifecycle(final Path outputDirectory) {

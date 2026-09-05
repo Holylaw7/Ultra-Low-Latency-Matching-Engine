@@ -36,6 +36,9 @@ public final class GaFormalPerformanceContract {
     public static final Duration MANAGEMENT_MEASUREMENT = Duration.ofMinutes(5);
     /** Status request interval for the management trial. */
     public static final Duration MANAGEMENT_INTERVAL = Duration.ofSeconds(1);
+    /** Exact number of measured STATUS requests in each five-minute status trial. */
+    public static final int MANAGEMENT_STATUS_REQUESTS = (int) (
+            MANAGEMENT_MEASUREMENT.toNanos() / MANAGEMENT_INTERVAL.toNanos());
     /** Command timeout for formal child-process traffic. */
     public static final Duration COMMAND_TIMEOUT = Duration.ofSeconds(5);
     /** Child startup timeout. */
@@ -119,9 +122,12 @@ public final class GaFormalPerformanceContract {
         fields.put("latency.p999MaximumNanos", Long.toString(
                 GaPerformanceEvaluator.MAX_P999_NANOS));
         fields.put("lifecycle.cycles", Integer.toString(LIFECYCLE_CYCLES));
+        fields.put("lifecycle.startupSamples", Integer.toString(LIFECYCLE_CYCLES));
+        fields.put("lifecycle.shutdownSamples", Integer.toString(LIFECYCLE_CYCLES));
         fields.put("management.warmup", MANAGEMENT_WARMUP.toString());
         fields.put("management.measurement", MANAGEMENT_MEASUREMENT.toString());
         fields.put("management.statusInterval", MANAGEMENT_INTERVAL.toString());
+        fields.put("management.statusRequestCount", Integer.toString(MANAGEMENT_STATUS_REQUESTS));
         return Map.copyOf(fields);
     }
 
