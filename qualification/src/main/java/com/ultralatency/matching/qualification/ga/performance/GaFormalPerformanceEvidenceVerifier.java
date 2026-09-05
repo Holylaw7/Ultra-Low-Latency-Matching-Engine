@@ -62,6 +62,9 @@ public final class GaFormalPerformanceEvidenceVerifier {
                     findings.add("campaign/gate outcome mismatch");
                 }
             }
+            if (!campaignGateBindsRequiredManifests(root, fields, gateFields)) {
+                findings.add("campaign gate does not bind canonical campaign/run manifests");
+            }
             verifyCampaignEvidence(root, fields, gateFields, findings);
             final int runCount = Math.toIntExact(longValue(fields, "run.count"));
             final List<Map<String, String>> runManifests = new ArrayList<>();
@@ -151,6 +154,30 @@ public final class GaFormalPerformanceEvidenceVerifier {
             }
         }
         return false;
+    }
+
+    /** Returns whether the authoritative campaign gate inventories its campaign and run manifests. */
+    static boolean campaignGateBindsRequiredManifests(
+            final Path root,
+            final Map<String, String> campaign,
+            final Map<String, String> gate) throws IOException {
+        Objects.requireNonNull(root, "root");
+        Objects.requireNonNull(campaign, "campaign");
+        Objects.requireNonNull(gate, "gate");
+        final Path normalizedRoot = root.toAbsolutePath().normalize();
+        if (!isGatePayloadBound(normalizedRoot, gate,
+                normalizedRoot.resolve("g4-campaign-manifest-v1.txt"))) {
+            return false;
+        }
+        final int runCount = integer(campaign, "run.count");
+        for (int index = 1; index <= runCount; index++) {
+            final String path = campaign.get(String.format("run.%04d.manifestPath", index));
+            if (path == null || !isGatePayloadBound(normalizedRoot, gate,
+                    resolvePayload(normalizedRoot, path))) {
+                return false;
+            }
+        }
+        return runCount > 0;
     }
 
     private static int integerUnchecked(final String value) {
@@ -802,6 +829,10 @@ public final class GaFormalPerformanceEvidenceVerifier {
                 verifySidecar(raw.resolveSibling(raw.getFileName() + ".sha256"), raw, findings);
                 final Map<String, String> trial = readKeyValue(raw);
                 verifyChildIdentity(trial, campaign, "management trial " + index, findings);
+                if (!managementBindingComplete(trial)) {
+                    findings.add("management evidence canonical binding is incomplete: trial "
+                            + index);
+                }
                 final String expectedPathPart = index == 1 || index == 4
                         ? "pair-" + (index == 1 ? "a" : "b") + "-idle"
                         : "pair-" + (index == 2 ? "a" : "b") + "-status";
@@ -833,6 +864,10 @@ public final class GaFormalPerformanceEvidenceVerifier {
                     findings.add("management trial is not a trustworthy PASS: " + index);
                 }
                 final long[] requestLatencies = readRequestLatencies(trial);
+                if (!accountingMatchesRaw(trial)) {
+                    findings.add("management accounting is not backed by request-level raw evidence: "
+                            + index);
+                }
                 final QualificationPercentiles.Summary requestSummary =
                         QualificationPercentiles.summarize(requestLatencies);
                 final long p99 = requestSummary.count() == 0L
@@ -866,6 +901,14 @@ public final class GaFormalPerformanceEvidenceVerifier {
         }
     }
 
+    static boolean managementBindingComplete(final Map<String, String> trial) {
+        return "true".equals(trial.get("configuration.bound"))
+                && "true".equals(trial.get("environment.bound"))
+                && "true".equals(trial.get("candidate.bound"))
+                && "true".equals(trial.get("controller.bound"))
+                && "true".equals(trial.get("evidence.mandatoryComplete"));
+    }
+
     private static boolean statusHealthPass(final Map<String, String> trial) {
         return "true".equals(trial.get("candidate.ready"))
                 && "true".equals(trial.get("status.healthy"))
@@ -873,7 +916,9 @@ public final class GaFormalPerformanceEvidenceVerifier {
                 && "NONE".equals(trial.get("candidate.failureCode"))
                 && "0".equals(trial.get("candidate.terminalFailures"))
                 && "true".equals(trial.get("candidate.healthEvidenceComplete"))
-                && "true".equals(trial.get("shutdown.completed"));
+                && "true".equals(trial.get("shutdown.completed"))
+                && "true".equals(trial.get("status.boundaryComplete"))
+                && managementBindingComplete(trial);
     }
 
     private static long[] readRequestLatencies(final Map<String, String> trial)
@@ -919,6 +964,7 @@ public final class GaFormalPerformanceEvidenceVerifier {
         final long[] result = new long[declared];
         final long interval = GaFormalPerformanceContract.MANAGEMENT_INTERVAL.toNanos();
         final long measurementStart = longValue(trial, "measurementStartNanos");
+        final long measurementEnd = longValue(trial, "measurementEndNanos");
         for (int index = 1; index <= declared; index++) {
             final String prefix = "status.sample." + index + ".";
             final long deadline = longValue(trial, prefix + "deadlineNanos");
@@ -927,6 +973,8 @@ public final class GaFormalPerformanceEvidenceVerifier {
             final long latency = longValue(trial, prefix + "latencyNanos");
             final long expectedDeadline = measurementStart + (long) (index - 1) * interval;
             if (deadline != expectedDeadline || started < deadline || completed < started
+                    || !GaFormalPerformanceRunner.statusSampleWithinMeasurement(
+                            measurementStart, measurementEnd, started, completed)
                     || latency != completed - started || latency < 1L) {
                 throw new IOException("STATUS timing evidence is not absolute or ordered");
             }
@@ -1094,9 +1142,135 @@ public final class GaFormalPerformanceEvidenceVerifier {
                     && duration != longValue(manifest, "evidence.measurementDurationNanos"))) {
                 findings.add("measurement boundary arithmetic is invalid");
             }
+            if (!accountingMatchesRaw(raw)) {
+                findings.add("measurement accounting is not recomputable from request-level raw evidence");
+            }
         } catch (IOException | ArithmeticException failure) {
             findings.add("measurement accounting field is invalid: " + failure.getMessage());
         }
+    }
+
+    /** Recomputes bounded request accounting without trusting summary counters. */
+    static boolean accountingMatchesRaw(final Map<String, String> raw) {
+        Objects.requireNonNull(raw, "raw");
+        try {
+            final long start = longValue(raw, "measurementStartNanos");
+            final long end = longValue(raw, "measurementEndNanos");
+            if (start < 0L || end <= start) {
+                return false;
+            }
+            final RequestAccounting accounting = recomputeRequestAccounting(raw, start, end);
+            return accounting.summaryMatches(raw);
+        } catch (IOException | RuntimeException failure) {
+            return false;
+        }
+    }
+
+    private static RequestAccounting recomputeRequestAccounting(
+            final Map<String, String> raw,
+            final long measurementStart,
+            final long measurementEnd) throws IOException {
+        final Map<Long, RequestEvidence> requests = new TreeMap<>();
+        for (Map.Entry<String, String> entry : raw.entrySet()) {
+            final String key = entry.getKey();
+            if (!key.startsWith("request.")) {
+                continue;
+            }
+            final String remainder = key.substring("request.".length());
+            final int separator = remainder.indexOf('.');
+            if (separator <= 0 || separator == remainder.length() - 1) {
+                throw new IOException("malformed request-level accounting key");
+            }
+            final long requestId;
+            try {
+                requestId = Long.parseLong(remainder.substring(0, separator));
+            } catch (NumberFormatException failure) {
+                throw new IOException("request-level accounting id is invalid", failure);
+            }
+            if (requestId <= 0L) {
+                throw new IOException("request-level accounting id is outside bounds");
+            }
+            final RequestEvidence request = requests.computeIfAbsent(
+                    requestId, ignored -> new RequestEvidence());
+            final String field = remainder.substring(separator + 1);
+            switch (field) {
+                case "commandSequence" -> request.commandSequence = parseLong(entry.getValue(), field);
+                case "offeredNanos" -> request.offeredNanos = parseLong(entry.getValue(), field);
+                case "inMeasurement" -> request.inMeasurement = parseBoolean(entry.getValue(), field);
+                case "completedNanos" -> request.completedNanos = parseLong(entry.getValue(), field);
+                case "capacityReleaseNanos" -> request.capacityReleaseNanos = parseLong(
+                        entry.getValue(), field);
+                case "outcomeCode" -> request.outcomeCode = parseLong(entry.getValue(), field);
+                case "latencyNanos" -> {
+                    // The management raw payload may include this derived field.  The
+                    // authoritative accounting boundaries are the request state timestamps.
+                }
+                default -> throw new IOException("unknown request-level accounting field: " + field);
+            }
+        }
+        if (requests.isEmpty()) {
+            throw new IOException("request-level accounting evidence is missing");
+        }
+        long offered = 0L;
+        long accepted = 0L;
+        long completed = 0L;
+        long post = 0L;
+        long cross = 0L;
+        long unfinished = 0L;
+        for (RequestEvidence request : requests.values()) {
+            if (request.commandSequence == null || request.offeredNanos == null
+                    || request.inMeasurement == null || request.completedNanos == null
+                    || request.capacityReleaseNanos == null || request.outcomeCode == null) {
+                throw new IOException("request-level accounting row is incomplete");
+            }
+            if (request.commandSequence <= 0L || request.offeredNanos < 0L
+                    || request.completedNanos < 0L || request.capacityReleaseNanos < 0L) {
+                throw new IOException("request-level accounting chronology is invalid");
+            }
+            if (request.completedNanos > 0L
+                    && (request.completedNanos < request.offeredNanos
+                    || request.capacityReleaseNanos < request.completedNanos
+                    || request.outcomeCode < 0L)) {
+                throw new IOException("request-level accounting completion is invalid");
+            }
+            if (!request.inMeasurement) {
+                continue;
+            }
+            if (request.offeredNanos < measurementStart
+                    || request.offeredNanos >= measurementEnd) {
+                throw new IOException("measurement request offer is outside its interval");
+            }
+            offered++;
+            if (request.completedNanos == 0L) {
+                unfinished++;
+            } else {
+                accepted++;
+                if (request.completedNanos < measurementStart) {
+                    cross++;
+                } else if (request.completedNanos < measurementEnd) {
+                    completed++;
+                } else {
+                    post++;
+                }
+            }
+        }
+        return new RequestAccounting(offered, accepted, completed, post, cross, unfinished);
+    }
+
+    private static long parseLong(final String value, final String field) throws IOException {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException failure) {
+            throw new IOException("request-level accounting field is not a long: " + field,
+                    failure);
+        }
+    }
+
+    private static boolean parseBoolean(final String value, final String field) throws IOException {
+        if (!"true".equals(value) && !"false".equals(value)) {
+            throw new IOException("request-level accounting field is not boolean: " + field);
+        }
+        return Boolean.parseBoolean(value);
     }
 
     private static void verifyLatency(
@@ -1446,5 +1620,45 @@ public final class GaFormalPerformanceEvidenceVerifier {
             boolean status,
             double throughput,
             long p99Nanos) {
+    }
+
+    private record RequestAccounting(
+            long offered,
+            long accepted,
+            long completed,
+            long postMeasurementDrain,
+            long crossBoundary,
+            long unfinished) {
+
+        private boolean summaryMatches(final Map<String, String> raw) {
+            return longValueOrDefault(raw.get("measurement.offeredCommands"), -1L) == offered
+                    && longValueOrDefault(raw.get("measurement.acceptedCommands"), -1L)
+                    == accepted
+                    && longValueOrDefault(raw.get("measurement.completedCommands"), -1L)
+                    == completed
+                    && longValueOrDefault(raw.get("measurement.postMeasurementDrainCommands"), -1L)
+                    == postMeasurementDrain
+                    && longValueOrDefault(raw.get("measurement.crossBoundaryCommands"), -1L)
+                    == crossBoundary
+                    && longValueOrDefault(raw.get("measurement.unfinishedCommands"), -1L)
+                    == unfinished
+                    && optionalSummaryMatches(raw, "offeredCommands", offered)
+                    && optionalSummaryMatches(raw, "acceptedCommands", accepted)
+                    && optionalSummaryMatches(raw, "responseCount", completed);
+        }
+
+        private static boolean optionalSummaryMatches(
+                final Map<String, String> raw, final String key, final long expected) {
+            return !raw.containsKey(key) || longValueOrDefault(raw.get(key), Long.MIN_VALUE) == expected;
+        }
+    }
+
+    private static final class RequestEvidence {
+        private Long commandSequence;
+        private Long offeredNanos;
+        private Boolean inMeasurement;
+        private Long completedNanos;
+        private Long capacityReleaseNanos;
+        private Long outcomeCode;
     }
 }

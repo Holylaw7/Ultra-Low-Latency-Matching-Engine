@@ -60,8 +60,10 @@ class GaPerformanceRunnerTest {
         assertTrue(Files.isRegularFile(result.publishedRun().manifestPath()));
         assertTrue(Files.isRegularFile(result.publishedRun().gateResultPath()));
         assertTrue(Files.isDirectory(result.publishedRun().evidenceDirectory()));
-        assertTrue(GaFormalPerformanceEvidenceVerifier.verifyRun(
-                result.publishedRun().evidenceDirectory()).passed());
+        final GaFormalPerformanceEvidenceVerifier.Verification verification =
+                GaFormalPerformanceEvidenceVerifier.verifyRun(
+                        result.publishedRun().evidenceDirectory());
+        assertTrue(verification.passed(), verification.findings()::toString);
         final Path raw = result.publishedRun().evidenceDirectory()
                 .resolve("raw-evidence-v2.txt");
         Files.writeString(raw, "tampered=true\n", java.nio.file.StandardOpenOption.APPEND);
@@ -116,6 +118,20 @@ class GaPerformanceRunnerTest {
                 GaFormalPerformanceContract.MANAGEMENT_STATUS_REQUESTS - 1));
         assertTrue(GaFormalPerformanceRunner.statusWorkloadComplete(false, 0));
         assertFalse(GaFormalPerformanceRunner.statusWorkloadComplete(false, 1));
+    }
+
+    @Test
+    void statusSamplesMustStartAndCompleteInsideMeasurementBoundary() {
+        final long start = 1_000L;
+        final long end = 2_000L;
+        assertTrue(GaFormalPerformanceRunner.statusSampleWithinMeasurement(
+                start, end, 1_100L, 1_900L));
+        assertFalse(GaFormalPerformanceRunner.statusSampleWithinMeasurement(
+                start, end, end, end));
+        assertFalse(GaFormalPerformanceRunner.statusSampleWithinMeasurement(
+                start, end, 1_900L, end));
+        assertFalse(GaFormalPerformanceRunner.statusSampleWithinMeasurement(
+                start, end, 2_001L, 2_002L));
     }
 
     @Test

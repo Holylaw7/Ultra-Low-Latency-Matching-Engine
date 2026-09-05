@@ -136,4 +136,107 @@ class GaFormalPerformanceEvidenceVerifierTest {
         assertTrue(verification.findings().stream()
                 .anyMatch(finding -> finding.contains("complete run set")));
     }
+
+    @Test
+    void managementPassRequiresEveryCanonicalBinding() {
+        final Map<String, String> binding = new LinkedHashMap<>();
+        binding.put("configuration.bound", "true");
+        binding.put("environment.bound", "true");
+        binding.put("candidate.bound", "true");
+        binding.put("controller.bound", "true");
+        binding.put("evidence.mandatoryComplete", "true");
+        assertTrue(GaFormalPerformanceEvidenceVerifier.managementBindingComplete(binding));
+        for (String key : List.copyOf(binding.keySet())) {
+            binding.put(key, "false");
+            assertFalse(GaFormalPerformanceEvidenceVerifier.managementBindingComplete(binding),
+                    key);
+            binding.put(key, "true");
+        }
+    }
+
+    @Test
+    void requestAccountingIsRecomputedInsteadOfTrustingSummary() {
+        final Map<String, String> raw = accountingEvidence();
+        assertTrue(GaFormalPerformanceEvidenceVerifier.accountingMatchesRaw(raw));
+
+        for (Map.Entry<String, String> entry : Map.of(
+                "measurement.offeredCommands", "2",
+                "measurement.acceptedCommands", "2",
+                "measurement.completedCommands", "2",
+                "measurement.postMeasurementDrainCommands", "1",
+                "measurement.crossBoundaryCommands", "1",
+                "measurement.unfinishedCommands", "1",
+                "offeredCommands", "2",
+                "acceptedCommands", "2",
+                "responseCount", "2").entrySet()) {
+            final Map<String, String> tampered = accountingEvidence();
+            tampered.put(entry.getKey(), entry.getValue());
+            assertFalse(GaFormalPerformanceEvidenceVerifier.accountingMatchesRaw(tampered),
+                    entry.getKey());
+        }
+    }
+
+    @Test
+    void managementAccountingUsesTheSameRequestLevelRecomputation() {
+        final Map<String, String> managementRaw = accountingEvidence();
+        managementRaw.put("pollStatus", "false");
+        managementRaw.put("status.pollCount", "0");
+        assertTrue(GaFormalPerformanceEvidenceVerifier.accountingMatchesRaw(managementRaw));
+
+        managementRaw.put("measurement.completedCommands", "0");
+        assertFalse(GaFormalPerformanceEvidenceVerifier.accountingMatchesRaw(managementRaw));
+    }
+
+    @Test
+    void campaignGateMustInventoryCampaignAndRunManifests() throws Exception {
+        final Path root = temporaryDirectory.resolve("campaign-chain");
+        final Path runDirectory = root.resolve("run-01");
+        Files.createDirectories(runDirectory);
+        final Path campaignManifest = root.resolve("g4-campaign-manifest-v1.txt");
+        final Path runManifest = runDirectory.resolve("ga-run-manifest-v1.txt");
+        Files.writeString(campaignManifest, "campaign=true\n", StandardCharsets.US_ASCII);
+        Files.writeString(runManifest, "run=true\n", StandardCharsets.US_ASCII);
+        final Map<String, String> campaign = new LinkedHashMap<>();
+        campaign.put("run.count", "1");
+        campaign.put("run.0001.manifestPath", "run-01/ga-run-manifest-v1.txt");
+        final Map<String, String> gate = new LinkedHashMap<>();
+        gate.put("manifest.count", "2");
+        gate.put("manifest.0001.path", "run-01/ga-run-manifest-v1.txt");
+        gate.put("manifest.0001.sha256", QualificationArtifactHasher.sha256(runManifest));
+        gate.put("manifest.0002.path", "g4-campaign-manifest-v1.txt");
+        gate.put("manifest.0002.sha256", QualificationArtifactHasher.sha256(campaignManifest));
+        assertTrue(GaFormalPerformanceEvidenceVerifier.campaignGateBindsRequiredManifests(
+                root, campaign, gate));
+
+        gate.remove("manifest.0002.sha256");
+        assertFalse(GaFormalPerformanceEvidenceVerifier.campaignGateBindsRequiredManifests(
+                root, campaign, gate));
+
+        gate.put("manifest.0002.sha256", QualificationArtifactHasher.sha256(campaignManifest));
+        gate.remove("manifest.0001.path");
+        assertFalse(GaFormalPerformanceEvidenceVerifier.campaignGateBindsRequiredManifests(
+                root, campaign, gate));
+    }
+
+    private static Map<String, String> accountingEvidence() {
+        final Map<String, String> raw = new LinkedHashMap<>();
+        raw.put("measurementStartNanos", "100");
+        raw.put("measurementEndNanos", "200");
+        raw.put("measurement.offeredCommands", "1");
+        raw.put("measurement.acceptedCommands", "1");
+        raw.put("measurement.completedCommands", "1");
+        raw.put("measurement.postMeasurementDrainCommands", "0");
+        raw.put("measurement.crossBoundaryCommands", "0");
+        raw.put("measurement.unfinishedCommands", "0");
+        raw.put("offeredCommands", "1");
+        raw.put("acceptedCommands", "1");
+        raw.put("responseCount", "1");
+        raw.put("request.1.commandSequence", "1");
+        raw.put("request.1.offeredNanos", "110");
+        raw.put("request.1.inMeasurement", "true");
+        raw.put("request.1.completedNanos", "150");
+        raw.put("request.1.capacityReleaseNanos", "151");
+        raw.put("request.1.outcomeCode", "0");
+        return raw;
+    }
 }
