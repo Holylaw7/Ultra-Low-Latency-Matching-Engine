@@ -121,8 +121,13 @@ public final class GaPerformanceRunner {
         final long elapsedNanos = Math.max(1L, Duration.between(started, completed).toNanos());
         final Map<String, String> environment = GaPerformanceEnvironment.capture(root);
         final Map<String, String> configurationFields = configurationFields(matrix, configuration);
-        final boolean infrastructureBound = true;
-        final double observedThroughput = accepted * 1_000_000_000.0 / elapsedNanos;
+        final boolean configurationBound = quickConfigurationBound(configurationFields);
+        final boolean comparabilityBound = !environment.isEmpty();
+        final boolean candidateBound = context.candidate().applicationJarSha256() != null
+                && !context.candidate().applicationJarSha256().isBlank();
+        final boolean controllerBound = context.controllerGitSha() != null
+                && !context.controllerGitSha().isBlank();
+        final double observedThroughput = responses * 1_000_000_000.0 / elapsedNanos;
         final GaPerformanceObservation observation = new GaPerformanceObservation(
                 matrix.quickCommandCount(),
                 accepted,
@@ -139,18 +144,17 @@ public final class GaPerformanceRunner {
                 timeouts,
                 mismatches,
                 publicPathCompleted,
-                true,
-                infrastructureBound,
-                true,
-                true);
+                configurationBound,
+                comparabilityBound,
+                candidateBound,
+                controllerBound);
         final GaPerformanceEvaluator.Evaluation evaluation =
                 GaPerformanceEvaluator.evaluateQuick(observation);
         raw.insert(0, rawEvidence(matrix, configuration, context, environment, observation));
         final boolean completedDetermination = publicPathCompleted;
         final String outcome = evaluation.passed() ? "PASS"
                 : completedDetermination ? "FAIL" : "ABORTED";
-        final String failureCode = evaluation.passed() ? "NONE"
-                : completedDetermination ? "B2" : "B3";
+        final String failureCode = evaluation.passed() ? "NONE" : quickFailureCode(observation);
         final GaQuickEvidencePublisher.RunInput input = new GaQuickEvidencePublisher.RunInput(
                 "G4",
                 "ga-g4-quick-v1",
@@ -243,6 +247,28 @@ public final class GaPerformanceRunner {
         fields.put("client", "single sequential client");
         fields.put("formalDuration", matrix.runDuration().toString());
         return Map.copyOf(fields);
+    }
+
+    private static boolean quickConfigurationBound(final Map<String, String> fields) {
+        return "QUICK".equals(fields.get("lane"))
+                && GaPerformanceMatrix.APPROVED_PROFILE.equals(fields.get("profile"))
+                && "v1 TCP".equals(fields.get("protocol"))
+                && "SYNC_EACH_APPEND".equals(fields.get("durability"))
+                && "1024/BLOCKING".equals(fields.get("pipeline"));
+    }
+
+    private static String quickFailureCode(final GaPerformanceObservation observation) {
+        if (!observation.candidateBound() || !observation.controllerBound()) {
+            return "B0";
+        }
+        if (!observation.configurationBound() || !observation.comparabilityBound()) {
+            return "B3";
+        }
+        if (observation.errors() > 0 || observation.timeouts() > 0
+                || observation.mismatches() > 0) {
+            return "B1";
+        }
+        return "B2";
     }
 
     private static String rawEvidence(

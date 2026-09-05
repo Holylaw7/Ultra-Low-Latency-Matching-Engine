@@ -65,6 +65,8 @@ public final class GaPerformanceEvaluator {
         final List<Criterion> criteria = new ArrayList<>();
         criteria.add(exact("publicPath.complete", observation.publicPathCompleted()
                 && observation.completeResponsePopulation(), "true"));
+        criteria.add(exact("measurement.boundary.complete",
+                observation.measurement().boundaryComplete(), "true"));
         criteria.add(greaterOrEqual("throughput.commandsPerSecond",
                 throughput(observation), MIN_THROUGHPUT_COMMANDS_PER_SECOND));
         criteria.add(lessOrEqual("latency.p50Nanos", latency.p50Nanos(), MAX_P50_NANOS));
@@ -79,7 +81,7 @@ public final class GaPerformanceEvaluator {
         criteria.add(exact("controller.bound", observation.controllerBound(), "true"));
         final boolean passed = criteria.stream().allMatch(Criterion::passed);
         return new Evaluation(passed, passed, passed ? "PASS" : "FAIL",
-                passed ? "NONE" : "B2", criteria);
+                passed ? "NONE" : failureCode(observation, latency), criteria);
     }
 
     /** Evaluates only readiness properties for a Quick smoke; it cannot claim formal G4. */
@@ -88,6 +90,8 @@ public final class GaPerformanceEvaluator {
         final List<Criterion> criteria = new ArrayList<>();
         criteria.add(exact("quick.publicPath.complete", observation.publicPathCompleted()
                 && observation.completeResponsePopulation(), "true"));
+        criteria.add(exact("quick.measurement.boundary.complete",
+                observation.measurement().boundaryComplete(), "true"));
         criteria.add(exact("quick.configuration.bound", observation.configurationBound(), "true"));
         criteria.add(exact("quick.comparability.observed", observation.comparabilityBound(), "true"));
         criteria.add(exact("quick.candidate.bound", observation.candidateBound(), "true"));
@@ -97,7 +101,7 @@ public final class GaPerformanceEvaluator {
         criteria.add(zero("quick.mismatches", observation.mismatches()));
         final boolean passed = criteria.stream().allMatch(Criterion::passed);
         return new Evaluation(passed, false, passed ? "PASS" : "FAIL",
-                passed ? "NONE" : "B2", criteria);
+                passed ? "NONE" : failureCode(observation, observation.latency()), criteria);
     }
 
     /** Evaluates exactly the three formal runs as an all-run conjunction. */
@@ -132,14 +136,23 @@ public final class GaPerformanceEvaluator {
                 MAX_LIFECYCLE_P99_NANOS));
         criteria.add(managementCriterion(observations));
         final boolean passed = criteria.stream().allMatch(Criterion::passed);
+        String failureCode = "NONE";
+        if (!passed) {
+            failureCode = observations.stream().map(GaPerformanceEvaluator::evaluateRun)
+                    .map(Evaluation::failureCode).filter(code -> !"NONE".equals(code))
+                    .findFirst().orElse("B1");
+            if ("NONE".equals(failureCode)) {
+                failureCode = "B1";
+            }
+        }
         return new Evaluation(passed, passed, passed ? "PASS" : "FAIL",
-                passed ? "NONE" : "B2", criteria);
+                failureCode, criteria);
     }
 
     /** Returns the measured accepted throughput without rounding away failures. */
     public static double throughput(final GaPerformanceObservation observation) {
         return observation.elapsedNanos() == 0 ? 0.0
-                : observation.acceptedCommands() * 1_000_000_000.0
+                : observation.responseCount() * 1_000_000_000.0
                 / observation.elapsedNanos();
     }
 
@@ -175,6 +188,33 @@ public final class GaPerformanceEvaluator {
 
     private static Criterion greaterOrEqual(final String id, final long actual, final long required) {
         return new Criterion(id, Long.toString(actual), "GE", Long.toString(required), actual >= required);
+    }
+
+    static String failureCode(
+            final GaPerformanceObservation observation,
+            final QualificationPercentiles.Summary latency) {
+        if (!observation.candidateBound() || !observation.controllerBound()) {
+            return "B0";
+        }
+        if (!observation.configurationBound() || !observation.comparabilityBound()) {
+            return "B3";
+        }
+        if (observation.errors() > 0 || observation.timeouts() > 0
+                || observation.mismatches() > 0) {
+            return "B1";
+        }
+        if (!observation.publicPathCompleted()
+                || !observation.measurement().complete()
+                || !observation.measurement().boundaryComplete()) {
+            return "B2";
+        }
+        if (throughput(observation) < MIN_THROUGHPUT_COMMANDS_PER_SECOND
+                || latency.p50Nanos() > MAX_P50_NANOS
+                || latency.p99Nanos() > MAX_P99_NANOS
+                || latency.p999Nanos() > MAX_P999_NANOS) {
+            return "B1";
+        }
+        return "B2";
     }
 
     private static Evaluation failedCampaign(final String id, final long actual, final long required) {

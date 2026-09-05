@@ -23,7 +23,8 @@ public record GaPerformanceObservation(
         boolean configurationBound,
         boolean comparabilityBound,
         boolean candidateBound,
-        boolean controllerBound) {
+        boolean controllerBound,
+        GaPerformanceMeasurement measurement) {
 
     /** Validates and defensively copies all measurement arrays. */
     public GaPerformanceObservation {
@@ -36,9 +37,45 @@ public record GaPerformanceObservation(
                 || statusThroughputCommandsPerSecond < 0) {
             throw new IllegalArgumentException("performance observation is outside its bounds");
         }
+        Objects.requireNonNull(measurement, "measurement");
         responseLatencyNanos = copyAndValidate(responseLatencyNanos, "responseLatencyNanos");
         startupLatencyNanos = copyAndValidate(startupLatencyNanos, "startupLatencyNanos");
         shutdownLatencyNanos = copyAndValidate(shutdownLatencyNanos, "shutdownLatencyNanos");
+        if (measurement.completedCommands() != responseCount
+                || measurement.completedCommands() != responseLatencyNanos.length) {
+            throw new IllegalArgumentException(
+                    "measurement completion count must match retained latency population");
+        }
+    }
+
+    /** Compatibility constructor for pre-remediation qualification fixtures. */
+    public GaPerformanceObservation(
+            final int commandCount,
+            final long acceptedCommands,
+            final long responseCount,
+            final long elapsedNanos,
+            final long[] responseLatencyNanos,
+            final long[] startupLatencyNanos,
+            final long[] shutdownLatencyNanos,
+            final double idleThroughputCommandsPerSecond,
+            final double statusThroughputCommandsPerSecond,
+            final long idleStatusP99Nanos,
+            final long statusP99Nanos,
+            final int errors,
+            final int timeouts,
+            final int mismatches,
+            final boolean publicPathCompleted,
+            final boolean configurationBound,
+            final boolean comparabilityBound,
+            final boolean candidateBound,
+            final boolean controllerBound) {
+        this(commandCount, acceptedCommands, responseCount, elapsedNanos, responseLatencyNanos,
+                startupLatencyNanos, shutdownLatencyNanos, idleThroughputCommandsPerSecond,
+                statusThroughputCommandsPerSecond, idleStatusP99Nanos, statusP99Nanos, errors,
+                timeouts, mismatches, publicPathCompleted, configurationBound,
+                comparabilityBound, candidateBound, controllerBound,
+                GaPerformanceMeasurement.legacy(commandCount, acceptedCommands, responseCount,
+                        responseLatencyNanos == null ? 0 : responseLatencyNanos.length));
     }
 
     /** Returns a defensive copy of response samples. */
@@ -61,9 +98,12 @@ public record GaPerformanceObservation(
 
     /** Returns whether the measured public exchange population is complete. */
     public boolean completeResponsePopulation() {
-        return acceptedCommands == commandCount
-                && responseCount == commandCount
-                && responseLatencyNanos.length == commandCount;
+        return measurement.complete();
+    }
+
+    /** Returns explicit offer/accept/complete and bounded-drain accounting. */
+    public GaPerformanceMeasurement measurement() {
+        return measurement;
     }
 
     /** Returns a nearest-rank summary over every retained response sample. */

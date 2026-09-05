@@ -1,6 +1,7 @@
 package com.ultralatency.matching.qualification.ga.performance;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
@@ -26,7 +27,22 @@ class GaPerformanceEvaluatorTest {
     void throughputBelowThresholdFailsWithoutFiltering() {
         final GaPerformanceObservation observation = observation(
                 4, 8_000_001L, new long[]{1L, 1L, 1L, 1L});
-        assertFalse(GaPerformanceEvaluator.evaluateRun(observation).passed());
+        final GaPerformanceEvaluator.Evaluation evaluation =
+                GaPerformanceEvaluator.evaluateRun(observation);
+        assertFalse(evaluation.passed());
+        assertEquals("B1", evaluation.failureCode());
+    }
+
+    @Test
+    void trustworthyLatencySloFailureIsCandidateB1() {
+        final GaPerformanceObservation observation = observation(
+                8, 8_000_000L,
+                new long[]{6_000_000L, 6_000_000L, 6_000_000L, 6_000_000L,
+                    6_000_000L, 6_000_000L, 6_000_000L, 6_000_000L});
+        final GaPerformanceEvaluator.Evaluation evaluation =
+                GaPerformanceEvaluator.evaluateRun(observation);
+        assertFalse(evaluation.passed());
+        assertEquals("B1", evaluation.failureCode());
     }
 
     @Test
